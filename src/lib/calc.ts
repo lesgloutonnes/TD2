@@ -32,7 +32,7 @@ import {
   SLOTS,
   STAT_LABELS,
   armorOnKillFlat,
-  armorRegenPerSec,
+  totalArmorRegenPerSec,
   resolveHealthFlat,
 } from "./data/attributes";
 
@@ -45,7 +45,9 @@ const STAT_KEYS: StatKey[] = [
   "armor",
   "armorPercent",
   "health",
+  "healthPercent",
   "armorRegen",
+  "armorRegenPercent",
   "armorOnKill",
   "hazardProtection",
   "explosiveResistance",
@@ -280,7 +282,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
       }
       const investorBonuses: StatBonus[] = [];
       if (red > 0) investorBonuses.push({ stat: "chd", value: 10 * red });
-      if (blue > 0) investorBonuses.push({ stat: "armorRegen", value: 1 * blue });
+      if (blue > 0) investorBonuses.push({ stat: "armorRegenPercent", value: 1 * blue });
       if (yellow > 0) investorBonuses.push({ stat: "skillEfficiency", value: 5 * yellow });
       if (investorBonuses.length) {
         addBonuses(values, investorBonuses);
@@ -349,7 +351,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     } else if (augment.statHint === "magazineSize") {
       values.magazineSize += Math.round(stack.total * 0.5 * 10) / 10;
     } else if (augment.statHint === "health") {
-      values.health += stack.total;
+      values.healthPercent += stack.total;
     }
   }
 
@@ -537,25 +539,40 @@ export function computeStats(loadout: Loadout): ComputedStats {
   values.armor = resolveFlatArmor(loadout, values.armorPercent, notes);
 
   const derived = {
-    armorRegenPerSec: armorRegenPerSec(values.armor, values.armorRegen),
+    armorRegenPerSec: totalArmorRegenPerSec(
+      values.armorRegen,
+      values.armor,
+      values.armorRegenPercent,
+    ),
     armorOnKillFlat: armorOnKillFlat(values.armor, values.armorOnKill),
-    healthFlat: resolveHealthFlat(values.health),
+    healthFlat: resolveHealthFlat(values.health, values.healthPercent),
   };
 
-  if (values.armorRegen > 0 && values.armor > 0) {
-    notes.push(
-      `Armor Regeneration ${values.armorRegen}% of total armor → ${Math.round(derived.armorRegenPerSec).toLocaleString("en-US")}/s (no separate flat armor/s attribute on gear).`,
-    );
+  if (derived.armorRegenPerSec > 0) {
+    const parts: string[] = [];
+    if (values.armorRegen > 0) {
+      parts.push(`${Math.round(values.armorRegen).toLocaleString("en-US")}/s from gear attributes`);
+    }
+    if (values.armorRegenPercent > 0) {
+      parts.push(
+        `${values.armorRegenPercent}% of armor (${Math.round((values.armor * values.armorRegenPercent) / 100).toLocaleString("en-US")}/s)`,
+      );
+    }
+    notes.push(`Armor Regeneration total ${Math.round(derived.armorRegenPerSec).toLocaleString("en-US")}/s` +
+      (parts.length ? ` = ${parts.join(" + ")}` : "") +
+      ". Gear rolls are flat HP/s; brand/set bonuses are %.");
   }
   if (values.armorOnKill > 0 && values.armor > 0) {
     notes.push(
       `Armor on Kill ${values.armorOnKill}% → ${Math.round(derived.armorOnKillFlat).toLocaleString("en-US")} armor restored per kill.`,
     );
   }
-  if (values.health > 0 || equippedSlots > 0) {
+  if (values.health > 0 || values.healthPercent > 0 || equippedSlots > 0) {
     notes.push(
-      `Health: ${Math.round(derived.healthFlat).toLocaleString("en-US")} (base ${AGENT_BASE_HEALTH.toLocaleString("en-US")}` +
-        (values.health > 0 ? ` × (1 + ${values.health}%)` : "") +
+      `Health: ${Math.round(derived.healthFlat).toLocaleString("en-US")}` +
+        ` (base ${AGENT_BASE_HEALTH.toLocaleString("en-US")}` +
+        (values.health > 0 ? ` + ${Math.round(values.health).toLocaleString("en-US")} flat` : "") +
+        (values.healthPercent > 0 ? ` × (1 + ${values.healthPercent}%)` : "") +
         ").",
     );
   }

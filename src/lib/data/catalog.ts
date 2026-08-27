@@ -263,7 +263,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "gila",
     slots: ["kneepads"],
-    extraStats: [{ stat: "armorRegen", value: 1 }],
+    extraStats: [{ stat: "armorRegenPercent", value: 1 }],
     extraCores: ["red"],
     note: "Gila kneepads: extra armor regen + red core.",
   },
@@ -495,7 +495,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "murakami",
     slots: ["kneepads"],
-    extraStats: [{ stat: "armorRegen", value: 1 }],
+    extraStats: [{ stat: "armorRegenPercent", value: 1 }],
     note: "Murakami kneepads: +1% extra armor regen. Brand core: yellow.",
   },
 

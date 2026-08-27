@@ -145,6 +145,7 @@ function testCeskaY8s3() {
     `Ceska 3pc hazard, got ${stats.values.hazardProtection}`,
   );
   assert(stats.values.health === 0, `Ceska n'a plus de bonus Santé, got ${stats.values.health}`);
+  assert(stats.values.healthPercent === 0, "Ceska sans health %");
 }
 
 function testEmberEngine() {
@@ -439,10 +440,12 @@ function testKindColors() {
 function testStatCaps() {
   assert(clampStat("chc", 99) === 6, "CHC max 6");
   assert(clampStat("chd", 20) === 12, "CHD max 12");
-  assert(clampStat("armorRegen", 5) === 0.5, "armor regen max 0.5");
+  assert(clampStat("armorRegen", 99999) === 4925, "armor regen max 4925 HP/s");
+  assert(clampStat("health", 99999) === 18935, "health attr max 18935");
   assert(clampStat("chc", -3) === 0, "no negative");
   assert(clampStat("chc", 99, true) === 9, "Prototype CHC max 9");
   assert(clampStat("chd", 20, true) === 18, "Prototype CHD max 18");
+  assert(clampStat("armorRegen", 99999, true) === 7388, "Prototype regen ~1.5×");
 }
 
 function testCatalogSlotLockedCore() {
@@ -705,12 +708,13 @@ function testArmorRegenFlatDerived() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
   loadout.gear.mask = createPiece("mask", "brand:belstone");
-  loadout.gear.mask.attributes = [{ stat: "armorRegen", value: 0.5 }];
+  loadout.gear.mask.attributes = [{ stat: "armorRegen", value: 4925 }];
   loadout.gear.mask.mods = [];
-  // 1pc Belstone = +1% armor regen + piece attr 0.5% = 1.5%
+  // Flat attr 4925 + Belstone 1pc +1% of armor
   const stats = computeStats(loadout);
-  assert(stats.values.armorRegen === 1.5, `regen %, got ${stats.values.armorRegen}`);
-  const expectedPerSec = (stats.values.armor * 1.5) / 100;
+  assert(stats.values.armorRegen === 4925, `flat regen, got ${stats.values.armorRegen}`);
+  assert(stats.values.armorRegenPercent === 1, `Belstone %, got ${stats.values.armorRegenPercent}`);
+  const expectedPerSec = 4925 + stats.values.armor / 100;
   assert(
     Math.abs(stats.derived.armorRegenPerSec - expectedPerSec) < 1,
     `regen/s got ${stats.derived.armorRegenPerSec} expected ${expectedPerSec}`,
@@ -722,10 +726,12 @@ function testHealthFlatDerived() {
   const loadout = emptyLoadout();
   loadout.shdWatch = true; // +10% health
   loadout.gear.mask = createPiece("mask", "brand:gila");
+  loadout.gear.mask.attributes = [{ stat: "health", value: 18935 }];
+  loadout.gear.mask.mods = [];
   const stats = computeStats(loadout);
-  // Gila 1pc is armor % only; SHD = +10% health
-  assert(stats.values.health === 10, `health %, got ${stats.values.health}`);
-  const expected = 167_000 * 1.1;
+  assert(stats.values.health === 18935, `flat health attr, got ${stats.values.health}`);
+  assert(stats.values.healthPercent === 10, `SHD health %, got ${stats.values.healthPercent}`);
+  const expected = (167_000 + 18935) * 1.1;
   assert(
     Math.abs(stats.derived.healthFlat - expected) < 1,
     `health flat got ${stats.derived.healthFlat} expected ${expected}`,
@@ -738,12 +744,16 @@ function testInvestorSlotted() {
   const mask = createPiece("mask", "investor");
   mask.attributes = [
     { stat: "chd", value: 12 },
-    { stat: "armorRegen", value: 0.5 },
+    { stat: "armorRegen", value: 4925 },
   ];
   loadout.gear.mask = mask;
   const stats = computeStats(loadout);
   assert(stats.values.chd === 22, `12 attr + 10 Investor red, got ${stats.values.chd}`);
-  assert(stats.values.armorRegen === 1.5, `0.5 attr + 1 Investor blue, got ${stats.values.armorRegen}`);
+  assert(stats.values.armorRegen === 4925, `flat attr unchanged, got ${stats.values.armorRegen}`);
+  assert(
+    stats.values.armorRegenPercent === 1,
+    `Investor blue → +1% regen, got ${stats.values.armorRegenPercent}`,
+  );
   assert(stats.bonuses.some((b) => b.source.includes("Investor")), "investor bonus row");
 }
 

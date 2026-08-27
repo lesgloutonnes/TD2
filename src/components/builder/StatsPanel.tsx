@@ -14,8 +14,10 @@ const HIGHLIGHT: StatKey[] = [
   "armor",
   "armorPercent",
   "armorRegen",
+  "armorRegenPercent",
   "armorOnKill",
   "health",
+  "healthPercent",
   "hazardProtection",
   "skillDamage",
   "skillHaste",
@@ -97,9 +99,37 @@ export function StatsPanel({
 
       <ul className="stat-list">
         {HIGHLIGHT.map((key) => {
+          if (key === "armorRegen" || key === "armorRegenPercent") {
+            if (key === "armorRegenPercent") return null;
+            if (!stats.derived.armorRegenPerSec) return null;
+            return (
+              <li key="armorRegenTotal">
+                <span>Armor Regeneration</span>
+                <strong>{formatFlatAmount(stats.derived.armorRegenPerSec)}/s</strong>
+              </li>
+            );
+          }
+          if (key === "health" || key === "healthPercent") {
+            if (key === "healthPercent") return null;
+            if (!stats.values.armor && !stats.values.health && !stats.values.healthPercent) {
+              return null;
+            }
+            const pct =
+              stats.values.healthPercent > 0
+                ? ` (${formatStat("healthPercent", stats.values.healthPercent)})`
+                : "";
+            return (
+              <li key="healthTotal">
+                <span>Health</span>
+                <strong>
+                  {formatFlatAmount(stats.derived.healthFlat)}
+                  {pct}
+                </strong>
+              </li>
+            );
+          }
           const value = key === "chc" ? stats.chcCapped : stats.values[key];
-          if (!value && key !== "health") return null;
-          if (key === "health" && !value && !stats.values.armor) return null;
+          if (!value) return null;
           return (
             <li key={key}>
               <span>{STAT_LABELS[key]}</span>
@@ -109,8 +139,7 @@ export function StatsPanel({
         })}
       </ul>
       <small className="hint index-hint">
-        Armor Regeneration rolls as % of total armor /s on blue attributes — the flat armor/s
-        amount is derived, not a separate gear roll.
+        Gear Armor Regen rolls as flat HP/s (max 4,925). Brand/set bonuses add % of total armor.
       </small>
 
       <section>
@@ -148,15 +177,8 @@ export function StatsPanel({
 }
 
 function formatHighlight(key: StatKey, value: number, stats: ComputedStats): string {
-  if (key === "armorRegen" && stats.derived.armorRegenPerSec > 0) {
-    return `${formatStat(key, value)} · ${formatFlatAmount(stats.derived.armorRegenPerSec)}/s`;
-  }
   if (key === "armorOnKill" && stats.derived.armorOnKillFlat > 0) {
     return `${formatStat(key, value)} · ${formatFlatAmount(stats.derived.armorOnKillFlat)}`;
-  }
-  if (key === "health") {
-    const pct = value > 0 ? ` (${formatStat("health", value)})` : "";
-    return `${formatFlatAmount(stats.derived.healthFlat)}${pct}`;
   }
   return formatStat(key, value);
 }

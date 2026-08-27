@@ -36,7 +36,9 @@ Open [http://localhost:3000](http://localhost:3000).
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
 - Per-piece / per-weapon expertise
 - Armor model: flat piece armor + blue cores + Total Armor %
-- Armor Regeneration / Armor on Kill: gear rolls are %, analysis also shows flat armor/s and flat on-kill amounts
+- Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
+- Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
+- Armor on Kill: % → flat amount in analysis
 - Assumed uptime for common chest/backpack talents and major 4pc set bonuses
 - Soft exotic assumptions (Memento stacks, Investor Slotted by attribute color)
 - Caps: CHC 60%, Skill Tier 6
