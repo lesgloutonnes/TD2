@@ -160,6 +160,10 @@ export type GearPiece = {
    * Raises attribute caps (~1.5×) and red/blue core values; Skill Tier unchanged.
    */
   prototype?: boolean;
+  /** Prototype Augment id (only when prototype). */
+  augmentId?: string;
+  /** Augment level 1–10 (only when prototype). */
+  augmentLevel?: number;
 };
 
 export type EquippedWeapon = {

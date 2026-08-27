@@ -69,6 +69,16 @@ export function GearTooltip({
 
       {inspect.prototype ? <p className="tt-prototype">Prototype quality</p> : null}
 
+      {inspect.augment ? (
+        <div className="tt-talent">
+          <p className="tt-kind">
+            Augment · Lv {inspect.augment.level} · {inspect.augment.value}% {inspect.augment.effectLabel}
+          </p>
+          <strong>{inspect.augment.name}</strong>
+          <p>{inspect.augment.description}</p>
+        </div>
+      ) : null}
+
       <div className="tt-core">
         <span className="tt-core-pip" style={{ background: inspect.coreColor }} />
         <span>

@@ -1,0 +1,114 @@
+import type { StatKey } from "../types";
+
+export const AUGMENT_LEVEL_MIN = 1;
+export const AUGMENT_LEVEL_MAX = 10;
+
+export type AugmentDef = {
+  id: string;
+  name: string;
+  /** Short in-game style description. */
+  description: string;
+  /** What the stacked % represents in the analyzer. */
+  effectLabel: string;
+  /**
+   * Value at a given level (1–10), post Y8S1.3 where published.
+   * Echo / Paradox / Entropy / Trapper / Atomize use community approximations.
+   */
+  valueAtLevel: (level: number) => number;
+  /** Soft mapping into build stats when a numeric proxy helps. */
+  statHint?: StatKey;
+};
+
+function linear(level1: number, perLevel: number, level: number): number {
+  const clamped = Math.max(AUGMENT_LEVEL_MIN, Math.min(AUGMENT_LEVEL_MAX, Math.round(level)));
+  return Math.round((level1 + perLevel * (clamped - 1)) * 10) / 10;
+}
+
+/**
+ * Prototype Augments (Y8 Rise Up). Any Prototype gear piece can roll any Augment.
+ * Values: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes (via community tables).
+ */
+export const AUGMENTS: AugmentDef[] = [
+  {
+    id: "quantum",
+    name: "Quantum",
+    description: "Chance to become temporarily immune to damage.",
+    effectLabel: "immunity chance",
+    valueAtLevel: (level) => linear(1, 0.4, level),
+  },
+  {
+    id: "echo",
+    name: "Echo",
+    description: "Each bullet fired has a chance to deal its damage a second time.",
+    effectLabel: "double-hit chance",
+    valueAtLevel: (level) => linear(1, 0.2, level),
+  },
+  {
+    id: "atomize",
+    name: "Atomize",
+    description: "Increases grenade radius and damage.",
+    effectLabel: "grenade power",
+    valueAtLevel: (level) => linear(5, 0.5, level),
+    statHint: "explosiveDamage",
+  },
+  {
+    id: "amalgam",
+    name: "Amalgam",
+    description: "Bullet hits have a chance to apply a random status effect.",
+    effectLabel: "status proc chance",
+    valueAtLevel: (level) => linear(1.6, 0.3, level),
+    statHint: "statusEffects",
+  },
+  {
+    id: "trapper",
+    name: "Trapper",
+    description: "Increases the duration of status effects you apply.",
+    effectLabel: "status duration",
+    valueAtLevel: (level) => linear(2, 0.3, level),
+  },
+  {
+    id: "entropy",
+    name: "Entropy",
+    description: "Increases your Health based on a percentage of your total Armor.",
+    effectLabel: "armor → health",
+    valueAtLevel: (level) => linear(2, 0.3, level),
+    statHint: "health",
+  },
+  {
+    id: "anomaly",
+    name: "Anomaly",
+    description: "Skills restore a portion of the damage they deal as healing.",
+    effectLabel: "skill damage → heal",
+    valueAtLevel: (level) => linear(4, 0.5, level),
+  },
+  {
+    id: "paradox",
+    name: "Paradox",
+    description: "Chance to refill part of the magazine while firing.",
+    effectLabel: "mag refill chance",
+    valueAtLevel: (level) => linear(1, 0.2, level),
+    statHint: "magazineSize",
+  },
+  {
+    id: "synesthesia",
+    name: "Synesthesia",
+    description: "Bullet hits have a chance to slightly reduce skill cooldowns.",
+    effectLabel: "cooldown reduction proc",
+    valueAtLevel: (level) => linear(5, 1, level),
+    statHint: "skillHaste",
+  },
+];
+
+export function augmentById(id: string | undefined | null): AugmentDef | undefined {
+  if (!id) return undefined;
+  return AUGMENTS.find((item) => item.id === id);
+}
+
+export function clampAugmentLevel(level: number | undefined): number {
+  if (!Number.isFinite(level)) return AUGMENT_LEVEL_MIN;
+  return Math.max(AUGMENT_LEVEL_MIN, Math.min(AUGMENT_LEVEL_MAX, Math.round(level!)));
+}
+
+export function defaultAugmentId(): string {
+  return "echo";
+}

@@ -23,6 +23,13 @@ import {
   statStep,
 } from "@/lib/data/attributes";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
+import {
+  AUGMENTS,
+  AUGMENT_LEVEL_MAX,
+  AUGMENT_LEVEL_MIN,
+  augmentById,
+  clampAugmentLevel,
+} from "@/lib/data/augments";
 import { isCoreLocked, setPiecePrototype } from "@/lib/piece";
 
 export function PieceEditor({
@@ -100,6 +107,54 @@ export function PieceEditor({
           ) : (
             <p className="hint">Exotics cannot be converted to Prototype.</p>
           )}
+
+          {isPrototype ? (
+            <>
+              <label className="field">
+                <span>Augment</span>
+                <select
+                  value={piece.augmentId ?? ""}
+                  onChange={(event) =>
+                    onChange({
+                      ...piece,
+                      augmentId: event.target.value || undefined,
+                      augmentLevel: clampAugmentLevel(piece.augmentLevel ?? 1),
+                    })
+                  }
+                >
+                  {AUGMENTS.map((augment) => (
+                    <option key={augment.id} value={augment.id}>
+                      {augment.name}
+                    </option>
+                  ))}
+                </select>
+                {augmentById(piece.augmentId) ? (
+                  <small className="hint">{augmentById(piece.augmentId)!.description}</small>
+                ) : null}
+              </label>
+              <label className="field expertise-field">
+                <span>
+                  Augment level ({clampAugmentLevel(piece.augmentLevel ?? 1)})
+                  {augmentById(piece.augmentId)
+                    ? ` · ${augmentById(piece.augmentId)!.valueAtLevel(piece.augmentLevel ?? 1)}%`
+                    : ""}
+                </span>
+                <input
+                  type="range"
+                  min={AUGMENT_LEVEL_MIN}
+                  max={AUGMENT_LEVEL_MAX}
+                  value={clampAugmentLevel(piece.augmentLevel ?? 1)}
+                  onChange={(event) =>
+                    onChange({
+                      ...piece,
+                      augmentLevel: Number(event.target.value),
+                    })
+                  }
+                />
+                <small className="hint">Stacks with the same Augment on other Prototype pieces.</small>
+              </label>
+            </>
+          ) : null}
 
           <label className="field">
             <span>Core</span>

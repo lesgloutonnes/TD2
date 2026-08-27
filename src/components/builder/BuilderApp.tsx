@@ -18,6 +18,7 @@ import {
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
+import { augmentById } from "@/lib/data/augments";
 import { pieceInspect } from "@/lib/tooltip";
 import {
   decodeLoadout,
@@ -252,6 +253,10 @@ export function BuilderApp() {
                         {piece
                           ? `${CORE_SHORT_LABELS[piece.core]}${
                               piece.prototype && source?.kind !== "exotic" ? " · Prototype" : ""
+                            }${
+                              piece.prototype && augmentById(piece.augmentId)
+                                ? ` · ${augmentById(piece.augmentId)!.name}`
+                                : ""
                             }${source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""}`
                           : "Click to equip"}
                       </em>

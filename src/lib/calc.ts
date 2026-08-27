@@ -12,6 +12,7 @@ import { GEAR_SETS } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
 import { SPECIALIZATIONS } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
+import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
   CHC_CAP,
   CORE_COLORS,
@@ -165,6 +166,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
 
   const { brandCounts, setCounts, ninja } = gearCounts(loadout);
   let equippedSlots = 0;
+  const augmentStacks = new Map<string, { count: number; total: number; levels: number[] }>();
 
   for (const slot of SLOTS) {
     const piece = loadout.gear[slot];
@@ -199,8 +201,48 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
     if (isPrototype) {
       notes.push(
-        `${source.name}: Prototype — attribute caps ×${PROTOTYPE_ATTR_MULT}, red/blue cores ×${PROTOTYPE_ATTR_MULT} (Skill Tier unchanged). Augments not modeled yet.`,
+        `${source.name}: Prototype — attribute caps ×${PROTOTYPE_ATTR_MULT}, red/blue cores ×${PROTOTYPE_ATTR_MULT} (Skill Tier unchanged).`,
       );
+      const augment = augmentById(piece.augmentId);
+      if (augment) {
+        const level = clampAugmentLevel(piece.augmentLevel);
+        const value = augment.valueAtLevel(level);
+        const stack = augmentStacks.get(augment.id) ?? { count: 0, total: 0, levels: [] };
+        stack.count += 1;
+        stack.total = Math.round((stack.total + value) * 10) / 10;
+        stack.levels.push(level);
+        augmentStacks.set(augment.id, stack);
+      }
+    }
+  }
+
+  for (const [augmentId, stack] of augmentStacks) {
+    const augment = augmentById(augmentId);
+    if (!augment) continue;
+    bonuses.push({
+      source: `Augment · ${augment.name}`,
+      label: `${stack.count}× · ${stack.total}% ${augment.effectLabel}`,
+      detail: `${augment.description} Levels: ${stack.levels.join(", ")}.`,
+      pieces: stack.count,
+      required: 1,
+      active: true,
+      color: "#5ec8c0",
+    });
+    notes.push(
+      `Augment ${augment.name}: ${stack.count} piece${stack.count > 1 ? "s" : ""} → ${stack.total}% ${augment.effectLabel}.`,
+    );
+    if (augment.statHint === "explosiveDamage") {
+      values.explosiveDamage += stack.total;
+    } else if (augment.statHint === "statusEffects") {
+      values.statusEffects += stack.total;
+    } else if (augment.statHint === "skillHaste") {
+      // Synesthesia is a CDR proc, not flat haste — count half as a soft proxy.
+      values.skillHaste += Math.round(stack.total * 0.25 * 10) / 10;
+    } else if (augment.statHint === "magazineSize") {
+      values.magazineSize += Math.round(stack.total * 0.5 * 10) / 10;
+    } else if (augment.statHint === "health") {
+      // Entropy conversion rate stacks; shown as Health % proxy in the analyzer.
+      values.health += stack.total;
     }
   }
 
