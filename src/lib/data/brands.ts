@@ -130,7 +130,7 @@ export const BRANDS: Brand[] = [
     bonuses: [
       [{ stat: "armorPercent", value: 5 }],
       [{ stat: "hazardProtection", value: 20 }],
-      [{ stat: "armorRegen", value: 2 }],
+      [{ stat: "armorRegenPercent", value: 2 }],
     ],
   },
   {
@@ -139,7 +139,7 @@ export const BRANDS: Brand[] = [
     name: "Belstone Armory",
     color: "#6e7a4a",
     bonuses: [
-      [{ stat: "armorRegen", value: 1 }],
+      [{ stat: "armorRegenPercent", value: 1 }],
       [{ stat: "threat", value: 100 }],
       [{ stat: "protectionFromElites", value: 36 }],
     ],
@@ -195,7 +195,7 @@ export const BRANDS: Brand[] = [
     color: "#4a6741",
     bonuses: [
       [{ stat: "explosiveResistance", value: 20 }],
-      [{ stat: "armorRegen", value: 1.5 }],
+      [{ stat: "armorRegenPercent", value: 1.5 }],
       [{ stat: "threat", value: 150 }],
     ],
   },

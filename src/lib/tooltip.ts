@@ -11,7 +11,6 @@ import {
   SLOT_LABELS,
   STAT_LABELS,
   formatStat,
-  hasGearMod,
   itemKindColor,
   prototypeCoreMult,
 } from "./data/attributes";
@@ -94,7 +93,7 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
       });
     }
   }
-  if (hasGearMod(slot)) {
+  if (piece.mods.length > 0) {
     for (const mod of piece.mods) {
       stats.push({
         label: `Mod · ${STAT_LABELS[mod.stat]}`,

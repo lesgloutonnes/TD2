@@ -6,7 +6,7 @@ import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { pieceInspect } from "./tooltip";
 
@@ -145,6 +145,7 @@ function testCeskaY8s3() {
     `Ceska 3pc hazard, got ${stats.values.hazardProtection}`,
   );
   assert(stats.values.health === 0, `Ceska n'a plus de bonus Santé, got ${stats.values.health}`);
+  assert(stats.values.healthPercent === 0, "Ceska sans health %");
 }
 
 function testEmberEngine() {
@@ -439,10 +440,12 @@ function testKindColors() {
 function testStatCaps() {
   assert(clampStat("chc", 99) === 6, "CHC max 6");
   assert(clampStat("chd", 20) === 12, "CHD max 12");
-  assert(clampStat("armorRegen", 5) === 0.5, "armor regen max 0.5");
+  assert(clampStat("armorRegen", 99999) === 4925, "armor regen max 4925 HP/s");
+  assert(clampStat("health", 99999) === 18935, "health attr max 18935");
   assert(clampStat("chc", -3) === 0, "no negative");
   assert(clampStat("chc", 99, true) === 9, "Prototype CHC max 9");
   assert(clampStat("chd", 20, true) === 18, "Prototype CHD max 18");
+  assert(clampStat("armorRegen", 99999, true) === 7388, "Prototype regen ~1.5×");
 }
 
 function testCatalogSlotLockedCore() {
@@ -705,12 +708,13 @@ function testArmorRegenFlatDerived() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
   loadout.gear.mask = createPiece("mask", "brand:belstone");
-  loadout.gear.mask.attributes = [{ stat: "armorRegen", value: 0.5 }];
+  loadout.gear.mask.attributes = [{ stat: "armorRegen", value: 4925 }];
   loadout.gear.mask.mods = [];
-  // 1pc Belstone = +1% armor regen + piece attr 0.5% = 1.5%
+  // Flat attr 4925 + Belstone 1pc +1% of armor
   const stats = computeStats(loadout);
-  assert(stats.values.armorRegen === 1.5, `regen %, got ${stats.values.armorRegen}`);
-  const expectedPerSec = (stats.values.armor * 1.5) / 100;
+  assert(stats.values.armorRegen === 4925, `flat regen, got ${stats.values.armorRegen}`);
+  assert(stats.values.armorRegenPercent === 1, `Belstone %, got ${stats.values.armorRegenPercent}`);
+  const expectedPerSec = 4925 + stats.values.armor / 100;
   assert(
     Math.abs(stats.derived.armorRegenPerSec - expectedPerSec) < 1,
     `regen/s got ${stats.derived.armorRegenPerSec} expected ${expectedPerSec}`,
@@ -722,10 +726,12 @@ function testHealthFlatDerived() {
   const loadout = emptyLoadout();
   loadout.shdWatch = true; // +10% health
   loadout.gear.mask = createPiece("mask", "brand:gila");
+  loadout.gear.mask.attributes = [{ stat: "health", value: 18935 }];
+  loadout.gear.mask.mods = [];
   const stats = computeStats(loadout);
-  // Gila 1pc is armor % only; SHD = +10% health
-  assert(stats.values.health === 10, `health %, got ${stats.values.health}`);
-  const expected = 167_000 * 1.1;
+  assert(stats.values.health === 18935, `flat health attr, got ${stats.values.health}`);
+  assert(stats.values.healthPercent === 10, `SHD health %, got ${stats.values.healthPercent}`);
+  const expected = (167_000 + 18935) * 1.1;
   assert(
     Math.abs(stats.derived.healthFlat - expected) < 1,
     `health flat got ${stats.derived.healthFlat} expected ${expected}`,
@@ -738,12 +744,16 @@ function testInvestorSlotted() {
   const mask = createPiece("mask", "investor");
   mask.attributes = [
     { stat: "chd", value: 12 },
-    { stat: "armorRegen", value: 0.5 },
+    { stat: "armorRegen", value: 4925 },
   ];
   loadout.gear.mask = mask;
   const stats = computeStats(loadout);
   assert(stats.values.chd === 22, `12 attr + 10 Investor red, got ${stats.values.chd}`);
-  assert(stats.values.armorRegen === 1.5, `0.5 attr + 1 Investor blue, got ${stats.values.armorRegen}`);
+  assert(stats.values.armorRegen === 4925, `flat attr unchanged, got ${stats.values.armorRegen}`);
+  assert(
+    stats.values.armorRegenPercent === 1,
+    `Investor blue → +1% regen, got ${stats.values.armorRegenPercent}`,
+  );
   assert(stats.bonuses.some((b) => b.source.includes("Investor")), "investor bonus row");
 }
 
@@ -755,6 +765,35 @@ function testMementoAssumed() {
   assert(stats.values.weaponDamage === 30, `15 core + 15 memento, got ${stats.values.weaponDamage}`);
   assert(stats.values.armorPercent === 10, `memento armor %, got ${stats.values.armorPercent}`);
   assert(stats.cores.blue === 1 && stats.cores.yellow === 1, "memento extra cores");
+}
+
+function testGearModSlots() {
+  const mask = createPiece("mask", "brand:providence");
+  const gloves = createPiece("gloves", "brand:providence");
+  const chill = createPiece("mask", "chill-out");
+  assert(mask.mods.length === 1, `standard mask 1 mod, got ${mask.mods.length}`);
+  assert(gloves.mods.length === 0, `gloves no mod, got ${gloves.mods.length}`);
+  assert(chill.mods.length === 2, `Chill Out 2 mods, got ${chill.mods.length}`);
+
+  chill.mods[0] = { stat: "chc", value: 6 };
+  chill.mods[1] = { stat: "chd", value: 12 };
+  chill.attributes = [{ stat: "hazardProtection", value: 10 }];
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = chill;
+  const stats = computeStats(loadout);
+  assert(stats.values.chc === 6, `chill mod CHC, got ${stats.values.chc}`);
+  assert(stats.values.chd === 12, `chill mod CHD, got ${stats.values.chd}`);
+  assert(stats.values.hazardProtection === 10, `chill attr hazard, got ${stats.values.hazardProtection}`);
+}
+
+function testAttributePoolNoAoK() {
+  assert(!ATTRIBUTE_OPTIONS.includes("armorOnKill"), "AoK not a gear attribute roll");
+  assert(!ATTRIBUTE_OPTIONS.includes("incomingRepairs"), "Incoming Repairs not a gear attribute roll");
+  assert(MOD_OPTIONS.includes("armorOnKill"), "AoK remains a gear mod option");
+  assert(MOD_OPTIONS.includes("armorRegen"), "armor regen flat remains a gear mod option");
+  assert(ATTRIBUTE_OPTIONS.includes("armorRegen"), "armor regen flat is a gear attribute");
+  assert(ATTRIBUTE_OPTIONS.includes("health"), "health flat is a gear attribute");
 }
 
 const tests = [
@@ -802,6 +841,8 @@ const tests = [
   testHealthFlatDerived,
   testInvestorSlotted,
   testMementoAssumed,
+  testGearModSlots,
+  testAttributePoolNoAoK,
 ];
 
 let failed = 0;

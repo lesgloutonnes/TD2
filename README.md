@@ -35,8 +35,11 @@ Open [http://localhost:3000](http://localhost:3000).
 - Exotics (Vile, BTSU, Collector, Nurse's Kneepads, Investor, Blacklisters, Caduceus, Ouroboros…)
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
 - Per-piece / per-weapon expertise
+- Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
 - Armor model: flat piece armor + blue cores + Total Armor %
-- Armor Regeneration / Armor on Kill: gear rolls are %, analysis also shows flat armor/s and flat on-kill amounts
+- Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
+- Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
+- Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
 - Assumed uptime for common chest/backpack talents and major 4pc set bonuses
 - Soft exotic assumptions (Memento stacks, Investor Slotted by attribute color)
 - Caps: CHC 60%, Skill Tier 6

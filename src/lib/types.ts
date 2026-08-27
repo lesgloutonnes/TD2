@@ -30,7 +30,9 @@ export type StatKey =
   | "armor"
   | "armorPercent"
   | "health"
+  | "healthPercent"
   | "armorRegen"
+  | "armorRegenPercent"
   | "armorOnKill"
   | "hazardProtection"
   | "explosiveResistance"
@@ -123,6 +125,8 @@ export type CatalogItem = {
   /** Soft analyzer bonuses while this piece is equipped (exotics with uptime). */
   assumed?: StatBonus[];
   assumedNote?: string;
+  /** Override gear mod socket count (default: 1 on mask/chest/backpack, else 0). */
+  modSlots?: number;
   lockedCore?: CoreType;
   ninja?: boolean;
   note?: string;
@@ -210,13 +214,13 @@ export type ActiveBonus = {
 export type ComputedStats = {
   cores: { red: number; blue: number; yellow: number };
   values: Record<StatKey, number>;
-  /** Flat amounts derived from % of total armor / base health. */
+  /** Flat amounts derived from gear + % bonuses. */
   derived: {
-    /** Armor regenerated per second (armor × armorRegen% / 100). */
+    /** Total armor regenerated per second (flat attrs + % of total armor). */
     armorRegenPerSec: number;
     /** Armor restored on kill (armor × armorOnKill% / 100). */
     armorOnKillFlat: number;
-    /** Effective health pool (base × (1 + health% / 100)). */
+    /** Effective health pool (base + flat attrs, then Health %). */
     healthFlat: number;
   };
   chcCapped: number;

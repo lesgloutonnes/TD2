@@ -78,7 +78,9 @@ export const STAT_LABELS: Record<StatKey, string> = {
   armor: "Armor",
   armorPercent: "Total Armor",
   health: "Health",
+  healthPercent: "Bonus Health",
   armorRegen: "Armor Regeneration",
+  armorRegenPercent: "Armor Regeneration %",
   armorOnKill: "Armor on Kill",
   hazardProtection: "Hazard Protection",
   explosiveResistance: "Explosive Resistance",
@@ -126,10 +128,12 @@ export const STAT_MAX: Partial<Record<StatKey, number>> = {
   skillRepair: 20,
   skillDuration: 8,
   statusEffects: 10,
-  armorRegen: 0.5,
+  /** Flat HP/s on gear attributes / mods (live UI). */
+  armorRegen: 4925,
   armorOnKill: 10,
   hazardProtection: 10,
-  health: 10,
+  /** Flat health on gear attributes / mods. */
+  health: 18935,
   explosiveResistance: 10,
   incomingRepairs: 20,
   skillHealth: 10,
@@ -146,11 +150,9 @@ export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
     label: "Defensive",
     stats: [
       "armorRegen",
-      "armorOnKill",
       "hazardProtection",
       "health",
       "explosiveResistance",
-      "incomingRepairs",
     ],
   },
   {
@@ -196,6 +198,19 @@ export function hasGearMod(slot: Slot): boolean {
   return GEAR_MOD_SLOTS.includes(slot);
 }
 
+/** Number of gear mod sockets for this slot / catalog piece (Chill Out = 2). */
+export function gearModCount(
+  slot: Slot,
+  source?: { modSlots?: number } | null,
+): number {
+  if (source?.modSlots != null) return Math.max(0, source.modSlots);
+  return hasGearMod(slot) ? 1 : 0;
+}
+
+export function defaultMods(count: number, core: CoreType): StatBonus[] {
+  return Array.from({ length: count }, () => defaultMod(core));
+}
+
 export function parseStatInput(raw: string): number {
   const normalized = raw.trim().replace(",", ".");
   return Number(normalized);
@@ -205,11 +220,16 @@ export function clampStat(stat: StatKey, value: number, prototype = false): numb
   if (!Number.isFinite(value) || value < 0) return 0;
   const max = statMax(stat, prototype);
   const capped = max == null ? value : Math.min(value, max);
+  if (stat === "armorRegen" || stat === "health" || stat === "armor") {
+    return Math.round(capped);
+  }
   return Math.round(capped * 10) / 10;
 }
 
 export function statStep(stat: StatKey): number {
-  return stat === "armorRegen" ? 0.1 : 0.1;
+  if (stat === "armorRegen") return 25;
+  if (stat === "health") return 100;
+  return 0.1;
 }
 
 /** Prototype attribute ceiling multiplier (old HE max → new floor; new max ≈ 1.5×). */
@@ -248,9 +268,9 @@ export const PERCENT_STATS = new Set<StatKey>([
   "chd",
   "hsd",
   "weaponHandling",
-  "health",
+  "healthPercent",
   "armorPercent",
-  "armorRegen",
+  "armorRegenPercent",
   "armorOnKill",
   "hazardProtection",
   "explosiveResistance",
@@ -291,7 +311,7 @@ export const SHD_WATCH: StatBonus[] = [
   { stat: "chc", value: 10 },
   { stat: "chd", value: 20 },
   { stat: "armorPercent", value: 10 },
-  { stat: "health", value: 10 },
+  { stat: "healthPercent", value: 10 },
   { stat: "hazardProtection", value: 10 },
   { stat: "explosiveResistance", value: 10 },
   { stat: "skillHaste", value: 10 },
@@ -319,11 +339,9 @@ export const OFFENSIVE_ATTRS = new Set<StatKey>([
 ]);
 export const DEFENSIVE_ATTRS = new Set<StatKey>([
   "armorRegen",
-  "armorOnKill",
   "hazardProtection",
   "health",
   "explosiveResistance",
-  "incomingRepairs",
 ]);
 export const SKILL_ATTRS = new Set<StatKey>([
   "skillDamage",
@@ -346,10 +364,13 @@ export const PRIMARY_WEAPON_TYPES = [
 ] as const;
 
 export function formatStat(stat: StatKey, value: number): string {
-  if (stat === "armor") {
+  if (stat === "armor" || stat === "health") {
     return Math.round(value).toLocaleString("en-US");
   }
-  if (stat === "armorPercent") {
+  if (stat === "armorRegen") {
+    return `${Math.round(value).toLocaleString("en-US")}/s`;
+  }
+  if (stat === "armorPercent" || stat === "healthPercent" || stat === "armorRegenPercent") {
     const pretty = Number.isInteger(value) ? String(value) : value.toFixed(1);
     return `+${pretty}%`;
   }
@@ -366,19 +387,23 @@ export function formatFlatAmount(value: number): string {
 }
 
 /**
- * Armor Regeneration rolls as a % of total armor / second on gear.
- * There is no separate flat “armor/s” attribute — the % converts to a flat amount.
+ * Total armor regen /s = flat attribute rolls + brand/set % of total armor.
+ * Gear attributes show as HP/s in-game; Belstone / Foundry / etc. remain %.
  */
-export function armorRegenPerSec(totalArmor: number, armorRegenPercent: number): number {
-  return (totalArmor * armorRegenPercent) / 100;
+export function totalArmorRegenPerSec(
+  flatRegen: number,
+  totalArmor: number,
+  armorRegenPercent: number,
+): number {
+  return flatRegen + (totalArmor * armorRegenPercent) / 100;
 }
 
 export function armorOnKillFlat(totalArmor: number, armorOnKillPercent: number): number {
   return (totalArmor * armorOnKillPercent) / 100;
 }
 
-export function resolveHealthFlat(healthPercent: number): number {
-  return AGENT_BASE_HEALTH * (1 + healthPercent / 100);
+export function resolveHealthFlat(flatHealth: number, healthPercent: number): number {
+  return (AGENT_BASE_HEALTH + flatHealth) * (1 + healthPercent / 100);
 }
 
 export function defaultAttributes(core: CoreType): StatBonus[] {
@@ -390,7 +415,7 @@ export function defaultAttributes(core: CoreType): StatBonus[] {
   }
   if (core === "blue") {
     return [
-      { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 0.5 },
+      { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 4925 },
       { stat: "hazardProtection", value: STAT_MAX.hazardProtection ?? 10 },
     ];
   }
@@ -408,6 +433,6 @@ export function defaultMod(core: CoreType): StatBonus {
 
 export function gearSetAttribute(core: CoreType): StatBonus {
   if (core === "yellow") return { stat: "skillDamage", value: STAT_MAX.skillDamage ?? 10 };
-  if (core === "blue") return { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 0.5 };
+  if (core === "blue") return { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 4925 };
   return { stat: "chd", value: STAT_MAX.chd ?? 12 };
 }

@@ -211,7 +211,7 @@ export const GEAR_SETS: GearSetDef[] = [
     three: "+1% Armor Regeneration and +50% Shield Health",
     four: "Makeshift Repairs — 25% of damage taken (by you or your shield) is repaired over 10s.",
     twoStats: [{ stat: "armorPercent", value: 10 }],
-    threeStats: [{ stat: "armorRegen", value: 1 }],
+    threeStats: [{ stat: "armorRegenPercent", value: 1 }],
     fourStats: [{ stat: "armorPercent", value: 5 }],
     fourAssumedNote: "Makeshift Repairs approximated as +5% Total Armor effective.",
     backpackTalent: {
@@ -404,7 +404,7 @@ export const GEAR_SETS: GearSetDef[] = [
     two: "+70% Health",
     three: "+15% Total Armor",
     four: "Stoic — gain +3% damage resistance for each enemy targeting you (multiplied by group size).",
-    twoStats: [{ stat: "health", value: 70 }],
+    twoStats: [{ stat: "healthPercent", value: 70 }],
     threeStats: [{ stat: "armorPercent", value: 15 }],
     backpackTalent: {
       name: "Polyethylene Plating",
