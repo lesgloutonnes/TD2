@@ -35,6 +35,12 @@ export type StatKey =
   | "armorRegenPercent"
   | "armorOnKill"
   | "hazardProtection"
+  | "bleedResistance"
+  | "burnResistance"
+  | "shockResistance"
+  | "disruptResistance"
+  | "blindResistance"
+  | "ensnareResistance"
   | "explosiveResistance"
   | "incomingRepairs"
   | "skillDamage"
@@ -186,10 +192,20 @@ export type GearPiece = {
   augmentLevel?: number;
 };
 
+export type WeaponModKind = "optic" | "magazine" | "muzzle" | "underbarrel";
+
+export type WeaponMod = {
+  kind: WeaponModKind;
+  stat: StatKey;
+  value: number;
+};
+
 export type EquippedWeapon = {
   weaponId: string;
   /** Per-weapon expertise 0–30 (Weapon Damage on that weapon). */
   expertise: number;
+  /** Optic / magazine / muzzle / underbarrel (pistols: optic + muzzle). */
+  mods?: WeaponMod[];
 };
 
 export type Loadout = {

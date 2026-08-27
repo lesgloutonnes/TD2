@@ -236,6 +236,24 @@ select:focus {
   gap: 8px;
 }
 
+.weapon-mods {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.weapon-mod-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .weapon-mod-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .expertise-field input[type="range"] {
   width: 100%;
 }

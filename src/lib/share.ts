@@ -1,10 +1,20 @@
-import type { Loadout, WeaponSlot } from "./types";
+import type { EquippedWeapon, Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
 import { createPiece } from "./piece";
 import { EXPERTISE_MAX, canBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
+import { defaultWeaponMods, sanitizeWeaponMods } from "./data/weapon-mods";
 import { catalogById } from "./data/catalog";
 import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
+
+function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
+  const def = WEAPONS.find((weapon) => weapon.id === weaponId);
+  return {
+    weaponId,
+    expertise,
+    mods: def ? defaultWeaponMods(def.type) : [],
+  };
+}
 
 export function encodeLoadout(loadout: Loadout): string {
   const json = JSON.stringify(loadout);
@@ -91,6 +101,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
       expertise: clampExpertise(
         typeof equipped.expertise === "number" ? equipped.expertise : (legacyExpertise ?? 0),
       ),
+      mods: sanitizeWeaponMods(def.type, equipped.mods),
     };
   }
 
@@ -206,9 +217,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "set:striker");
       loadout.gear.holster = createPiece("holster", "brand:ceska");
       loadout.gear.kneepads = createPiece("kneepads", "brand:grupo");
-      loadout.weapons.primary = { weaponId: "st-elmo", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "lexington", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "liberty", expertise: 12 };
+      loadout.weapons.primary = withWeapon("st-elmo", 12);
+      loadout.weapons.secondary = withWeapon("lexington", 12);
+      loadout.weapons.sidearm = withWeapon("liberty", 12);
       loadout.skills = ["reviver-hive", "crusader-shield"];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
@@ -226,9 +237,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "contractors-gloves");
       loadout.gear.holster = createPiece("holster", "brand:grupo");
       loadout.gear.kneepads = createPiece("kneepads", "foxs-prayer");
-      loadout.weapons.primary = { weaponId: "lexington", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "famas", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "d50", expertise: 12 };
+      loadout.weapons.primary = withWeapon("lexington", 12);
+      loadout.weapons.secondary = withWeapon("famas", 12);
+      loadout.weapons.sidearm = withWeapon("d50", 12);
       loadout.skills = ["reviver-hive", "striker-drone"];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
@@ -246,9 +257,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "set:heartbreaker");
       loadout.gear.holster = createPiece("holster", "brand:ceska", "red");
       loadout.gear.kneepads = createPiece("kneepads", "foxs-prayer");
-      loadout.weapons.primary = { weaponId: "st-elmo", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "carbine-7", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "liberty", expertise: 12 };
+      loadout.weapons.primary = withWeapon("st-elmo", 12);
+      loadout.weapons.secondary = withWeapon("carbine-7", 12);
+      loadout.weapons.sidearm = withWeapon("liberty", 12);
       loadout.skills = ["crusader-shield", "reviver-hive"];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
@@ -268,9 +279,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.kneepads = createPiece("kneepads", "brand:wyvern", "yellow");
       if (loadout.gear.backpack) loadout.gear.backpack.talentId = "tech-support";
       if (loadout.gear.chest) loadout.gear.chest.talentId = "kinetic-momentum";
-      loadout.weapons.primary = { weaponId: "capacitor", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "lexington", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "d50", expertise: 12 };
+      loadout.weapons.primary = withWeapon("capacitor", 12);
+      loadout.weapons.secondary = withWeapon("lexington", 12);
+      loadout.weapons.sidearm = withWeapon("d50", 12);
       loadout.skills = ["artillery-turret", "striker-drone"];
       loadout.specialization = "technician";
       return applyLibraryExpertise(loadout);
@@ -288,9 +299,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "set:foundry");
       loadout.gear.holster = createPiece("holster", "brand:gila", "blue");
       loadout.gear.kneepads = createPiece("kneepads", "brand:belstone", "blue");
-      loadout.weapons.primary = { weaponId: "acs-12", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "scorpio", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "liberty", expertise: 12 };
+      loadout.weapons.primary = withWeapon("acs-12", 12);
+      loadout.weapons.secondary = withWeapon("scorpio", 12);
+      loadout.weapons.sidearm = withWeapon("liberty", 12);
       loadout.skills = ["bulwark-shield", "decoy"];
       loadout.specialization = "firewall";
       return applyLibraryExpertise(loadout);
@@ -308,9 +319,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "set:hunters-fury");
       loadout.gear.holster = createPiece("holster", "brand:sokolov");
       loadout.gear.kneepads = createPiece("kneepads", "brand:ceska");
-      loadout.weapons.primary = { weaponId: "dark-winter", expertise: 12 };
-      loadout.weapons.secondary = { weaponId: "chatterbox", expertise: 12 };
-      loadout.weapons.sidearm = { weaponId: "d50", expertise: 12 };
+      loadout.weapons.primary = withWeapon("dark-winter", 12);
+      loadout.weapons.secondary = withWeapon("chatterbox", 12);
+      loadout.weapons.sidearm = withWeapon("d50", 12);
       loadout.skills = ["reviver-hive", "blinder-firefly"];
       loadout.specialization = "firewall";
       return applyLibraryExpertise(loadout);

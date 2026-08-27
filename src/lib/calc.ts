@@ -12,6 +12,10 @@ import { GEAR_SETS } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
 import { SPECIALIZATIONS, SKILLS } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
+import {
+  sanitizeWeaponMods,
+  weaponModMultiplier,
+} from "./data/weapon-mods";
 import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
@@ -50,6 +54,12 @@ const STAT_KEYS: StatKey[] = [
   "armorRegenPercent",
   "armorOnKill",
   "hazardProtection",
+  "bleedResistance",
+  "burnResistance",
+  "shockResistance",
+  "disruptResistance",
+  "blindResistance",
+  "ensnareResistance",
   "explosiveResistance",
   "incomingRepairs",
   "skillDamage",
@@ -478,8 +488,9 @@ export function computeStats(loadout: Loadout): ComputedStats {
   }
 
   // Primary weapon talent assumed bonuses.
-  const primaryWeapon = loadout.weapons.primary
-    ? WEAPONS.find((weapon) => weapon.id === loadout.weapons.primary?.weaponId)
+  const primaryEquipped = loadout.weapons.primary;
+  const primaryWeapon = primaryEquipped
+    ? WEAPONS.find((weapon) => weapon.id === primaryEquipped.weaponId)
     : undefined;
   if (primaryWeapon?.assumed?.length) {
     addBonuses(values, primaryWeapon.assumed);
@@ -494,6 +505,39 @@ export function computeStats(loadout: Loadout): ComputedStats {
     });
     notes.push(
       `Primary ${primaryWeapon.name} talent assumed: ${formatBonusList(primaryWeapon.assumed)}.`,
+    );
+  }
+
+  // Primary weapon mods (optic / mag / muzzle / underbarrel).
+  if (primaryEquipped && primaryWeapon && primaryEquipped.mods?.length) {
+    const mods = sanitizeWeaponMods(primaryWeapon.type, primaryEquipped.mods);
+    const mult = weaponModMultiplier(primaryWeapon.talent);
+    const scaled = mods.map((mod) => ({
+      stat: mod.stat,
+      value: Math.round(mod.value * mult * 10) / 10,
+    }));
+    addBonuses(values, scaled);
+    bonuses.push({
+      source: `Weapon mods · ${primaryWeapon.name}`,
+      label: formatBonusList(scaled),
+      detail:
+        mult > 1
+          ? `Optimized: weapon mods ×${mult}. ${mods.map((m) => m.kind).join(", ")}.`
+          : `Sockets: ${mods.map((m) => m.kind).join(", ")}.`,
+      pieces: mods.length,
+      required: mods.length,
+      active: true,
+      color: "#8a7a4a",
+    });
+    notes.push(
+      `Primary weapon mods${mult > 1 ? ` (Optimized ×${mult})` : ""}: ${formatBonusList(scaled)}.`,
+    );
+  }
+  for (const slot of ["secondary", "sidearm"] as const) {
+    const equipped = loadout.weapons[slot];
+    if (!equipped?.mods?.length) continue;
+    notes.push(
+      `${slot === "secondary" ? "Secondary" : "Sidearm"} weapon mods stored (apply when that weapon is used).`,
     );
   }
 

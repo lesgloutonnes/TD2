@@ -108,7 +108,7 @@ function testSkillTierCap() {
 function testStrikerPresetChc() {
   const loadout = PRESETS[0].build();
   const stats = computeStats(loadout);
-  assert(stats.chcCapped === 48, `striker preset CHC, got ${stats.chcCapped}`);
+  assert(stats.chcCapped === 56, `striker preset CHC with weapon optic, got ${stats.chcCapped}`);
   assert(stats.chcOvercap === 0, `striker preset no overcap, got ${stats.chcOvercap}`);
 }
 
@@ -792,8 +792,43 @@ function testAttributePoolNoAoK() {
   assert(!ATTRIBUTE_OPTIONS.includes("incomingRepairs"), "Incoming Repairs not a gear attribute roll");
   assert(MOD_OPTIONS.includes("armorOnKill"), "AoK remains a gear mod option");
   assert(MOD_OPTIONS.includes("armorRegen"), "armor regen flat remains a gear mod option");
+  assert(MOD_OPTIONS.includes("bleedResistance"), "bleed resistance on gear mods");
+  assert(MOD_OPTIONS.includes("burnResistance"), "burn resistance on gear mods");
   assert(ATTRIBUTE_OPTIONS.includes("armorRegen"), "armor regen flat is a gear attribute");
   assert(ATTRIBUTE_OPTIONS.includes("health"), "health flat is a gear attribute");
+}
+
+function testWeaponModsPrimary() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.primary = {
+    weaponId: "lexington",
+    expertise: 0,
+    mods: [
+      { kind: "optic", stat: "chc", value: 10 },
+      { kind: "magazine", stat: "magazineSize", value: 20 },
+      { kind: "muzzle", stat: "chd", value: 15 },
+      { kind: "underbarrel", stat: "weaponHandling", value: 10 },
+    ],
+  };
+  const stats = computeStats(loadout);
+  // Optimized ×1.3
+  assert(stats.values.chc === 13, `Optimized optic CHC 10×1.3, got ${stats.values.chc}`);
+  assert(stats.values.chd === 19.5, `Optimized muzzle CHD 15×1.3, got ${stats.values.chd}`);
+  assert(stats.values.magazineSize === 26, `Optimized mag 20×1.3, got ${stats.values.magazineSize}`);
+  assert(stats.bonuses.some((b) => b.source.includes("Weapon mods")), "weapon mods bonus row");
+}
+
+function testHazardGearMod() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  const mask = createPiece("mask", "brand:gila");
+  mask.mods = [{ stat: "burnResistance", value: 10 }];
+  mask.attributes = [{ stat: "hazardProtection", value: 10 }];
+  loadout.gear.mask = mask;
+  const stats = computeStats(loadout);
+  assert(stats.values.burnResistance === 10, `burn res, got ${stats.values.burnResistance}`);
+  assert(stats.values.hazardProtection === 10, `hazard still separate, got ${stats.values.hazardProtection}`);
 }
 
 const tests = [
@@ -843,6 +878,8 @@ const tests = [
   testMementoAssumed,
   testGearModSlots,
   testAttributePoolNoAoK,
+  testWeaponModsPrimary,
+  testHazardGearMod,
 ];
 
 let failed = 0;
