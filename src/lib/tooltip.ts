@@ -13,6 +13,7 @@ import {
   formatStat,
   hasGearMod,
   itemKindColor,
+  prototypeCoreMult,
 } from "./data/attributes";
 import { formatBonusList, gearCounts } from "./calc";
 
@@ -42,6 +43,7 @@ export type PieceInspect =
       kind: ItemKind;
       kindLabel: string;
       kindColor: string;
+      prototype: boolean;
       core: CoreType;
       coreLabel: string;
       coreColor: string;
@@ -202,10 +204,15 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     kind: source.kind,
     kindLabel: KIND_LABELS[source.kind],
     kindColor: itemKindColor(source.kind),
+    prototype: Boolean(piece.prototype) && source.kind !== "exotic",
     core: piece.core,
     coreLabel: CORE_OPTION_LABELS[piece.core],
     coreColor: CORE_COLORS[piece.core],
-    coreValue: formatStat(CORE_VALUES[piece.core].stat, CORE_VALUES[piece.core].value),
+    coreValue: formatStat(
+      CORE_VALUES[piece.core].stat,
+      CORE_VALUES[piece.core].value *
+        (piece.prototype && source.kind !== "exotic" ? prototypeCoreMult(piece.core) : 1),
+    ),
     extraCores,
     stats,
     talent,

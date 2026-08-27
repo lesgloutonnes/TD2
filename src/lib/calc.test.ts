@@ -1,5 +1,5 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
-import { applyGearSet, createPiece } from "./piece";
+import { applyGearSet, createPiece, setPiecePrototype } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
@@ -440,6 +440,8 @@ function testStatCaps() {
   assert(clampStat("chd", 20) === 12, "CHD max 12");
   assert(clampStat("armorRegen", 5) === 0.5, "armor regen max 0.5");
   assert(clampStat("chc", -3) === 0, "no negative");
+  assert(clampStat("chc", 99, true) === 9, "Prototype CHC max 9");
+  assert(clampStat("chd", 20, true) === 18, "Prototype CHD max 18");
 }
 
 function testCatalogSlotLockedCore() {
@@ -606,6 +608,28 @@ function testPistolSlotSanitize() {
   assert(decoded!.gear.gloves?.expertise === 20, "legacy global expertise migrated to piece");
 }
 
+function testPrototypeSwitch() {
+  const brand = createPiece("mask", "brand:ceska");
+  const proto = setPiecePrototype(brand, true);
+  assert(proto.prototype === true, "prototype on");
+  assert(proto.expertise === 30, "expertise forced to 30");
+  assert(proto.attributes[0]?.value === 9, `CHC proto max, got ${proto.attributes[0]?.value}`);
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = proto;
+  const stats = computeStats(loadout);
+  assert(stats.values.weaponDamage === 22.5, `red core ×1.5, got ${stats.values.weaponDamage}`);
+  assert(stats.notes.some((note) => note.includes("Prototype")), "prototype note");
+
+  const exotic = setPiecePrototype(createPiece("mask", "catharsis"), true);
+  assert(exotic.prototype === false, "exotics cannot be prototype");
+
+  const off = setPiecePrototype(proto, false);
+  assert(off.prototype === false, "prototype off");
+  assert(off.attributes[0]?.value === 6, `CHC back to HE max, got ${off.attributes[0]?.value}`);
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -642,6 +666,7 @@ const tests = [
   testInspectNinjaBoost,
   testPerItemExpertise,
   testPistolSlotSanitize,
+  testPrototypeSwitch,
 ];
 
 let failed = 0;

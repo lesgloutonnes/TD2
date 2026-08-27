@@ -706,6 +706,26 @@ select:focus {
   align-items: center;
 }
 
+.prototype-switch span {
+  display: grid;
+  gap: 2px;
+}
+
+.prototype-switch .hint {
+  float: none;
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.tt-prototype {
+  margin: 0 0 8px;
+  color: #5ec8c0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 @media (max-width: 1080px) {
   .topbar,
   .workspace,

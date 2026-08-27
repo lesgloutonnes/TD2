@@ -17,8 +17,10 @@ import {
   CORE_COLORS,
   CORE_VALUES,
   EMPTY_SLOT_COLOR,
-  hasGearMod,
   GEAR_BASE_ARMOR,
+  hasGearMod,
+  PROTOTYPE_ATTR_MULT,
+  prototypeCoreMult,
   SHD_WATCH,
   SKILL_TIER_CAP,
   SLOTS,
@@ -82,9 +84,16 @@ function addBonuses(values: Record<StatKey, number>, bonuses: StatBonus[]) {
   }
 }
 
-function addCore(values: Record<StatKey, number>, cores: Record<CoreType, number>, core: CoreType) {
+function addCore(
+  values: Record<StatKey, number>,
+  cores: Record<CoreType, number>,
+  core: CoreType,
+  prototype = false,
+) {
   cores[core] += 1;
-  addBonuses(values, [CORE_VALUES[core]]);
+  const base = CORE_VALUES[core];
+  const mult = prototype ? prototypeCoreMult(core) : 1;
+  addBonuses(values, [{ stat: base.stat, value: base.value * mult }]);
 }
 
 export function emptyLoadout(name = "New build"): Loadout {
@@ -164,16 +173,34 @@ export function computeStats(loadout: Loadout): ComputedStats {
     const source = catalogById(piece.sourceId);
     if (!source) continue;
 
-    addCore(values, cores, piece.core);
+    const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
+    addCore(values, cores, piece.core, isPrototype);
     for (const extra of piece.extraCores ?? source.extraCores ?? []) {
-      addCore(values, cores, extra);
+      addCore(values, cores, extra, isPrototype);
     }
 
     addBonuses(values, piece.attributes);
     if (hasGearMod(slot)) addBonuses(values, piece.mods);
-    if (source.extraStats) addBonuses(values, source.extraStats);
+    if (source.extraStats) {
+      if (isPrototype) {
+        addBonuses(
+          values,
+          source.extraStats.map((bonus) => ({
+            ...bonus,
+            value: Math.round(bonus.value * PROTOTYPE_ATTR_MULT * 10) / 10,
+          })),
+        );
+      } else {
+        addBonuses(values, source.extraStats);
+      }
+    }
     if (source.uniqueTalent) {
       notes.push(`${source.name} : ${source.uniqueTalent.name}. ${source.uniqueTalent.description}`);
+    }
+    if (isPrototype) {
+      notes.push(
+        `${source.name}: Prototype — attribute caps ×${PROTOTYPE_ATTR_MULT}, red/blue cores ×${PROTOTYPE_ATTR_MULT} (Skill Tier unchanged). Augments not modeled yet.`,
+      );
     }
   }
 
@@ -258,7 +285,8 @@ export function computeStats(loadout: Loadout): ComputedStats {
   for (const slot of SLOTS) {
     const piece = loadout.gear[slot];
     if (!piece || !piece.expertise) continue;
-    gearExpertiseArmor += (GEAR_BASE_ARMOR * piece.expertise) / 100;
+    const baseArmor = piece.prototype ? GEAR_BASE_ARMOR * PROTOTYPE_ATTR_MULT : GEAR_BASE_ARMOR;
+    gearExpertiseArmor += (baseArmor * piece.expertise) / 100;
     gearExpertisePieces += 1;
   }
   if (gearExpertisePieces > 0) {

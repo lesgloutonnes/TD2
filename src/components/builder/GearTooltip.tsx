@@ -62,9 +62,12 @@ export function GearTooltip({
       style={{ ...style, borderColor: inspect.kindColor }}
     >
       <p className="tt-kind">
-        {inspect.kindLabel} · {inspect.slotLabel}
+        {inspect.kindLabel}
+        {inspect.prototype ? " · Prototype" : ""} · {inspect.slotLabel}
       </p>
       <h3 style={{ color: inspect.kindColor }}>{inspect.name}</h3>
+
+      {inspect.prototype ? <p className="tt-prototype">Prototype quality</p> : null}
 
       <div className="tt-core">
         <span className="tt-core-pip" style={{ background: inspect.coreColor }} />
