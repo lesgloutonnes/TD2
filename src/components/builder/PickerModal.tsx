@@ -3,14 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ItemKind, Slot } from "@/lib/types";
 import { catalogForSlot } from "@/lib/data/catalog";
-import { itemKindColor } from "@/lib/data/attributes";
-
-const KIND_LABELS: Record<ItemKind, string> = {
-  brand: "Marques",
-  "gear-set": "Sets",
-  named: "Nommés",
-  exotic: "Exotiques",
-};
+import { itemKindColor, KIND_LABELS } from "@/lib/data/attributes";
 
 export function PickerModal({
   slot,

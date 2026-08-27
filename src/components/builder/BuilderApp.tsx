@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { GearPiece, Loadout, Slot, WeaponSlot } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
 import { createPiece, pieceLabel } from "@/lib/piece";
@@ -8,6 +8,7 @@ import { catalogById } from "@/lib/data/catalog";
 import { EMPTY_SLOT_COLOR, itemKindColor, SLOT_LABELS, SLOTS } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
+import { pieceInspect } from "@/lib/tooltip";
 import {
   decodeLoadout,
   deleteBuild,
@@ -19,6 +20,7 @@ import {
   subscribeSaved,
 } from "@/lib/share";
 import { AgentSilhouette } from "@/components/builder/AgentSilhouette";
+import { GearTooltip } from "@/components/builder/GearTooltip";
 import { PickerModal } from "@/components/builder/PickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
@@ -40,6 +42,19 @@ export function BuilderApp() {
   const [activeSlot, setActiveSlot] = useState<Slot>("mask");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [hover, setHover] = useState<{ slot: Slot; rect: DOMRect } | null>(null);
+  const hoverLeaveTimer = useRef<number>(0);
+
+  function showHover(slot: Slot, rect?: DOMRect) {
+    window.clearTimeout(hoverLeaveTimer.current);
+    if (!rect) return;
+    setHover({ slot, rect });
+  }
+
+  function hideHover() {
+    window.clearTimeout(hoverLeaveTimer.current);
+    hoverLeaveTimer.current = window.setTimeout(() => setHover(null), 80);
+  }
 
   if (hash !== hashApplied) {
     setHashApplied(hash);
@@ -141,23 +156,48 @@ export function BuilderApp() {
           <div className="agent-board">
             <AgentSilhouette
               activeSlot={activeSlot}
+              hoverSlot={hover?.slot ?? null}
               slotColors={slotColors}
               onSelect={(slot) => {
                 setActiveSlot(slot);
+                hideHover();
                 if (!loadout.gear[slot]) setPickerOpen(true);
+              }}
+              onHover={(slot, rect) => {
+                if (slot && rect) showHover(slot, rect);
+                else hideHover();
               }}
             />
             <div className="slot-grid">
               {SLOTS.map((slot) => {
                 const piece = loadout.gear[slot];
                 const source = piece ? catalogById(piece.sourceId) : undefined;
+                const hovered = hover?.slot === slot;
                 return (
                   <button
                     key={slot}
                     type="button"
-                    className={slot === activeSlot ? "slot-card active" : "slot-card"}
+                    className={
+                      slot === activeSlot
+                        ? hovered
+                          ? "slot-card active hovered"
+                          : "slot-card active"
+                        : hovered
+                          ? "slot-card hovered"
+                          : "slot-card"
+                    }
+                    aria-describedby={`gear-tooltip-${slot}`}
+                    onMouseEnter={(event) =>
+                      showHover(slot, event.currentTarget.getBoundingClientRect())
+                    }
+                    onMouseLeave={hideHover}
+                    onFocus={(event) =>
+                      showHover(slot, event.currentTarget.getBoundingClientRect())
+                    }
+                    onBlur={hideHover}
                     onClick={() => {
                       setActiveSlot(slot);
+                      hideHover();
                       if (!piece) setPickerOpen(true);
                     }}
                   >
@@ -189,7 +229,10 @@ export function BuilderApp() {
             piece={loadout.gear[activeSlot]}
             onChange={(piece) => updateGear(activeSlot, piece)}
             onClear={() => updateGear(activeSlot, null)}
-            onSwap={() => setPickerOpen(true)}
+            onSwap={() => {
+              hideHover();
+              setPickerOpen(true);
+            }}
           />
 
           <section className="kit-grid">
@@ -322,6 +365,10 @@ export function BuilderApp() {
 
         <StatsPanel loadout={loadout} stats={stats} />
       </div>
+
+      {hover && !pickerOpen ? (
+        <GearTooltip inspect={pieceInspect(hover.slot, loadout)} anchor={hover.rect} />
+      ) : null}
 
       {pickerOpen ? (
         <PickerModal
