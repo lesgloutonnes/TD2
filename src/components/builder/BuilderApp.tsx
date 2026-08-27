@@ -10,7 +10,9 @@ import {
   CORE_OPTION_LABELS,
   CORE_SHORT_LABELS,
   EMPTY_SLOT_COLOR,
+  EXPERTISE_MAX,
   itemKindColor,
+  PRIMARY_WEAPON_TYPES,
   SLOT_LABELS,
   SLOTS,
 } from "@/lib/data/attributes";
@@ -97,9 +99,28 @@ export function BuilderApp() {
       ...current,
       weapons: {
         ...current.weapons,
-        [slot]: weaponId ? { weaponId } : null,
+        [slot]: weaponId
+          ? {
+              weaponId,
+              expertise: current.weapons[slot]?.expertise ?? 0,
+            }
+          : null,
       },
     }));
+  }
+
+  function setWeaponExpertise(slot: WeaponSlot, expertise: number) {
+    setLoadout((current) => {
+      const equipped = current.weapons[slot];
+      if (!equipped) return current;
+      return {
+        ...current,
+        weapons: {
+          ...current.weapons,
+          [slot]: { ...equipped, expertise },
+        },
+      };
+    });
   }
 
   async function copyShareLink() {
@@ -239,6 +260,32 @@ export function BuilderApp() {
                 );
               })}
             </div>
+            <div className="agent-meta">
+              <label className="field">
+                <span>Specialization</span>
+                <select
+                  value={loadout.specialization ?? ""}
+                  onChange={(event) =>
+                    setLoadout({ ...loadout, specialization: event.target.value || null })
+                  }
+                >
+                  <option value="">None</option>
+                  {SPECIALIZATIONS.map((spec) => (
+                    <option key={spec.id} value={spec.id}>
+                      {spec.name} — {spec.signature}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="field checkbox">
+                <input
+                  type="checkbox"
+                  checked={loadout.shdWatch}
+                  onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
+                />
+                <span>SHD Watch 1000</span>
+              </label>
+            </div>
           </div>
 
           <PieceEditor
@@ -257,21 +304,30 @@ export function BuilderApp() {
               label="Primary weapon"
               slot="primary"
               value={loadout.weapons.primary?.weaponId ?? ""}
+              expertise={loadout.weapons.primary?.expertise ?? 0}
+              types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
+              onExpertiseChange={setWeaponExpertise}
             />
             <WeaponSelect
               label="Secondary weapon"
               slot="secondary"
               value={loadout.weapons.secondary?.weaponId ?? ""}
+              expertise={loadout.weapons.secondary?.expertise ?? 0}
+              types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
+              onExpertiseChange={setWeaponExpertise}
             />
             <WeaponSelect
               label="Sidearm"
               slot="sidearm"
               value={loadout.weapons.sidearm?.weaponId ?? ""}
+              expertise={loadout.weapons.sidearm?.expertise ?? 0}
               types={["pistol"]}
               onChange={setWeapon}
+              onExpertiseChange={setWeaponExpertise}
             />
+            <div className="kit-spacer" aria-hidden="true" />
             <label className="field">
               <span>Skill 1</span>
               <select
@@ -309,42 +365,6 @@ export function BuilderApp() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="field">
-              <span>Specialization</span>
-              <select
-                value={loadout.specialization ?? ""}
-                onChange={(event) =>
-                  setLoadout({ ...loadout, specialization: event.target.value || null })
-                }
-              >
-                <option value="">None</option>
-                {SPECIALIZATIONS.map((spec) => (
-                  <option key={spec.id} value={spec.id}>
-                    {spec.name} — {spec.signature}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field checkbox">
-              <input
-                type="checkbox"
-                checked={loadout.shdWatch}
-                onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
-              />
-              <span>SHD Watch 1000</span>
-            </label>
-            <label className="field">
-              <span>Expertise ({loadout.expertise})</span>
-              <input
-                type="range"
-                min={0}
-                max={30}
-                value={loadout.expertise}
-                onChange={(event) =>
-                  setLoadout({ ...loadout, expertise: Number(event.target.value) })
-                }
-              />
             </label>
           </section>
 
@@ -419,33 +439,51 @@ function WeaponSelect({
   label,
   slot,
   value,
+  expertise,
   onChange,
+  onExpertiseChange,
   types,
 }: {
   label: string;
   slot: WeaponSlot;
   value: string;
+  expertise: number;
   onChange: (slot: WeaponSlot, weaponId: string) => void;
+  onExpertiseChange: (slot: WeaponSlot, expertise: number) => void;
   types?: Array<(typeof WEAPONS)[number]["type"]>;
 }) {
   const options = types ? WEAPONS.filter((weapon) => types.includes(weapon.type)) : WEAPONS;
   const selected = WEAPONS.find((weapon) => weapon.id === value);
   return (
-    <label className="field">
-      <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
-        <option value="">None</option>
-        {options.map((weapon) => (
-          <option key={weapon.id} value={weapon.id}>
-            {WEAPON_TYPE_LABELS[weapon.type]} — {weapon.name}
-          </option>
-        ))}
-      </select>
+    <div className="field weapon-field">
+      <label className="field">
+        <span>{label}</span>
+        <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
+          <option value="">None</option>
+          {options.map((weapon) => (
+            <option key={weapon.id} value={weapon.id}>
+              {WEAPON_TYPE_LABELS[weapon.type]} — {weapon.name}
+            </option>
+          ))}
+        </select>
+      </label>
       {selected ? (
-        <small className="hint">
-          {selected.talent} · {selected.rpm} RPM · mag {selected.mag} · {selected.talentDesc}
-        </small>
+        <>
+          <small className="hint">
+            {selected.talent} · {selected.rpm} RPM · mag {selected.mag} · {selected.talentDesc}
+          </small>
+          <label className="field expertise-field">
+            <span>Expertise ({expertise})</span>
+            <input
+              type="range"
+              min={0}
+              max={EXPERTISE_MAX}
+              value={expertise}
+              onChange={(event) => onExpertiseChange(slot, Number(event.target.value))}
+            />
+          </label>
+        </>
       ) : null}
-    </label>
+    </div>
   );
 }

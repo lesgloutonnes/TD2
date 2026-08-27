@@ -18,6 +18,7 @@ import {
   CORE_VALUES,
   EMPTY_SLOT_COLOR,
   hasGearMod,
+  GEAR_BASE_ARMOR,
   SHD_WATCH,
   SKILL_TIER_CAP,
   SLOTS,
@@ -105,7 +106,6 @@ export function emptyLoadout(name = "New build"): Loadout {
     skills: [null, null],
     specialization: null,
     shdWatch: true,
-    expertise: 12,
   };
 }
 
@@ -252,9 +252,35 @@ export function computeStats(loadout: Loadout): ComputedStats {
     notes.push("SHD Watch 1000 active (offensive, defensive, and utility bonuses).");
   }
 
-  if (loadout.expertise > 0) {
-    values.weaponDamage += loadout.expertise;
-    notes.push(`Expertise ${loadout.expertise}: +${loadout.expertise}% Weapon Damage.`);
+  // Per-piece gear expertise: +1% of that piece's armor per level (approx. base armor).
+  let gearExpertiseArmor = 0;
+  let gearExpertisePieces = 0;
+  for (const slot of SLOTS) {
+    const piece = loadout.gear[slot];
+    if (!piece || !piece.expertise) continue;
+    gearExpertiseArmor += (GEAR_BASE_ARMOR * piece.expertise) / 100;
+    gearExpertisePieces += 1;
+  }
+  if (gearExpertisePieces > 0) {
+    values.armor += gearExpertiseArmor;
+    notes.push(
+      `Gear expertise on ${gearExpertisePieces} piece${gearExpertisePieces > 1 ? "s" : ""}: +${Math.round(gearExpertiseArmor).toLocaleString("en-US")} Armor.`,
+    );
+  }
+
+  // Per-weapon expertise: primary feeds the offensive index (active weapon).
+  const primaryExpertise = loadout.weapons.primary?.expertise ?? 0;
+  if (primaryExpertise > 0) {
+    values.weaponDamage += primaryExpertise;
+    notes.push(`Primary weapon expertise ${primaryExpertise}: +${primaryExpertise}% Weapon Damage.`);
+  }
+  for (const slot of ["secondary", "sidearm"] as const) {
+    const exp = loadout.weapons[slot]?.expertise ?? 0;
+    if (exp > 0) {
+      notes.push(
+        `${slot === "secondary" ? "Secondary" : "Sidearm"} expertise ${exp} stored (applies when that weapon is used).`,
+      );
+    }
   }
 
   if (loadout.specialization) {

@@ -271,6 +271,18 @@ export const SHD_WATCH: StatBonus[] = [
 export const CHC_CAP = 60;
 export const SKILL_TIER_CAP = 6;
 export const EXPERTISE_MAX = 30;
+/** Approximate gear-piece armor used to apply per-piece expertise (+1% armor per level). */
+export const GEAR_BASE_ARMOR = 170_000;
+
+/** Weapon types allowed in primary / secondary slots (no pistols). */
+export const PRIMARY_WEAPON_TYPES = [
+  "ar",
+  "lmg",
+  "smg",
+  "shotgun",
+  "mmr",
+  "rifle",
+] as const;
 
 export function formatStat(stat: StatKey, value: number): string {
   if (stat === "armor") {

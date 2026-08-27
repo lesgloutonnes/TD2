@@ -153,10 +153,14 @@ export type GearPiece = {
   talentId?: string;
   uniqueTalent?: { name: string; description: string };
   mods: StatBonus[];
+  /** Per-piece expertise 0–30 (boosts that piece's armor). */
+  expertise: number;
 };
 
 export type EquippedWeapon = {
   weaponId: string;
+  /** Per-weapon expertise 0–30 (Weapon Damage on that weapon). */
+  expertise: number;
 };
 
 export type Loadout = {
@@ -166,7 +170,6 @@ export type Loadout = {
   skills: [string | null, string | null];
   specialization: string | null;
   shdWatch: boolean;
-  expertise: number;
 };
 
 export type ActiveBonus = {

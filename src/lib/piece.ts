@@ -34,6 +34,7 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
     talentId,
     uniqueTalent,
     mods: hasGearMod(slot) ? [defaultMod(resolvedCore)] : [],
+    expertise: 0,
   };
 }
 
