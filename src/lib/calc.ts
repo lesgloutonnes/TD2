@@ -327,6 +327,38 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
+  // Active (primary) weapon Prototype Augment stacks with gear (in-game max 7 = 6 gear + weapon).
+  {
+    const equipped = loadout.weapons.primary;
+    const weapon = equipped
+      ? WEAPONS.find((item) => item.id === equipped.weaponId)
+      : undefined;
+    if (equipped?.prototype && weapon && weapon.quality !== "exotic") {
+      notes.push(
+        `Primary ${weapon.name}: Prototype — Augment stacks with gear Prototypes.`,
+      );
+      const augment = augmentById(equipped.augmentId);
+      if (augment) {
+        const level = clampAugmentLevel(equipped.augmentLevel);
+        const value = augment.valueAtLevel(level);
+        const stack = augmentStacks.get(augment.id) ?? { count: 0, total: 0, levels: [] };
+        stack.count += 1;
+        stack.total = Math.round((stack.total + value) * 10) / 10;
+        stack.levels.push(level);
+        augmentStacks.set(augment.id, stack);
+      }
+    }
+    for (const slot of ["secondary", "sidearm"] as const) {
+      const other = loadout.weapons[slot];
+      const def = other ? WEAPONS.find((item) => item.id === other.weaponId) : undefined;
+      if (other?.prototype && def && def.quality !== "exotic") {
+        notes.push(
+          `${slot === "secondary" ? "Secondary" : "Sidearm"} ${def.name}: Prototype stored (Augment applies when that weapon is active).`,
+        );
+      }
+    }
+  }
+
   for (const [augmentId, stack] of augmentStacks) {
     const augment = augmentById(augmentId);
     if (!augment) continue;

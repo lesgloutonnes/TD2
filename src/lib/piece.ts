@@ -1,8 +1,17 @@
-import type { CatalogItem, CoreType, GearPiece, Loadout, Slot } from "./types";
+import type {
+  CatalogItem,
+  CoreType,
+  EquippedWeapon,
+  GearPiece,
+  Loadout,
+  Slot,
+  WeaponDef,
+} from "./types";
 import { ALL_TALENTS } from "./data/talents";
 import { catalogById } from "./data/catalog";
 import {
   canBePrototype,
+  canWeaponBePrototype,
   defaultAttributes,
   defaultMods,
   EXPERTISE_MAX,
@@ -65,6 +74,25 @@ export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece
     attributes: scaleAttributesForPrototype(piece.attributes, true),
     augmentId: piece.augmentId ?? defaultAugmentId(),
     augmentLevel: clampAugmentLevel(piece.augmentLevel ?? 1),
+  };
+}
+
+/** Toggle Prototype on a non-exotic weapon (Augment + Expertise 30). */
+export function setWeaponPrototype(
+  equipped: EquippedWeapon,
+  quality: WeaponDef["quality"],
+  enabled: boolean,
+): EquippedWeapon {
+  if (!canWeaponBePrototype(quality) || !enabled) {
+    const { augmentId: _a, augmentLevel: _l, ...rest } = equipped;
+    return { ...rest, prototype: false };
+  }
+  return {
+    ...equipped,
+    prototype: true,
+    expertise: EXPERTISE_MAX,
+    augmentId: equipped.augmentId ?? defaultAugmentId(),
+    augmentLevel: clampAugmentLevel(equipped.augmentLevel ?? 1),
   };
 }
 

@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type {
   EquippedSkill,
+  EquippedWeapon,
   GearPiece,
   Loadout,
   Slot,
@@ -12,7 +13,7 @@ import type {
   WeaponSlot,
 } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
-import { applyGearSet, createPiece, pieceLabel } from "@/lib/piece";
+import { applyGearSet, createPiece, pieceLabel, setWeaponPrototype } from "@/lib/piece";
 import { catalogById } from "@/lib/data/catalog";
 import {
   CORE_COLORS,
@@ -21,12 +22,14 @@ import {
   EMPTY_SLOT_COLOR,
   EXPERTISE_MAX,
   formatStat,
-  itemKindColor,
+  itemDisplayColor,
   parseStatInput,
   PRIMARY_WEAPON_TYPES,
   SLOT_LABELS,
   SLOTS,
   STAT_LABELS,
+  canWeaponBePrototype,
+  weaponDisplayColor,
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS } from "@/lib/data/weapons";
@@ -45,7 +48,13 @@ import {
   SKILL_MOD_MAX,
   weaponsByType,
 } from "@/lib/data/skill-mods";
-import { augmentById } from "@/lib/data/augments";
+import {
+  AUGMENT_LEVEL_MAX,
+  AUGMENT_LEVEL_MIN,
+  AUGMENTS,
+  augmentById,
+  clampAugmentLevel,
+} from "@/lib/data/augments";
 import { pieceInspect } from "@/lib/tooltip";
 import {
   decodeLoadout,
@@ -133,18 +142,38 @@ export function BuilderApp() {
       const def = WEAPONS.find((weapon) => weapon.id === weaponId);
       if (!def) return current;
       const prev = current.weapons[slot];
+      const keepMods =
+        prev?.weaponId === weaponId && prev.mods?.length
+          ? prev.mods
+          : defaultWeaponMods(def.type);
+      const base: EquippedWeapon = {
+        weaponId,
+        expertise: prev?.expertise ?? 0,
+        mods: keepMods,
+      };
+      // Preserve Prototype only when swapping between non-exotic weapons.
+      if (prev?.prototype && canWeaponBePrototype(def.quality)) {
+        return {
+          ...current,
+          weapons: {
+            ...current.weapons,
+            [slot]: setWeaponPrototype(
+              {
+                ...base,
+                augmentId: prev.augmentId,
+                augmentLevel: prev.augmentLevel,
+              },
+              def.quality,
+              true,
+            ),
+          },
+        };
+      }
       return {
         ...current,
         weapons: {
           ...current.weapons,
-          [slot]: {
-            weaponId,
-            expertise: prev?.expertise ?? 0,
-            mods:
-              prev?.weaponId === weaponId && prev.mods?.length
-                ? prev.mods
-                : defaultWeaponMods(def.type),
-          },
+          [slot]: base,
         },
       };
     });
@@ -178,6 +207,13 @@ export function BuilderApp() {
         },
       };
     });
+  }
+
+  function updateWeapon(slot: WeaponSlot, next: EquippedWeapon) {
+    setLoadout((current) => ({
+      ...current,
+      weapons: { ...current.weapons, [slot]: next },
+    }));
   }
 
   function setSkill(index: 0 | 1, skillId: string) {
@@ -330,9 +366,18 @@ export function BuilderApp() {
                   >
                     <span className="swatch-col">
                       <span
-                        className="swatch"
+                        className={
+                          piece?.prototype && source && source.kind !== "exotic"
+                            ? "swatch swatch-prototype"
+                            : "swatch"
+                        }
                         style={{
-                          background: source ? itemKindColor(source.kind) : EMPTY_SLOT_COLOR,
+                          background: source
+                            ? itemDisplayColor(
+                                source.kind,
+                                Boolean(piece?.prototype),
+                              )
+                            : EMPTY_SLOT_COLOR,
                         }}
                       />
                       {piece ? (
@@ -405,35 +450,32 @@ export function BuilderApp() {
             <WeaponSelect
               label="Primary weapon"
               slot="primary"
-              value={loadout.weapons.primary?.weaponId ?? ""}
-              expertise={loadout.weapons.primary?.expertise ?? 0}
-              mods={loadout.weapons.primary?.mods ?? []}
+              equipped={loadout.weapons.primary}
               types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
               onModChange={setWeaponMod}
+              onUpdate={updateWeapon}
             />
             <WeaponSelect
               label="Secondary weapon"
               slot="secondary"
-              value={loadout.weapons.secondary?.weaponId ?? ""}
-              expertise={loadout.weapons.secondary?.expertise ?? 0}
-              mods={loadout.weapons.secondary?.mods ?? []}
+              equipped={loadout.weapons.secondary}
               types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
               onModChange={setWeaponMod}
+              onUpdate={updateWeapon}
             />
             <WeaponSelect
               label="Sidearm"
               slot="sidearm"
-              value={loadout.weapons.sidearm?.weaponId ?? ""}
-              expertise={loadout.weapons.sidearm?.expertise ?? 0}
-              mods={loadout.weapons.sidearm?.mods ?? []}
+              equipped={loadout.weapons.sidearm}
               types={["pistol"]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
               onModChange={setWeaponMod}
+              onUpdate={updateWeapon}
             />
             <div className="kit-spacer" aria-hidden="true" />
             <SkillSelect
@@ -522,30 +564,43 @@ export function BuilderApp() {
 function WeaponSelect({
   label,
   slot,
-  value,
-  expertise,
-  mods,
+  equipped,
   onChange,
   onExpertiseChange,
   onModChange,
+  onUpdate,
   types,
 }: {
   label: string;
   slot: WeaponSlot;
-  value: string;
-  expertise: number;
-  mods: WeaponMod[];
+  equipped: EquippedWeapon | null;
   onChange: (slot: WeaponSlot, weaponId: string) => void;
   onExpertiseChange: (slot: WeaponSlot, expertise: number) => void;
   onModChange: (slot: WeaponSlot, index: number, mod: WeaponMod) => void;
+  onUpdate: (slot: WeaponSlot, next: EquippedWeapon) => void;
   types?: Array<(typeof WEAPONS)[number]["type"]>;
 }) {
   const groups = weaponsByType(types);
+  const value = equipped?.weaponId ?? "";
+  const expertise = equipped?.expertise ?? 0;
+  const mods = equipped?.mods ?? [];
   const selected = WEAPONS.find((weapon) => weapon.id === value);
+  const prototypeAllowed = canWeaponBePrototype(selected?.quality);
+  const isPrototype = Boolean(equipped?.prototype) && prototypeAllowed;
   return (
-    <div className="field weapon-field">
+    <div className={isPrototype ? "field weapon-field is-prototype" : "field weapon-field"}>
       <label className="field">
-        <span>{label}</span>
+        <span className="weapon-label-row">
+          {isPrototype ? <span className="weapon-proto-tint" aria-hidden="true" /> : null}
+          <span>{label}</span>
+          {selected ? (
+            <span
+              className="weapon-quality-dot"
+              title={isPrototype ? "Prototype" : selected.quality}
+              style={{ background: weaponDisplayColor(selected.quality, isPrototype) }}
+            />
+          ) : null}
+        </span>
         <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
           <option value="">None</option>
           {groups.map((group) => (
@@ -559,11 +614,80 @@ function WeaponSelect({
           ))}
         </select>
       </label>
-      {selected ? (
+      {selected && equipped ? (
         <>
           <small className="hint">
             {selected.talent} · {selected.rpm} RPM · mag {selected.mag} · {selected.talentDesc}
           </small>
+          {prototypeAllowed ? (
+            <label className="field checkbox prototype-switch">
+              <input
+                type="checkbox"
+                checked={isPrototype}
+                onChange={(event) =>
+                  onUpdate(slot, setWeaponPrototype(equipped, selected.quality, event.target.checked))
+                }
+              />
+              <span>
+                Prototype
+                <small className="hint">
+                  Expertise 30 · Augment stacks with gear Prototypes when this weapon is active. Not
+                  available on exotics.
+                </small>
+              </span>
+            </label>
+          ) : (
+            <p className="hint">Exotics cannot be converted to Prototype.</p>
+          )}
+          {isPrototype ? (
+            <>
+              <label className="field">
+                <span>Augment</span>
+                <select
+                  value={equipped.augmentId ?? ""}
+                  onChange={(event) =>
+                    onUpdate(slot, {
+                      ...equipped,
+                      augmentId: event.target.value || undefined,
+                      augmentLevel: clampAugmentLevel(equipped.augmentLevel ?? 1),
+                    })
+                  }
+                >
+                  {AUGMENTS.map((augment) => (
+                    <option key={augment.id} value={augment.id}>
+                      {augment.name}
+                    </option>
+                  ))}
+                </select>
+                {augmentById(equipped.augmentId) ? (
+                  <small className="hint">{augmentById(equipped.augmentId)!.description}</small>
+                ) : null}
+              </label>
+              <label className="field expertise-field">
+                <span>
+                  Augment level ({clampAugmentLevel(equipped.augmentLevel ?? 1)})
+                  {augmentById(equipped.augmentId)
+                    ? ` · ${augmentById(equipped.augmentId)!.valueAtLevel(equipped.augmentLevel ?? 1)}%`
+                    : ""}
+                </span>
+                <input
+                  type="range"
+                  min={AUGMENT_LEVEL_MIN}
+                  max={AUGMENT_LEVEL_MAX}
+                  value={clampAugmentLevel(equipped.augmentLevel ?? 1)}
+                  onChange={(event) =>
+                    onUpdate(slot, {
+                      ...equipped,
+                      augmentLevel: Number(event.target.value),
+                    })
+                  }
+                />
+                <small className="hint">
+                  Primary weapon Augment counts toward the 7-piece Prototype stack with gear.
+                </small>
+              </label>
+            </>
+          ) : null}
           <label className="field expertise-field">
             <span>Expertise ({expertise})</span>
             <input

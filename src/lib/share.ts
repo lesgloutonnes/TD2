@@ -1,7 +1,7 @@
 import type { EquippedSkill, EquippedWeapon, Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
 import { createPiece } from "./piece";
-import { EXPERTISE_MAX, canBePrototype, SLOTS } from "./data/attributes";
+import { EXPERTISE_MAX, canBePrototype, canWeaponBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
 import { defaultWeaponMods, sanitizeWeaponMods } from "./data/weapon-mods";
 import { defaultSkillMods, sanitizeSkillMods } from "./data/skill-mods";
@@ -127,12 +127,23 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
       weapons[slot] = null;
       continue;
     }
+    const prototype =
+      Boolean(equipped.prototype) && canWeaponBePrototype(def.quality);
+    const augmentId =
+      prototype && augmentById(equipped.augmentId)
+        ? equipped.augmentId
+        : prototype
+          ? defaultAugmentId()
+          : undefined;
     weapons[slot] = {
       weaponId: equipped.weaponId,
       expertise: clampExpertise(
         typeof equipped.expertise === "number" ? equipped.expertise : (legacyExpertise ?? 0),
       ),
       mods: sanitizeWeaponMods(def.type, equipped.mods),
+      prototype,
+      augmentId,
+      augmentLevel: prototype ? clampAugmentLevel(equipped.augmentLevel) : undefined,
     };
   }
 

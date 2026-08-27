@@ -11,7 +11,7 @@ import {
   SLOT_LABELS,
   STAT_LABELS,
   formatStat,
-  itemKindColor,
+  itemDisplayColor,
   prototypeCoreMult,
 } from "./data/attributes";
 import { formatBonusList, gearCounts } from "./calc";
@@ -217,7 +217,7 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     name: source.name,
     kind: source.kind,
     kindLabel: KIND_LABELS[source.kind],
-    kindColor: itemKindColor(source.kind),
+    kindColor: itemDisplayColor(source.kind, isPrototype),
     prototype: isPrototype,
     augment,
     core: piece.core,
