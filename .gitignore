@@ -17,6 +17,8 @@
 /.next/
 /out/
 
+# Le site statique servi par lancer-builder.bat est versionne dans /www
+
 # production
 /build
 
