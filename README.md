@@ -2,7 +2,15 @@
 
 Loadout planner for **Tom Clancy's The Division 2**.
 
-Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons, skills, specialization, bonus calculation, and URL sharing.
+Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons, skills, specialization, bonus totals, and URL sharing.
+
+## What this is (and is not)
+
+**This is a gear builder.** Plan cores, attributes, talents, mods, Prototype, and expertise, then go farm the pieces in-game and validate feel at the **shooting range**.
+
+**This is not a DPS calculator.** Live damage depends on enemy type, armor plates, cover, distance, talent uptime, skill interaction, directives, and much more. Those factors will not be simulated here on purpose — the range is the right place to compare damage.
+
+The optional **build index** in Analysis is only a relative stack comparison (weapon damage × type × crit × headshot × DtA/DtH). It is not DPS and should not be treated as one.
 
 ## Run without npm (Windows)
 
@@ -42,12 +50,11 @@ Open [http://localhost:3000](http://localhost:3000).
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
-- Assumed uptime for common chest/backpack talents and major 4pc set bonuses
-- Soft exotic assumptions (Memento stacks, Investor Slotted by attribute color)
+- Soft assumed notes for common talents / 4pc (planning aid only)
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: +1 piece for each brand/set already equipped
-- Offense score (relative estimate, not DPS)
-- Presets: Striker, All Red, Heartbreaker, Skill DPS, Foundry, Hunter's Fury
+- Build index (relative stack compare — **not DPS**)
+- Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
 - Local save and share link
 
 Not affiliated with Ubisoft.
