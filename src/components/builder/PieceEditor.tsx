@@ -9,11 +9,11 @@ import {
   clampStat,
   CORE_OPTION_LABELS,
   defaultAttributes,
-  defaultMod,
+  defaultMods,
   EXPERTISE_MAX,
   formatStat,
+  gearModCount,
   gearSetAttribute,
-  hasGearMod,
   MOD_GROUPS,
   parseStatInput,
   SLOT_LABELS,
@@ -50,7 +50,7 @@ export function PieceEditor({
   const coreLocked = isCoreLocked(slot, source);
   const talentOptions =
     slot === "chest" || slot === "backpack" ? talentsForSlot(slot) : [];
-  const showMod = Boolean(piece && hasGearMod(slot));
+  const showMod = Boolean(piece && gearModCount(slot, source) > 0);
   const prototypeAllowed = canBePrototype(source?.kind);
   const isPrototype = Boolean(piece?.prototype) && prototypeAllowed;
 
@@ -170,7 +170,7 @@ export function PieceEditor({
                     source?.kind === "gear-set"
                       ? [gearSetAttribute(core)]
                       : defaultAttributes(core),
-                  mods: hasGearMod(slot) ? [defaultMod(core)] : [],
+                  mods: defaultMods(gearModCount(slot, source), core),
                 });
               }}
             >
@@ -224,8 +224,8 @@ export function PieceEditor({
           {showMod
             ? piece.mods.map((mod, index) => (
                 <StatRow
-                  key={`mod-${mod.stat}-${index}`}
-                  label="Mod"
+                  key={`mod-${index}-${mod.stat}`}
+                  label={piece.mods.length > 1 ? `Mod ${index + 1}` : "Mod"}
                   stat={mod.stat}
                   value={mod.value}
                   prototype={false}

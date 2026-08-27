@@ -80,7 +80,7 @@ export const STAT_LABELS: Record<StatKey, string> = {
   health: "Health",
   healthPercent: "Bonus Health",
   armorRegen: "Armor Regeneration",
-  armorRegenPercent: "Armor Regeneration",
+  armorRegenPercent: "Armor Regeneration %",
   armorOnKill: "Armor on Kill",
   hazardProtection: "Hazard Protection",
   explosiveResistance: "Explosive Resistance",
@@ -150,11 +150,9 @@ export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
     label: "Defensive",
     stats: [
       "armorRegen",
-      "armorOnKill",
       "hazardProtection",
       "health",
       "explosiveResistance",
-      "incomingRepairs",
     ],
   },
   {
@@ -198,6 +196,19 @@ export const GEAR_MOD_SLOTS: Slot[] = ["mask", "backpack", "chest"];
 
 export function hasGearMod(slot: Slot): boolean {
   return GEAR_MOD_SLOTS.includes(slot);
+}
+
+/** Number of gear mod sockets for this slot / catalog piece (Chill Out = 2). */
+export function gearModCount(
+  slot: Slot,
+  source?: { modSlots?: number } | null,
+): number {
+  if (source?.modSlots != null) return Math.max(0, source.modSlots);
+  return hasGearMod(slot) ? 1 : 0;
+}
+
+export function defaultMods(count: number, core: CoreType): StatBonus[] {
+  return Array.from({ length: count }, () => defaultMod(core));
 }
 
 export function parseStatInput(raw: string): number {
@@ -328,11 +339,9 @@ export const OFFENSIVE_ATTRS = new Set<StatKey>([
 ]);
 export const DEFENSIVE_ATTRS = new Set<StatKey>([
   "armorRegen",
-  "armorOnKill",
   "hazardProtection",
   "health",
   "explosiveResistance",
-  "incomingRepairs",
 ]);
 export const SKILL_ATTRS = new Set<StatKey>([
   "skillDamage",

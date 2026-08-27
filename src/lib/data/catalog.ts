@@ -275,7 +275,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "skillHaste", value: 10 }],
     extraCores: ["yellow"],
-    note: "Gila seasonal mask: 2 mod slots (the builder only simulates one) + yellow core.",
+    modSlots: 2,
+    note: "Gila seasonal mask: 2 gear mod slots + yellow core.",
   },
 
   // --- Belstone Armory ---

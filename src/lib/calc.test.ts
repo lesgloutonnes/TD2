@@ -6,7 +6,7 @@ import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { pieceInspect } from "./tooltip";
 
@@ -767,6 +767,35 @@ function testMementoAssumed() {
   assert(stats.cores.blue === 1 && stats.cores.yellow === 1, "memento extra cores");
 }
 
+function testGearModSlots() {
+  const mask = createPiece("mask", "brand:providence");
+  const gloves = createPiece("gloves", "brand:providence");
+  const chill = createPiece("mask", "chill-out");
+  assert(mask.mods.length === 1, `standard mask 1 mod, got ${mask.mods.length}`);
+  assert(gloves.mods.length === 0, `gloves no mod, got ${gloves.mods.length}`);
+  assert(chill.mods.length === 2, `Chill Out 2 mods, got ${chill.mods.length}`);
+
+  chill.mods[0] = { stat: "chc", value: 6 };
+  chill.mods[1] = { stat: "chd", value: 12 };
+  chill.attributes = [{ stat: "hazardProtection", value: 10 }];
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = chill;
+  const stats = computeStats(loadout);
+  assert(stats.values.chc === 6, `chill mod CHC, got ${stats.values.chc}`);
+  assert(stats.values.chd === 12, `chill mod CHD, got ${stats.values.chd}`);
+  assert(stats.values.hazardProtection === 10, `chill attr hazard, got ${stats.values.hazardProtection}`);
+}
+
+function testAttributePoolNoAoK() {
+  assert(!ATTRIBUTE_OPTIONS.includes("armorOnKill"), "AoK not a gear attribute roll");
+  assert(!ATTRIBUTE_OPTIONS.includes("incomingRepairs"), "Incoming Repairs not a gear attribute roll");
+  assert(MOD_OPTIONS.includes("armorOnKill"), "AoK remains a gear mod option");
+  assert(MOD_OPTIONS.includes("armorRegen"), "armor regen flat remains a gear mod option");
+  assert(ATTRIBUTE_OPTIONS.includes("armorRegen"), "armor regen flat is a gear attribute");
+  assert(ATTRIBUTE_OPTIONS.includes("health"), "health flat is a gear attribute");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -812,6 +841,8 @@ const tests = [
   testHealthFlatDerived,
   testInvestorSlotted,
   testMementoAssumed,
+  testGearModSlots,
+  testAttributePoolNoAoK,
 ];
 
 let failed = 0;

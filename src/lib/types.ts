@@ -125,6 +125,8 @@ export type CatalogItem = {
   /** Soft analyzer bonuses while this piece is equipped (exotics with uptime). */
   assumed?: StatBonus[];
   assumedNote?: string;
+  /** Override gear mod socket count (default: 1 on mask/chest/backpack, else 0). */
+  modSlots?: number;
   lockedCore?: CoreType;
   ninja?: boolean;
   note?: string;

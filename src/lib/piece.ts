@@ -4,10 +4,10 @@ import { catalogById } from "./data/catalog";
 import {
   canBePrototype,
   defaultAttributes,
-  defaultMod,
+  defaultMods,
   EXPERTISE_MAX,
+  gearModCount,
   gearSetAttribute,
-  hasGearMod,
   scaleAttributesForPrototype,
   SLOTS,
 } from "./data/attributes";
@@ -37,7 +37,7 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
     attributes,
     talentId,
     uniqueTalent,
-    mods: hasGearMod(slot) ? [defaultMod(resolvedCore)] : [],
+    mods: defaultMods(gearModCount(slot, source), resolvedCore),
     expertise: 0,
     prototype: false,
   };
