@@ -36,7 +36,9 @@ Open [http://localhost:3000](http://localhost:3000).
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
 - Per-piece / per-weapon expertise
 - Armor model: flat piece armor + blue cores + Total Armor %
+- Armor Regeneration / Armor on Kill: gear rolls are %, analysis also shows flat armor/s and flat on-kill amounts
 - Assumed uptime for common chest/backpack talents and major 4pc set bonuses
+- Soft exotic assumptions (Memento stacks, Investor Slotted by attribute color)
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: +1 piece for each brand/set already equipped
 - Offense score (relative estimate, not DPS)

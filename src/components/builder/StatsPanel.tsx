@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComputedStats, Loadout } from "@/lib/types";
-import { formatStat, STAT_LABELS } from "@/lib/data/attributes";
+import { formatFlatAmount, formatStat, STAT_LABELS } from "@/lib/data/attributes";
 import type { StatKey } from "@/lib/types";
 
 const HIGHLIGHT: StatKey[] = [
@@ -15,6 +15,7 @@ const HIGHLIGHT: StatKey[] = [
   "armorPercent",
   "armorRegen",
   "armorOnKill",
+  "health",
   "hazardProtection",
   "skillDamage",
   "skillHaste",
@@ -97,15 +98,20 @@ export function StatsPanel({
       <ul className="stat-list">
         {HIGHLIGHT.map((key) => {
           const value = key === "chc" ? stats.chcCapped : stats.values[key];
-          if (!value) return null;
+          if (!value && key !== "health") return null;
+          if (key === "health" && !value && !stats.values.armor) return null;
           return (
             <li key={key}>
               <span>{STAT_LABELS[key]}</span>
-              <strong>{formatStat(key, value)}</strong>
+              <strong>{formatHighlight(key, value, stats)}</strong>
             </li>
           );
         })}
       </ul>
+      <small className="hint index-hint">
+        Armor Regeneration rolls as % of total armor /s on blue attributes — the flat armor/s
+        amount is derived, not a separate gear roll.
+      </small>
 
       <section>
         <h3>Active bonuses</h3>
@@ -139,6 +145,20 @@ export function StatsPanel({
       ) : null}
     </aside>
   );
+}
+
+function formatHighlight(key: StatKey, value: number, stats: ComputedStats): string {
+  if (key === "armorRegen" && stats.derived.armorRegenPerSec > 0) {
+    return `${formatStat(key, value)} · ${formatFlatAmount(stats.derived.armorRegenPerSec)}/s`;
+  }
+  if (key === "armorOnKill" && stats.derived.armorOnKillFlat > 0) {
+    return `${formatStat(key, value)} · ${formatFlatAmount(stats.derived.armorOnKillFlat)}`;
+  }
+  if (key === "health") {
+    const pct = value > 0 ? ` (${formatStat("health", value)})` : "";
+    return `${formatFlatAmount(stats.derived.healthFlat)}${pct}`;
+  }
+  return formatStat(key, value);
 }
 
 function CorePip({
