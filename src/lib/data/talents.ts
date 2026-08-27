@@ -236,6 +236,52 @@ export const CHEST_TALENTS: GearTalent[] = [
       "Rester en couverture 5 s : +15% dégâts totaux d'arme et de compétence pour vous et les alliés (15 s).",
     perfect: true,
   },
+  {
+    id: "perfect-protected-reload",
+    name: "Perfect Protected Reload",
+    slot: "chest",
+    description:
+      "Pendant un rechargement : +40% armure bonus. Alliés qui rechargent : 0–30% de votre armure en bonus (selon cœurs bleus).",
+    perfect: true,
+  },
+  {
+    id: "perfect-entrench",
+    name: "Perfect Entrench",
+    slot: "chest",
+    description: "Sous 30% d'armure, un headshot depuis la couverture répare 30% d'armure. CD 2 s.",
+    perfect: true,
+  },
+  {
+    id: "perfect-mad-bomber",
+    name: "Perfectly Mad Bomber",
+    slot: "chest",
+    description:
+      "Rayon de grenade +75%. Kill grenade remboursée. Les grenades se cuisinent. +15% armure bonus en visant une grenade.",
+    perfect: true,
+  },
+  {
+    id: "perfect-spotter",
+    name: "Perfect Spotter",
+    slot: "chest",
+    description: "+20% dégâts totaux d'arme et de compétence vs cibles pulsées.",
+    perfect: true,
+  },
+  {
+    id: "perfect-explosive-delivery",
+    name: "Perfectly Explosive Delivery",
+    slot: "chest",
+    description:
+      "Lancer une compétence : explosion 1,5 s après l'atterrissage, puis toutes les 5 s. Dégâts selon palier.",
+    perfect: true,
+  },
+  {
+    id: "perfect-kinetic-momentum",
+    name: "Perfect Kinetic Momentum",
+    slot: "chest",
+    description:
+      "En combat, chaque compétence active génère des stacks : +1,5% dégâts de compétence et +2% réparation, 18 max par compétence.",
+    perfect: true,
+  },
 ];
 
 export const BACKPACK_TALENTS: GearTalent[] = [
@@ -458,7 +504,45 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Perfect Versatile",
     slot: "backpack",
     description:
-      "Arme 1 : +40% dégâts totaux d'arme à 15 m+. Arme 2 : +40% à moins de 15 m.",
+      "Changer d'arme (types différents) : +45% à moins de 15 m (pompe/SMG), +45% au-delà de 25 m (fusil/MMR), +20% entre 15 et 25 m (LMG/AR).",
+    perfect: true,
+  },
+  {
+    id: "perfect-unstoppable-force",
+    name: "Perfectly Unstoppable Force",
+    slot: "backpack",
+    description: "Tuer : +7% dégâts totaux d'arme pendant 15 s, 5 stacks. Kill grenade : 2 stacks.",
+    perfect: true,
+  },
+  {
+    id: "perfect-opportunistic",
+    name: "Perfectly Opportunistic",
+    slot: "backpack",
+    description:
+      "Toucher au fusil à pompe ou de précision : la cible subit +15% dégâts de toutes sources pendant 5 s.",
+    perfect: true,
+  },
+  {
+    id: "perfect-tamper-proof",
+    name: "Perfectly Tamper Proof",
+    slot: "backpack",
+    description:
+      "Ennemis à 3 m d'une hive, tourelle, pulse distant ou leurre : choc. Armement 2 s, CD 8 s.",
+    perfect: true,
+  },
+  {
+    id: "perfect-energize",
+    name: "Perfect Energize",
+    slot: "backpack",
+    description:
+      "Utiliser un kit d'armure : +1 palier pendant 15 s. Palier 6 : overcharge. CD 30 s.",
+    perfect: true,
+  },
+  {
+    id: "perfect-composure",
+    name: "Perfect Composure",
+    slot: "backpack",
+    description: "En couverture : +20% dégâts totaux d'arme.",
     perfect: true,
   },
 ];

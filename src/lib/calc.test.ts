@@ -213,6 +213,17 @@ function testNamedBrandCorrections() {
 
   const chainkiller = catalogById("chainkiller");
   assert(chainkiller?.brandId === "walker", "Chainkiller est Walker");
+
+  const vigil = catalogById("vigil");
+  assert(vigil?.brandId === "legatus", "Vigil est Legatus");
+  assert(vigil?.slots !== "all" && vigil?.slots.includes("backpack"), "Vigil sac");
+
+  const sleight = catalogById("sleight");
+  assert(sleight?.slots !== "all" && sleight?.slots.includes("chest"), "Sleight gilet");
+  const spotOn = catalogById("spot-on");
+  assert(spotOn?.slots !== "all" && spotOn?.slots.includes("holster"), "Spot-On holster");
+  const bulldog = catalogById("bulldog");
+  assert(bulldog?.slots !== "all" && bulldog?.slots.includes("backpack"), "Bulldog sac");
 }
 
 function testNamedExtraStats() {
@@ -242,8 +253,8 @@ function testCatalogCoverage() {
 
   const named = NAMED_AND_EXOTICS.filter((item) => item.kind === "named");
   const exotic = NAMED_AND_EXOTICS.filter((item) => item.kind === "exotic");
-  assert(named.length >= 50, `au moins 50 nommés, got ${named.length}`);
-  assert(exotic.length >= 20, `au moins 20 exotiques gear, got ${exotic.length}`);
+  assert(named.length >= 65, `au moins 65 nommés, got ${named.length}`);
+  assert(exotic.length >= 25, `au moins 25 exotiques gear, got ${exotic.length}`);
 
   const namedBrands = new Set(named.map((item) => item.brandId).filter(Boolean));
   const expected = [
@@ -279,6 +290,11 @@ function testCatalogCoverage() {
     "royal-works",
     "edelweiss",
     "yaahl",
+    "uzina",
+    "palisade",
+    "zwiadowka",
+    "legatus",
+    "shiny-monkey",
   ];
   for (const brandId of expected) {
     assert(namedBrands.has(brandId), `nommé manquant pour ${brandId}`);
@@ -296,6 +312,11 @@ function testCatalogCoverage() {
     "devils-due",
     "equalizer",
     "benefactor",
+    "vigil",
+    "backbone",
+    "the-setup",
+    "bober",
+    "visionario",
   ]) {
     assert(catalogById(required), `catalogue manque ${required}`);
   }
@@ -306,8 +327,8 @@ function testWeaponCatalog() {
   assert(new Set(ids).size === ids.length, "ids armes uniques");
   const named = WEAPONS.filter((weapon) => weapon.quality === "named");
   const exotic = WEAPONS.filter((weapon) => weapon.quality === "exotic");
-  assert(named.length >= 25, `au moins 25 armes nommées, got ${named.length}`);
-  assert(exotic.length >= 20, `au moins 20 armes exotiques, got ${exotic.length}`);
+  assert(named.length >= 80, `au moins 80 armes nommées, got ${named.length}`);
+  assert(exotic.length >= 22, `au moins 22 armes exotiques, got ${exotic.length}`);
   for (const required of [
     "caduceus",
     "ouroboros",
@@ -320,6 +341,10 @@ function testWeaponCatalog() {
     "harmony",
     "lexington",
     "st-elmo",
+    "caretaker",
+    "the-grudge",
+    "bakers-dozen",
+    "shroud",
   ]) {
     assert(
       WEAPONS.some((weapon) => weapon.id === required),

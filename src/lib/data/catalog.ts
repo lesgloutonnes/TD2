@@ -5,7 +5,8 @@ import { GEAR_SETS } from "./gear-sets";
 /**
  * Nommés et exotiques d'équipement (live Y8S3).
  * Organisé marque par marque, puis exotiques par emplacement.
- * Saisonniers meme (Oh Carol, Sleigher, Bell Ringer…) volontairement omis.
+ * Base : sheet communautaire (à jour au 22 mars 2026) + pièces Y8S2/Y8S3 postérieures.
+ * Saisonniers meme (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…) volontairement omis.
  */
 export const NAMED_AND_EXOTICS: CatalogItem[] = [
   // --- Providence Defense ---
@@ -54,8 +55,13 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "ceska",
     slots: ["kneepads"],
-    extraStats: [{ stat: "chc", value: 8 }],
-    note: "Genouillères Česká : jet extra de chance de critique (au-dessus du plafond normal).",
+    extraStats: [{ stat: "chd", value: 12 }],
+    uniqueTalent: {
+      name: "Bewildered",
+      description:
+        "50% des dégâts d'arme sont infligés à un autre ennemi dans les 30 m. S'il n'y en a pas, dégâts normaux. Ne s'applique pas aux plaques d'armure.",
+    },
+    note: "Genouillères Česká (événement 1er avril, loot pool ensuite). Talent Bewildered.",
   },
 
   // --- Grupo Sombra ---
@@ -223,9 +229,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "douglas",
     slots: ["mask"],
-    extraStats: [{ stat: "hsd", value: 10 }],
+    extraStats: [{ stat: "hsd", value: 20 }],
     extraCores: ["red"],
-    note: "Masque Douglas : +10% dégâts headshot extra + cœur rouge.",
+    note: "Masque Douglas : +20% dégâts headshot extra (jet unique) + cœur rouge.",
   },
 
   // --- Gila Guard ---
@@ -250,7 +256,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "skillHaste", value: 10 }],
     extraCores: ["yellow"],
-    note: "Masque Gila : +10% skill haste extra + cœur jaune. Compte pour Gila Guard.",
+    note: "Masque Gila : Scanner Pulse Haste 100% (approximé haste) + cœur jaune.",
   },
   {
     id: "sawyers-kneepads",
@@ -391,6 +397,20 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     extraStats: [{ stat: "pistolDamage", value: 10 }],
     extraCores: ["red"],
     note: "Holster Wyvern : dégâts de pistolet extra, dégâts de mêlée élevés, cœur rouge.",
+  },
+  {
+    id: "impetus",
+    name: "Impetus",
+    kind: "named",
+    brandId: "wyvern",
+    slots: ["chest"],
+    extraCores: ["yellow"],
+    uniqueTalent: {
+      name: "Perfect Kinetic Momentum",
+      description:
+        "En combat, chaque compétence active (ou hors CD) génère des stacks : +1,5% dégâts de compétence et +2% réparation par stack, 18 max par compétence.",
+    },
+    talentSlot: "chest",
   },
 
   // --- Alps Summit ---
@@ -565,17 +585,54 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
 
   // --- Lengmo ---
   {
-    id: "vigil",
-    name: "Vigil",
+    id: "backbone",
+    name: "Backbone",
     kind: "named",
     brandId: "lengmo",
     slots: ["backpack"],
     uniqueTalent: {
-      name: "Perfect Versatile",
+      name: "Perfectly Unstoppable Force",
       description:
-        "Arme 1 : +40% dégâts totaux d'arme à 15 m+. Arme 2 : +40% à moins de 15 m.",
+        "Tuer : +7% dégâts totaux d'arme pendant 15 s, 5 stacks. Un kill grenade donne 2 stacks.",
     },
     talentSlot: "backpack",
+  },
+  {
+    id: "carpenter",
+    name: "Carpenter",
+    kind: "named",
+    brandId: "lengmo",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Perfectly Mad Bomber",
+      description:
+        "Rayon de grenade +75%. Kill grenade remboursée. Les grenades se cuisinent. +15% armure bonus en visant une grenade.",
+    },
+    talentSlot: "chest",
+  },
+
+  // --- Legatus ---
+  {
+    id: "vigil",
+    name: "Vigil",
+    kind: "named",
+    brandId: "legatus",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfect Versatile",
+      description:
+        "Changer d'arme (types différents) : +45% dégâts totaux à moins de 15 m (pompe/SMG), +45% au-delà de 25 m (fusil/MMR), +20% entre 15 et 25 m (LMG/AR). 10 s, une fois / 5 s par type.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "visionario",
+    name: "Visionario",
+    kind: "named",
+    brandId: "legatus",
+    slots: ["mask"],
+    extraStats: [{ stat: "optimalRange", value: 50 }],
+    note: "Masque Legatus : +50% portée optimale extra.",
   },
 
   // --- Imminence Armaments ---
@@ -605,29 +662,38 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     },
     talentSlot: "backpack",
   },
+  {
+    id: "cloak",
+    name: "Cloak",
+    kind: "named",
+    brandId: "imminence",
+    slots: ["kneepads"],
+    extraStats: [{ stat: "threat", value: -50 }],
+    note: "Genouillères Imminence : −50% menace extra.",
+  },
 
   // --- Urban Lookout ---
-  {
-    id: "spot-on",
-    name: "Spot-On",
-    kind: "named",
-    brandId: "urban-lookout",
-    slots: ["mask"],
-    extraStats: [{ stat: "hsd", value: 10 }],
-    extraCores: ["yellow"],
-    note: "Masque Urban Lookout : +10% headshot extra + cœur jaune.",
-  },
   {
     id: "sleight",
     name: "Sleight",
     kind: "named",
     brandId: "urban-lookout",
-    slots: ["holster"],
+    slots: ["chest"],
     uniqueTalent: {
       name: "Perfect Protected Reload",
       description:
-        "Pendant un rechargement : +30% réduction de dégâts. Après le rechargement : +15% dégâts d'arme pendant 5 s.",
+        "Pendant un rechargement : +40% armure bonus. Les alliés rechargent : 0–30% de votre armure en bonus (selon cœurs bleus).",
     },
+    talentSlot: "chest",
+  },
+  {
+    id: "spot-on",
+    name: "Spot-On",
+    kind: "named",
+    brandId: "urban-lookout",
+    slots: ["holster"],
+    extraStats: [{ stat: "accuracy", value: 38 }],
+    note: "Holster Urban Lookout : +38% précision extra (jet unique).",
   },
 
   // --- Unit Alloys ---
@@ -674,10 +740,12 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     name: "Bulldog",
     kind: "named",
     brandId: "royal-works",
-    slots: ["holster"],
-    extraStats: [{ stat: "stability", value: 10 }],
-    extraCores: ["red"],
-    note: "Holster Royal Works : stabilité extra + cœur rouge (Perfect Composure).",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfect Composure",
+      description: "En couverture : +20% dégâts totaux d'arme.",
+    },
+    talentSlot: "backpack",
   },
 
   // --- Edelweiss GPz ---
@@ -707,6 +775,111 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     talentSlot: "backpack",
   },
 
+  // --- Uzina Getica ---
+  {
+    id: "the-setup",
+    name: "The Setup",
+    kind: "named",
+    brandId: "uzina",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfectly Opportunistic",
+      description:
+        "Toucher un ennemi au fusil à pompe ou de précision : il subit +15% dégâts de toutes sources pendant 5 s.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "closer",
+    name: "Closer",
+    kind: "named",
+    brandId: "uzina",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Perfect Spotter",
+      description: "+20% dégâts totaux d'arme et de compétence vs cibles pulsées.",
+    },
+    talentSlot: "chest",
+  },
+
+  // --- Palisade Steelworks ---
+  {
+    id: "proxy",
+    name: "Proxy",
+    kind: "named",
+    brandId: "palisade",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfectly Tamper Proof",
+      description:
+        "Ennemis à 3 m d'une hive, tourelle, pulse distant ou leurre : choc. Armement 2 s, CD 8 s par compétence.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "combustor",
+    name: "Combustor",
+    kind: "named",
+    brandId: "palisade",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Perfectly Explosive Delivery",
+      description:
+        "Lancer une compétence : explosion 1,5 s après l'atterrissage (5 m), puis toutes les 5 s. Dégâts selon palier. Une fois par compétence.",
+    },
+    talentSlot: "chest",
+  },
+
+  // --- Zwiadowka ---
+  {
+    id: "bober",
+    name: "Bober",
+    kind: "named",
+    brandId: "zwiadowka",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Perfect Entrench",
+      description:
+        "Sous 30% d'armure, un headshot depuis la couverture répare 30% d'armure. CD 2 s.",
+    },
+    talentSlot: "chest",
+  },
+  {
+    id: "eagles-grasp",
+    name: "Eagles Grasp",
+    kind: "named",
+    brandId: "zwiadowka",
+    slots: ["gloves"],
+    extraStats: [{ stat: "weaponHandling", value: 15 }],
+    note: "Gants Zwiadowka : +15% maniement extra (jet unique).",
+  },
+
+  // --- Shiny Monkey Gear ---
+  {
+    id: "axel",
+    name: "Axel",
+    kind: "named",
+    brandId: "shiny-monkey",
+    slots: ["backpack"],
+    extraCores: ["yellow"],
+    uniqueTalent: {
+      name: "Perfect Energize",
+      description:
+        "Utiliser un kit d'armure : +1 palier de compétence pendant 15 s. Déjà palier 6 : overcharge. CD 30 s.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "grease",
+    name: "Grease",
+    kind: "named",
+    brandId: "shiny-monkey",
+    slots: ["kneepads"],
+    extraStats: [{ stat: "statusEffects", value: 16 }],
+    extraCores: ["yellow"],
+    note: "Genouillères Shiny Monkey : +16% effets de statut extra + cœur jaune.",
+  },
+
   // --- Yaahl Gear ---
   {
     id: "the-hollow-man",
@@ -714,9 +887,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "yaahl",
     slots: ["mask"],
-    extraStats: [{ stat: "damageToHealth", value: 10 }],
+    extraStats: [{ stat: "damageToHealth", value: 14 }],
     extraCores: ["blue"],
-    note: "Masque Yaahl : +10% dégâts à la santé extra + cœur bleu.",
+    note: "Masque Yaahl : +14% dégâts à la santé extra + cœur bleu.",
   },
 
   // ========== Exotiques — masques ==========
@@ -777,6 +950,17 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Jury Rigged",
       description:
         "Autorise des combinaisons de compétences inhabituelles et booste les mods de compétence équipés.",
+    },
+  },
+  {
+    id: "investor",
+    name: "Investor",
+    kind: "exotic",
+    slots: ["mask"],
+    uniqueTalent: {
+      name: "Slotted",
+      description:
+        "Bonus selon la couleur de chaque attribut non-cœur : rouge +10% CHD, jaune +5% efficacité de compétence, bleu +1% régén armure.",
     },
   },
 
@@ -1006,6 +1190,28 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "First Aid Associate",
       description:
         "Vous et les alliés à 10 m : +40% protection contre les aléas. Socle des builds support / Toxic DZ.",
+    },
+  },
+  {
+    id: "acosta-kneepads",
+    name: "Acosta's Kneepads",
+    kind: "exotic",
+    slots: ["kneepads"],
+    uniqueTalent: {
+      name: "Escape Plan",
+      description:
+        "Vault, rester immobile 5 s ou subir un statut : bonus de vitesse de déplacement (max 20%). −50% pénalité de mobilité des statuts.",
+    },
+  },
+  {
+    id: "blacklisters",
+    name: "Blacklisters",
+    kind: "exotic",
+    slots: ["kneepads"],
+    uniqueTalent: {
+      name: "Ostracize",
+      description:
+        "Marque un ennemi : vous prenez 600% de dégâts amplifiés de lui, +20% dégâts amplifiés aux autres. Une marque à la fois.",
     },
   },
 ];
