@@ -4,13 +4,20 @@ import type { CoreType, GearPiece, Slot, StatKey } from "@/lib/types";
 import { catalogById } from "@/lib/data/catalog";
 import { ALL_TALENTS, talentsForSlot } from "@/lib/data/talents";
 import {
-  ATTRIBUTE_OPTIONS,
-  CORE_LABELS,
+  ATTRIBUTE_GROUPS,
+  clampStat,
+  CORE_OPTION_LABELS,
+  defaultAttributes,
+  defaultMod,
   formatStat,
-  MOD_OPTIONS,
+  gearSetAttribute,
+  hasGearMod,
+  MOD_GROUPS,
+  parseStatInput,
   SLOT_LABELS,
   STAT_LABELS,
   STAT_MAX,
+  statStep,
 } from "@/lib/data/attributes";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
 
@@ -32,6 +39,7 @@ export function PieceEditor({
   const coreLocked = Boolean(source?.lockedCore || source?.kind === "gear-set");
   const talentOptions =
     slot === "chest" || slot === "backpack" ? talentsForSlot(slot) : [];
+  const showMod = Boolean(piece && hasGearMod(slot));
 
   return (
     <section className="editor">
@@ -73,13 +81,22 @@ export function PieceEditor({
             <select
               disabled={coreLocked}
               value={piece.core}
-              onChange={(event) =>
-                onChange({ ...piece, core: event.target.value as CoreType })
-              }
+              onChange={(event) => {
+                const core = event.target.value as CoreType;
+                onChange({
+                  ...piece,
+                  core,
+                  attributes:
+                    source?.kind === "gear-set"
+                      ? [gearSetAttribute(core)]
+                      : defaultAttributes(core),
+                  mods: hasGearMod(slot) ? [defaultMod(core)] : [],
+                });
+              }}
             >
-              {(Object.keys(CORE_LABELS) as CoreType[]).map((core) => (
+              {(Object.keys(CORE_OPTION_LABELS) as CoreType[]).map((core) => (
                 <option key={core} value={core}>
-                  {core === "red" ? "Rouge" : core === "blue" ? "Bleu" : "Jaune"} — {CORE_LABELS[core]}
+                  {CORE_OPTION_LABELS[core]}
                 </option>
               ))}
             </select>
@@ -91,7 +108,7 @@ export function PieceEditor({
               label={`Attribut ${index + 1}`}
               stat={attribute.stat}
               value={attribute.value}
-              options={ATTRIBUTE_OPTIONS}
+              groups={ATTRIBUTE_GROUPS}
               onStat={(stat) => {
                 const next = [...piece.attributes];
                 next[index] = { stat, value: STAT_MAX[stat] ?? attribute.value };
@@ -99,31 +116,35 @@ export function PieceEditor({
               }}
               onValue={(value) => {
                 const next = [...piece.attributes];
-                next[index] = { ...next[index], value };
+                next[index] = { ...next[index], value: clampStat(next[index].stat, value) };
                 onChange({ ...piece, attributes: next });
               }}
             />
           ))}
 
-          {piece.mods.map((mod, index) => (
-            <StatRow
-              key={`mod-${mod.stat}-${index}`}
-              label="Mod"
-              stat={mod.stat}
-              value={mod.value}
-              options={MOD_OPTIONS}
-              onStat={(stat) => {
-                const next = [...piece.mods];
-                next[index] = { stat, value: STAT_MAX[stat] ?? mod.value };
-                onChange({ ...piece, mods: next });
-              }}
-              onValue={(value) => {
-                const next = [...piece.mods];
-                next[index] = { ...next[index], value };
-                onChange({ ...piece, mods: next });
-              }}
-            />
-          ))}
+          {showMod
+            ? piece.mods.map((mod, index) => (
+                <StatRow
+                  key={`mod-${mod.stat}-${index}`}
+                  label="Mod"
+                  stat={mod.stat}
+                  value={mod.value}
+                  groups={MOD_GROUPS}
+                  onStat={(stat) => {
+                    const next = [...piece.mods];
+                    next[index] = { stat, value: STAT_MAX[stat] ?? mod.value };
+                    onChange({ ...piece, mods: next });
+                  }}
+                  onValue={(value) => {
+                    const next = [...piece.mods];
+                    next[index] = { ...next[index], value: clampStat(next[index].stat, value) };
+                    onChange({ ...piece, mods: next });
+                  }}
+                />
+              ))
+            : (
+              <p className="hint">Pas de mod sur cet emplacement (masque, sac et gilet seulement).</p>
+            )}
 
           {talentOptions.length > 0 && !talentLocked ? (
             <label className="field">
@@ -173,36 +194,48 @@ function StatRow({
   label,
   stat,
   value,
-  options,
+  groups,
   onStat,
   onValue,
 }: {
   label: string;
   stat: StatKey;
   value: number;
-  options: StatKey[];
+  groups: { label: string; stats: StatKey[] }[];
   onStat: (stat: StatKey) => void;
   onValue: (value: number) => void;
 }) {
+  const max = STAT_MAX[stat];
   return (
     <label className="field">
       <span>
         {label}
-        <em>{formatStat(stat, value)}</em>
+        <em>
+          {formatStat(stat, value)}
+          {max != null ? ` · max ${formatStat(stat, max)}` : ""}
+        </em>
       </span>
       <div className="field-split">
         <select value={stat} onChange={(event) => onStat(event.target.value as StatKey)}>
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {STAT_LABELS[option]}
-            </option>
+          {groups.map((group) => (
+            <optgroup key={group.label} label={group.label}>
+              {group.stats.map((option) => (
+                <option key={option} value={option}>
+                  {STAT_LABELS[option]}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
         <input
           type="number"
-          step="0.1"
+          inputMode="decimal"
+          min={0}
+          max={max}
+          step={statStep(stat)}
           value={value}
-          onChange={(event) => onValue(Number(event.target.value))}
+          title={max != null ? `Plafond live : ${formatStat(stat, max)}` : undefined}
+          onChange={(event) => onValue(parseStatInput(event.target.value))}
         />
       </div>
     </label>

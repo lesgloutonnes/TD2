@@ -1,7 +1,7 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
 import { createPiece } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor, clampStat } from "./data/attributes";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -33,7 +33,7 @@ function testProvidence3() {
   loadout.gear.holster = createPiece("holster", "brand:providence");
   const stats = computeStats(loadout);
   assert(stats.values.hsd === 13, `1pc hsd, got ${stats.values.hsd}`);
-  assert(stats.values.chc === 44, `2pc chc + attrs + mods, got ${stats.values.chc}`);
+  assert(stats.values.chc === 32, `2pc chc + attrs + mask mod, got ${stats.values.chc}`);
   assert(stats.values.chd === 49, `3pc chd + attrs, got ${stats.values.chd}`);
 }
 
@@ -107,8 +107,8 @@ function testSkillTierCap() {
 function testStrikerPresetChc() {
   const loadout = PRESETS[0].build();
   const stats = computeStats(loadout);
-  assert(stats.chcCapped === 60, `striker preset capped at 60, got ${stats.chcCapped}`);
-  assert(stats.chcOvercap <= 2, `striker preset little overcap, got ${stats.chcOvercap}`);
+  assert(stats.chcCapped === 48, `striker preset CHC, got ${stats.chcCapped}`);
+  assert(stats.chcOvercap === 0, `striker preset no overcap, got ${stats.chcOvercap}`);
 }
 
 function testY8s3Brands() {
@@ -140,7 +140,7 @@ function testCeskaY8s3() {
   loadout.gear.gloves = createPiece("gloves", "brand:ceska");
   loadout.gear.holster = createPiece("holster", "brand:ceska");
   const stats = computeStats(loadout);
-  assert(stats.values.chc === 44, `Ceska 1pc CHC + attrs, got ${stats.values.chc}`);
+  assert(stats.values.chc === 32, `Ceska 1pc CHC + attrs + mask mod, got ${stats.values.chc}`);
   assert(stats.values.shotgunDamage === 24, `Ceska 2pc shotgun, got ${stats.values.shotgunDamage}`);
   assert(
     stats.values.hazardProtection === 30,
@@ -216,6 +216,13 @@ function testKindColors() {
   assert(itemKindColor("exotic") === "#c41e3a", "exotic red");
 }
 
+function testStatCaps() {
+  assert(clampStat("chc", 99) === 6, "CHC max 6");
+  assert(clampStat("chd", 20) === 12, "CHD max 12");
+  assert(clampStat("armorRegen", 5) === 0.5, "armor regen max 0.5");
+  assert(clampStat("chc", -3) === 0, "no negative");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -233,6 +240,7 @@ const tests = [
   testHotshotHandlingMove,
   testSlotCoreColors,
   testKindColors,
+  testStatCaps,
 ];
 
 let failed = 0;

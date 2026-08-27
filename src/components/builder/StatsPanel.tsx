@@ -75,7 +75,7 @@ export function StatsPanel({
 
       <div className="chc-meter">
         <div className="chc-label">
-          <span>Chance de critique</span>
+          <span>Chances de coups critiques</span>
           <span>
             {stats.chcCapped.toFixed(1)}%
             {stats.chcOvercap > 0 ? ` · +${stats.chcOvercap.toFixed(1)}% hors cap` : ""}

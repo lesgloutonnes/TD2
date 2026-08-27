@@ -17,6 +17,7 @@ import {
   CORE_COLORS,
   CORE_VALUES,
   EMPTY_SLOT_COLOR,
+  hasGearMod,
   SHD_WATCH,
   SKILL_TIER_CAP,
   SLOTS,
@@ -140,7 +141,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
 
     addBonuses(values, piece.attributes);
-    addBonuses(values, piece.mods);
+    if (hasGearMod(slot)) addBonuses(values, piece.mods);
     if (source.extraStats) addBonuses(values, source.extraStats);
   }
 
