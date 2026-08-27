@@ -155,6 +155,11 @@ export type GearPiece = {
   mods: StatBonus[];
   /** Per-piece expertise 0–30 (boosts that piece's armor). */
   expertise: number;
+  /**
+   * Prototype quality (Y8). Brand / named / gear-set only — never exotics.
+   * Raises attribute caps (~1.5×) and red/blue core values; Skill Tier unchanged.
+   */
+  prototype?: boolean;
 };
 
 export type EquippedWeapon = {

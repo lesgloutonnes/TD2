@@ -200,15 +200,45 @@ export function parseStatInput(raw: string): number {
   return Number(normalized);
 }
 
-export function clampStat(stat: StatKey, value: number): number {
+export function clampStat(stat: StatKey, value: number, prototype = false): number {
   if (!Number.isFinite(value) || value < 0) return 0;
-  const max = STAT_MAX[stat];
+  const max = statMax(stat, prototype);
   const capped = max == null ? value : Math.min(value, max);
   return Math.round(capped * 10) / 10;
 }
 
 export function statStep(stat: StatKey): number {
   return stat === "armorRegen" ? 0.1 : 0.1;
+}
+
+/** Prototype attribute ceiling multiplier (old HE max → new floor; new max ≈ 1.5×). */
+export const PROTOTYPE_ATTR_MULT = 1.5;
+
+export function canBePrototype(kind: ItemKind | undefined): boolean {
+  return Boolean(kind && kind !== "exotic");
+}
+
+export function statMax(stat: StatKey, prototype = false): number | undefined {
+  const base = STAT_MAX[stat];
+  if (base == null) return undefined;
+  if (!prototype) return base;
+  return Math.round(base * PROTOTYPE_ATTR_MULT * 10) / 10;
+}
+
+/** Scale attribute rolls to Prototype max (optimized conversion). */
+export function scaleAttributesForPrototype(
+  bonuses: StatBonus[],
+  prototype: boolean,
+): StatBonus[] {
+  return bonuses.map((bonus) => ({
+    ...bonus,
+    value: clampStat(bonus.stat, statMax(bonus.stat, prototype) ?? bonus.value, prototype),
+  }));
+}
+
+/** Core value multiplier for Prototype (Skill Tier cores stay 1× in live game). */
+export function prototypeCoreMult(core: CoreType): number {
+  return core === "yellow" ? 1 : PROTOTYPE_ATTR_MULT;
 }
 
 export const PERCENT_STATS = new Set<StatKey>([

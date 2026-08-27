@@ -2,10 +2,13 @@ import type { CatalogItem, CoreType, GearPiece, Loadout, Slot } from "./types";
 import { ALL_TALENTS } from "./data/talents";
 import { catalogById } from "./data/catalog";
 import {
+  canBePrototype,
   defaultAttributes,
   defaultMod,
+  EXPERTISE_MAX,
   gearSetAttribute,
   hasGearMod,
+  scaleAttributesForPrototype,
   SLOTS,
 } from "./data/attributes";
 import { BRANDS } from "./data/brands";
@@ -35,6 +38,28 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
     uniqueTalent,
     mods: hasGearMod(slot) ? [defaultMod(resolvedCore)] : [],
     expertise: 0,
+    prototype: false,
+  };
+}
+
+/** Toggle Prototype quality. Exotics are never allowed. */
+export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece {
+  const source = catalogById(piece.sourceId);
+  if (!canBePrototype(source?.kind)) {
+    return { ...piece, prototype: false };
+  }
+  if (!enabled) {
+    return {
+      ...piece,
+      prototype: false,
+      attributes: scaleAttributesForPrototype(piece.attributes, false),
+    };
+  }
+  return {
+    ...piece,
+    prototype: true,
+    expertise: EXPERTISE_MAX,
+    attributes: scaleAttributesForPrototype(piece.attributes, true),
   };
 }
 

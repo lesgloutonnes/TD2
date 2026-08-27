@@ -1,8 +1,9 @@
 import type { Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
 import { createPiece } from "./piece";
-import { EXPERTISE_MAX, SLOTS } from "./data/attributes";
+import { EXPERTISE_MAX, canBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
+import { catalogById } from "./data/catalog";
 
 export function encodeLoadout(loadout: Loadout): string {
   const json = JSON.stringify(loadout);
@@ -45,12 +46,17 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
       gear[slot] = null;
       continue;
     }
+    const created = createPiece(slot, piece.sourceId, piece.core);
+    const source = catalogById(piece.sourceId);
+    const prototype =
+      Boolean(piece.prototype) && canBePrototype(source?.kind);
     gear[slot] = {
-      ...createPiece(slot, piece.sourceId, piece.core),
+      ...created,
       ...piece,
       expertise: clampExpertise(
         typeof piece.expertise === "number" ? piece.expertise : (legacyExpertise ?? 0),
       ),
+      prototype,
     };
   }
 

@@ -251,8 +251,8 @@ export function BuilderApp() {
                       <em>
                         {piece
                           ? `${CORE_SHORT_LABELS[piece.core]}${
-                              source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""
-                            }`
+                              piece.prototype && source?.kind !== "exotic" ? " · Prototype" : ""
+                            }${source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""}`
                           : "Click to equip"}
                       </em>
                     </span>

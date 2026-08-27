@@ -5,6 +5,7 @@ import { catalogById } from "@/lib/data/catalog";
 import { ALL_TALENTS, talentsForSlot } from "@/lib/data/talents";
 import {
   ATTRIBUTE_GROUPS,
+  canBePrototype,
   clampStat,
   CORE_OPTION_LABELS,
   defaultAttributes,
@@ -18,10 +19,11 @@ import {
   SLOT_LABELS,
   STAT_LABELS,
   STAT_MAX,
+  statMax,
   statStep,
 } from "@/lib/data/attributes";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
-import { isCoreLocked } from "@/lib/piece";
+import { isCoreLocked, setPiecePrototype } from "@/lib/piece";
 
 export function PieceEditor({
   slot,
@@ -42,6 +44,8 @@ export function PieceEditor({
   const talentOptions =
     slot === "chest" || slot === "backpack" ? talentsForSlot(slot) : [];
   const showMod = Boolean(piece && hasGearMod(slot));
+  const prototypeAllowed = canBePrototype(source?.kind);
+  const isPrototype = Boolean(piece?.prototype) && prototypeAllowed;
 
   return (
     <section className="editor">
@@ -77,6 +81,25 @@ export function PieceEditor({
           {source?.kind === "gear-set" && source.gearSetId ? (
             <GearSetHint setId={source.gearSetId} slot={slot} />
           ) : null}
+
+          {prototypeAllowed ? (
+            <label className="field checkbox prototype-switch">
+              <input
+                type="checkbox"
+                checked={isPrototype}
+                onChange={(event) => onChange(setPiecePrototype(piece, event.target.checked))}
+              />
+              <span>
+                Prototype
+                <small className="hint">
+                  Attribute caps ×1.5 · red/blue cores ×1.5 · requires Expertise 30. Not available on
+                  exotics.
+                </small>
+              </span>
+            </label>
+          ) : (
+            <p className="hint">Exotics cannot be converted to Prototype.</p>
+          )}
 
           <label className="field">
             <span>Core</span>
@@ -125,15 +148,19 @@ export function PieceEditor({
               label={`Attribute ${index + 1}`}
               stat={attribute.stat}
               value={attribute.value}
+              prototype={isPrototype}
               groups={ATTRIBUTE_GROUPS}
               onStat={(stat) => {
                 const next = [...piece.attributes];
-                next[index] = { stat, value: STAT_MAX[stat] ?? attribute.value };
+                next[index] = { stat, value: statMax(stat, isPrototype) ?? attribute.value };
                 onChange({ ...piece, attributes: next });
               }}
               onValue={(value) => {
                 const next = [...piece.attributes];
-                next[index] = { ...next[index], value: clampStat(next[index].stat, value) };
+                next[index] = {
+                  ...next[index],
+                  value: clampStat(next[index].stat, value, isPrototype),
+                };
                 onChange({ ...piece, attributes: next });
               }}
             />
@@ -146,6 +173,7 @@ export function PieceEditor({
                   label="Mod"
                   stat={mod.stat}
                   value={mod.value}
+                  prototype={false}
                   groups={MOD_GROUPS}
                   onStat={(stat) => {
                     const next = [...piece.mods];
@@ -211,6 +239,7 @@ function StatRow({
   label,
   stat,
   value,
+  prototype = false,
   groups,
   onStat,
   onValue,
@@ -218,11 +247,12 @@ function StatRow({
   label: string;
   stat: StatKey;
   value: number;
+  prototype?: boolean;
   groups: { label: string; stats: StatKey[] }[];
   onStat: (stat: StatKey) => void;
   onValue: (value: number) => void;
 }) {
-  const max = STAT_MAX[stat];
+  const max = statMax(stat, prototype);
   return (
     <label className="field">
       <span>
@@ -230,6 +260,7 @@ function StatRow({
         <em>
           {formatStat(stat, value)}
           {max != null ? ` · max ${formatStat(stat, max)}` : ""}
+          {prototype ? " · Prototype" : ""}
         </em>
       </span>
       <div className="field-split">
