@@ -31,8 +31,8 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 
 - 6 emplacements d'équipement + silhouette d'agent
 - 37 marques et 28 gear sets (**live Y8S3 Red Horizon**, 27 août 2026)
-- Nommés (Trick Shot, Rushdown, Melon Baller, Keeper, The Gift, The Sacrifice…)
-- Exotiques (Fafnir, Iron Will, Loaded for Bear, Coyote's Mask, Memento, NinjaBike…)
+- Nommés par marque (Chainkiller, Matador, Force Multiplier, Zero F's, Pointman, Fox's Prayer, Contractor's Gloves, Equalizer, Benefactor…)
+- Exotiques (Vile, BTSU, Collector, Nurse's Kneepads, Overdogs, Coyote's Mask, Memento, NinjaBike, Caduceus, Ouroboros…)
 - Caps : CHC 60 %, paliers de compétence 6
 - NinjaBike : +1 pièce pour chaque marque/set déjà équipé
 - Presets : Striker, All Red, Heartbreaker, Skill DPS, Foundry, Hunter's Fury
