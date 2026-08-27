@@ -1,14 +1,16 @@
-import type { CatalogItem, CoreType, GearPiece, Slot } from "./types";
+import type { CatalogItem, CoreType, GearPiece, Slot, StatBonus } from "./types";
 import { ALL_TALENTS } from "./data/talents";
 import { catalogById } from "./data/catalog";
-import { defaultAttributes, defaultMod } from "./data/attributes";
+import { defaultAttributes, defaultMod, STAT_MAX } from "./data/attributes";
 import { GEAR_SETS } from "./data/gear-sets";
 
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
   const source = catalogById(sourceId);
   const resolvedCore = resolveCore(slot, source, core);
   const isGearSet = source?.kind === "gear-set";
-  const attributes = defaultAttributes(resolvedCore).slice(0, isGearSet ? 1 : 2);
+  const attributes = isGearSet
+    ? [gearSetAttribute(resolvedCore)]
+    : defaultAttributes(resolvedCore);
   const uniqueTalent = source?.uniqueTalent;
   const talentId = uniqueTalent
     ? ALL_TALENTS.find((talent) => talent.name === uniqueTalent.name)?.id
@@ -38,6 +40,12 @@ function resolveCore(slot: Slot, source: CatalogItem | undefined, core?: CoreTyp
     return "yellow";
   }
   return core ?? "red";
+}
+
+function gearSetAttribute(core: CoreType): StatBonus {
+  if (core === "yellow") return { stat: "skillDamage", value: STAT_MAX.skillDamage ?? 10 };
+  if (core === "blue") return { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 0.5 };
+  return { stat: "chd", value: STAT_MAX.chd ?? 12 };
 }
 
 function extraCoresFor(slot: Slot, source: CatalogItem | undefined): CoreType[] {

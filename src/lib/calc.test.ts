@@ -1,6 +1,6 @@
 import { computeStats, emptyLoadout } from "./calc";
 import { createPiece } from "./piece";
-import { decodeLoadout, encodeLoadout } from "./share";
+import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -103,6 +103,13 @@ function testSkillTierCap() {
   assert(stats.skillTierCapped === 6, "tier cap 6");
 }
 
+function testStrikerPresetChc() {
+  const loadout = PRESETS[0].build();
+  const stats = computeStats(loadout);
+  assert(stats.chcCapped === 60, `striker preset capped at 60, got ${stats.chcCapped}`);
+  assert(stats.chcOvercap <= 2, `striker preset little overcap, got ${stats.chcOvercap}`);
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -112,6 +119,7 @@ const tests = [
   testChcCap,
   testShareRoundtrip,
   testSkillTierCap,
+  testStrikerPresetChc,
 ];
 
 let failed = 0;

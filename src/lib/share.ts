@@ -110,6 +110,9 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.gear.gloves = createPiece("gloves", "set:striker");
       loadout.gear.holster = createPiece("holster", "brand:ceska");
       loadout.gear.kneepads = createPiece("kneepads", "brand:grupo");
+      if (loadout.gear.kneepads) {
+        loadout.gear.kneepads.mods = [{ stat: "chd", value: 12 }];
+      }
       loadout.weapons.primary = { weaponId: "st-elmo" };
       loadout.weapons.secondary = { weaponId: "lexington" };
       loadout.weapons.sidearm = { weaponId: "liberty" };
