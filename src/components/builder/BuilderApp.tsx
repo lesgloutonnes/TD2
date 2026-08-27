@@ -392,7 +392,8 @@ export function BuilderApp() {
           slot={activeSlot}
           onClose={() => setPickerOpen(false)}
           onPick={(sourceId) => {
-            updateGear(activeSlot, createPiece(activeSlot, sourceId, loadout.gear[activeSlot]?.core));
+            // Always resolve the piece's own locked/brand core — never inherit the previous slot core.
+            updateGear(activeSlot, createPiece(activeSlot, sourceId));
             setPickerOpen(false);
           }}
           onPickSet={(sourceId) => {

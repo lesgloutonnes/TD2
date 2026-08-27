@@ -8,6 +8,7 @@ import {
   hasGearMod,
   SLOTS,
 } from "./data/attributes";
+import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCore } from "./data/gear-sets";
 
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
@@ -22,13 +23,13 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
     ? ALL_TALENTS.find((talent) => talent.name === uniqueTalent.name)?.id
     : defaultTalent(slot, source);
 
-  const extraCores = extraCoresFor(slot, source);
+  const extras = extraCoresFor(slot, source, resolvedCore);
 
   return {
     slot,
     sourceId,
     core: resolvedCore,
-    extraCores: extraCores.length ? extraCores : undefined,
+    extraCores: extras.length ? extras : undefined,
     attributes,
     talentId,
     uniqueTalent,
@@ -36,24 +37,41 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
   };
 }
 
-function resolveCore(slot: Slot, source: CatalogItem | undefined, core?: CoreType): CoreType {
-  if (source?.gearSetId) {
+/** In-game locked core for a catalog item in a given slot, if any. */
+export function lockedCoreFor(slot: Slot, source: CatalogItem | undefined): CoreType | undefined {
+  if (!source) return undefined;
+  if (source.gearSetId) {
     const set = GEAR_SETS.find((item) => item.id === source.gearSetId);
     if (set) return gearSetCore(set, slot);
   }
-  if (source?.lockedCore) return source.lockedCore;
-  if (source?.brandId === "brazos" && slot === "holster" && source.id === "picaros-holster") {
-    return "yellow";
+  if (source.lockedCore) return source.lockedCore;
+  if (source.brandId) {
+    const brand = BRANDS.find((item) => item.id === source.brandId);
+    if (brand) return brand.core;
   }
-  return core ?? "red";
+  return undefined;
 }
 
-function extraCoresFor(slot: Slot, source: CatalogItem | undefined): CoreType[] {
-  if (source?.extraCores) return [...source.extraCores];
-  if (source?.gearSetId === "core-strength" && slot === "backpack") {
-    return ["blue", "yellow"];
+export function isCoreLocked(slot: Slot, source: CatalogItem | undefined): boolean {
+  return lockedCoreFor(slot, source) !== undefined;
+}
+
+function resolveCore(slot: Slot, source: CatalogItem | undefined, core?: CoreType): CoreType {
+  return lockedCoreFor(slot, source) ?? core ?? "red";
+}
+
+function extraCoresFor(
+  slot: Slot,
+  source: CatalogItem | undefined,
+  primary: CoreType,
+): CoreType[] {
+  let extras: CoreType[] = [];
+  if (source?.extraCores) extras = [...source.extraCores];
+  else if (source?.gearSetId === "core-strength" && slot === "backpack") {
+    extras = ["blue", "yellow"];
   }
-  return [];
+  // Bonus cores only — never duplicate the primary core.
+  return extras.filter((core) => core !== primary);
 }
 
 function defaultTalent(slot: Slot, source: CatalogItem | undefined): string | undefined {

@@ -245,8 +245,39 @@ function testPicaroExtraCore() {
   loadout.expertise = 0;
   loadout.gear.holster = createPiece("holster", "picaros-holster");
   const stats = computeStats(loadout);
+  assert(loadout.gear.holster?.core === "yellow", "Picaro's primary core yellow");
   assert(stats.cores.yellow === 1, `Picaro's cœur jaune, got yellow=${stats.cores.yellow}`);
   assert(stats.cores.red === 1, `Picaro's cœur rouge extra, got red=${stats.cores.red}`);
+}
+
+function testLockedBrandAndExoticCores() {
+  assert(createPiece("mask", "catharsis").core === "blue", "Catharsis armor core");
+  assert(createPiece("holster", "forge").core === "yellow", "Forge skill tier core");
+  assert(createPiece("kneepads", "brand:badger").core === "blue", "Badger brand armor core");
+  assert(createPiece("gloves", "deathgrips").core === "blue", "Deathgrips primary armor core");
+  assert(
+    JSON.stringify(createPiece("gloves", "deathgrips").extraCores) === JSON.stringify(["red"]),
+    "Deathgrips bonus red core",
+  );
+  const memento = createPiece("backpack", "memento");
+  assert(memento.core === "red", "Memento primary red");
+  assert(
+    JSON.stringify(memento.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "Memento bonus blue+yellow",
+  );
+  // Equipping after a red piece must not inherit red.
+  assert(createPiece("holster", "forge", "red").core === "yellow", "Forge ignores inherited red");
+  assert(createPiece("mask", "brand:empress", "red").core === "yellow", "Empress brand locks yellow");
+  assert(createPiece("holster", "waveform").core === "yellow", "Waveform skill tier");
+  assert(createPiece("gloves", "btsu-datagloves").core === "yellow", "BTSU skill tier");
+  assert(createPiece("chest", "tardigrade").core === "blue", "Tardigrade armor");
+
+  const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
+  assert(forgePicker?.lockedCore === "yellow", "Forge locked yellow in picker");
+  const deathgripsPicker = catalogForSlot("gloves").find((item) => item.id === "deathgrips");
+  assert(deathgripsPicker?.lockedCore === "blue", "Deathgrips locked blue in picker");
+  const badgerPicker = catalogForSlot("kneepads").find((item) => item.id === "brand:badger");
+  assert(badgerPicker?.lockedCore === "blue", "Badger brand locked blue in picker");
 }
 
 function testCatalogCoverage() {
@@ -570,6 +601,7 @@ const tests = [
   testNamedBrandCorrections,
   testNamedExtraStats,
   testPicaroExtraCore,
+  testLockedBrandAndExoticCores,
   testCatalogCoverage,
   testWeaponCatalog,
   testUniqueTalentNote,

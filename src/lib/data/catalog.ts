@@ -230,8 +230,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "douglas",
     slots: ["mask"],
     extraStats: [{ stat: "hsd", value: 20 }],
-    extraCores: ["red"],
-    note: "Douglas mask: +20% extra Headshot Damage (single roll) + red core.",
+    note: "Douglas mask: +20% extra Headshot Damage (single roll). Brand core: red.",
   },
 
   // --- Gila Guard ---
@@ -315,7 +314,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["gloves"],
     extraStats: [{ stat: "armorOnKill", value: 10 }],
     extraCores: ["red"],
-    note: "5.11 gloves: +10% extra Armor on Kill + red core.",
+    note: "5.11 gloves: brand blue (Armor) core + bonus red (Weapon Damage) core +10% Armor on Kill.",
   },
   {
     id: "keeper",
@@ -394,9 +393,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "wyvern",
     slots: ["holster"],
+    lockedCore: "red",
     extraStats: [{ stat: "pistolDamage", value: 10 }],
-    extraCores: ["red"],
-    note: "Wyvern holster: extra pistol damage, high melee damage, red core.",
+    note: "Wyvern holster: extra pistol damage, high melee damage; locked red core (overrides brand yellow).",
   },
   {
     id: "impetus",
@@ -404,7 +403,6 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "wyvern",
     slots: ["chest"],
-    extraCores: ["yellow"],
     uniqueTalent: {
       name: "Perfect Kinetic Momentum",
       description:
@@ -434,8 +432,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "alps",
     slots: ["gloves"],
     extraStats: [{ stat: "skillHealth", value: 20 }],
-    extraCores: ["yellow"],
-    note: "Alps gloves (Technician specialization research): +20% extra skill health.",
+    note: "Alps gloves (Technician specialization research): +20% extra skill health. Brand core: yellow.",
   },
 
   // --- China Light Industries ---
@@ -461,7 +458,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "brazos",
     slots: ["holster"],
     extraCores: ["red"],
-    note: "Brazos holster: innate yellow core + bonus red core.",
+    note: "Brazos holster: brand yellow core + bonus red core.",
   },
   {
     id: "hermano",
@@ -499,8 +496,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "murakami",
     slots: ["kneepads"],
     extraStats: [{ stat: "armorRegen", value: 1 }],
-    extraCores: ["yellow"],
-    note: "Murakami kneepads: +1% extra armor regen + yellow core.",
+    note: "Murakami kneepads: +1% extra armor regen. Brand core: yellow.",
   },
 
   // --- Richter & Kaiser ---
@@ -525,8 +521,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "richter",
     slots: ["holster"],
     extraStats: [{ stat: "skillHealth", value: 20 }],
-    extraCores: ["yellow"],
-    note: "Richter holster: +50% shield health (approximated as skill health) + yellow core.",
+    note: "Richter holster: +50% shield health (approximated as skill health). Brand core: yellow.",
   },
 
   // --- Electrique ---
@@ -717,8 +712,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "unit-alloys",
     slots: ["holster"],
     extraStats: [{ stat: "rateOfFire", value: 5 }],
-    extraCores: ["red"],
-    note: "Unit Alloys holster: +5% extra rate of fire + red core.",
+    note: "Unit Alloys holster: +5% extra rate of fire. Brand core: red.",
   },
 
   // --- Royal Works ---
@@ -861,7 +855,6 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "shiny-monkey",
     slots: ["backpack"],
-    extraCores: ["yellow"],
     uniqueTalent: {
       name: "Perfect Energize",
       description:
@@ -876,8 +869,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "shiny-monkey",
     slots: ["kneepads"],
     extraStats: [{ stat: "statusEffects", value: 16 }],
-    extraCores: ["yellow"],
-    note: "Shiny Monkey kneepads: +16% extra Status Effects + yellow core.",
+    note: "Shiny Monkey kneepads: +16% extra Status Effects. Brand core: yellow.",
   },
 
   // --- Yaahl Gear ---
@@ -888,8 +880,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "yaahl",
     slots: ["mask"],
     extraStats: [{ stat: "damageToHealth", value: 14 }],
-    extraCores: ["blue"],
-    note: "Yaahl mask: +14% extra Damage to Health + blue core.",
+    note: "Yaahl mask: +14% extra Damage to Health. Brand core: blue.",
   },
 
   // ========== Exotics — masks ==========
@@ -897,6 +888,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "coyotes-mask",
     name: "Coyote's Mask",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["mask"],
     uniqueTalent: {
       name: "Pack Instincts",
@@ -912,6 +904,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "vile",
     name: "Vile",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["mask"],
     uniqueTalent: {
       name: "Toxic Delivery",
@@ -923,6 +916,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "catharsis",
     name: "Catharsis",
     kind: "exotic",
+    lockedCore: "blue",
     slots: ["mask"],
     uniqueTalent: {
       name: "Vicious Cycle",
@@ -934,6 +928,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "catalyst",
     name: "The Catalyst",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["mask"],
     uniqueTalent: {
       name: "Chain Reaction",
@@ -945,6 +940,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "tinkerer",
     name: "Tinkerer",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["mask"],
     uniqueTalent: {
       name: "Jury Rigged",
@@ -956,6 +952,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "investor",
     name: "Investor",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["mask"],
     uniqueTalent: {
       name: "Slotted",
@@ -969,6 +966,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "memento",
     name: "Memento",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["backpack"],
     extraCores: ["blue", "yellow"],
     uniqueTalent: {
@@ -981,6 +979,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "ninjabike",
     name: "NinjaBike Messenger Bag",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["backpack"],
     ninja: true,
     uniqueTalent: {
@@ -993,6 +992,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "acosta-go-bag",
     name: "Acosta's Go-Bag",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
       name: "One Step Ahead",
@@ -1003,6 +1003,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "harrier-pride",
     name: "Harrier Pride",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
       name: "Close Air Support",
@@ -1014,6 +1015,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "birdies-quick-fix",
     name: "Birdie's Quick Fix",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
       name: "Field Medic",
@@ -1027,6 +1029,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "ridgeways-pride",
     name: "Ridgeway's Pride",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["chest"],
     uniqueTalent: {
       name: "Bleeding Heart",
@@ -1037,6 +1040,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "tardigrade",
     name: "Tardigrade Armor System",
     kind: "exotic",
+    lockedCore: "blue",
     slots: ["chest"],
     uniqueTalent: {
       name: "Ablative Nanoplating",
@@ -1047,6 +1051,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "iron-will",
     name: "Iron Will",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["chest"],
     uniqueTalent: {
       name: "Resolved",
@@ -1058,6 +1063,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "collector",
     name: "Collector",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["chest"],
     uniqueTalent: {
       name: "Hoarder",
@@ -1069,6 +1075,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "provocator",
     name: "Provocator",
     kind: "exotic",
+    lockedCore: "blue",
     slots: ["chest"],
     uniqueTalent: {
       name: "Instigator",
@@ -1082,6 +1089,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "loaded-for-bear",
     name: "Loaded for Bear",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["gloves"],
     uniqueTalent: {
       name: "Afterburn",
@@ -1093,6 +1101,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "btsu-datagloves",
     name: "BTSU Datagloves",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["gloves"],
     extraStats: [{ stat: "skillHaste", value: 10 }],
     uniqueTalent: {
@@ -1105,6 +1114,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "bloody-knuckles",
     name: "Bloody Knuckles",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["gloves"],
     uniqueTalent: {
       name: "Bloodsport",
@@ -1116,6 +1126,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "shocker-punch",
     name: "Shocker Punch",
     kind: "exotic",
+    lockedCore: "blue",
     slots: ["gloves"],
     extraStats: [{ stat: "statusEffects", value: 10 }],
     uniqueTalent: {
@@ -1127,6 +1138,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "overdogs",
     name: "Overdogs",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["gloves"],
     extraStats: [{ stat: "armorOnKill", value: 10 }],
     uniqueTalent: {
@@ -1141,6 +1153,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "waveform",
     name: "Waveform",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["holster"],
     uniqueTalent: {
       name: "Capacitance",
@@ -1151,6 +1164,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "imperial-dynasty",
     name: "Imperial Dynasty",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["holster"],
     uniqueTalent: {
       name: "Dragon's Negation",
@@ -1161,6 +1175,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "dodge-city",
     name: "Dodge City Gunslinger's Holster",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["holster"],
     uniqueTalent: {
       name: "Quick Draw",
@@ -1171,6 +1186,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "centurions-scabbard",
     name: "Centurion's Scabbard",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["holster"],
     uniqueTalent: {
       name: "Gladius",
@@ -1184,6 +1200,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "nurses-kneepads",
     name: "Nurse's Kneepads",
     kind: "exotic",
+    lockedCore: "yellow",
     slots: ["kneepads"],
     extraStats: [{ stat: "hazardProtection", value: 10 }],
     uniqueTalent: {
@@ -1196,6 +1213,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "acosta-kneepads",
     name: "Acosta's Kneepads",
     kind: "exotic",
+    lockedCore: "blue",
     slots: ["kneepads"],
     uniqueTalent: {
       name: "Escape Plan",
@@ -1207,6 +1225,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     id: "blacklisters",
     name: "Blacklisters",
     kind: "exotic",
+    lockedCore: "red",
     slots: ["kneepads"],
     uniqueTalent: {
       name: "Ostracize",
@@ -1224,6 +1243,7 @@ export const CATALOG: CatalogItem[] = [
       kind: "brand",
       brandId: brand.id,
       slots: "all",
+      lockedCore: brand.core,
     }),
   ),
   ...GEAR_SETS.map(
@@ -1246,10 +1266,16 @@ export function catalogById(id: string): CatalogItem | undefined {
 export function catalogForSlot(slot: import("../types").Slot): CatalogItem[] {
   return CATALOG.filter((item) => item.slots === "all" || item.slots.includes(slot)).map(
     (item) => {
-      if (!item.gearSetId) return item;
-      const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
-      if (!set) return item;
-      return { ...item, lockedCore: gearSetCore(set, slot) };
+      if (item.gearSetId) {
+        const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
+        if (set) return { ...item, lockedCore: gearSetCore(set, slot) };
+      }
+      if (item.lockedCore) return item;
+      if (item.brandId) {
+        const brand = BRANDS.find((entry) => entry.id === item.brandId);
+        if (brand) return { ...item, lockedCore: brand.core };
+      }
+      return item;
     },
   );
 }
