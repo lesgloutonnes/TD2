@@ -7,6 +7,7 @@ import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
+import { AUGMENTS } from "./data/augments";
 import { pieceInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
@@ -613,6 +614,8 @@ function testPrototypeSwitch() {
   const proto = setPiecePrototype(brand, true);
   assert(proto.prototype === true, "prototype on");
   assert(proto.expertise === 30, "expertise forced to 30");
+  assert(proto.augmentId === "echo", "default augment Echo");
+  assert(proto.augmentLevel === 1, "default augment level 1");
   assert(proto.attributes[0]?.value === 9, `CHC proto max, got ${proto.attributes[0]?.value}`);
 
   const loadout = emptyLoadout();
@@ -621,13 +624,31 @@ function testPrototypeSwitch() {
   const stats = computeStats(loadout);
   assert(stats.values.weaponDamage === 22.5, `red core ×1.5, got ${stats.values.weaponDamage}`);
   assert(stats.notes.some((note) => note.includes("Prototype")), "prototype note");
+  assert(stats.bonuses.some((bonus) => bonus.source.includes("Echo")), "echo augment bonus");
 
   const exotic = setPiecePrototype(createPiece("mask", "catharsis"), true);
   assert(exotic.prototype === false, "exotics cannot be prototype");
 
   const off = setPiecePrototype(proto, false);
   assert(off.prototype === false, "prototype off");
+  assert(off.augmentId === undefined, "augment cleared");
   assert(off.attributes[0]?.value === 6, `CHC back to HE max, got ${off.attributes[0]?.value}`);
+}
+
+function testAugmentStacks() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  for (const slot of ["mask", "gloves", "holster"] as const) {
+    const piece = setPiecePrototype(createPiece(slot, "brand:grupo"), true);
+    piece.augmentId = "quantum";
+    piece.augmentLevel = 10;
+    loadout.gear[slot] = piece;
+  }
+  const stats = computeStats(loadout);
+  const quantum = stats.bonuses.find((bonus) => bonus.source.includes("Quantum"));
+  assert(quantum, "quantum stack bonus");
+  assert(quantum!.label.includes("13.8%"), `3× Quantum L10 = 13.8%, got ${quantum!.label}`);
+  assert(AUGMENTS.length === 9, "nine augments");
 }
 
 const tests = [
@@ -667,6 +688,7 @@ const tests = [
   testPerItemExpertise,
   testPistolSlotSanitize,
   testPrototypeSwitch,
+  testAugmentStacks,
 ];
 
 let failed = 0;

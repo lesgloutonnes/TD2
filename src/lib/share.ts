@@ -4,6 +4,7 @@ import { createPiece } from "./piece";
 import { EXPERTISE_MAX, canBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
 import { catalogById } from "./data/catalog";
+import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
 
 export function encodeLoadout(loadout: Loadout): string {
   const json = JSON.stringify(loadout);
@@ -50,6 +51,8 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     const source = catalogById(piece.sourceId);
     const prototype =
       Boolean(piece.prototype) && canBePrototype(source?.kind);
+    const augmentId =
+      prototype && augmentById(piece.augmentId) ? piece.augmentId : prototype ? defaultAugmentId() : undefined;
     gear[slot] = {
       ...created,
       ...piece,
@@ -57,6 +60,8 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
         typeof piece.expertise === "number" ? piece.expertise : (legacyExpertise ?? 0),
       ),
       prototype,
+      augmentId,
+      augmentLevel: prototype ? clampAugmentLevel(piece.augmentLevel) : undefined,
     };
   }
 

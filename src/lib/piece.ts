@@ -13,6 +13,7 @@ import {
 } from "./data/attributes";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCore } from "./data/gear-sets";
+import { clampAugmentLevel, defaultAugmentId } from "./data/augments";
 
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
   const source = catalogById(sourceId);
@@ -46,11 +47,13 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
 export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece {
   const source = catalogById(piece.sourceId);
   if (!canBePrototype(source?.kind)) {
-    return { ...piece, prototype: false };
+    const { augmentId: _a, augmentLevel: _l, ...rest } = piece;
+    return { ...rest, prototype: false };
   }
   if (!enabled) {
+    const { augmentId: _a, augmentLevel: _l, ...rest } = piece;
     return {
-      ...piece,
+      ...rest,
       prototype: false,
       attributes: scaleAttributesForPrototype(piece.attributes, false),
     };
@@ -60,6 +63,8 @@ export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece
     prototype: true,
     expertise: EXPERTISE_MAX,
     attributes: scaleAttributesForPrototype(piece.attributes, true),
+    augmentId: piece.augmentId ?? defaultAugmentId(),
+    augmentLevel: clampAugmentLevel(piece.augmentLevel ?? 1),
   };
 }
 

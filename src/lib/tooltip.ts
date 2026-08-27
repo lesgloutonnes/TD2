@@ -16,6 +16,7 @@ import {
   prototypeCoreMult,
 } from "./data/attributes";
 import { formatBonusList, gearCounts } from "./calc";
+import { augmentById, clampAugmentLevel } from "./data/augments";
 
 export type TooltipTier = {
   key: string;
@@ -44,6 +45,7 @@ export type PieceInspect =
       kindLabel: string;
       kindColor: string;
       prototype: boolean;
+      augment: { name: string; level: number; value: number; effectLabel: string; description: string } | null;
       core: CoreType;
       coreLabel: string;
       coreColor: string;
@@ -196,6 +198,19 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     }
   }
 
+  const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
+  const augmentDef = isPrototype ? augmentById(piece.augmentId) : undefined;
+  const augmentLevel = clampAugmentLevel(piece.augmentLevel);
+  const augment = augmentDef
+    ? {
+        name: augmentDef.name,
+        level: augmentLevel,
+        value: augmentDef.valueAtLevel(augmentLevel),
+        effectLabel: augmentDef.effectLabel,
+        description: augmentDef.description,
+      }
+    : null;
+
   return {
     empty: false,
     slot,
@@ -204,14 +219,14 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     kind: source.kind,
     kindLabel: KIND_LABELS[source.kind],
     kindColor: itemKindColor(source.kind),
-    prototype: Boolean(piece.prototype) && source.kind !== "exotic",
+    prototype: isPrototype,
+    augment,
     core: piece.core,
     coreLabel: CORE_OPTION_LABELS[piece.core],
     coreColor: CORE_COLORS[piece.core],
     coreValue: formatStat(
       CORE_VALUES[piece.core].stat,
-      CORE_VALUES[piece.core].value *
-        (piece.prototype && source.kind !== "exotic" ? prototypeCoreMult(piece.core) : 1),
+      CORE_VALUES[piece.core].value * (isPrototype ? prototypeCoreMult(piece.core) : 1),
     ),
     extraCores,
     stats,
