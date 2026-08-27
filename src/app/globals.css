@@ -217,6 +217,29 @@ select:focus {
   padding: 16px;
 }
 
+.agent-meta {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 16px;
+  align-items: end;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.kit-spacer {
+  min-height: 0;
+}
+
+.weapon-field {
+  display: grid;
+  gap: 8px;
+}
+
+.expertise-field input[type="range"] {
+  width: 100%;
+}
+
 .agent-svg {
   width: 100%;
   height: auto;
@@ -474,6 +497,10 @@ select:focus {
   grid-template-columns: 1fr 1fr;
 }
 
+.kit-spacer {
+  min-height: 0;
+}
+
 .core-row {
   grid-template-columns: repeat(3, 1fr);
 }
@@ -685,6 +712,10 @@ select:focus {
   .agent-board,
   .presets,
   .kit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agent-meta {
     grid-template-columns: 1fr;
   }
 

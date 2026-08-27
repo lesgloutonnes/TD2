@@ -9,6 +9,7 @@ import {
   CORE_OPTION_LABELS,
   defaultAttributes,
   defaultMod,
+  EXPERTISE_MAX,
   formatStat,
   gearSetAttribute,
   hasGearMod,
@@ -101,6 +102,21 @@ export function PieceEditor({
                 </option>
               ))}
             </select>
+            {coreLocked ? <small className="hint">Core locked for this piece.</small> : null}
+          </label>
+
+          <label className="field expertise-field">
+            <span>Expertise ({piece.expertise})</span>
+            <input
+              type="range"
+              min={0}
+              max={EXPERTISE_MAX}
+              value={piece.expertise}
+              onChange={(event) =>
+                onChange({ ...piece, expertise: Number(event.target.value) })
+              }
+            />
+            <small className="hint">+1% Armor on this piece per level (0–30).</small>
           </label>
 
           {piece.attributes.map((attribute, index) => (

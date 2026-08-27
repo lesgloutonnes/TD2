@@ -1,6 +1,7 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
 import { applyGearSet, createPiece } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
+import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
@@ -23,7 +24,6 @@ function testEmpty() {
 function testWatchOff() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   const stats = computeStats(loadout);
   assert(stats.values.chc === 0, "no watch chc");
   assert(stats.values.weaponDamage === 0, "no watch wd");
@@ -32,7 +32,6 @@ function testWatchOff() {
 function testProvidence3() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "brand:providence");
   loadout.gear.gloves = createPiece("gloves", "brand:providence");
   loadout.gear.holster = createPiece("holster", "brand:providence");
@@ -45,7 +44,6 @@ function testProvidence3() {
 function testNinja() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "brand:providence");
   loadout.gear.backpack = createPiece("backpack", "ninjabike");
   const stats = computeStats(loadout);
@@ -56,7 +54,6 @@ function testNinja() {
 function testStriker4() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "set:striker");
   loadout.gear.backpack = createPiece("backpack", "set:striker");
   loadout.gear.chest = createPiece("chest", "set:striker");
@@ -77,7 +74,6 @@ function testStriker4() {
 function testChcCap() {
   const loadout = emptyLoadout();
   loadout.shdWatch = true;
-  loadout.expertise = 0;
   for (const slot of ["mask", "backpack", "chest", "gloves", "holster", "kneepads"] as const) {
     loadout.gear[slot] = createPiece(slot, "brand:ceska");
   }
@@ -99,7 +95,6 @@ function testShareRoundtrip() {
 function testSkillTierCap() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.specialization = "technician";
   for (const slot of ["mask", "backpack", "chest", "gloves", "holster", "kneepads"] as const) {
     loadout.gear[slot] = createPiece(slot, "brand:empress", "yellow");
@@ -119,7 +114,6 @@ function testStrikerPresetChc() {
 function testY8s3Brands() {
   const walker = emptyLoadout();
   walker.shdWatch = false;
-  walker.expertise = 0;
   walker.gear.mask = createPiece("mask", "brand:walker");
   const walkerStats = computeStats(walker);
   assert(
@@ -129,7 +123,6 @@ function testY8s3Brands() {
 
   const grupo = emptyLoadout();
   grupo.shdWatch = false;
-  grupo.expertise = 0;
   grupo.gear.gloves = createPiece("gloves", "brand:grupo");
   grupo.gear.holster = createPiece("holster", "brand:grupo");
   grupo.gear.kneepads = createPiece("kneepads", "brand:grupo");
@@ -140,7 +133,6 @@ function testY8s3Brands() {
 function testCeskaY8s3() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "brand:ceska");
   loadout.gear.gloves = createPiece("gloves", "brand:ceska");
   loadout.gear.holster = createPiece("holster", "brand:ceska");
@@ -157,7 +149,6 @@ function testCeskaY8s3() {
 function testEmberEngine() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "set:ember-engine");
   loadout.gear.backpack = createPiece("backpack", "set:ember-engine");
   loadout.gear.chest = createPiece("chest", "set:ember-engine");
@@ -178,7 +169,6 @@ function testEmberEngine() {
 function testAcesY8s3() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "set:aces");
   loadout.gear.gloves = createPiece("gloves", "set:aces");
   loadout.gear.holster = createPiece("holster", "set:aces");
@@ -192,7 +182,6 @@ function testAcesY8s3() {
 function testHotshotHandlingMove() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = createPiece("mask", "set:hotshot");
   loadout.gear.gloves = createPiece("gloves", "set:hotshot");
   let stats = computeStats(loadout);
@@ -231,7 +220,6 @@ function testNamedBrandCorrections() {
 function testNamedExtraStats() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.gloves = createPiece("gloves", "contractors-gloves");
   loadout.gear.kneepads = createPiece("kneepads", "foxs-prayer");
   const stats = computeStats(loadout);
@@ -242,7 +230,6 @@ function testNamedExtraStats() {
 function testPicaroExtraCore() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.holster = createPiece("holster", "picaros-holster");
   const stats = computeStats(loadout);
   assert(loadout.gear.holster?.core === "yellow", "Picaro's primary core yellow");
@@ -389,7 +376,6 @@ function testWeaponCatalog() {
 function testUniqueTalentNote() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.chest = createPiece("chest", "the-sacrifice");
   const stats = computeStats(loadout);
   assert(
@@ -425,7 +411,6 @@ function testRefactorSlotCores() {
 
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.expertise = 0;
   loadout.gear.mask = mask;
   loadout.gear.backpack = backpack;
   const stats = computeStats(loadout);
@@ -583,6 +568,44 @@ function testInspectNinjaBoost() {
   assert(bag.affiliation === null, "ninja has no brand row");
 }
 
+function testPerItemExpertise() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = createPiece("mask", "brand:providence");
+  loadout.gear.mask.expertise = 10;
+  loadout.weapons.primary = { weaponId: "lexington", expertise: 15 };
+  const stats = computeStats(loadout);
+  assert(
+    stats.values.weaponDamage === 30,
+    `15 WD core + 15 expertise, got ${stats.values.weaponDamage}`,
+  );
+  assert(stats.values.armor >= 17000, `gear expertise armor, got ${stats.values.armor}`);
+  assert(
+    stats.notes.some((note) => note.includes("Primary weapon expertise 15")),
+    "primary expertise note",
+  );
+}
+
+function testPistolSlotSanitize() {
+  const dirty = emptyLoadout("Pistol leak") as Loadout & { expertise?: number };
+  dirty.weapons.primary = { weaponId: "liberty", expertise: 5 };
+  dirty.weapons.secondary = { weaponId: "lexington", expertise: 8 };
+  dirty.weapons.sidearm = { weaponId: "st-elmo", expertise: 3 };
+  dirty.expertise = 20;
+  const gloves = createPiece("gloves", "deathgrips");
+  delete (gloves as { expertise?: number }).expertise;
+  dirty.gear.gloves = gloves as typeof gloves;
+
+  const encoded = encodeLoadout(dirty);
+  const decoded = decodeLoadout(encoded);
+  assert(decoded, "decoded loadout");
+  assert(decoded!.weapons.primary === null, "pistol cleared from primary");
+  assert(decoded!.weapons.secondary?.weaponId === "lexington", "rifle stays on secondary");
+  assert(decoded!.weapons.secondary?.expertise === 8, "keeps weapon expertise");
+  assert(decoded!.weapons.sidearm === null, "non-pistol cleared from sidearm");
+  assert(decoded!.gear.gloves?.expertise === 20, "legacy global expertise migrated to piece");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -617,6 +640,8 @@ const tests = [
   testInspectProvidenceTiers,
   testInspectStrikerTalents,
   testInspectNinjaBoost,
+  testPerItemExpertise,
+  testPistolSlotSanitize,
 ];
 
 let failed = 0;

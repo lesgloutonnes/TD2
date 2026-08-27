@@ -68,8 +68,8 @@ export function StatsPanel({
           </strong>
         </div>
         <div>
-          <p className="eyebrow">Expertise</p>
-          <strong>{loadout.expertise}</strong>
+          <p className="eyebrow">Primary expertise</p>
+          <strong>{loadout.weapons.primary?.expertise ?? 0}</strong>
         </div>
       </div>
 
