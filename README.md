@@ -1,41 +1,41 @@
 # TD2 Gear Builder
 
-Planificateur de builds pour **Tom Clancy's The Division 2**.
+Loadout planner for **Tom Clancy's The Division 2**.
 
-Outil fan-made, 100 % dans le navigateur : marques, gear sets, pièces nommées, exotiques, armes, compétences, spécialisation, calcul des bonus et partage par URL.
+Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons, skills, specialization, bonus calculation, and URL sharing.
 
-## Lancer sans npm (Windows)
+## Run without npm (Windows)
 
-Double-cliquez sur **`lancer-builder.bat`**.
+Double-click **`lancer-builder.bat`**.
 
-Ça ouvre http://localhost:3000 dans le navigateur. Aucun Node/npm à installer : Windows PowerShell sert le site déjà généré dans `www/`. Laissez la fenêtre noire ouverte tant que vous jouez avec le builder, puis fermez-la pour arrêter.
+That opens http://localhost:3000 in the browser. No Node/npm install: Windows PowerShell serves the site already built in `www/`. Leave the black window open while you use the builder, then close it to stop.
 
-Si le navigateur affiche une **erreur 500**, mettez à jour `lancer-builder.ps1` (le premier serveur plantait en envoyant les fichiers). Relancez le `.bat` et regardez les lignes `ERREUR` dans la fenêtre noire.
+If the browser shows an **HTTP 500**, update `lancer-builder.ps1` (the first server crashed while sending files). Rerun the `.bat` and look for `ERREUR` lines in the black window.
 
-Si Windows bloque le script : clic droit sur `lancer-builder.ps1` → Propriétés → Débloquer, ou :
+If Windows blocks the script: right-click `lancer-builder.ps1` → Properties → Unblock, or:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-## Lancer avec npm (développement)
+## Run with npm (development)
 
 ```bash
 npm install
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
-## Fonctions
+## Features
 
-- 6 emplacements d'équipement + silhouette d'agent
-- 37 marques et 28 gear sets (**live Y8S3 Red Horizon**, 27 août 2026)
-- Nommés par marque (sheet 22/03/26 + Y8S3) : Chainkiller, Vigil, Backbone, The Setup, Bober, Equalizer…
-- Exotiques (Vile, BTSU, Collector, Nurse's Kneepads, Investor, Blacklisters, Caduceus, Ouroboros…)
-- Caps : CHC 60 %, paliers de compétence 6
-- NinjaBike : +1 pièce pour chaque marque/set déjà équipé
-- Presets : Striker, All Red, Heartbreaker, Skill DPS, Foundry, Hunter's Fury
-- Sauvegarde locale et lien de partage
+- 6 gear slots + agent silhouette
+- 37 brands and 28 gear sets (**live Y8S3 Red Horizon**, 27 Aug 2026)
+- Named items per brand (sheet 22/03/26 + Y8S3): Chainkiller, Vigil, Backbone, The Setup, Bober, Equalizer…
+- Exotics (Vile, BTSU, Collector, Nurse's Kneepads, Investor, Blacklisters, Caduceus, Ouroboros…)
+- Caps: CHC 60%, Skill Tier 6
+- NinjaBike: +1 piece for each brand/set already equipped
+- Presets: Striker, All Red, Heartbreaker, Skill DPS, Foundry, Hunter's Fury
+- Local save and share link
 
-Non affilié à Ubisoft.
+Not affiliated with Ubisoft.

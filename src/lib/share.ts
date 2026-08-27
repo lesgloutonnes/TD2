@@ -141,7 +141,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
   {
     id: "heartbreaker",
     name: "Heartbreaker AR",
-    blurb: "4 Heartbreaker bleu, bouclier croisé, St. Elmo.",
+    blurb: "4 Heartbreaker Blue, Crusader Shield, St. Elmo.",
     build: () => {
       const loadout = emptyLoadout("Heartbreaker AR");
       loadout.gear.mask = createPiece("mask", "set:heartbreaker");
@@ -161,7 +161,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
   {
     id: "skill",
     name: "Skill DPS",
-    blurb: "Empress / Wyvern / Hana-U + Capacitor. Technicien.",
+    blurb: "Empress / Wyvern / Hana-U + Capacitor. Technician.",
     build: () => {
       const loadout = emptyLoadout("Skill DPS");
       loadout.gear.mask = createPiece("mask", "brand:empress", "yellow");
@@ -183,7 +183,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
   {
     id: "foundry",
     name: "Tank Foundry",
-    blurb: "4 Foundry Bulwark, bouclier rempart, Firewall.",
+    blurb: "4 Foundry Bulwark, Bulwark Shield, Firewall.",
     build: () => {
       const loadout = emptyLoadout("Tank Foundry");
       loadout.gear.mask = createPiece("mask", "set:foundry");
@@ -203,7 +203,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
   {
     id: "hunters",
     name: "Hunter's Fury",
-    blurb: "CQC SMG / pompe. Dark Winter + Chatterbox.",
+    blurb: "CQC SMG / shotgun. Dark Winter + Chatterbox.",
     build: () => {
       const loadout = emptyLoadout("Hunter's Fury");
       loadout.gear.mask = createPiece("mask", "set:hunters-fury");

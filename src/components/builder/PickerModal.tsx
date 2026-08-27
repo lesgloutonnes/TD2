@@ -6,10 +6,10 @@ import { catalogForSlot } from "@/lib/data/catalog";
 import { CORE_COLORS, CORE_OPTION_LABELS, itemKindColor } from "@/lib/data/attributes";
 
 const KIND_LABELS: Record<ItemKind, string> = {
-  brand: "Marques",
-  "gear-set": "Sets",
-  named: "Nommés",
-  exotic: "Exotiques",
+  brand: "Brands",
+  "gear-set": "Gear Sets",
+  named: "Named",
+  exotic: "Exotics",
 };
 
 export function PickerModal({
@@ -46,18 +46,18 @@ export function PickerModal({
       >
         <div className="modal-head">
           <div>
-            <p className="eyebrow">Équipement</p>
-            <h2 id="picker-title">Choisir une pièce</h2>
+            <p className="eyebrow">Gear</p>
+            <h2 id="picker-title">Choose a piece</h2>
           </div>
           <button type="button" className="ghost-btn" onClick={onClose}>
-            Fermer
+            Close
           </button>
         </div>
         <input
           className="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Rechercher une marque, un set, un nommé…"
+          placeholder="Search a brand, gear set, named item…"
           autoFocus
         />
         <div className="chip-row">
@@ -66,7 +66,7 @@ export function PickerModal({
             className={kind === "all" ? "chip active" : "chip"}
             onClick={() => setKind("all")}
           >
-            Tout
+            All
           </button>
           {(Object.keys(KIND_LABELS) as ItemKind[]).map((key) => (
             <button
@@ -105,15 +105,15 @@ export function PickerModal({
                 <button
                   type="button"
                   className="ghost-btn set-all-btn"
-                  title="Équiper les 6 emplacements avec ce set"
+                  title="Equip all 6 slots with this gear set"
                   onClick={() => onPickSet(item.id)}
                 >
-                  6 pièces
+                  6 pieces
                 </button>
               ) : null}
             </div>
           ))}
-          {items.length === 0 ? <p className="empty">Aucun résultat.</p> : null}
+          {items.length === 0 ? <p className="empty">No results.</p> : null}
         </div>
       </div>
     </div>

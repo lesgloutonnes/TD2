@@ -17,12 +17,12 @@ const mono = Share_Tech_Mono({
 export const metadata: Metadata = {
   title: "TD2 Gear Builder",
   description:
-    "Planificateur de builds The Division 2 — live Y8S3 Red Horizon : marques, gear sets, talents, armes et stats.",
+    "The Division 2 loadout planner — live Y8S3 Red Horizon: brands, gear sets, talents, weapons, and stats.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${sans.variable} ${mono.variable} h-full antialiased`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );
