@@ -36,6 +36,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
+- Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
+- Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Armor model: flat piece armor + blue cores + Total Armor %
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)

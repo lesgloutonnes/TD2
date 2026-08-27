@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
-import type { GearPiece, Loadout, Slot, WeaponSlot } from "@/lib/types";
+import type { GearPiece, Loadout, Slot, StatKey, WeaponMod, WeaponSlot } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
 import { applyGearSet, createPiece, pieceLabel } from "@/lib/piece";
 import { catalogById } from "@/lib/data/catalog";
@@ -11,13 +11,23 @@ import {
   CORE_SHORT_LABELS,
   EMPTY_SLOT_COLOR,
   EXPERTISE_MAX,
+  formatStat,
   itemKindColor,
+  parseStatInput,
   PRIMARY_WEAPON_TYPES,
   SLOT_LABELS,
   SLOTS,
+  STAT_LABELS,
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
+import {
+  clampWeaponMod,
+  defaultWeaponMods,
+  WEAPON_MOD_GROUPS,
+  WEAPON_MOD_KIND_LABELS,
+  WEAPON_MOD_MAX,
+} from "@/lib/data/weapon-mods";
 import { augmentById } from "@/lib/data/augments";
 import { pieceInspect } from "@/lib/tooltip";
 import {
@@ -96,18 +106,31 @@ export function BuilderApp() {
   }
 
   function setWeapon(slot: WeaponSlot, weaponId: string) {
-    setLoadout((current) => ({
-      ...current,
-      weapons: {
-        ...current.weapons,
-        [slot]: weaponId
-          ? {
-              weaponId,
-              expertise: current.weapons[slot]?.expertise ?? 0,
-            }
-          : null,
-      },
-    }));
+    setLoadout((current) => {
+      if (!weaponId) {
+        return {
+          ...current,
+          weapons: { ...current.weapons, [slot]: null },
+        };
+      }
+      const def = WEAPONS.find((weapon) => weapon.id === weaponId);
+      if (!def) return current;
+      const prev = current.weapons[slot];
+      return {
+        ...current,
+        weapons: {
+          ...current.weapons,
+          [slot]: {
+            weaponId,
+            expertise: prev?.expertise ?? 0,
+            mods:
+              prev?.weaponId === weaponId && prev.mods?.length
+                ? prev.mods
+                : defaultWeaponMods(def.type),
+          },
+        },
+      };
+    });
   }
 
   function setWeaponExpertise(slot: WeaponSlot, expertise: number) {
@@ -119,6 +142,22 @@ export function BuilderApp() {
         weapons: {
           ...current.weapons,
           [slot]: { ...equipped, expertise },
+        },
+      };
+    });
+  }
+
+  function setWeaponMod(slot: WeaponSlot, index: number, nextMod: WeaponMod) {
+    setLoadout((current) => {
+      const equipped = current.weapons[slot];
+      if (!equipped) return current;
+      const mods = [...(equipped.mods ?? [])];
+      mods[index] = nextMod;
+      return {
+        ...current,
+        weapons: {
+          ...current.weapons,
+          [slot]: { ...equipped, mods },
         },
       };
     });
@@ -310,27 +349,33 @@ export function BuilderApp() {
               slot="primary"
               value={loadout.weapons.primary?.weaponId ?? ""}
               expertise={loadout.weapons.primary?.expertise ?? 0}
+              mods={loadout.weapons.primary?.mods ?? []}
               types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
+              onModChange={setWeaponMod}
             />
             <WeaponSelect
               label="Secondary weapon"
               slot="secondary"
               value={loadout.weapons.secondary?.weaponId ?? ""}
               expertise={loadout.weapons.secondary?.expertise ?? 0}
+              mods={loadout.weapons.secondary?.mods ?? []}
               types={[...PRIMARY_WEAPON_TYPES]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
+              onModChange={setWeaponMod}
             />
             <WeaponSelect
               label="Sidearm"
               slot="sidearm"
               value={loadout.weapons.sidearm?.weaponId ?? ""}
               expertise={loadout.weapons.sidearm?.expertise ?? 0}
+              mods={loadout.weapons.sidearm?.mods ?? []}
               types={["pistol"]}
               onChange={setWeapon}
               onExpertiseChange={setWeaponExpertise}
+              onModChange={setWeaponMod}
             />
             <div className="kit-spacer" aria-hidden="true" />
             <label className="field">
@@ -445,16 +490,20 @@ function WeaponSelect({
   slot,
   value,
   expertise,
+  mods,
   onChange,
   onExpertiseChange,
+  onModChange,
   types,
 }: {
   label: string;
   slot: WeaponSlot;
   value: string;
   expertise: number;
+  mods: WeaponMod[];
   onChange: (slot: WeaponSlot, weaponId: string) => void;
   onExpertiseChange: (slot: WeaponSlot, expertise: number) => void;
+  onModChange: (slot: WeaponSlot, index: number, mod: WeaponMod) => void;
   types?: Array<(typeof WEAPONS)[number]["type"]>;
 }) {
   const options = types ? WEAPONS.filter((weapon) => types.includes(weapon.type)) : WEAPONS;
@@ -487,6 +536,60 @@ function WeaponSelect({
               onChange={(event) => onExpertiseChange(slot, Number(event.target.value))}
             />
           </label>
+          <div className="weapon-mods">
+            <p className="eyebrow">Weapon mods</p>
+            {mods.map((mod, index) => {
+              const groups = WEAPON_MOD_GROUPS[mod.kind];
+              const max = WEAPON_MOD_MAX[mod.stat];
+              return (
+                <div key={`${mod.kind}-${index}`} className="weapon-mod-row">
+                  <label className="field">
+                    <span>{WEAPON_MOD_KIND_LABELS[mod.kind]}</span>
+                    <select
+                      value={mod.stat}
+                      onChange={(event) => {
+                        const stat = event.target.value as StatKey;
+                        onModChange(slot, index, {
+                          kind: mod.kind,
+                          stat,
+                          value: clampWeaponMod(stat, WEAPON_MOD_MAX[stat] ?? mod.value),
+                        });
+                      }}
+                    >
+                      {groups.map((group) => (
+                        <optgroup key={group.label} label={group.label}>
+                          {group.stats.map((stat) => (
+                            <option key={stat} value={stat}>
+                              {STAT_LABELS[stat]}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="field">
+                    <span>
+                      {formatStat(mod.stat, mod.value)}
+                      {max != null ? ` · max ${formatStat(mod.stat, max)}` : ""}
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={max}
+                      step={0.1}
+                      value={mod.value}
+                      onChange={(event) =>
+                        onModChange(slot, index, {
+                          ...mod,
+                          value: clampWeaponMod(mod.stat, parseStatInput(event.target.value)),
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              );
+            })}
+          </div>
         </>
       ) : null}
     </div>
