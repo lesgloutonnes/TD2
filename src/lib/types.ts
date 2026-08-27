@@ -81,6 +81,8 @@ export type GearSetDef = {
   name: string;
   color: string;
   core: CoreType;
+  /** Cœur imposé par emplacement quand le set n'est pas mono-cœur (Refactor, System Corruption…). */
+  slotCores?: Partial<Record<Slot, CoreType>>;
   two: string;
   three: string;
   four: string;

@@ -213,6 +213,17 @@ function testNamedBrandCorrections() {
 
   const chainkiller = catalogById("chainkiller");
   assert(chainkiller?.brandId === "walker", "Chainkiller est Walker");
+
+  const vigil = catalogById("vigil");
+  assert(vigil?.brandId === "legatus", "Vigil est Legatus");
+  assert(vigil?.slots !== "all" && vigil?.slots.includes("backpack"), "Vigil sac");
+
+  const sleight = catalogById("sleight");
+  assert(sleight?.slots !== "all" && sleight?.slots.includes("chest"), "Sleight gilet");
+  const spotOn = catalogById("spot-on");
+  assert(spotOn?.slots !== "all" && spotOn?.slots.includes("holster"), "Spot-On holster");
+  const bulldog = catalogById("bulldog");
+  assert(bulldog?.slots !== "all" && bulldog?.slots.includes("backpack"), "Bulldog sac");
 }
 
 function testNamedExtraStats() {
@@ -242,8 +253,8 @@ function testCatalogCoverage() {
 
   const named = NAMED_AND_EXOTICS.filter((item) => item.kind === "named");
   const exotic = NAMED_AND_EXOTICS.filter((item) => item.kind === "exotic");
-  assert(named.length >= 50, `au moins 50 nommés, got ${named.length}`);
-  assert(exotic.length >= 20, `au moins 20 exotiques gear, got ${exotic.length}`);
+  assert(named.length >= 65, `au moins 65 nommés, got ${named.length}`);
+  assert(exotic.length >= 25, `au moins 25 exotiques gear, got ${exotic.length}`);
 
   const namedBrands = new Set(named.map((item) => item.brandId).filter(Boolean));
   const expected = [
@@ -279,6 +290,11 @@ function testCatalogCoverage() {
     "royal-works",
     "edelweiss",
     "yaahl",
+    "uzina",
+    "palisade",
+    "zwiadowka",
+    "legatus",
+    "shiny-monkey",
   ];
   for (const brandId of expected) {
     assert(namedBrands.has(brandId), `nommé manquant pour ${brandId}`);
@@ -296,6 +312,11 @@ function testCatalogCoverage() {
     "devils-due",
     "equalizer",
     "benefactor",
+    "vigil",
+    "backbone",
+    "the-setup",
+    "bober",
+    "visionario",
   ]) {
     assert(catalogById(required), `catalogue manque ${required}`);
   }
@@ -306,8 +327,8 @@ function testWeaponCatalog() {
   assert(new Set(ids).size === ids.length, "ids armes uniques");
   const named = WEAPONS.filter((weapon) => weapon.quality === "named");
   const exotic = WEAPONS.filter((weapon) => weapon.quality === "exotic");
-  assert(named.length >= 25, `au moins 25 armes nommées, got ${named.length}`);
-  assert(exotic.length >= 20, `au moins 20 armes exotiques, got ${exotic.length}`);
+  assert(named.length >= 80, `au moins 80 armes nommées, got ${named.length}`);
+  assert(exotic.length >= 22, `au moins 22 armes exotiques, got ${exotic.length}`);
   for (const required of [
     "caduceus",
     "ouroboros",
@@ -320,6 +341,10 @@ function testWeaponCatalog() {
     "harmony",
     "lexington",
     "st-elmo",
+    "caretaker",
+    "the-grudge",
+    "bakers-dozen",
+    "shroud",
   ]) {
     assert(
       WEAPONS.some((weapon) => weapon.id === required),
@@ -349,6 +374,40 @@ function testSlotCoreColors() {
   assert(slotColor("mask", loadout) === CORE_COLORS.red, "brand high-end follows red core");
   assert(slotColor("chest", loadout) === CORE_COLORS.blue, "foundry follows blue core");
   assert(slotColor("gloves", loadout) === CORE_COLORS.yellow, "ember engine follows yellow core");
+}
+
+function testRefactorSlotCores() {
+  const mask = createPiece("mask", "set:refactor", "red");
+  const chest = createPiece("chest", "set:refactor", "red");
+  const holster = createPiece("holster", "set:refactor", "red");
+  const backpack = createPiece("backpack", "set:refactor", "red");
+  const gloves = createPiece("gloves", "set:refactor", "red");
+  const kneepads = createPiece("kneepads", "set:refactor", "red");
+  assert(mask.core === "yellow", "Refactor masque jaune");
+  assert(chest.core === "yellow", "Refactor gilet jaune");
+  assert(holster.core === "yellow", "Refactor holster jaune");
+  assert(backpack.core === "blue", "Refactor sac bleu");
+  assert(gloves.core === "blue", "Refactor gants bleus");
+  assert(kneepads.core === "blue", "Refactor genouillères bleues");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.expertise = 0;
+  loadout.gear.mask = mask;
+  loadout.gear.backpack = backpack;
+  const stats = computeStats(loadout);
+  assert(stats.cores.yellow === 1, `Refactor 1 jaune, got yellow=${stats.cores.yellow}`);
+  assert(stats.cores.blue === 1, `Refactor 1 bleu, got blue=${stats.cores.blue}`);
+  assert(stats.cores.red === 0, "Refactor sans cœur rouge par défaut");
+}
+
+function testSystemCorruptionSlotCores() {
+  assert(createPiece("mask", "set:system-corruption").core === "red", "SC masque rouge");
+  assert(createPiece("gloves", "set:system-corruption").core === "red", "SC gants rouge");
+  assert(createPiece("holster", "set:system-corruption").core === "red", "SC holster rouge");
+  assert(createPiece("backpack", "set:system-corruption").core === "blue", "SC sac bleu");
+  assert(createPiece("chest", "set:system-corruption").core === "blue", "SC gilet bleu");
+  assert(createPiece("kneepads", "set:system-corruption").core === "blue", "SC genouillères bleues");
 }
 
 function testKindColors() {
@@ -387,6 +446,8 @@ const tests = [
   testWeaponCatalog,
   testUniqueTalentNote,
   testSlotCoreColors,
+  testRefactorSlotCores,
+  testSystemCorruptionSlotCores,
   testKindColors,
   testStatCaps,
 ];

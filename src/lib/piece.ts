@@ -7,7 +7,7 @@ import {
   gearSetAttribute,
   hasGearMod,
 } from "./data/attributes";
-import { GEAR_SETS } from "./data/gear-sets";
+import { GEAR_SETS, gearSetCore } from "./data/gear-sets";
 
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
   const source = catalogById(sourceId);
@@ -36,11 +36,11 @@ export function createPiece(slot: Slot, sourceId: string, core?: CoreType): Gear
 }
 
 function resolveCore(slot: Slot, source: CatalogItem | undefined, core?: CoreType): CoreType {
-  if (source?.lockedCore) return source.lockedCore;
   if (source?.gearSetId) {
     const set = GEAR_SETS.find((item) => item.id === source.gearSetId);
-    if (set) return set.core;
+    if (set) return gearSetCore(set, slot);
   }
+  if (source?.lockedCore) return source.lockedCore;
   if (source?.brandId === "brazos" && slot === "holster" && source.id === "picaros-holster") {
     return "yellow";
   }
