@@ -5,6 +5,7 @@ import { NAMED_AND_EXOTICS, catalogById } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor, clampStat } from "./data/attributes";
+import { pieceInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -424,6 +425,85 @@ function testStatCaps() {
   assert(clampStat("chc", -3) === 0, "no negative");
 }
 
+function testInspectEmpty() {
+  const inspect = pieceInspect("mask", emptyLoadout());
+  assert(inspect.empty, "empty slot inspect");
+  assert(inspect.slotLabel === "Masque", "slot label");
+}
+
+function testInspectProvidenceTiers() {
+  const loadout = emptyLoadout();
+  loadout.gear.mask = createPiece("mask", "brand:providence");
+  const one = pieceInspect("mask", loadout);
+  assert(!one.empty, "equipped inspect");
+  if (one.empty) return;
+  assert(one.name === "Providence Defense", "brand name");
+  assert(one.affiliation?.tiers.length === 3, "1/2/3pc listed");
+  assert(one.affiliation?.tiers[0]?.active === true, "1pc active");
+  assert(one.affiliation?.tiers[1]?.active === false, "2pc locked");
+  assert(one.affiliation?.tiers[2]?.active === false, "3pc locked");
+  assert(one.affiliation?.tiers[0]?.detail.includes("13"), "1pc hsd");
+
+  loadout.gear.gloves = createPiece("gloves", "brand:providence");
+  const two = pieceInspect("mask", loadout);
+  assert(!two.empty, "still equipped");
+  if (two.empty) return;
+  assert(two.affiliation?.tiers[0]?.active === true, "1pc still active");
+  assert(two.affiliation?.tiers[1]?.active === true, "2pc lights up");
+  assert(two.affiliation?.tiers[2]?.active === false, "3pc still locked");
+}
+
+function testInspectStrikerTalents() {
+  const loadout = emptyLoadout();
+  loadout.gear.mask = createPiece("mask", "set:striker");
+  loadout.gear.backpack = createPiece("backpack", "set:striker");
+  loadout.gear.chest = createPiece("chest", "set:striker");
+  loadout.gear.gloves = createPiece("gloves", "set:striker");
+  const inspect = pieceInspect("mask", loadout);
+  assert(!inspect.empty, "striker inspect");
+  if (inspect.empty) return;
+  const tiers = inspect.affiliation?.tiers ?? [];
+  assert(tiers.find((tier) => tier.key === "2pc")?.active === true, "2pc");
+  assert(tiers.find((tier) => tier.key === "3pc")?.active === true, "3pc");
+  assert(tiers.find((tier) => tier.key === "4pc")?.active === true, "4pc");
+  assert(tiers.find((tier) => tier.key === "chest-talent")?.active === true, "chest talent on");
+  assert(tiers.find((tier) => tier.key === "backpack-talent")?.active === true, "backpack talent on");
+
+  loadout.gear.chest = createPiece("chest", "brand:providence");
+  loadout.gear.holster = createPiece("holster", "set:striker");
+  const noChest = pieceInspect("mask", loadout);
+  assert(!noChest.empty, "still inspect");
+  if (noChest.empty) return;
+  assert(noChest.affiliation?.tiers.find((tier) => tier.key === "4pc")?.active === true, "4pc still on");
+  assert(
+    noChest.affiliation?.tiers.find((tier) => tier.key === "chest-talent")?.active === false,
+    "chest talent off without set chest",
+  );
+  assert(
+    noChest.affiliation?.tiers.find((tier) => tier.key === "backpack-talent")?.active === true,
+    "backpack talent stays on",
+  );
+}
+
+function testInspectNinjaBoost() {
+  const loadout = emptyLoadout();
+  loadout.gear.mask = createPiece("mask", "brand:providence");
+  loadout.gear.backpack = createPiece("backpack", "ninjabike");
+  const inspect = pieceInspect("mask", loadout);
+  assert(!inspect.empty, "ninja inspect");
+  if (inspect.empty) return;
+  assert(inspect.affiliation?.pieces === 2, `ninja counts as 2, got ${inspect.affiliation?.pieces}`);
+  assert(inspect.affiliation?.ninjaBoost === true, "ninja badge");
+  assert(inspect.affiliation?.tiers[1]?.active === true, "ninja unlocks 2pc");
+  assert(inspect.affiliation?.tiers[2]?.active === false, "3pc still locked");
+
+  const bag = pieceInspect("backpack", loadout);
+  assert(!bag.empty, "ninja bag inspect");
+  if (bag.empty) return;
+  assert(bag.talent?.name === "Resourceful", "ninja talent");
+  assert(bag.affiliation === null, "ninja has no brand row");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -450,6 +530,10 @@ const tests = [
   testSystemCorruptionSlotCores,
   testKindColors,
   testStatCaps,
+  testInspectEmpty,
+  testInspectProvidenceTiers,
+  testInspectStrikerTalents,
+  testInspectNinjaBoost,
 ];
 
 let failed = 0;

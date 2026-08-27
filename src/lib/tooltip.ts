@@ -1,0 +1,214 @@
+import type { CoreType, ItemKind, Loadout, Slot } from "./types";
+import { BRANDS } from "./data/brands";
+import { GEAR_SETS } from "./data/gear-sets";
+import { catalogById } from "./data/catalog";
+import { ALL_TALENTS } from "./data/talents";
+import {
+  CORE_COLORS,
+  CORE_OPTION_LABELS,
+  CORE_VALUES,
+  KIND_LABELS,
+  SLOT_LABELS,
+  STAT_LABELS,
+  formatStat,
+  hasGearMod,
+  itemKindColor,
+} from "./data/attributes";
+import { formatBonusList, gearCounts } from "./calc";
+
+export type TooltipTier = {
+  key: string;
+  label: string;
+  detail: string;
+  active: boolean;
+};
+
+export type InspectStat = {
+  label: string;
+  value: string;
+};
+
+export type PieceInspect =
+  | {
+      empty: true;
+      slot: Slot;
+      slotLabel: string;
+    }
+  | {
+      empty: false;
+      slot: Slot;
+      slotLabel: string;
+      name: string;
+      kind: ItemKind;
+      kindLabel: string;
+      kindColor: string;
+      core: CoreType;
+      coreLabel: string;
+      coreColor: string;
+      coreValue: string;
+      extraCores: { core: CoreType; label: string; color: string }[];
+      stats: InspectStat[];
+      talent: { name: string; description: string; locked: boolean } | null;
+      affiliation: {
+        name: string;
+        color: string;
+        pieces: number;
+        required: number;
+        ninjaBoost: boolean;
+        tiers: TooltipTier[];
+      } | null;
+    };
+
+export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
+  const slotLabel = SLOT_LABELS[slot];
+  const piece = loadout.gear[slot];
+  if (!piece) return { empty: true, slot, slotLabel };
+
+  const source = catalogById(piece.sourceId);
+  if (!source) return { empty: true, slot, slotLabel };
+
+  const { brandCounts, setCounts, ninja } = gearCounts(loadout);
+
+  const extraCores = (piece.extraCores ?? source.extraCores ?? []).map((core) => ({
+    core,
+    label: CORE_OPTION_LABELS[core],
+    color: CORE_COLORS[core],
+  }));
+
+  const stats: InspectStat[] = [];
+  for (const attr of piece.attributes) {
+    stats.push({
+      label: STAT_LABELS[attr.stat],
+      value: formatStat(attr.stat, attr.value),
+    });
+  }
+  if (source.extraStats) {
+    for (const extra of source.extraStats) {
+      stats.push({
+        label: STAT_LABELS[extra.stat],
+        value: formatStat(extra.stat, extra.value),
+      });
+    }
+  }
+  if (hasGearMod(slot)) {
+    for (const mod of piece.mods) {
+      stats.push({
+        label: `Mod · ${STAT_LABELS[mod.stat]}`,
+        value: formatStat(mod.stat, mod.value),
+      });
+    }
+  }
+
+  let talent: { name: string; description: string; locked: boolean } | null = null;
+  if (source.uniqueTalent) {
+    talent = { ...source.uniqueTalent, locked: false };
+  } else if (piece.talentId) {
+    const found = ALL_TALENTS.find((item) => item.id === piece.talentId);
+    if (found) {
+      talent = { name: found.name, description: found.description, locked: false };
+    }
+  }
+
+  let affiliation: Extract<PieceInspect, { empty: false }>["affiliation"] = null;
+
+  if (source.brandId) {
+    const brand = BRANDS.find((item) => item.id === source.brandId);
+    if (brand) {
+      const pieces = brandCounts.get(brand.id) ?? 0;
+      affiliation = {
+        name: brand.name,
+        color: brand.color,
+        pieces,
+        required: 3,
+        ninjaBoost: ninja && pieces > 0,
+        tiers: brand.bonuses.map((bonus, index) => {
+          const n = index + 1;
+          return {
+            key: `${n}pc`,
+            label: `${n} pièce${n > 1 ? "s" : ""}`,
+            detail: formatBonusList(bonus),
+            active: pieces >= n,
+          };
+        }),
+      };
+    }
+  } else if (source.gearSetId) {
+    const set = GEAR_SETS.find((item) => item.id === source.gearSetId);
+    if (set) {
+      const pieces = setCounts.get(set.id) ?? 0;
+      const chest = loadout.gear.chest;
+      const backpack = loadout.gear.backpack;
+      const chestIsSet = Boolean(chest && catalogById(chest.sourceId)?.gearSetId === set.id);
+      const backpackIsSet = Boolean(
+        backpack && catalogById(backpack.sourceId)?.gearSetId === set.id,
+      );
+      const fourPiece = pieces >= 4;
+      affiliation = {
+        name: set.name,
+        color: set.color,
+        pieces,
+        required: 4,
+        ninjaBoost: ninja && pieces > 0,
+        tiers: [
+          {
+            key: "2pc",
+            label: "2 pièces",
+            detail: set.two,
+            active: pieces >= 2,
+          },
+          {
+            key: "3pc",
+            label: "3 pièces",
+            detail: set.three,
+            active: pieces >= 3,
+          },
+          {
+            key: "4pc",
+            label: "4 pièces",
+            detail: set.four,
+            active: fourPiece,
+          },
+          {
+            key: "backpack-talent",
+            label: "Talent sac",
+            detail: `${set.backpackTalent.name} — ${set.backpackTalent.description}`,
+            active: fourPiece && backpackIsSet,
+          },
+          {
+            key: "chest-talent",
+            label: "Talent gilet",
+            detail: `${set.chestTalent.name} — ${set.chestTalent.description}`,
+            active: fourPiece && chestIsSet,
+          },
+        ],
+      };
+
+      if (!talent && (slot === "chest" || slot === "backpack")) {
+        const setTalent = slot === "chest" ? set.chestTalent : set.backpackTalent;
+        talent = {
+          name: setTalent.name,
+          description: setTalent.description,
+          locked: !fourPiece,
+        };
+      }
+    }
+  }
+
+  return {
+    empty: false,
+    slot,
+    slotLabel,
+    name: source.name,
+    kind: source.kind,
+    kindLabel: KIND_LABELS[source.kind],
+    kindColor: itemKindColor(source.kind),
+    core: piece.core,
+    coreLabel: CORE_OPTION_LABELS[piece.core],
+    coreColor: CORE_COLORS[piece.core],
+    coreValue: formatStat(CORE_VALUES[piece.core].stat, CORE_VALUES[piece.core].value),
+    extraCores,
+    stats,
+    talent,
+    affiliation,
+  };
+}
