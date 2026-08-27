@@ -1,4 +1,4 @@
-import type { CoreType, Slot, StatBonus, StatKey } from "../types";
+import type { CoreType, ItemKind, Slot, StatBonus, StatKey } from "../types";
 
 export const SLOTS: Slot[] = [
   "mask",
@@ -24,40 +24,66 @@ export const CORE_LABELS: Record<CoreType, string> = {
   yellow: "Palier de compétence",
 };
 
+export const CORE_OPTION_LABELS: Record<CoreType, string> = {
+  red: "Rouge — Dégâts d'arme",
+  blue: "Bleu — Armure",
+  yellow: "Jaune — Palier de compétence",
+};
+
 export const CORE_VALUES: Record<CoreType, StatBonus> = {
   red: { stat: "weaponDamage", value: 15 },
   blue: { stat: "armor", value: 170000 },
   yellow: { stat: "skillTier", value: 1 },
 };
 
+export const CORE_COLORS: Record<CoreType, string> = {
+  red: "#e23d3d",
+  blue: "#3d8fe2",
+  yellow: "#e2c03d",
+};
+
+export const EMPTY_SLOT_COLOR = "#3a414c";
+
+/** Couleurs d'identification TD2 : high-end or, set émeraude, exo rouge. */
+export const KIND_COLORS: Record<ItemKind, string> = {
+  brand: "#d4af37",
+  named: "#d4af37",
+  "gear-set": "#2ecc71",
+  exotic: "#c41e3a",
+};
+
+export function itemKindColor(kind: ItemKind): string {
+  return KIND_COLORS[kind];
+}
+
 export const STAT_LABELS: Record<StatKey, string> = {
   weaponDamage: "Dégâts d'arme",
-  chc: "Chance de critique",
-  chd: "Dégâts critiques",
-  hsd: "Dégâts à la tête",
+  chc: "Chances de coups critiques",
+  chd: "Dégâts des coups critiques",
+  hsd: "Dégâts des tirs à la tête",
   weaponHandling: "Maniement d'arme",
   armor: "Armure",
   health: "Santé",
-  armorRegen: "Régén. d'armure",
+  armorRegen: "Régénération d'armure",
   armorOnKill: "Armure à la mort",
-  hazardProtection: "Protection aléas",
-  explosiveResistance: "Résistance explosifs",
+  hazardProtection: "Protection contre les aléas",
+  explosiveResistance: "Résistance aux explosifs",
   incomingRepairs: "Réparations reçues",
   skillDamage: "Dégâts de compétence",
   skillHaste: "Hâte de compétence",
   skillDuration: "Durée de compétence",
-  skillRepair: "Réparation de compétence",
+  skillRepair: "Compétences de réparation",
   skillEfficiency: "Efficacité de compétence",
   skillHealth: "Santé de compétence",
   statusEffects: "Effets de statut",
   skillTier: "Palier de compétence",
-  arDamage: "Dégâts fusil d'assaut",
-  lmgDamage: "Dégâts mitrailleuse",
-  smgDamage: "Dégâts PM",
-  shotgunDamage: "Dégâts fusil à pompe",
-  mmrDamage: "Dégâts fusil de précision",
-  rifleDamage: "Dégâts fusil",
-  pistolDamage: "Dégâts pistolet",
+  arDamage: "Dégâts des fusils d'assaut",
+  lmgDamage: "Dégâts des mitrailleuses",
+  smgDamage: "Dégâts des pistolets-mitrailleurs",
+  shotgunDamage: "Dégâts des fusils à pompe",
+  mmrDamage: "Dégâts des fusils de précision",
+  rifleDamage: "Dégâts des fusils",
+  pistolDamage: "Dégâts des pistolets",
   reloadSpeed: "Vitesse de rechargement",
   magazineSize: "Taille du chargeur",
   ammoCapacity: "Capacité de munitions",
@@ -67,10 +93,10 @@ export const STAT_LABELS: Record<StatKey, string> = {
   damageToArmor: "Dégâts à l'armure",
   damageToHealth: "Dégâts à la santé",
   explosiveDamage: "Dégâts explosifs",
-  pulseResistance: "Résistance pulse",
-  swapSpeed: "Vitesse de changement",
+  pulseResistance: "Résistance aux impulsions",
+  swapSpeed: "Vitesse de changement d'arme",
   optimalRange: "Portée optimale",
-  threat: "Menace",
+  threat: "Menace accrue",
   protectionFromElites: "Protection contre les élites",
 };
 
@@ -94,38 +120,83 @@ export const STAT_MAX: Partial<Record<StatKey, number>> = {
   incomingRepairs: 20,
   skillHealth: 10,
   skillEfficiency: 10,
+  protectionFromElites: 10,
 };
 
-export const ATTRIBUTE_OPTIONS: StatKey[] = [
-  "chc",
-  "chd",
-  "hsd",
-  "weaponHandling",
-  "damageToArmor",
-  "damageToHealth",
-  "skillDamage",
-  "skillHaste",
-  "skillDuration",
-  "skillRepair",
-  "statusEffects",
-  "armorRegen",
-  "armorOnKill",
-  "hazardProtection",
-  "health",
-  "explosiveResistance",
+export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
+  {
+    label: "Offensif",
+    stats: ["chc", "chd", "hsd", "weaponHandling", "damageToArmor", "damageToHealth"],
+  },
+  {
+    label: "Défensif",
+    stats: [
+      "armorRegen",
+      "armorOnKill",
+      "hazardProtection",
+      "health",
+      "explosiveResistance",
+      "incomingRepairs",
+    ],
+  },
+  {
+    label: "Compétence",
+    stats: [
+      "skillDamage",
+      "skillHaste",
+      "skillDuration",
+      "skillRepair",
+      "statusEffects",
+      "skillHealth",
+      "skillEfficiency",
+    ],
+  },
 ];
 
-export const MOD_OPTIONS: StatKey[] = [
-  "chc",
-  "chd",
-  "hsd",
-  "skillHaste",
-  "skillDamage",
-  "statusEffects",
-  "armorRegen",
-  "hazardProtection",
-  "health",
+export const ATTRIBUTE_OPTIONS: StatKey[] = ATTRIBUTE_GROUPS.flatMap((group) => group.stats);
+
+export const MOD_GROUPS: { label: string; stats: StatKey[] }[] = [
+  { label: "Offensif", stats: ["chc", "chd", "hsd"] },
+  {
+    label: "Défensif",
+    stats: [
+      "armorOnKill",
+      "incomingRepairs",
+      "protectionFromElites",
+      "hazardProtection",
+      "health",
+      "armorRegen",
+    ],
+  },
+  {
+    label: "Compétence",
+    stats: ["skillHaste", "skillDamage", "skillDuration", "skillRepair", "statusEffects"],
+  },
 ];
+
+export const MOD_OPTIONS: StatKey[] = MOD_GROUPS.flatMap((group) => group.stats);
+
+export const GEAR_MOD_SLOTS: Slot[] = ["mask", "backpack", "chest"];
+
+export function hasGearMod(slot: Slot): boolean {
+  return GEAR_MOD_SLOTS.includes(slot);
+}
+
+export function parseStatInput(raw: string): number {
+  const normalized = raw.trim().replace(",", ".");
+  return Number(normalized);
+}
+
+export function clampStat(stat: StatKey, value: number): number {
+  if (!Number.isFinite(value) || value < 0) return 0;
+  const max = STAT_MAX[stat];
+  const capped = max == null ? value : Math.min(value, max);
+  return Math.round(capped * 10) / 10;
+}
+
+export function statStep(stat: StatKey): number {
+  return stat === "armorRegen" ? 0.1 : 0.1;
+}
 
 export const PERCENT_STATS = new Set<StatKey>([
   "weaponDamage",
@@ -222,4 +293,10 @@ export function defaultMod(core: CoreType): StatBonus {
   if (core === "yellow") return { stat: "skillHaste", value: 12 };
   if (core === "blue") return { stat: "hazardProtection", value: 10 };
   return { stat: "chc", value: 6 };
+}
+
+export function gearSetAttribute(core: CoreType): StatBonus {
+  if (core === "yellow") return { stat: "skillDamage", value: STAT_MAX.skillDamage ?? 10 };
+  if (core === "blue") return { stat: "armorRegen", value: STAT_MAX.armorRegen ?? 0.5 };
+  return { stat: "chd", value: STAT_MAX.chd ?? 12 };
 }
