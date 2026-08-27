@@ -68,18 +68,17 @@ export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece
   };
 }
 
-/** In-game locked core for a catalog item in a given slot, if any. */
+/** In-game locked core — only gear sets, exotics, and rare named locks (e.g. Claws Out). */
 export function lockedCoreFor(slot: Slot, source: CatalogItem | undefined): CoreType | undefined {
   if (!source) return undefined;
-  if (source.gearSetId) {
+  if (source.kind === "gear-set" || source.gearSetId) {
     const set = GEAR_SETS.find((item) => item.id === source.gearSetId);
     if (set) return gearSetCore(set, slot);
   }
-  if (source.lockedCore) return source.lockedCore;
-  if (source.brandId) {
-    const brand = BRANDS.find((item) => item.id === source.brandId);
-    if (brand) return brand.core;
-  }
+  if (source.kind === "exotic") return source.lockedCore;
+  // Rare named pieces with an explicit locked core in catalog data.
+  if (source.kind === "named" && source.lockedCore) return source.lockedCore;
+  // Brand high-end / normal named: cores are recalibratable in live TD2.
   return undefined;
 }
 
@@ -87,8 +86,20 @@ export function isCoreLocked(slot: Slot, source: CatalogItem | undefined): boole
   return lockedCoreFor(slot, source) !== undefined;
 }
 
+/** Default / native core when the piece is first equipped (not a lock). */
+export function nativeCoreFor(slot: Slot, source: CatalogItem | undefined): CoreType {
+  const locked = lockedCoreFor(slot, source);
+  if (locked) return locked;
+  if (source?.lockedCore) return source.lockedCore;
+  if (source?.brandId) {
+    const brand = BRANDS.find((item) => item.id === source.brandId);
+    if (brand) return brand.core;
+  }
+  return "red";
+}
+
 function resolveCore(slot: Slot, source: CatalogItem | undefined, core?: CoreType): CoreType {
-  return lockedCoreFor(slot, source) ?? core ?? "red";
+  return lockedCoreFor(slot, source) ?? core ?? nativeCoreFor(slot, source);
 }
 
 function extraCoresFor(

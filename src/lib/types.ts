@@ -208,11 +208,17 @@ export type EquippedWeapon = {
   mods?: WeaponMod[];
 };
 
+export type EquippedSkill = {
+  skillId: string;
+  /** Skill mod slots (simplified kit — damage / haste / duration / …). */
+  mods?: StatBonus[];
+};
+
 export type Loadout = {
   name: string;
   gear: Record<Slot, GearPiece | null>;
   weapons: Record<WeaponSlot, EquippedWeapon | null>;
-  skills: [string | null, string | null];
+  skills: [EquippedSkill | null, EquippedSkill | null];
   specialization: string | null;
   shdWatch: boolean;
 };

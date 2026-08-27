@@ -1,7 +1,16 @@
 "use client";
 
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
-import type { GearPiece, Loadout, Slot, StatKey, WeaponMod, WeaponSlot } from "@/lib/types";
+import type {
+  EquippedSkill,
+  GearPiece,
+  Loadout,
+  Slot,
+  StatBonus,
+  StatKey,
+  WeaponMod,
+  WeaponSlot,
+} from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
 import { applyGearSet, createPiece, pieceLabel } from "@/lib/piece";
 import { catalogById } from "@/lib/data/catalog";
@@ -20,7 +29,7 @@ import {
   STAT_LABELS,
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
-import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
+import { WEAPONS } from "@/lib/data/weapons";
 import {
   clampWeaponMod,
   defaultWeaponMods,
@@ -28,6 +37,14 @@ import {
   WEAPON_MOD_KIND_LABELS,
   WEAPON_MOD_MAX,
 } from "@/lib/data/weapon-mods";
+import {
+  clampSkillMod,
+  defaultSkillMods,
+  sanitizeSkillMods,
+  SKILL_MOD_GROUPS,
+  SKILL_MOD_MAX,
+  weaponsByType,
+} from "@/lib/data/skill-mods";
 import { augmentById } from "@/lib/data/augments";
 import { pieceInspect } from "@/lib/tooltip";
 import {
@@ -160,6 +177,43 @@ export function BuilderApp() {
           [slot]: { ...equipped, mods },
         },
       };
+    });
+  }
+
+  function setSkill(index: 0 | 1, skillId: string) {
+    setLoadout((current) => {
+      const skills: [EquippedSkill | null, EquippedSkill | null] = [
+        current.skills[0],
+        current.skills[1],
+      ];
+      if (!skillId) {
+        skills[index] = null;
+      } else {
+        const prev = current.skills[index];
+        skills[index] = {
+          skillId,
+          mods:
+            prev?.skillId === skillId && prev.mods?.length
+              ? prev.mods
+              : defaultSkillMods(),
+        };
+      }
+      return { ...current, skills };
+    });
+  }
+
+  function setSkillMod(index: 0 | 1, modIndex: number, nextMod: StatBonus) {
+    setLoadout((current) => {
+      const equipped = current.skills[index];
+      if (!equipped) return current;
+      const mods = sanitizeSkillMods(equipped.mods);
+      mods[modIndex] = nextMod;
+      const skills: [EquippedSkill | null, EquippedSkill | null] = [
+        current.skills[0],
+        current.skills[1],
+      ];
+      skills[index] = { ...equipped, mods };
+      return { ...current, skills };
     });
   }
 
@@ -382,44 +436,20 @@ export function BuilderApp() {
               onModChange={setWeaponMod}
             />
             <div className="kit-spacer" aria-hidden="true" />
-            <label className="field">
-              <span>Skill 1</span>
-              <select
-                value={loadout.skills[0] ?? ""}
-                onChange={(event) =>
-                  setLoadout({
-                    ...loadout,
-                    skills: [event.target.value || null, loadout.skills[1]],
-                  })
-                }
-              >
-                <option value="">None</option>
-                {SKILLS.map((skill) => (
-                  <option key={skill.id} value={skill.id}>
-                    {skill.category} — {skill.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="field">
-              <span>Skill 2</span>
-              <select
-                value={loadout.skills[1] ?? ""}
-                onChange={(event) =>
-                  setLoadout({
-                    ...loadout,
-                    skills: [loadout.skills[0], event.target.value || null],
-                  })
-                }
-              >
-                <option value="">None</option>
-                {SKILLS.map((skill) => (
-                  <option key={skill.id} value={skill.id}>
-                    {skill.category} — {skill.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <SkillSelect
+              label="Skill 1"
+              index={0}
+              value={loadout.skills[0]}
+              onChange={setSkill}
+              onModChange={setSkillMod}
+            />
+            <SkillSelect
+              label="Skill 2"
+              index={1}
+              value={loadout.skills[1]}
+              onChange={setSkill}
+              onModChange={setSkillMod}
+            />
           </section>
 
           {saved.length > 0 ? (
@@ -510,7 +540,7 @@ function WeaponSelect({
   onModChange: (slot: WeaponSlot, index: number, mod: WeaponMod) => void;
   types?: Array<(typeof WEAPONS)[number]["type"]>;
 }) {
-  const options = types ? WEAPONS.filter((weapon) => types.includes(weapon.type)) : WEAPONS;
+  const groups = weaponsByType(types);
   const selected = WEAPONS.find((weapon) => weapon.id === value);
   return (
     <div className="field weapon-field">
@@ -518,10 +548,14 @@ function WeaponSelect({
         <span>{label}</span>
         <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
           <option value="">None</option>
-          {options.map((weapon) => (
-            <option key={weapon.id} value={weapon.id}>
-              {WEAPON_TYPE_LABELS[weapon.type]} — {weapon.name}
-            </option>
+          {groups.map((group) => (
+            <optgroup key={group.type} label={group.label}>
+              {group.weapons.map((weapon) => (
+                <option key={weapon.id} value={weapon.id}>
+                  {weapon.name}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </label>
@@ -586,6 +620,103 @@ function WeaponSelect({
                         onModChange(slot, index, {
                           ...mod,
                           value: clampWeaponMod(mod.stat, parseStatInput(event.target.value)),
+                        })
+                      }
+                    />
+                  </label>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+function SkillSelect({
+  label,
+  index,
+  value,
+  onChange,
+  onModChange,
+}: {
+  label: string;
+  index: 0 | 1;
+  value: EquippedSkill | null;
+  onChange: (index: 0 | 1, skillId: string) => void;
+  onModChange: (index: 0 | 1, modIndex: number, mod: StatBonus) => void;
+}) {
+  const selected = SKILLS.find((skill) => skill.id === value?.skillId);
+  const mods = value ? sanitizeSkillMods(value.mods) : [];
+  const categories = [...new Set(SKILLS.map((skill) => skill.category))];
+  return (
+    <div className="field weapon-field">
+      <label className="field">
+        <span>{label}</span>
+        <select
+          value={value?.skillId ?? ""}
+          onChange={(event) => onChange(index, event.target.value)}
+        >
+          <option value="">None</option>
+          {categories.map((category) => (
+            <optgroup key={category} label={category}>
+              {SKILLS.filter((skill) => skill.category === category).map((skill) => (
+                <option key={skill.id} value={skill.id}>
+                  {skill.name}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      </label>
+      {selected ? (
+        <>
+          <small className="hint">{selected.description}</small>
+          <div className="weapon-mods">
+            <p className="eyebrow">Skill mods</p>
+            {mods.map((mod, modIndex) => {
+              const max = SKILL_MOD_MAX[mod.stat];
+              return (
+                <div key={`skill-mod-${modIndex}`} className="weapon-mod-row">
+                  <label className="field">
+                    <span>Mod {modIndex + 1}</span>
+                    <select
+                      value={mod.stat}
+                      onChange={(event) => {
+                        const stat = event.target.value as StatKey;
+                        onModChange(index, modIndex, {
+                          stat,
+                          value: clampSkillMod(stat, SKILL_MOD_MAX[stat] ?? mod.value),
+                        });
+                      }}
+                    >
+                      {SKILL_MOD_GROUPS.map((group) => (
+                        <optgroup key={group.label} label={group.label}>
+                          {group.stats.map((stat) => (
+                            <option key={stat} value={stat}>
+                              {STAT_LABELS[stat]}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="field">
+                    <span>
+                      {formatStat(mod.stat, mod.value)}
+                      {max != null ? ` · max ${formatStat(mod.stat, max)}` : ""}
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={max}
+                      step={0.1}
+                      value={mod.value}
+                      onChange={(event) =>
+                        onModChange(index, modIndex, {
+                          ...mod,
+                          value: clampSkillMod(mod.stat, parseStatInput(event.target.value)),
                         })
                       }
                     />

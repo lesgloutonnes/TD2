@@ -541,10 +541,10 @@ export function computeStats(loadout: Loadout): ComputedStats {
     );
   }
 
-  // Equipped skills: analysis entries + optional soft bonuses.
-  for (const skillId of loadout.skills) {
-    if (!skillId) continue;
-    const skill = SKILLS.find((item) => item.id === skillId);
+  // Equipped skills: analysis entries + skill mods + optional soft bonuses.
+  for (const equipped of loadout.skills) {
+    if (!equipped?.skillId) continue;
+    const skill = SKILLS.find((item) => item.id === equipped.skillId);
     if (!skill) continue;
     bonuses.push({
       source: `Skill · ${skill.name}`,
@@ -560,6 +560,10 @@ export function computeStats(loadout: Loadout): ComputedStats {
       notes.push(`Skill ${skill.name} assumed: ${formatBonusList(skill.assumed)}.`);
     } else {
       notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
+    }
+    if (equipped.mods?.length) {
+      addBonuses(values, equipped.mods);
+      notes.push(`Skill mods on ${skill.name}: ${formatBonusList(equipped.mods)}.`);
     }
   }
 

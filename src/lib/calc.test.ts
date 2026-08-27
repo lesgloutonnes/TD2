@@ -8,6 +8,7 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
+import { weaponsByType, weaponsSorted } from "./data/skill-mods";
 import { pieceInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
@@ -241,7 +242,7 @@ function testPicaroExtraCore() {
 
 function testLockedBrandAndExoticCores() {
   assert(createPiece("mask", "catharsis").core === "blue", "Catharsis armor core");
-  assert(createPiece("holster", "forge").core === "yellow", "Forge skill tier core");
+  assert(createPiece("holster", "forge").core === "yellow", "Forge native yellow (Richter)");
   assert(createPiece("kneepads", "brand:badger").core === "blue", "Badger brand armor core");
   assert(createPiece("gloves", "deathgrips").core === "blue", "Deathgrips primary armor core");
   assert(
@@ -254,19 +255,29 @@ function testLockedBrandAndExoticCores() {
     JSON.stringify(memento.extraCores) === JSON.stringify(["blue", "yellow"]),
     "Memento bonus blue+yellow",
   );
-  // Equipping after a red piece must not inherit red.
-  assert(createPiece("holster", "forge", "red").core === "yellow", "Forge ignores inherited red");
-  assert(createPiece("mask", "brand:empress", "red").core === "yellow", "Empress brand locks yellow");
+  // Exotic / rare named locks ignore inherited recalibration.
+  assert(createPiece("holster", "waveform", "red").core === "yellow", "Waveform ignores inherited red");
+  assert(createPiece("mask", "catharsis", "red").core === "blue", "Catharsis ignores inherited red");
+  // Brand HE + normal named cores are recalibratable in-game.
+  assert(createPiece("mask", "brand:empress", "red").core === "red", "Empress brand recalibrates to red");
+  assert(createPiece("mask", "brand:empress").core === "yellow", "Empress native yellow");
+  assert(createPiece("holster", "forge", "red").core === "red", "Forge named recalibrates to red");
   assert(createPiece("holster", "waveform").core === "yellow", "Waveform skill tier");
   assert(createPiece("gloves", "btsu-datagloves").core === "yellow", "BTSU skill tier");
   assert(createPiece("chest", "tardigrade").core === "blue", "Tardigrade armor");
 
-  const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
-  assert(forgePicker?.lockedCore === "yellow", "Forge locked yellow in picker");
+  const waveformPicker = catalogForSlot("holster").find((item) => item.id === "waveform");
+  assert(waveformPicker?.lockedCore === "yellow", "Waveform locked yellow in picker");
+  const catharsisPicker = catalogForSlot("mask").find((item) => item.id === "catharsis");
+  assert(catharsisPicker?.lockedCore === "blue", "Catharsis locked blue in picker");
   const deathgripsPicker = catalogForSlot("gloves").find((item) => item.id === "deathgrips");
-  assert(deathgripsPicker?.lockedCore === "blue", "Deathgrips locked blue in picker");
+  assert(deathgripsPicker?.lockedCore === undefined, "Deathgrips named recalibratable in picker");
+  const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
+  assert(forgePicker?.lockedCore === undefined, "Forge named recalibratable in picker");
   const badgerPicker = catalogForSlot("kneepads").find((item) => item.id === "brand:badger");
-  assert(badgerPicker?.lockedCore === "blue", "Badger brand locked blue in picker");
+  assert(badgerPicker?.lockedCore === undefined, "Badger brand recalibratable in picker");
+  const empressPicker = catalogForSlot("mask").find((item) => item.id === "brand:empress");
+  assert(empressPicker?.lockedCore === undefined, "Empress brand recalibratable in picker");
 }
 
 function testCatalogCoverage() {
@@ -704,6 +715,74 @@ function testAugmentStacks() {
   assert(AUGMENTS.length === 9, "nine augments");
 }
 
+function testAugmentPublishedCurves() {
+  const byId = (id: string) => AUGMENTS.find((item) => item.id === id)!;
+  assert(byId("quantum").valueAtLevel(1) === 1, "Quantum L1 = 1%");
+  assert(byId("quantum").valueAtLevel(10) === 4.6, "Quantum L10 = 4.6%");
+  assert(byId("amalgam").valueAtLevel(1) === 1.6, "Amalgam L1 = 1.6%");
+  assert(byId("amalgam").valueAtLevel(10) === 4.3, "Amalgam L10 = 4.3%");
+  assert(byId("anomaly").valueAtLevel(1) === 4, "Anomaly L1 = 4%");
+  assert(byId("anomaly").valueAtLevel(10) === 8.5, "Anomaly L10 = 8.5%");
+  assert(byId("synesthesia").valueAtLevel(1) === 5, "Synesthesia L1 = 5%");
+  assert(byId("synesthesia").valueAtLevel(10) === 14, "Synesthesia L10 = 14%");
+  assert(byId("echo").valueAtLevel(10) === 2.8, "Echo L10 = 2.8%");
+  assert(byId("quantum").valueSource === "ubisoft-y8s1.3", "Quantum from Ubisoft notes");
+  assert(byId("echo").valueSource === "community", "Echo community curve");
+}
+
+function testWeaponListSorting() {
+  const sorted = weaponsSorted(["ar", "smg", "shotgun"]);
+  for (let i = 1; i < sorted.length; i += 1) {
+    const prev = sorted[i - 1]!;
+    const next = sorted[i]!;
+    const order = ["ar", "lmg", "smg", "shotgun", "mmr", "rifle", "pistol"];
+    const typeOk = order.indexOf(prev.type) <= order.indexOf(next.type);
+    assert(typeOk, `type order ${prev.type} before ${next.type}`);
+    if (prev.type === next.type) {
+      assert(prev.name.localeCompare(next.name, "en") <= 0, `name order ${prev.name} / ${next.name}`);
+    }
+  }
+  const groups = weaponsByType(["smg", "shotgun", "ar"]);
+  assert(groups[0]?.type === "ar", "AR group first");
+  assert(groups.every((group, index, all) => index === 0 || all[index - 1]!.type !== group.type), "no duplicate groups");
+}
+
+function testSkillModsContribute() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.skills = [
+    {
+      skillId: "striker-drone",
+      mods: [
+        { stat: "skillDamage", value: 10 },
+        { stat: "skillHaste", value: 12 },
+        { stat: "skillDuration", value: 8 },
+      ],
+    },
+    null,
+  ];
+  const stats = computeStats(loadout);
+  // Soft assumed +5 skill damage on Striker Drone + 10 from mods.
+  assert(stats.values.skillDamage === 15, `skill mod damage, got ${stats.values.skillDamage}`);
+  assert(stats.values.skillHaste === 12, `skill mod haste, got ${stats.values.skillHaste}`);
+  assert(stats.values.skillDuration === 8, `skill mod duration, got ${stats.values.skillDuration}`);
+  assert(
+    stats.notes.some((note) => note.includes("Skill mods on")),
+    "skill mod note present",
+  );
+}
+
+function testLegacySkillShareMigrate() {
+  const legacy = {
+    ...emptyLoadout("Legacy skills"),
+    skills: ["reviver-hive", "crusader-shield"],
+  };
+  const decoded = decodeLoadout(encodeLoadout(legacy as unknown as Loadout));
+  assert(decoded?.skills[0]?.skillId === "reviver-hive", "legacy skill 1 migrated");
+  assert(decoded?.skills[1]?.skillId === "crusader-shield", "legacy skill 2 migrated");
+  assert((decoded?.skills[0]?.mods?.length ?? 0) === 3, "default skill mods applied");
+}
+
 function testArmorRegenFlatDerived() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
@@ -872,6 +951,10 @@ const tests = [
   testTalentAssumed,
   testStrikerFourAssumed,
   testAugmentStacks,
+  testAugmentPublishedCurves,
+  testWeaponListSorting,
+  testSkillModsContribute,
+  testLegacySkillShareMigrate,
   testArmorRegenFlatDerived,
   testHealthFlatDerived,
   testInvestorSlotted,

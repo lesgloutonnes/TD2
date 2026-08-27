@@ -180,7 +180,11 @@ export function PieceEditor({
                 </option>
               ))}
             </select>
-            {coreLocked ? <small className="hint">Core locked for this piece.</small> : null}
+            {coreLocked ? (
+              <small className="hint">Core locked (exotic / gear set / rare named).</small>
+            ) : (
+              <small className="hint">Recalibratable — change freely like in-game.</small>
+            )}
           </label>
 
           <label className="field expertise-field">

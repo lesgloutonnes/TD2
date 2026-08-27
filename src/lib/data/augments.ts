@@ -11,12 +11,16 @@ export type AugmentDef = {
   /** What the stacked % represents in the analyzer. */
   effectLabel: string;
   /**
-   * Value at a given level (1–10), post Y8S1.3 where published.
-   * Echo / Paradox / Entropy / Trapper / Atomize use community approximations.
+   * Value at a given level (1–10).
+   * Quantum / Amalgam / Anomaly / Synesthesia: Ubisoft Y8S1.3 published values.
+   * Echo: unchanged in Y8S1.3 (community L1/L10).
+   * Others: community approximations marked below.
    */
   valueAtLevel: (level: number) => number;
   /** Soft mapping into build stats when a numeric proxy helps. */
   statHint?: StatKey;
+  /** Provenance for the numeric curve. */
+  valueSource: "ubisoft-y8s1.3" | "community";
 };
 
 function linear(level1: number, perLevel: number, level: number): number {
@@ -25,8 +29,11 @@ function linear(level1: number, perLevel: number, level: number): number {
 }
 
 /**
- * Prototype Augments (Y8 Rise Up). Any Prototype gear piece can roll any Augment.
- * Values: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes (via community tables).
+ * Prototype Augments (Y8).
+ * Published L1 → L10 (Ubisoft Y8S1.3 notes via community tables):
+ *   Quantum 1% +0.4 → 4.6% | Amalgam 1.6% +0.3 → 4.3%
+ *   Anomaly 4% +0.5 → 8.5% | Synesthesia 5% +1 → 14%
+ * Echo was explicitly left unchanged in that patch (still ~1% +0.2 → 2.8%).
  */
 export const AUGMENTS: AugmentDef[] = [
   {
@@ -35,13 +42,16 @@ export const AUGMENTS: AugmentDef[] = [
     description: "Chance to become temporarily immune to damage.",
     effectLabel: "immunity chance",
     valueAtLevel: (level) => linear(1, 0.4, level),
+    valueSource: "ubisoft-y8s1.3",
   },
   {
     id: "echo",
     name: "Echo",
     description: "Each bullet fired has a chance to deal its damage a second time.",
     effectLabel: "double-hit chance",
+    // Unchanged in Y8S1.3 when Quantum/etc. were buffed.
     valueAtLevel: (level) => linear(1, 0.2, level),
+    valueSource: "community",
   },
   {
     id: "atomize",
@@ -50,6 +60,7 @@ export const AUGMENTS: AugmentDef[] = [
     effectLabel: "grenade power",
     valueAtLevel: (level) => linear(5, 0.5, level),
     statHint: "explosiveDamage",
+    valueSource: "community",
   },
   {
     id: "amalgam",
@@ -58,13 +69,16 @@ export const AUGMENTS: AugmentDef[] = [
     effectLabel: "status proc chance",
     valueAtLevel: (level) => linear(1.6, 0.3, level),
     statHint: "statusEffects",
+    valueSource: "ubisoft-y8s1.3",
   },
   {
     id: "trapper",
     name: "Trapper",
     description: "Increases the duration of status effects you apply.",
     effectLabel: "status duration",
-    valueAtLevel: (level) => linear(2, 0.3, level),
+    // Same ballpark as Amalgam's published curve (status-focused).
+    valueAtLevel: (level) => linear(1.6, 0.3, level),
+    valueSource: "community",
   },
   {
     id: "entropy",
@@ -73,6 +87,7 @@ export const AUGMENTS: AugmentDef[] = [
     effectLabel: "armor → health",
     valueAtLevel: (level) => linear(2, 0.3, level),
     statHint: "health",
+    valueSource: "community",
   },
   {
     id: "anomaly",
@@ -80,14 +95,17 @@ export const AUGMENTS: AugmentDef[] = [
     description: "Skills restore a portion of the damage they deal as healing.",
     effectLabel: "skill damage → heal",
     valueAtLevel: (level) => linear(4, 0.5, level),
+    valueSource: "ubisoft-y8s1.3",
   },
   {
     id: "paradox",
     name: "Paradox",
     description: "Chance to refill part of the magazine while firing.",
     effectLabel: "mag refill chance",
+    // Same pre-buff style curve as Echo (unchanged family).
     valueAtLevel: (level) => linear(1, 0.2, level),
     statHint: "magazineSize",
+    valueSource: "community",
   },
   {
     id: "synesthesia",
@@ -96,6 +114,7 @@ export const AUGMENTS: AugmentDef[] = [
     effectLabel: "cooldown reduction proc",
     valueAtLevel: (level) => linear(5, 1, level),
     statHint: "skillHaste",
+    valueSource: "ubisoft-y8s1.3",
   },
 ];
 
