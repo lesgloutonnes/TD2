@@ -15,18 +15,25 @@ import { WEAPONS } from "./data/weapons";
 import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
+  AGENT_BASE_HEALTH,
   CHC_CAP,
   CORE_COLORS,
   CORE_VALUES,
+  DEFENSIVE_ATTRS,
   EMPTY_SLOT_COLOR,
   GEAR_BASE_ARMOR,
   hasGearMod,
+  OFFENSIVE_ATTRS,
   PROTOTYPE_ATTR_MULT,
   prototypeCoreMult,
   SHD_WATCH,
+  SKILL_ATTRS,
   SKILL_TIER_CAP,
   SLOTS,
   STAT_LABELS,
+  armorOnKillFlat,
+  armorRegenPerSec,
+  resolveHealthFlat,
 } from "./data/attributes";
 
 const STAT_KEYS: StatKey[] = [
@@ -243,6 +250,53 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
     if (source.uniqueTalent) {
       notes.push(`${source.name} : ${source.uniqueTalent.name}. ${source.uniqueTalent.description}`);
+    }
+    if (source.assumed?.length) {
+      addBonuses(values, source.assumed);
+      bonuses.push({
+        source: `${source.name}`,
+        label: formatBonusList(source.assumed),
+        detail: source.assumedNote ?? source.uniqueTalent?.description ?? source.name,
+        pieces: 1,
+        required: 1,
+        active: true,
+        color: "#c41e3a",
+      });
+      notes.push(
+        `${source.name} assumed: ${formatBonusList(source.assumed)}${
+          source.assumedNote ? ` — ${source.assumedNote}` : ""
+        }.`,
+      );
+    }
+    // Investor: bonus per non-core attribute color on this mask.
+    if (source.id === "investor") {
+      let red = 0;
+      let blue = 0;
+      let yellow = 0;
+      for (const attr of piece.attributes) {
+        if (OFFENSIVE_ATTRS.has(attr.stat)) red += 1;
+        else if (DEFENSIVE_ATTRS.has(attr.stat)) blue += 1;
+        else if (SKILL_ATTRS.has(attr.stat)) yellow += 1;
+      }
+      const investorBonuses: StatBonus[] = [];
+      if (red > 0) investorBonuses.push({ stat: "chd", value: 10 * red });
+      if (blue > 0) investorBonuses.push({ stat: "armorRegen", value: 1 * blue });
+      if (yellow > 0) investorBonuses.push({ stat: "skillEfficiency", value: 5 * yellow });
+      if (investorBonuses.length) {
+        addBonuses(values, investorBonuses);
+        bonuses.push({
+          source: "Investor · Slotted",
+          label: formatBonusList(investorBonuses),
+          detail: `From attributes: ${red} red, ${blue} blue, ${yellow} yellow.`,
+          pieces: 1,
+          required: 1,
+          active: true,
+          color: "#c41e3a",
+        });
+        notes.push(
+          `Investor Slotted: ${red}×red → CHD, ${blue}×blue → armor regen %, ${yellow}×yellow → skill efficiency.`,
+        );
+      }
     }
     if (isPrototype) {
       notes.push(
@@ -482,6 +536,30 @@ export function computeStats(loadout: Loadout): ComputedStats {
   // Flat armor after all armorPercent sources (brands, sets, SHD, talents, specs).
   values.armor = resolveFlatArmor(loadout, values.armorPercent, notes);
 
+  const derived = {
+    armorRegenPerSec: armorRegenPerSec(values.armor, values.armorRegen),
+    armorOnKillFlat: armorOnKillFlat(values.armor, values.armorOnKill),
+    healthFlat: resolveHealthFlat(values.health),
+  };
+
+  if (values.armorRegen > 0 && values.armor > 0) {
+    notes.push(
+      `Armor Regeneration ${values.armorRegen}% of total armor → ${Math.round(derived.armorRegenPerSec).toLocaleString("en-US")}/s (no separate flat armor/s attribute on gear).`,
+    );
+  }
+  if (values.armorOnKill > 0 && values.armor > 0) {
+    notes.push(
+      `Armor on Kill ${values.armorOnKill}% → ${Math.round(derived.armorOnKillFlat).toLocaleString("en-US")} armor restored per kill.`,
+    );
+  }
+  if (values.health > 0 || equippedSlots > 0) {
+    notes.push(
+      `Health: ${Math.round(derived.healthFlat).toLocaleString("en-US")} (base ${AGENT_BASE_HEALTH.toLocaleString("en-US")}` +
+        (values.health > 0 ? ` × (1 + ${values.health}%)` : "") +
+        ").",
+    );
+  }
+
   const chcCapped = Math.min(values.chc, CHC_CAP);
   const chcOvercap = Math.max(0, values.chc - CHC_CAP);
   const skillTierCapped = Math.min(values.skillTier, SKILL_TIER_CAP);
@@ -513,6 +591,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   return {
     cores,
     values,
+    derived,
     chcCapped,
     chcOvercap,
     skillTierCapped,

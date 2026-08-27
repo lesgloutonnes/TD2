@@ -701,6 +701,62 @@ function testAugmentStacks() {
   assert(AUGMENTS.length === 9, "nine augments");
 }
 
+function testArmorRegenFlatDerived() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = createPiece("mask", "brand:belstone");
+  loadout.gear.mask.attributes = [{ stat: "armorRegen", value: 0.5 }];
+  loadout.gear.mask.mods = [];
+  // 1pc Belstone = +1% armor regen + piece attr 0.5% = 1.5%
+  const stats = computeStats(loadout);
+  assert(stats.values.armorRegen === 1.5, `regen %, got ${stats.values.armorRegen}`);
+  const expectedPerSec = (stats.values.armor * 1.5) / 100;
+  assert(
+    Math.abs(stats.derived.armorRegenPerSec - expectedPerSec) < 1,
+    `regen/s got ${stats.derived.armorRegenPerSec} expected ${expectedPerSec}`,
+  );
+  assert(stats.notes.some((n) => n.includes("Armor Regeneration") && n.includes("/s")), "regen note");
+}
+
+function testHealthFlatDerived() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = true; // +10% health
+  loadout.gear.mask = createPiece("mask", "brand:gila");
+  const stats = computeStats(loadout);
+  // Gila 1pc is armor % only; SHD = +10% health
+  assert(stats.values.health === 10, `health %, got ${stats.values.health}`);
+  const expected = 167_000 * 1.1;
+  assert(
+    Math.abs(stats.derived.healthFlat - expected) < 1,
+    `health flat got ${stats.derived.healthFlat} expected ${expected}`,
+  );
+}
+
+function testInvestorSlotted() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  const mask = createPiece("mask", "investor");
+  mask.attributes = [
+    { stat: "chd", value: 12 },
+    { stat: "armorRegen", value: 0.5 },
+  ];
+  loadout.gear.mask = mask;
+  const stats = computeStats(loadout);
+  assert(stats.values.chd === 22, `12 attr + 10 Investor red, got ${stats.values.chd}`);
+  assert(stats.values.armorRegen === 1.5, `0.5 attr + 1 Investor blue, got ${stats.values.armorRegen}`);
+  assert(stats.bonuses.some((b) => b.source.includes("Investor")), "investor bonus row");
+}
+
+function testMementoAssumed() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.backpack = createPiece("backpack", "memento");
+  const stats = computeStats(loadout);
+  assert(stats.values.weaponDamage === 30, `15 core + 15 memento, got ${stats.values.weaponDamage}`);
+  assert(stats.values.armorPercent === 10, `memento armor %, got ${stats.values.armorPercent}`);
+  assert(stats.cores.blue === 1 && stats.cores.yellow === 1, "memento extra cores");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -742,6 +798,10 @@ const tests = [
   testTalentAssumed,
   testStrikerFourAssumed,
   testAugmentStacks,
+  testArmorRegenFlatDerived,
+  testHealthFlatDerived,
+  testInvestorSlotted,
+  testMementoAssumed,
 ];
 
 let failed = 0;

@@ -974,6 +974,12 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Picking up a trophy: stacks of Weapon Damage, armor, and skill damage. 3 cores. Excellent hybrid piece.",
     },
+    assumed: [
+      { stat: "weaponDamage", value: 15 },
+      { stat: "armorPercent", value: 10 },
+      { stat: "skillDamage", value: 15 },
+    ],
+    assumedNote: "Assumes mid Kill Confirmed trophy stacks in combat.",
   },
   {
     id: "ninjabike",

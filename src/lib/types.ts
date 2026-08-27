@@ -120,6 +120,9 @@ export type CatalogItem = {
   talentSlot?: Slot;
   extraCores?: CoreType[];
   extraStats?: StatBonus[];
+  /** Soft analyzer bonuses while this piece is equipped (exotics with uptime). */
+  assumed?: StatBonus[];
+  assumedNote?: string;
   lockedCore?: CoreType;
   ninja?: boolean;
   note?: string;
@@ -207,6 +210,15 @@ export type ActiveBonus = {
 export type ComputedStats = {
   cores: { red: number; blue: number; yellow: number };
   values: Record<StatKey, number>;
+  /** Flat amounts derived from % of total armor / base health. */
+  derived: {
+    /** Armor regenerated per second (armor × armorRegen% / 100). */
+    armorRegenPerSec: number;
+    /** Armor restored on kill (armor × armorOnKill% / 100). */
+    armorOnKillFlat: number;
+    /** Effective health pool (base × (1 + health% / 100)). */
+    healthFlat: number;
+  };
   chcCapped: number;
   chcOvercap: number;
   skillTierCapped: number;

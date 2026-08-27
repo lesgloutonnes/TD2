@@ -305,6 +305,35 @@ export const SKILL_TIER_CAP = 6;
 export const EXPERTISE_MAX = 30;
 /** Approximate gear-piece armor used to apply per-piece expertise (+1% armor per level). */
 export const GEAR_BASE_ARMOR = 170_000;
+/** Approximate level-40 agent base health (Health % applies on top). */
+export const AGENT_BASE_HEALTH = 167_000;
+
+/** Attribute color buckets (used by Investor and similar). */
+export const OFFENSIVE_ATTRS = new Set<StatKey>([
+  "chc",
+  "chd",
+  "hsd",
+  "weaponHandling",
+  "damageToArmor",
+  "damageToHealth",
+]);
+export const DEFENSIVE_ATTRS = new Set<StatKey>([
+  "armorRegen",
+  "armorOnKill",
+  "hazardProtection",
+  "health",
+  "explosiveResistance",
+  "incomingRepairs",
+]);
+export const SKILL_ATTRS = new Set<StatKey>([
+  "skillDamage",
+  "skillHaste",
+  "skillDuration",
+  "skillRepair",
+  "statusEffects",
+  "skillHealth",
+  "skillEfficiency",
+]);
 
 /** Weapon types allowed in primary / secondary slots (no pistols). */
 export const PRIMARY_WEAPON_TYPES = [
@@ -329,6 +358,27 @@ export function formatStat(stat: StatKey, value: number): string {
   }
   const pretty = Number.isInteger(value) ? String(value) : value.toFixed(1);
   return `+${pretty}%`;
+}
+
+/** Format a flat armor/health amount for analysis panels. */
+export function formatFlatAmount(value: number): string {
+  return Math.round(value).toLocaleString("en-US");
+}
+
+/**
+ * Armor Regeneration rolls as a % of total armor / second on gear.
+ * There is no separate flat “armor/s” attribute — the % converts to a flat amount.
+ */
+export function armorRegenPerSec(totalArmor: number, armorRegenPercent: number): number {
+  return (totalArmor * armorRegenPercent) / 100;
+}
+
+export function armorOnKillFlat(totalArmor: number, armorOnKillPercent: number): number {
+  return (totalArmor * armorOnKillPercent) / 100;
+}
+
+export function resolveHealthFlat(healthPercent: number): number {
+  return AGENT_BASE_HEALTH * (1 + healthPercent / 100);
 }
 
 export function defaultAttributes(core: CoreType): StatBonus[] {
