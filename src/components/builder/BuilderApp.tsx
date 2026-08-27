@@ -484,7 +484,7 @@ export function BuilderApp() {
           ) : null}
         </div>
 
-        <StatsPanel loadout={loadout} stats={stats} />
+        <StatsPanel stats={stats} />
       </div>
 
       {hover && !pickerOpen ? (
