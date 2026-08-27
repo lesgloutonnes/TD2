@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CatalogItem, ItemKind, Slot } from "@/lib/types";
+import type { ItemKind, Slot } from "@/lib/types";
 import { catalogForSlot } from "@/lib/data/catalog";
-import { BRANDS } from "@/lib/data/brands";
-import { GEAR_SETS } from "@/lib/data/gear-sets";
+import { itemKindColor } from "@/lib/data/attributes";
 
 const KIND_LABELS: Record<ItemKind, string> = {
   brand: "Marques",
@@ -86,7 +85,7 @@ export function PickerModal({
               className="picker-row"
               onClick={() => onPick(item.id)}
             >
-              <span className="swatch" style={{ background: itemColor(item) }} />
+              <span className="swatch" style={{ background: itemKindColor(item.kind) }} />
               <span className="picker-copy">
                 <strong>{item.name}</strong>
                 <small>
@@ -102,15 +101,4 @@ export function PickerModal({
       </div>
     </div>
   );
-}
-
-function itemColor(item: CatalogItem): string {
-  if (item.kind === "exotic") return "#c9a227";
-  if (item.gearSetId) {
-    return GEAR_SETS.find((set) => set.id === item.gearSetId)?.color ?? "#2ecc71";
-  }
-  if (item.brandId) {
-    return BRANDS.find((brand) => brand.id === item.brandId)?.color ?? "#d4a017";
-  }
-  return "#6b7280";
 }

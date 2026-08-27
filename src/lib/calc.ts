@@ -14,7 +14,10 @@ import { SPECIALIZATIONS } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
 import {
   CHC_CAP,
+  CORE_COLORS,
   CORE_VALUES,
+  EMPTY_SLOT_COLOR,
+  hasGearMod,
   SHD_WATCH,
   SKILL_TIER_CAP,
   SLOTS,
@@ -138,7 +141,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
 
     addBonuses(values, piece.attributes);
-    addBonuses(values, piece.mods);
+    if (hasGearMod(slot)) addBonuses(values, piece.mods);
     if (source.extraStats) addBonuses(values, source.extraStats);
   }
 
@@ -321,15 +324,6 @@ function formatBonusList(bonuses: StatBonus[]): string {
 
 export function slotColor(slot: Slot, loadout: Loadout): string {
   const piece = loadout.gear[slot];
-  if (!piece) return "#3a414c";
-  const source = catalogById(piece.sourceId);
-  if (!source) return "#3a414c";
-  if (source.kind === "exotic") return "#c9a227";
-  if (source.gearSetId) {
-    return GEAR_SETS.find((set) => set.id === source.gearSetId)?.color ?? "#2ecc71";
-  }
-  if (source.brandId) {
-    return BRANDS.find((brand) => brand.id === source.brandId)?.color ?? "#d4a017";
-  }
-  return "#d4a017";
+  if (!piece) return EMPTY_SLOT_COLOR;
+  return CORE_COLORS[piece.core];
 }

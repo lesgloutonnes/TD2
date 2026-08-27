@@ -5,7 +5,7 @@ import type { GearPiece, Loadout, Slot, WeaponSlot } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
 import { createPiece, pieceLabel } from "@/lib/piece";
 import { catalogById } from "@/lib/data/catalog";
-import { SLOT_LABELS, SLOTS } from "@/lib/data/attributes";
+import { EMPTY_SLOT_COLOR, itemKindColor, SLOT_LABELS, SLOTS } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
 import {
@@ -161,7 +161,12 @@ export function BuilderApp() {
                       if (!piece) setPickerOpen(true);
                     }}
                   >
-                    <span className="swatch" style={{ background: slotColors[slot] }} />
+                    <span
+                      className="swatch"
+                      style={{
+                        background: source ? itemKindColor(source.kind) : EMPTY_SLOT_COLOR,
+                      }}
+                    />
                     <span>
                       <small>{SLOT_LABELS[slot]}</small>
                       <strong>{piece ? pieceLabel(piece) : "Vide"}</strong>
