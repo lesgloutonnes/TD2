@@ -376,6 +376,40 @@ function testSlotCoreColors() {
   assert(slotColor("gloves", loadout) === CORE_COLORS.yellow, "ember engine follows yellow core");
 }
 
+function testRefactorSlotCores() {
+  const mask = createPiece("mask", "set:refactor", "red");
+  const chest = createPiece("chest", "set:refactor", "red");
+  const holster = createPiece("holster", "set:refactor", "red");
+  const backpack = createPiece("backpack", "set:refactor", "red");
+  const gloves = createPiece("gloves", "set:refactor", "red");
+  const kneepads = createPiece("kneepads", "set:refactor", "red");
+  assert(mask.core === "yellow", "Refactor masque jaune");
+  assert(chest.core === "yellow", "Refactor gilet jaune");
+  assert(holster.core === "yellow", "Refactor holster jaune");
+  assert(backpack.core === "blue", "Refactor sac bleu");
+  assert(gloves.core === "blue", "Refactor gants bleus");
+  assert(kneepads.core === "blue", "Refactor genouillères bleues");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.expertise = 0;
+  loadout.gear.mask = mask;
+  loadout.gear.backpack = backpack;
+  const stats = computeStats(loadout);
+  assert(stats.cores.yellow === 1, `Refactor 1 jaune, got yellow=${stats.cores.yellow}`);
+  assert(stats.cores.blue === 1, `Refactor 1 bleu, got blue=${stats.cores.blue}`);
+  assert(stats.cores.red === 0, "Refactor sans cœur rouge par défaut");
+}
+
+function testSystemCorruptionSlotCores() {
+  assert(createPiece("mask", "set:system-corruption").core === "red", "SC masque rouge");
+  assert(createPiece("gloves", "set:system-corruption").core === "red", "SC gants rouge");
+  assert(createPiece("holster", "set:system-corruption").core === "red", "SC holster rouge");
+  assert(createPiece("backpack", "set:system-corruption").core === "blue", "SC sac bleu");
+  assert(createPiece("chest", "set:system-corruption").core === "blue", "SC gilet bleu");
+  assert(createPiece("kneepads", "set:system-corruption").core === "blue", "SC genouillères bleues");
+}
+
 function testKindColors() {
   assert(itemKindColor("brand") === itemKindColor("named"), "high-end gold");
   assert(itemKindColor("brand") === "#d4af37", "brand gold");
@@ -412,6 +446,8 @@ const tests = [
   testWeaponCatalog,
   testUniqueTalentNote,
   testSlotCoreColors,
+  testRefactorSlotCores,
+  testSystemCorruptionSlotCores,
   testKindColors,
   testStatCaps,
 ];

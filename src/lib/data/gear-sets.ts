@@ -1,4 +1,4 @@
-import type { GearSetDef } from "../types";
+import type { CoreType, GearSetDef, Slot } from "../types";
 
 export const GEAR_SETS: GearSetDef[] = [
   {
@@ -314,7 +314,15 @@ export const GEAR_SETS: GearSetDef[] = [
     id: "system-corruption",
     name: "System Corruption",
     color: "#1a8a4a",
-    core: "blue",
+    core: "red",
+    slotCores: {
+      mask: "red",
+      gloves: "red",
+      holster: "red",
+      backpack: "blue",
+      chest: "blue",
+      kneepads: "blue",
+    },
     two: "+15% Armure à la mort",
     three: "+40% Résistance disrupt & pulse",
     four: "Hackstep Protocol — kits remplacés par une capacité infinie (20 s) : 20% armure, 50% armure bonus, nameplate caché 5 s.",
@@ -438,6 +446,14 @@ export const GEAR_SETS: GearSetDef[] = [
     name: "Refactor",
     color: "#2a8a6a",
     core: "yellow",
+    slotCores: {
+      mask: "yellow",
+      chest: "yellow",
+      holster: "yellow",
+      backpack: "blue",
+      gloves: "blue",
+      kneepads: "blue",
+    },
     two: "+15% Effets de statut",
     three: "+25% Dégâts de compétence",
     four: "Return to Sender — vous êtes réparé de 10% des dégâts de compétences, les alliés de 20%.",
@@ -574,3 +590,7 @@ export const GEAR_SETS: GearSetDef[] = [
     },
   },
 ];
+
+export function gearSetCore(set: GearSetDef, slot: Slot): CoreType {
+  return set.slotCores?.[slot] ?? set.core;
+}
