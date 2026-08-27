@@ -1,12 +1,12 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
-import { applyGearSet, createPiece, setPiecePrototype } from "./piece";
+import { applyGearSet, createPiece, setPiecePrototype, setWeaponPrototype } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { weaponsByType, weaponsSorted } from "./data/skill-mods";
 import { pieceInspect } from "./tooltip";
@@ -448,6 +448,16 @@ function testKindColors() {
   assert(itemKindColor("exotic") === "#c41e3a", "exotic red");
 }
 
+function testPrototypeDisplayColor() {
+  assert(itemDisplayColor("brand", false) === "#d4af37", "brand gold when not proto");
+  assert(itemDisplayColor("gear-set", false) === "#2ecc71", "set green when not proto");
+  assert(itemDisplayColor("brand", true) === PROTOTYPE_COLOR, "brand purple when proto");
+  assert(itemDisplayColor("gear-set", true) === PROTOTYPE_COLOR, "set purple when proto");
+  assert(itemDisplayColor("exotic", true) === "#c41e3a", "exotic stays red");
+  assert(weaponDisplayColor("named", true) === PROTOTYPE_COLOR, "named weapon purple");
+  assert(weaponDisplayColor("exotic", true) === "#c41e3a", "exotic weapon stays red");
+}
+
 function testStatCaps() {
   assert(clampStat("chc", 99) === 6, "CHC max 6");
   assert(clampStat("chd", 20) === 12, "CHD max 12");
@@ -658,6 +668,49 @@ function testPrototypeSwitch() {
   assert(off.prototype === false, "prototype off");
   assert(off.augmentId === undefined, "augment cleared");
   assert(off.attributes[0]?.value === 6, `CHC back to HE max, got ${off.attributes[0]?.value}`);
+}
+
+function testWeaponPrototype() {
+  const base = { weaponId: "lexington", expertise: 12, mods: [] };
+  const proto = setWeaponPrototype(base, "named", true);
+  assert(proto.prototype === true, "weapon prototype on");
+  assert(proto.expertise === 30, "weapon expertise forced to 30");
+  assert(proto.augmentId === "echo", "weapon default augment");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.primary = {
+    ...proto,
+    augmentId: "quantum",
+    augmentLevel: 10,
+  };
+  const stats = computeStats(loadout);
+  assert(
+    stats.bonuses.some((bonus) => bonus.source.includes("Quantum") && bonus.label.includes("4.6%")),
+    "primary weapon Quantum L10 = 4.6%",
+  );
+
+  const exotic = setWeaponPrototype(
+    { weaponId: "st-elmo", expertise: 10, mods: [] },
+    "exotic",
+    true,
+  );
+  assert(exotic.prototype === false, "exotic weapons cannot be prototype");
+
+  loadout.weapons.secondary = {
+    weaponId: "famas",
+    expertise: 30,
+    prototype: true,
+    augmentId: "quantum",
+    augmentLevel: 10,
+  };
+  const withSecondary = computeStats(loadout);
+  const quantum = withSecondary.bonuses.find((bonus) => bonus.source.includes("Quantum"));
+  assert(quantum!.label.includes("4.6%"), "secondary Prototype does not stack while inactive");
+  assert(
+    withSecondary.notes.some((note) => note.includes("Secondary") && note.includes("stored")),
+    "secondary prototype stored note",
+  );
 }
 
 
@@ -936,6 +989,7 @@ const tests = [
   testRefactorSlotCores,
   testSystemCorruptionSlotCores,
   testKindColors,
+  testPrototypeDisplayColor,
   testStatCaps,
   testCatalogSlotLockedCore,
   testEverySetPieceCore,
@@ -947,6 +1001,7 @@ const tests = [
   testPerItemExpertise,
   testPistolSlotSanitize,
   testPrototypeSwitch,
+  testWeaponPrototype,
   testArmorFlatAndPercent,
   testTalentAssumed,
   testStrikerFourAssumed,

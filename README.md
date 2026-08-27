@@ -42,6 +42,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - Named items per brand (sheet 22/03/26 + Y8S3): Chainkiller, Vigil, Backbone, The Setup, Bober, Equalizer…
 - Exotics (Vile, BTSU, Collector, Nurse's Kneepads, Investor, Blacklisters, Caduceus, Ouroboros…)
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
+- Prototype purple tint on gear/weapons (reverts to gold / set green when off)
+- Prototype + Augment on non-exotic weapons (primary Augment stacks with gear)
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3

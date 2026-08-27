@@ -746,10 +746,40 @@ select:focus {
 
 .tt-prototype {
   margin: 0 0 8px;
-  color: #5ec8c0;
+  color: #c084fc;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.swatch-prototype {
+  background: linear-gradient(145deg, #4a1878 0%, #b44dff 48%, #7a2cff 100%) !important;
+  box-shadow: inset 0 0 0 1px rgba(196, 132, 252, 0.35);
+}
+
+.weapon-field.is-prototype {
+  border-color: rgba(155, 61, 255, 0.45);
+}
+
+.weapon-proto-tint {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #4a1878 0%, #b44dff 48%, #7a2cff 100%);
+}
+
+.weapon-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weapon-quality-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 @media (max-width: 1080px) {

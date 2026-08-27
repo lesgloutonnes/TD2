@@ -39,8 +39,10 @@ export const AUGMENTS: AugmentDef[] = [
   {
     id: "quantum",
     name: "Quantum",
-    description: "Chance to become temporarily immune to damage.",
+    description:
+      "Chance to become temporarily immune to damage for 2 seconds when triggered.",
     effectLabel: "immunity chance",
+    // Ubisoft Y8S1.3: 1% +0.4%/level → 4.6% (not Amalgam’s 1.6→4.3).
     valueAtLevel: (level) => linear(1, 0.4, level),
     valueSource: "ubisoft-y8s1.3",
   },

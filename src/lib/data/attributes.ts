@@ -50,6 +50,12 @@ export const CORE_COLORS: Record<CoreType, string> = {
 
 export const EMPTY_SLOT_COLOR = "#3a414c";
 
+/**
+ * In-game Prototype quality tint (purple / magenta), overrides brand gold / set emerald.
+ * Exotics stay red and cannot be Prototype.
+ */
+export const PROTOTYPE_COLOR = "#9b3dff";
+
 /** TD2 ID colors: high-end gold, gear set emerald, exotic red. */
 export const KIND_COLORS: Record<ItemKind, string> = {
   brand: "#d4af37",
@@ -60,6 +66,22 @@ export const KIND_COLORS: Record<ItemKind, string> = {
 
 export function itemKindColor(kind: ItemKind): string {
   return KIND_COLORS[kind];
+}
+
+/** Swatch color for a gear piece — Prototype purple, else kind gold/green/red. */
+export function itemDisplayColor(kind: ItemKind, prototype = false): string {
+  if (prototype && kind !== "exotic") return PROTOTYPE_COLOR;
+  return itemKindColor(kind);
+}
+
+/** Swatch color for a weapon — Prototype purple, else gold HE/named or exotic red. */
+export function weaponDisplayColor(
+  quality: "high-end" | "named" | "exotic",
+  prototype = false,
+): string {
+  if (prototype && quality !== "exotic") return PROTOTYPE_COLOR;
+  if (quality === "exotic") return KIND_COLORS.exotic;
+  return KIND_COLORS.named;
 }
 
 export const KIND_LABELS: Record<ItemKind, string> = {
@@ -255,6 +277,12 @@ export const PROTOTYPE_ATTR_MULT = 1.5;
 
 export function canBePrototype(kind: ItemKind | undefined): boolean {
   return Boolean(kind && kind !== "exotic");
+}
+
+export function canWeaponBePrototype(
+  quality: "high-end" | "named" | "exotic" | undefined,
+): boolean {
+  return Boolean(quality && quality !== "exotic");
 }
 
 export function statMax(stat: StatKey, prototype = false): number | undefined {

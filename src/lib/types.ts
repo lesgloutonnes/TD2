@@ -206,6 +206,15 @@ export type EquippedWeapon = {
   expertise: number;
   /** Optic / magazine / muzzle / underbarrel (pistols: optic + muzzle). */
   mods?: WeaponMod[];
+  /**
+   * Prototype quality (Y8). High-end / named only — never exotics.
+   * Active (primary) weapon Augment stacks with gear Prototypes (7 max).
+   */
+  prototype?: boolean;
+  /** Prototype Augment id (only when prototype). */
+  augmentId?: string;
+  /** Augment level 1–10 (only when prototype). */
+  augmentLevel?: number;
 };
 
 export type EquippedSkill = {
