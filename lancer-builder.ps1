@@ -18,8 +18,26 @@ if (-not (Test-Path -LiteralPath (Join-Path $site "index.html"))) {
     exit 1
 }
 
-$site = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $site).Path)
-$siteRoot = $site.TrimEnd("\", "/") + [IO.Path]::DirectorySeparatorChar
+function Get-NativePath([string]$path) {
+    $item = Get-Item -LiteralPath $path
+    if ($item -and $item.FullName -and ($item.FullName -notlike "*::*")) {
+        return $item.FullName
+    }
+    $resolved = Resolve-Path -LiteralPath $path
+    if ($resolved.ProviderPath) {
+        return $resolved.ProviderPath
+    }
+    $raw = [string]$resolved.Path
+    $marker = "::"
+    $idx = $raw.IndexOf($marker)
+    if ($idx -ge 0) {
+        return $raw.Substring($idx + $marker.Length)
+    }
+    return $raw
+}
+
+$site = Get-NativePath $site
+$siteRoot = $site.TrimEnd(([char]'\'), ([char]'/')) + [IO.Path]::DirectorySeparatorChar
 
 $mimeMap = @{
     ".html"  = "text/html; charset=utf-8"
@@ -57,7 +75,12 @@ function Get-SafePath([string]$urlPath) {
     $decoded = [Uri]::UnescapeDataString($urlPath)
     $trimmed = $decoded.TrimStart([char[]]@([char]'/', [char]'\') )
     $combined = $siteRoot + ($trimmed -replace "/", [string][IO.Path]::DirectorySeparatorChar)
-    $full = [IO.Path]::GetFullPath($combined)
+    $full = $combined
+    try {
+        $full = [IO.Path]::GetFullPath($combined)
+    } catch {
+        $full = $combined
+    }
     if (-not $full.StartsWith($siteRoot, [StringComparison]::OrdinalIgnoreCase)) {
         return $null
     }
