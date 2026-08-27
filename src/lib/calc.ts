@@ -109,21 +109,21 @@ export function emptyLoadout(name = "New build"): Loadout {
   };
 }
 
-export function computeStats(loadout: Loadout): ComputedStats {
-  const values = emptyValues();
-  const cores: Record<CoreType, number> = { red: 0, blue: 0, yellow: 0 };
-  const notes: string[] = [];
-  const bonuses: ActiveBonus[] = [];
+export type GearCounts = {
+  brandCounts: Map<string, number>;
+  setCounts: Map<string, number>;
+  ninja: boolean;
+};
 
+/** Count brand / set pieces, including NinjaBike (+1 for each brand and set already present). */
+export function gearCounts(loadout: Loadout): GearCounts {
   const brandCounts = new Map<string, number>();
   const setCounts = new Map<string, number>();
   let ninja = false;
-  let equippedSlots = 0;
 
   for (const slot of SLOTS) {
     const piece = loadout.gear[slot];
     if (!piece) continue;
-    equippedSlots += 1;
     const source = catalogById(piece.sourceId);
     if (!source) continue;
 
@@ -134,6 +134,35 @@ export function computeStats(loadout: Loadout): ComputedStats {
     if (source.gearSetId) {
       setCounts.set(source.gearSetId, (setCounts.get(source.gearSetId) ?? 0) + 1);
     }
+  }
+
+  if (ninja) {
+    for (const [id, count] of brandCounts) {
+      if (count > 0) brandCounts.set(id, count + 1);
+    }
+    for (const [id, count] of setCounts) {
+      if (count > 0) setCounts.set(id, count + 1);
+    }
+  }
+
+  return { brandCounts, setCounts, ninja };
+}
+
+export function computeStats(loadout: Loadout): ComputedStats {
+  const values = emptyValues();
+  const cores: Record<CoreType, number> = { red: 0, blue: 0, yellow: 0 };
+  const notes: string[] = [];
+  const bonuses: ActiveBonus[] = [];
+
+  const { brandCounts, setCounts, ninja } = gearCounts(loadout);
+  let equippedSlots = 0;
+
+  for (const slot of SLOTS) {
+    const piece = loadout.gear[slot];
+    if (!piece) continue;
+    equippedSlots += 1;
+    const source = catalogById(piece.sourceId);
+    if (!source) continue;
 
     addCore(values, cores, piece.core);
     for (const extra of piece.extraCores ?? source.extraCores ?? []) {
@@ -149,12 +178,6 @@ export function computeStats(loadout: Loadout): ComputedStats {
   }
 
   if (ninja) {
-    for (const [id, count] of brandCounts) {
-      if (count > 0) brandCounts.set(id, count + 1);
-    }
-    for (const [id, count] of setCounts) {
-      if (count > 0) setCounts.set(id, count + 1);
-    }
     notes.push("NinjaBike: +1 piece for each brand and gear set already equipped.");
   }
 
@@ -313,7 +336,7 @@ function weaponTypeStat(
   }
 }
 
-function formatBonusList(bonuses: StatBonus[]): string {
+export function formatBonusList(bonuses: StatBonus[]): string {
   return bonuses
     .map((bonus) => {
       if (bonus.stat === "skillTier") return `+${bonus.value} Skill Tier`;

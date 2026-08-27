@@ -12,12 +12,16 @@ const ANCHORS: Record<Slot, { x: number; y: number }> = {
 
 export function AgentSilhouette({
   activeSlot,
+  hoverSlot,
   slotColors,
   onSelect,
+  onHover,
 }: {
   activeSlot: Slot | null;
+  hoverSlot: Slot | null;
   slotColors: Record<Slot, string>;
   onSelect: (slot: Slot) => void;
+  onHover: (slot: Slot | null, rect?: DOMRect) => void;
 }) {
   return (
     <svg
@@ -40,30 +44,39 @@ export function AgentSilhouette({
         strokeWidth="0.7"
       />
       {Object.entries(ANCHORS).map(([slot, point]) => {
-        const isActive = activeSlot === slot;
-        const color = slotColors[slot as Slot];
+        const typedSlot = slot as Slot;
+        const isActive = activeSlot === typedSlot;
+        const isHovered = hoverSlot === typedSlot;
+        const color = slotColors[typedSlot];
         return (
           <g
             key={slot}
-            className="slot-anchor"
+            className={isHovered ? "slot-anchor hovered" : "slot-anchor"}
             style={{ "--slot-color": color } as CSSProperties}
-            onClick={() => onSelect(slot as Slot)}
+            onClick={() => onSelect(typedSlot)}
+            onMouseEnter={(event) =>
+              onHover(typedSlot, event.currentTarget.getBoundingClientRect())
+            }
+            onMouseLeave={() => onHover(null)}
+            onFocus={(event) => onHover(typedSlot, event.currentTarget.getBoundingClientRect())}
+            onBlur={() => onHover(null)}
             role="button"
             tabIndex={0}
+            aria-describedby={`gear-tooltip-${typedSlot}`}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                onSelect(slot as Slot);
+                onSelect(typedSlot);
               }
             }}
           >
             <circle
               cx={point.x}
               cy={point.y}
-              r={isActive ? 7.4 : 6.4}
+              r={isActive || isHovered ? 7.4 : 6.4}
               fill="#07090b"
               stroke={isActive ? "#ffb347" : color}
-              strokeWidth={isActive ? 1.6 : 1.1}
+              strokeWidth={isActive || isHovered ? 1.6 : 1.1}
             />
             <circle cx={point.x} cy={point.y} r="2.2" fill={color} />
           </g>

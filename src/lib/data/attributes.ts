@@ -62,6 +62,13 @@ export function itemKindColor(kind: ItemKind): string {
   return KIND_COLORS[kind];
 }
 
+export const KIND_LABELS: Record<ItemKind, string> = {
+  brand: "Brands",
+  "gear-set": "Gear Sets",
+  named: "Named",
+  exotic: "Exotics",
+};
+
 export const STAT_LABELS: Record<StatKey, string> = {
   weaponDamage: "Weapon Damage",
   chc: "Critical Hit Chance",
