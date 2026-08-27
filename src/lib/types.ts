@@ -73,6 +73,8 @@ export type Brand = {
   id: string;
   name: string;
   color: string;
+  /** Fixed high-end core for this brand (Weapon Damage / Armor / Skill Tier). */
+  core: CoreType;
   bonuses: [StatBonus[], StatBonus[], StatBonus[]];
 };
 

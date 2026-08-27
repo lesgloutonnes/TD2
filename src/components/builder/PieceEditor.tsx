@@ -20,6 +20,7 @@ import {
   statStep,
 } from "@/lib/data/attributes";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
+import { isCoreLocked } from "@/lib/piece";
 
 export function PieceEditor({
   slot,
@@ -36,7 +37,7 @@ export function PieceEditor({
 }) {
   const source = piece ? catalogById(piece.sourceId) : undefined;
   const talentLocked = Boolean(source?.uniqueTalent) || source?.kind === "gear-set";
-  const coreLocked = Boolean(source?.lockedCore || source?.kind === "gear-set");
+  const coreLocked = isCoreLocked(slot, source);
   const talentOptions =
     slot === "chest" || slot === "backpack" ? talentsForSlot(slot) : [];
   const showMod = Boolean(piece && hasGearMod(slot));

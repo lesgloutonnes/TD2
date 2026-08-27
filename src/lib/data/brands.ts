@@ -3,6 +3,7 @@ import type { Brand } from "../types";
 export const BRANDS: Brand[] = [
   {
     id: "providence",
+    core: "red",
     name: "Providence Defense",
     color: "#c9a44a",
     bonuses: [
@@ -13,6 +14,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "ceska",
+    core: "red",
     name: "Česká Výroba",
     color: "#7ec8e8",
     bonuses: [
@@ -23,6 +25,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "grupo",
+    core: "red",
     name: "Grupo Sombra",
     color: "#d4a017",
     bonuses: [
@@ -33,6 +36,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "walker",
+    core: "red",
     name: "Walker, Harris & Co",
     color: "#b87333",
     bonuses: [
@@ -43,6 +47,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "fenris",
+    core: "red",
     name: "Fenris Group",
     color: "#8b1e1e",
     bonuses: [
@@ -53,6 +58,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "petrov",
+    core: "red",
     name: "Petrov Defense Group",
     color: "#4a6b3a",
     bonuses: [
@@ -63,6 +69,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "overlord",
+    core: "red",
     name: "Overlord Armaments",
     color: "#5c4a32",
     bonuses: [
@@ -73,6 +80,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "sokolov",
+    core: "red",
     name: "Sokolov Concern",
     color: "#6b4c7a",
     bonuses: [
@@ -83,6 +91,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "airaldi",
+    core: "red",
     name: "Airaldi Holdings",
     color: "#3d5a4c",
     bonuses: [
@@ -93,6 +102,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "badger",
+    core: "blue",
     name: "Badger Tuff",
     color: "#8a6a2a",
     bonuses: [
@@ -103,6 +113,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "douglas",
+    core: "red",
     name: "Douglas & Harding",
     color: "#4a5560",
     bonuses: [
@@ -113,6 +124,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "gila",
+    core: "blue",
     name: "Gila Guard",
     color: "#2f6b4f",
     bonuses: [
@@ -123,6 +135,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "belstone",
+    core: "blue",
     name: "Belstone Armory",
     color: "#6e7a4a",
     bonuses: [
@@ -133,6 +146,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "uzina",
+    core: "blue",
     name: "Uzina Getica",
     color: "#5a6e5a",
     bonuses: [
@@ -143,6 +157,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "palisade",
+    core: "blue",
     name: "Palisade Steelworks",
     color: "#7a8a9a",
     bonuses: [
@@ -153,6 +168,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "yaahl",
+    core: "blue",
     name: "Yaahl Gear",
     color: "#2a2a2a",
     bonuses: [
@@ -163,6 +179,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "511",
+    core: "blue",
     name: "5.11 Tactical",
     color: "#3a3f36",
     bonuses: [
@@ -173,6 +190,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "golan",
+    core: "blue",
     name: "Golan Gear",
     color: "#4a6741",
     bonuses: [
@@ -183,6 +201,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "empress",
+    core: "yellow",
     name: "Empress International",
     color: "#c45c8a",
     bonuses: [
@@ -193,6 +212,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "wyvern",
+    core: "yellow",
     name: "Wyvern Wear",
     color: "#6a4c9a",
     bonuses: [
@@ -203,6 +223,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "alps",
+    core: "yellow",
     name: "Alps Summit Armament",
     color: "#8ecae6",
     bonuses: [
@@ -213,6 +234,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "china-light",
+    core: "yellow",
     name: "China Light Industries",
     color: "#d94f2a",
     bonuses: [
@@ -223,6 +245,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "brazos",
+    core: "yellow",
     name: "Brazos de Arcabuz",
     color: "#c4a35a",
     bonuses: [
@@ -233,6 +256,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "hana-u",
+    core: "yellow",
     name: "Hana-U Corporation",
     color: "#2a6b8a",
     bonuses: [
@@ -243,6 +267,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "murakami",
+    core: "yellow",
     name: "Murakami Industries",
     color: "#8a2a4a",
     bonuses: [
@@ -253,6 +278,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "richter",
+    core: "yellow",
     name: "Richter & Kaiser",
     color: "#9aa0a8",
     bonuses: [
@@ -263,6 +289,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "electrique",
+    core: "yellow",
     name: "Electrique",
     color: "#3ec8ff",
     bonuses: [
@@ -273,6 +300,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "habsburg",
+    core: "red",
     name: "Habsburg Guard",
     color: "#c9b037",
     bonuses: [
@@ -283,6 +311,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "lengmo",
+    core: "red",
     name: "Lengmo",
     color: "#5a3a2a",
     bonuses: [
@@ -293,6 +322,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "zwiadowka",
+    core: "red",
     name: "Zwiadowka",
     color: "#3a4a3a",
     bonuses: [
@@ -303,6 +333,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "legatus",
+    core: "red",
     name: "Legatus",
     color: "#6a5a3a",
     bonuses: [
@@ -313,6 +344,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "shiny-monkey",
+    core: "yellow",
     name: "Shiny Monkey Gear",
     color: "#e8c84a",
     bonuses: [
@@ -323,6 +355,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "imminence",
+    core: "red",
     name: "Imminence Armaments",
     color: "#8a3a3a",
     bonuses: [
@@ -333,6 +366,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "urban-lookout",
+    core: "red",
     name: "Urban Lookout",
     color: "#4a5a6a",
     bonuses: [
@@ -343,6 +377,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "unit-alloys",
+    core: "red",
     name: "Unit Alloys",
     color: "#7a9aaa",
     bonuses: [
@@ -353,6 +388,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "royal-works",
+    core: "red",
     name: "Royal Works",
     color: "#8a6a8a",
     bonuses: [
@@ -363,6 +399,7 @@ export const BRANDS: Brand[] = [
   },
   {
     id: "edelweiss",
+    core: "yellow",
     name: "Edelweiss GPz",
     color: "#dfe6e9",
     bonuses: [
