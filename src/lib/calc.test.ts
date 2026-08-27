@@ -1,6 +1,7 @@
-import { computeStats, emptyLoadout } from "./calc";
+import { computeStats, emptyLoadout, slotColor } from "./calc";
 import { createPiece } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor } from "./data/attributes";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -197,6 +198,24 @@ function testHotshotHandlingMove() {
   assert(stats.values.weaponHandling === 30, "Hotshot handling en 3pc");
 }
 
+function testSlotCoreColors() {
+  const loadout = emptyLoadout();
+  assert(slotColor("mask", loadout) === EMPTY_SLOT_COLOR, "empty slot grey");
+  loadout.gear.mask = createPiece("mask", "brand:ceska");
+  loadout.gear.chest = createPiece("chest", "set:foundry");
+  loadout.gear.gloves = createPiece("gloves", "set:ember-engine");
+  assert(slotColor("mask", loadout) === CORE_COLORS.red, "brand high-end follows red core");
+  assert(slotColor("chest", loadout) === CORE_COLORS.blue, "foundry follows blue core");
+  assert(slotColor("gloves", loadout) === CORE_COLORS.yellow, "ember engine follows yellow core");
+}
+
+function testKindColors() {
+  assert(itemKindColor("brand") === itemKindColor("named"), "high-end gold");
+  assert(itemKindColor("brand") === "#d4af37", "brand gold");
+  assert(itemKindColor("gear-set") === "#2ecc71", "set emerald");
+  assert(itemKindColor("exotic") === "#c41e3a", "exotic red");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -212,6 +231,8 @@ const tests = [
   testEmberEngine,
   testAcesY8s3,
   testHotshotHandlingMove,
+  testSlotCoreColors,
+  testKindColors,
 ];
 
 let failed = 0;

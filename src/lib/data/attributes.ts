@@ -1,4 +1,4 @@
-import type { CoreType, Slot, StatBonus, StatKey } from "../types";
+import type { CoreType, ItemKind, Slot, StatBonus, StatKey } from "../types";
 
 export const SLOTS: Slot[] = [
   "mask",
@@ -29,6 +29,26 @@ export const CORE_VALUES: Record<CoreType, StatBonus> = {
   blue: { stat: "armor", value: 170000 },
   yellow: { stat: "skillTier", value: 1 },
 };
+
+export const CORE_COLORS: Record<CoreType, string> = {
+  red: "#e23d3d",
+  blue: "#3d8fe2",
+  yellow: "#e2c03d",
+};
+
+export const EMPTY_SLOT_COLOR = "#3a414c";
+
+/** Couleurs d'identification TD2 : high-end or, set émeraude, exo rouge. */
+export const KIND_COLORS: Record<ItemKind, string> = {
+  brand: "#d4af37",
+  named: "#d4af37",
+  "gear-set": "#2ecc71",
+  exotic: "#c41e3a",
+};
+
+export function itemKindColor(kind: ItemKind): string {
+  return KIND_COLORS[kind];
+}
 
 export const STAT_LABELS: Record<StatKey, string> = {
   weaponDamage: "Dégâts d'arme",
