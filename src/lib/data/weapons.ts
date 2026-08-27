@@ -9,7 +9,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Optimized",
-    talentDesc: "Les mods d'arme sont 30% plus efficaces.",
+    talentDesc: "Weapon mods are 30% more effective.",
   },
   {
     id: "st-elmo",
@@ -19,7 +19,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 50,
     talent: "Actum Est",
-    talentDesc: "Perfect Perfectly Fast Hands + Shock ammo périodique. Idéal Striker / Heartbreaker.",
+    talentDesc: "Perfect Perfectly Fast Hands + periodic Shock ammo. Ideal for Striker / Heartbreaker.",
   },
   {
     id: "eagle-bearer",
@@ -29,7 +29,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 40,
     talent: "Eagle's Strike",
-    talentDesc: "Hits : stacks de dégâts. Headshots : stacks d'armure. Raid Dark Hours.",
+    talentDesc: "Hits: damage stacks. Headshots: armor stacks. Dark Hours raid.",
   },
   {
     id: "famas",
@@ -39,7 +39,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Ranger",
-    talentDesc: "Dégâts augmentent avec la distance à la cible.",
+    talentDesc: "Damage increases with distance to the target.",
   },
   {
     id: "carbine-7",
@@ -49,7 +49,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 790,
     mag: 30,
     talent: "Fast Hands",
-    talentDesc: "Crits réduisent le temps de rechargement.",
+    talentDesc: "Critical hits reduce reload time.",
   },
   {
     id: "police-m4",
@@ -59,7 +59,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Optimist",
-    talentDesc: "+3% dégâts d'arme par 10% de munitions manquantes.",
+    talentDesc: "+3% weapon damage for every 10% magazine missing.",
   },
   {
     id: "f2000",
@@ -69,7 +69,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Close & Personal",
-    talentDesc: "Tuer à moins de 7 m : +30% dégâts d'arme pendant 10 s.",
+    talentDesc: "Kill an enemy within 7m: +30% weapon damage for 10 seconds.",
   },
   {
     id: "the-bighorn",
@@ -79,7 +79,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 700,
     mag: 30,
     talent: "Big Game Hunter",
-    talentDesc: "En couverture : mode semi auto à très hauts dégâts. Raid Iron Horse.",
+    talentDesc: "While in cover: switches to a semi-auto mode with very high damage. Iron Horse raid.",
   },
   {
     id: "chameleon",
@@ -89,7 +89,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Adaptive Instincts",
-    talentDesc: "Hits corps / tête / critiques construisent des bonus CHC, CHD, cadence.",
+    talentDesc:
+      "Body shots / headshots / critical hits build stacks of Critical Hit Chance, Critical Hit Damage, and rate of fire bonuses.",
   },
   {
     id: "capacitor",
@@ -99,7 +100,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 700,
     mag: 40,
     talent: "Capacitance",
-    talentDesc: "Tirer construit des stacks de dégâts de compétence. Skill build DPS.",
+    talentDesc: "Firing builds stacks of skill damage. Skill DPS build.",
   },
   {
     id: "pestilence",
@@ -109,7 +110,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 610,
     mag: 75,
     talent: "Plague of the Outcasts",
-    talentDesc: "Hits appliquent un DoT. À la mort, le DoT se propage.",
+    talentDesc: "Hits apply a DoT. On death, the DoT spreads.",
   },
   {
     id: "m60",
@@ -119,7 +120,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 500,
     mag: 100,
     talent: "Fast Hands",
-    talentDesc: "Crits réduisent le temps de rechargement.",
+    talentDesc: "Critical hits reduce reload time.",
   },
   {
     id: "mg5",
@@ -129,7 +130,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 50,
     talent: "Fast Hands",
-    talentDesc: "Crits réduisent le temps de rechargement.",
+    talentDesc: "Critical hits reduce reload time.",
   },
   {
     id: "iron-lung",
@@ -139,7 +140,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 600,
     mag: 75,
     talent: "Perfect Frenzy",
-    talentDesc: "Tuer : +10% cadence et maniement pendant 10 s. Stacks.",
+    talentDesc: "Kill: +10% rate of fire and weapon handling for 10 seconds. Stacks.",
   },
   {
     id: "bullet-king",
@@ -149,7 +150,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1000,
     mag: 200,
     talent: "Bullet Hell",
-    talentDesc: "Pas de reload. Surchauffe à la place.",
+    talentDesc: "No reloading. Overheats instead.",
   },
   {
     id: "vector",
@@ -159,7 +160,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1200,
     mag: 25,
     talent: "Killer",
-    talentDesc: "Tuer : +40% CHD pendant 8 s.",
+    talentDesc: "Kill: +40% Critical Hit Damage for 8 seconds.",
   },
   {
     id: "mpx",
@@ -169,7 +170,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Killer",
-    talentDesc: "Tuer : +40% CHD pendant 8 s.",
+    talentDesc: "Kill: +40% Critical Hit Damage for 8 seconds.",
   },
   {
     id: "dark-winter",
@@ -179,7 +180,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1200,
     mag: 32,
     talent: "Perfect Killer",
-    talentDesc: "Tuer : +50% CHD pendant 10 s.",
+    talentDesc: "Kill: +50% Critical Hit Damage for 10 seconds.",
   },
   {
     id: "chatterbox",
@@ -189,7 +190,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 50,
     talent: "In sync",
-    talentDesc: "Tuer recharge le chargeur et augmente la cadence. Stacks de dégâts proches.",
+    talentDesc: "Kills reload the magazine and increase rate of fire. Damage stacks increase at close range.",
   },
   {
     id: "backfire",
@@ -199,7 +200,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 40,
     talent: "Adaptive Instincts",
-    talentDesc: "CHC élevé, mais vous vous appliquez un saignement. Plus de CHD tant que vous saignez.",
+    talentDesc: "High Critical Hit Chance, but applies Bleed to yourself. More Critical Hit Damage while bleeding.",
   },
   {
     id: "acs-12",
@@ -209,7 +210,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Close & Personal",
-    talentDesc: "Tuer à moins de 7 m : +30% dégâts d'arme pendant 10 s.",
+    talentDesc: "Kill an enemy within 7m: +30% weapon damage for 10 seconds.",
   },
   {
     id: "scorpio",
@@ -219,7 +220,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 8,
     talent: "Sandman",
-    talentDesc: "Hits appliquent des statuts rotatifs puis un burst disrupt. Excellent utilitaire.",
+    talentDesc: "Hits apply rotating status effects, followed by a Disrupt burst. Excellent utility.",
   },
   {
     id: "rock-n-roll",
@@ -229,7 +230,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Perfect Sadist",
-    talentDesc: "Dégâts bonus vs cibles en saignement.",
+    talentDesc: "Bonus damage against bleeding targets.",
   },
   {
     id: "m700",
@@ -239,7 +240,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 7,
     talent: "Boomerang",
-    talentDesc: "Headshot critique recharge 1 balle.",
+    talentDesc: "Critical headshot reloads 1 round.",
   },
   {
     id: "white-death",
@@ -249,7 +250,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 55,
     mag: 5,
     talent: "Perfect Boomerang",
-    talentDesc: "Headshot critique recharge 2 balles.",
+    talentDesc: "Critical headshot reloads 2 rounds.",
   },
   {
     id: "nemesis",
@@ -259,7 +260,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 30,
     mag: 5,
     talent: "Magnetic Scope",
-    talentDesc: "Plus vous visez longtemps, plus les dégâts explosent. Raid Dark Hours.",
+    talentDesc: "The longer you aim, the more the shot's damage increases before exploding. Dark Hours raid.",
   },
   {
     id: "m1a",
@@ -269,7 +270,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 10,
     talent: "Boomerang",
-    talentDesc: "Headshot critique recharge 1 balle.",
+    talentDesc: "Critical headshot reloads 1 round.",
   },
   {
     id: "midas",
@@ -279,7 +280,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 950,
     mag: 32,
     talent: "Perfect Frenzy",
-    talentDesc: "Tuer : cadence et maniement.",
+    talentDesc: "Kill: rate of fire and weapon handling.",
   },
   {
     id: "diamondback",
@@ -289,7 +290,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 10,
     talent: "Agonizing Bite",
-    talentDesc: "Marque une cible. Tuer la cible : buff de dégâts et nouvelle marque.",
+    talentDesc: "Marks a target. Killing the marked target grants a damage buff and marks a new target.",
   },
   {
     id: "liberty",
@@ -299,7 +300,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 110,
     mag: 7,
     talent: "Liberty or Death",
-    talentDesc: "Hits : stacks. À 5 stacks, le prochain tir ignore l'armure et répare.",
+    talentDesc: "Hits: stacks. At 5 stacks, the next shot ignores armor and repairs it.",
   },
   {
     id: "regulus",
@@ -309,7 +310,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 6,
     talent: "Regicide",
-    talentDesc: "Headshots massifs, knockback. Raid Iron Horse.",
+    talentDesc: "Massive headshot damage, knockback. Iron Horse raid.",
   },
   {
     id: "d50",
@@ -319,7 +320,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 150,
     mag: 7,
     talent: "Salvage",
-    talentDesc: "Tuer recharge 50% du chargeur.",
+    talentDesc: "Kill reloads 50% of the magazine.",
   },
   {
     id: "fafnir",
@@ -330,7 +331,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 8,
     talent: "Dragon's Breath",
     talentDesc:
-      "Chaque tir a 40% de chance d'appliquer Brûlure. Les dégâts d'arme sont amplifiés de 50% de votre bonus d'effets de statut. Mods : +15% CHC, +5 chargeur, +10% maniement.",
+      "Each shot has a 40% chance to apply Burn. Weapon damage is amplified by 50% of your Status Effects bonus. Mods: +15% Critical Hit Chance, +5 magazine size, +10% weapon handling.",
   },
   {
     id: "teapot",
@@ -341,7 +342,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 20,
     talent: "Perfect Boiling Point",
     talentDesc:
-      "Les 48% premiers du chargeur : -100% chance de critique. Le reste : 100% chance de critique.",
+      "The first 48% of the magazine: -100% Critical Hit Chance. The rest: 100% Critical Hit Chance.",
   },
   {
     id: "steamer",
@@ -352,7 +353,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Perfect Boiling Point",
     talentDesc:
-      "Les 48% premiers du chargeur : -100% chance de critique. Le reste : 100% chance de critique.",
+      "The first 48% of the magazine: -100% Critical Hit Chance. The rest: 100% Critical Hit Chance.",
   },
   {
     id: "caduceus",
@@ -363,7 +364,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 40,
     talent: "Caduceus",
     talentDesc:
-      "Chaque critique répare 3% des dégâts infligés pour vous et les alliés. Mods CHC / CHD / chargeur 40.",
+      "Every critical hit heals you and nearby allies for 3% of the damage dealt. Mods: Critical Hit Chance / Critical Hit Damage / 40-round magazine.",
   },
   {
     id: "strega",
@@ -373,7 +374,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Witchcraft",
-    talentDesc: "Stacks de dégâts selon les hits. Recharger consomme les stacks pour un burst.",
+    talentDesc: "Builds damage stacks based on hits. Reloading consumes the stacks for a burst of damage.",
   },
   {
     id: "shield-splinterer",
@@ -383,7 +384,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Optimist",
-    talentDesc: "Dégâts d'arme +4,5% par 10% de munitions manquantes. Hunters DC.",
+    talentDesc: "+4.5% weapon damage for every 10% magazine missing. DC Hunters drop.",
   },
   {
     id: "railsplitter",
@@ -393,7 +394,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Perfectly Accurate",
-    talentDesc: "Précision et stabilité Perfect. Ancien DZ exclusive.",
+    talentDesc: "Perfect accuracy and stability. Former DZ exclusive.",
   },
   {
     id: "kingbreaker",
@@ -403,7 +404,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 30,
     talent: "Perfect Flatline",
-    talentDesc: "Dégâts bonus vs cibles pulsées, plus élevé que Flatline.",
+    talentDesc: "Bonus damage against Pulsed targets, higher than Flatline.",
   },
   {
     id: "huntsman",
@@ -413,7 +414,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Frenzy",
-    talentDesc: "Tuer : cadence et maniement Perfect. FAMAS. Hunters Brooklyn.",
+    talentDesc: "Kill: Perfect rate of fire and weapon handling bonus. FAMAS. Brooklyn Hunters drop.",
   },
   {
     id: "archivist",
@@ -423,7 +424,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 30,
     talent: "Perfect Ranger",
-    talentDesc: "Dégâts selon la distance. Mission classifiée Library of Congress.",
+    talentDesc: "Damage scales with distance. Library of Congress classified assignment.",
   },
   {
     id: "manic",
@@ -433,7 +434,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 50,
     talent: "Perfectly Overflowing",
-    talentDesc: "Chargeur Perfect Overflowing. Ancien DZ exclusive.",
+    talentDesc: "Perfect Overflowing magazine bonus. Former DZ exclusive.",
   },
   {
     id: "savage-wolverine",
@@ -443,7 +444,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Perfectly Close & Personal",
-    talentDesc: "Tuer à moins de 7 m : +40% dégâts d'arme. Recherche Firewall.",
+    talentDesc: "Kill an enemy within 7m: +40% weapon damage. Firewall research.",
   },
   {
     id: "pyromaniac",
@@ -453,7 +454,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Ignited",
-    talentDesc: "Dégâts bonus vs cibles en brûlure. Applique brûlure plus facilement.",
+    talentDesc: "Bonus damage against burning targets. Applies Burn more easily.",
   },
   {
     id: "invisible-hand",
@@ -463,7 +464,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Perfect Allegro",
-    talentDesc: "+15% cadence de tir.",
+    talentDesc: "+15% rate of fire.",
   },
   {
     id: "lud",
@@ -473,7 +474,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Streamline",
-    talentDesc: "+47% dégâts d'arme tant qu'aucune compétence n'est en recharge.",
+    talentDesc: "+47% weapon damage while no skill is on cooldown.",
   },
   {
     id: "ouroboros",
@@ -483,7 +484,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1500,
     mag: 50,
     talent: "Rule Them All",
-    talentDesc: "Cadence extrême, stacks de dégâts. Incursion Paradise Lost.",
+    talentDesc: "Extreme rate of fire, damage stacks. Paradise Lost incursion.",
   },
   {
     id: "lady-death",
@@ -493,7 +494,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1050,
     mag: 40,
     talent: "Breathe Free",
-    talentDesc: "Courir construit des stacks de dégâts CQC. Rechargement en courant.",
+    talentDesc: "Sprinting builds stacks of close-quarters damage. Reload while sprinting.",
   },
   {
     id: "oxpecker",
@@ -503,7 +504,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 32,
     talent: "Symbiosis",
-    talentDesc: "Dégâts de compétence et d'arme se buffent l'un l'autre.",
+    talentDesc: "Skill damage and weapon damage buff each other.",
   },
   {
     id: "the-apartment",
@@ -513,7 +514,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 32,
     talent: "Perfectly Measured",
-    talentDesc: "Dégâts selon le chargeur restant. Ancien DZ exclusive.",
+    talentDesc: "Damage scales with remaining magazine. Former DZ exclusive.",
   },
   {
     id: "old-glory",
@@ -523,7 +524,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 32,
     talent: "Perfect Close & Personal",
-    talentDesc: "Tuer à moins de 7 m : +40% dégâts d'arme. Mission classifiée McMillan.",
+    talentDesc: "Kill an enemy within 7m: +40% weapon damage. McMillan classified assignment.",
   },
   {
     id: "big-alejandro",
@@ -533,7 +534,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 500,
     mag: 100,
     talent: "Cover Shooter",
-    talentDesc: "En couverture : stacks de dégâts jusqu'à un plafond élevé.",
+    talentDesc: "While in cover: builds damage stacks up to a high cap.",
   },
   {
     id: "bluescreen",
@@ -543,7 +544,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 50,
     talent: "Disruptor Rounds",
-    talentDesc: "Hits appliquent disrupt. Compétences ennemies plus fragiles.",
+    talentDesc: "Hits apply Disrupt. Enemy skills become more fragile.",
   },
   {
     id: "pakhan",
@@ -553,7 +554,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 600,
     mag: 150,
     talent: "Overwhelming Force",
-    talentDesc: "Grand chargeur, stacks de dégâts en maintenant la gâchette.",
+    talentDesc: "Large magazine, builds damage stacks while holding the trigger.",
   },
   {
     id: "good-times",
@@ -563,7 +564,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 550,
     mag: 100,
     talent: "Perfect Fast Hands",
-    talentDesc: "Crits réduisent davantage le rechargement. Ancien DZ exclusive.",
+    talentDesc: "Critical hits reduce reload time even further. Former DZ exclusive.",
   },
   {
     id: "black-friday",
@@ -573,7 +574,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 50,
     talent: "Perfectly Unhinged",
-    talentDesc: "Dégâts élevés, maniement réduit. Ancien DZ exclusive.",
+    talentDesc: "High damage, reduced weapon handling. Former DZ exclusive.",
   },
   {
     id: "sleipnir",
@@ -583,7 +584,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 50,
     talent: "Perfect Frenzy",
-    talentDesc: "Tuer : +12% cadence et maniement pendant 10 s. Recherche Gunner.",
+    talentDesc: "Kill: +12% rate of fire and weapon handling for 10 seconds. Gunner research.",
   },
   {
     id: "headline-grabber",
@@ -593,7 +594,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 50,
     talent: "Perfect Strained",
-    talentDesc: "Dégâts selon l'armure manquante. Mission classifiée Capital Globe.",
+    talentDesc: "Damage scales with missing armor. Capital Globe classified assignment.",
   },
   {
     id: "merciless",
@@ -603,7 +604,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 14,
     talent: "Binary Trigger",
-    talentDesc: "Tire à l'appui ET au relâchement. Explosions sur hits répétés.",
+    talentDesc: "Fires on both trigger pull and release. Causes explosions on repeated hits.",
   },
   {
     id: "ravenous",
@@ -613,7 +614,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 275,
     mag: 20,
     talent: "Designated Target",
-    talentDesc: "Marque une cible, dégâts explosifs de zone. Raid Iron Horse.",
+    talentDesc: "Marks a target, dealing explosive area damage. Iron Horse raid.",
   },
   {
     id: "doctor-home",
@@ -623,7 +624,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "House Call",
-    talentDesc: "Hits soignent / buffent selon le contexte. Manhunt.",
+    talentDesc: "Hits heal or buff depending on context. Manhunt reward.",
   },
   {
     id: "vindicator",
@@ -633,7 +634,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 400,
     mag: 20,
     talent: "Vindicated",
-    talentDesc: "Stacks de dégâts en maintenant le tir. Achat Descent (NSA Tech).",
+    talentDesc: "Builds damage stacks while holding down the trigger. Purchasable from Descent (NSA Tech).",
   },
   {
     id: "harmony",
@@ -643,7 +644,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Perfectly In Sync",
-    talentDesc: "Hits d'arme buffent les compétences et inversement. Ancien DZ exclusive.",
+    talentDesc: "Weapon hits buff skills, and skill use buffs weapon damage. Former DZ exclusive.",
   },
   {
     id: "virginian",
@@ -653,7 +654,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 180,
     mag: 10,
     talent: "Perfect Boomerang",
-    talentDesc: "Headshot critique recharge 2 balles. Ancien DZ exclusive.",
+    talentDesc: "Critical headshot reloads 2 rounds. Former DZ exclusive.",
   },
   {
     id: "everlasting-gaze",
@@ -663,7 +664,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 240,
     mag: 20,
     talent: "Perfect Perpetuation",
-    talentDesc: "Les statuts durent plus longtemps. Ancien DZ exclusive.",
+    talentDesc: "Status effects last longer. Former DZ exclusive.",
   },
   {
     id: "the-claw",
@@ -673,7 +674,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Perfect Precision Strike",
-    talentDesc: "Headshots marquent la cible pour plus de dégâts. Mission classifiée.",
+    talentDesc: "Headshots mark the target for increased damage. Classified assignment.",
   },
   {
     id: "achilles",
@@ -683,7 +684,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Perfect Soft Spot",
-    talentDesc: "Dégâts bonus vs cibles pulsées, plus élevé que Soft Spot.",
+    talentDesc: "Bonus damage against Pulsed targets, higher than Soft Spot.",
   },
   {
     id: "sweet-dreams",
@@ -693,7 +694,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 75,
     mag: 8,
     talent: "Sandman",
-    talentDesc: "Mêlée : met les PNJ hors combat. Dégâts de pompe CQC.",
+    talentDesc: "Melee takes enemies out of combat. High close-quarters shotgun damage.",
   },
   {
     id: "enforcer",
@@ -703,7 +704,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 8,
     talent: "Perfect Pummel",
-    talentDesc: "Tuer à courte portée répare l'armure. Pre-order Warlords of NY.",
+    talentDesc: "Killing at close range repairs armor. Warlords of New York pre-order bonus.",
   },
   {
     id: "mantis",
@@ -713,7 +714,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 5,
     talent: "Mantis",
-    talentDesc: "Maintenir la visée construit un multiplicateur de headshot. Manhunt.",
+    talentDesc: "Holding aim builds a headshot damage multiplier. Manhunt reward.",
   },
   {
     id: "pinprick",
@@ -723,7 +724,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 55,
     mag: 7,
     talent: "Perfect First Blood",
-    talentDesc: "La première balle du chargeur a un bonus de dégâts. Ancien DZ exclusive.",
+    talentDesc: "The first bullet in the magazine deals bonus damage. Former DZ exclusive.",
   },
   {
     id: "whiplash",
@@ -733,7 +734,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 8,
     talent: "Whiplash",
-    talentDesc: "Hits appliquent un statut rotatif. Climax manhunt Y8S1.",
+    talentDesc: "Hits apply a rotating status effect. Year 8 Season 1 manhunt climax reward.",
   },
   {
     id: "busy-little-bee",
@@ -743,7 +744,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1100,
     mag: 20,
     talent: "Hive Mind",
-    talentDesc: "Pistolet automatique. Hits renforcent hive / drone.",
+    talentDesc: "Fully automatic pistol. Hits empower your Hive / Drone.",
   },
   {
     id: "tempest",
@@ -753,7 +754,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 15,
     talent: "Storm Surge",
-    talentDesc: "Choc et dégâts de zone sur headshots. Manhunt.",
+    talentDesc: "Applies Shock and area damage on headshots. Manhunt reward.",
   },
   {
     id: "orbit",
@@ -763,7 +764,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 8,
     talent: "Perfect Finisher",
-    talentDesc: "Dégâts bonus vs cibles à santé basse. Ancien DZ exclusive.",
+    talentDesc: "Bonus damage against low-health targets. Former DZ exclusive.",
   },
   {
     id: "tdi-kard",
@@ -773,7 +774,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 15,
     talent: "Perfectly Unhinged",
-    talentDesc: "+1 palier de compétence tant que le pistolet est en main. Ancien DZ exclusive.",
+    talentDesc: "+1 skill tier while the pistol is equipped. Former DZ exclusive.",
   },
   {
     id: "caretaker",
@@ -783,7 +784,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 30,
     talent: "Perfect Killer",
-    talentDesc: "Kill critique : +90% CHD pendant 10 s.",
+    talentDesc: "Critical kill: +90% Critical Hit Damage for 10 seconds.",
   },
   {
     id: "the-drill",
@@ -793,7 +794,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 790,
     mag: 30,
     talent: "Perfect Precision Strike",
-    talentDesc: "Kills à 20 m+ : stacks. Hit à moins de 20 m : +35% dégâts amplifiés CQC.",
+    talentDesc: "Kills at 20m+: builds stacks. Hits within 20m: +35% amplified close-quarters damage.",
   },
   {
     id: "goalie",
@@ -803,7 +804,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 20,
     talent: "Perfect Pressure Point",
-    talentDesc: "+20% dégâts d'arme vs cibles sous statut.",
+    talentDesc: "+20% weapon damage against targets affected by a status effect.",
   },
   {
     id: "born-great",
@@ -813,7 +814,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 30,
     talent: "Perfect Stabilize",
-    talentDesc: "+1% précision et stabilité par balle, jusqu'à 75%. Reset 6 s après arrêt de tir.",
+    talentDesc: "+1% accuracy and stability per round fired, up to 75%. Resets 6 seconds after you stop firing.",
   },
   {
     id: "burn-out",
@@ -823,7 +824,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Perfect On Empty",
-    talentDesc: "Recharger à vide : +80% maniement pendant 10 s.",
+    talentDesc: "Reloading from empty: +80% weapon handling for 10 seconds.",
   },
   {
     id: "glory-daze",
@@ -833,7 +834,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfectly Near Sighted",
-    talentDesc: "+100% stabilité, −35% portée optimale.",
+    talentDesc: "+100% stability, -35% optimal range.",
   },
   {
     id: "mechanical-animal",
@@ -843,7 +844,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 30,
     talent: "Future Perfection",
-    talentDesc: "Kills d'arme : +1 palier 19 s, 4 stacks. Palier 6 : overcharge 15 s.",
+    talentDesc: "Weapon kills: +1 skill tier for 19 seconds, up to 4 stacks. At tier 6: overcharge for 15 seconds.",
   },
   {
     id: "test-subject",
@@ -853,7 +854,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 30,
     talent: "Perfectly In Sync",
-    talentDesc: "Hits : +20% dégâts de compétence. Compétence : +20% dégâts d'arme. Doublé si les deux sont actifs.",
+    talentDesc: "Weapon hits: +20% skill damage. Skill use: +20% weapon damage. Doubled if both are active.",
   },
   {
     id: "agitator",
@@ -863,7 +864,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perturb",
-    talentDesc: "Holstered : −50% menace. Primé 10 s : swap = cadence, dégâts et choc.",
+    talentDesc: "Holstered: -50% threat. Primed for 10 seconds: swapping to this weapon grants rate of fire, damage, and applies Shock.",
   },
   {
     id: "dare",
@@ -873,7 +874,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 50,
     talent: "Perfect Flatline",
-    talentDesc: "+20% dégâts vs pulsés. Après 3 kills : pulse la prochaine cible.",
+    talentDesc: "+20% damage against Pulsed targets. After 3 kills: pulses the next target.",
   },
   {
     id: "tabula-rasa",
@@ -883,7 +884,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 610,
     mag: 30,
     talent: "Perfectly Steady Handed",
-    talentDesc: "Hits : +1% précision/stabilité. À 75 stacks : recharge le chargeur.",
+    talentDesc: "Hits: +1% accuracy/stability. At 75 stacks: reloads the magazine.",
   },
   {
     id: "the-stinger",
@@ -893,7 +894,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 550,
     mag: 100,
     talent: "Swift",
-    talentDesc: "Couverture à couverture : +20% dégâts d'arme pendant 20 s.",
+    talentDesc: "Cover to cover: +20% weapon damage for 20 seconds.",
   },
   {
     id: "gear-shift",
@@ -903,7 +904,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 550,
     mag: 100,
     talent: "Perfectly Measured",
-    talentDesc: "Première moitié du chargeur : +25% cadence −30% dégâts. Seconde : inverse.",
+    talentDesc: "First half of the magazine: +25% rate of fire, -30% damage. Second half: reversed.",
   },
   {
     id: "big-show",
@@ -913,7 +914,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 50,
     talent: "Perfect Thunder Strike",
-    talentDesc: "+35% dégâts vs cibles choquées.",
+    talentDesc: "+35% damage against shocked targets.",
   },
   {
     id: "carnage",
@@ -923,7 +924,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 50,
     talent: "Perfect Sadist",
-    talentDesc: "+35% dégâts vs saignement. Après 3 kills : applique saignement.",
+    talentDesc: "+35% damage against bleeding targets. After 3 kills: applies Bleed.",
   },
   {
     id: "new-reliable",
@@ -933,7 +934,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 45,
     talent: "Perfectly Optimized",
-    talentDesc: "+40% maniement d'arme.",
+    talentDesc: "+40% weapon handling.",
   },
   {
     id: "cricket",
@@ -943,7 +944,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 50,
     talent: "Perfect Precision Strike",
-    talentDesc: "Kills loin : stacks. Hit proche : +35% dégâts amplifiés CQC.",
+    talentDesc: "Kills at long range: builds stacks. Hits at close range: +35% amplified close-quarters damage.",
   },
   {
     id: "rusty",
@@ -953,7 +954,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 75,
     talent: "Perfect Pressure Point",
-    talentDesc: "+20% dégâts d'arme vs cibles sous statut.",
+    talentDesc: "+20% weapon damage against targets affected by a status effect.",
   },
   {
     id: "quiet-roar",
@@ -963,7 +964,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 550,
     mag: 75,
     talent: "Perfect Overwhelm",
-    talentDesc: "Supprimer un ennemi : +12% dégâts d'arme 12 s, 4 stacks.",
+    talentDesc: "Suppressing an enemy: +12% weapon damage for 12 seconds, up to 4 stacks.",
   },
   {
     id: "the-grudge",
@@ -973,7 +974,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 32,
     talent: "Perfectly Vindictive",
-    talentDesc: "Kill sous statut : +21% CHC et CHD au groupe 20 m pendant 20 s.",
+    talentDesc: "Killing a target affected by a status effect: +21% Critical Hit Chance and Critical Hit Damage to your group within 20m for 20 seconds.",
   },
   {
     id: "interchange",
@@ -983,7 +984,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 700,
     mag: 32,
     talent: "Perfect Back and Forth",
-    talentDesc: "Swap vers cette arme : +13% cadence et +12% dégâts 10 s.",
+    talentDesc: "Swapping to this weapon: +13% rate of fire and +12% damage for 10 seconds.",
   },
   {
     id: "cabaret",
@@ -993,7 +994,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 32,
     talent: "Perfect Thunder Strike",
-    talentDesc: "+35% dégâts vs cibles choquées.",
+    talentDesc: "+35% damage against shocked targets.",
   },
   {
     id: "grown-great",
@@ -1003,7 +1004,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 50,
     talent: "Perfect Stabilize",
-    talentDesc: "+1% précision et stabilité par balle, jusqu'à 75%.",
+    talentDesc: "+1% accuracy and stability per round fired, up to 75%.",
   },
   {
     id: "swap-chain",
@@ -1013,7 +1014,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 950,
     mag: 30,
     talent: "Perfect Unwavering",
-    talentDesc: "Swap vers cette arme : +400% maniement 5 s. Kills refresh.",
+    talentDesc: "Swapping to this weapon: +400% weapon handling for 5 seconds. Kills refresh the effect.",
   },
   {
     id: "safety-distance",
@@ -1023,7 +1024,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Outsider",
-    talentDesc: "Tuer : +150% portée optimale et +125% précision pendant 10 s.",
+    talentDesc: "Kill: +150% optimal range and +125% accuracy for 10 seconds.",
   },
   {
     id: "emelines-guard",
@@ -1033,7 +1034,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 50,
     talent: "Perfect Preservation",
-    talentDesc: "Tuer répare 15% d'armure / 5 s. Kill headshot : 30%.",
+    talentDesc: "Kill repairs 15% of your armor over 5 seconds. Headshot kill: 30%.",
   },
   {
     id: "purist",
@@ -1043,7 +1044,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 825,
     mag: 32,
     talent: "Perfect Streamline",
-    talentDesc: "+47% dégâts d'arme tant qu'aucune compétence n'est en recharge.",
+    talentDesc: "+47% weapon damage while no skill is on cooldown.",
   },
   {
     id: "cold-relations",
@@ -1053,7 +1054,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 800,
     mag: 64,
     talent: "Perfectly Strained",
-    talentDesc: "+10% CHD toutes les 0,5 s de tir, 8 stacks.",
+    talentDesc: "+10% Critical Hit Damage every 0.5 seconds of firing, up to 8 stacks.",
   },
   {
     id: "froth",
@@ -1063,7 +1064,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1200,
     mag: 25,
     talent: "Perfect Immobilize",
-    talentDesc: "+25% dégâts vs enserrés. Après 3 kills : enserrer la prochaine cible.",
+    talentDesc: "+25% damage against immobilized targets. After 3 kills: immobilizes the next target.",
   },
   {
     id: "lefty",
@@ -1073,7 +1074,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 8,
     talent: "Perfect Sledgehammer",
-    talentDesc: "Dégâts de grenade : marque. Cibles marquées : +40% dégâts à l'armure.",
+    talentDesc: "Grenade damage marks the target. Marked targets: +40% damage to armor.",
   },
   {
     id: "boomstick",
@@ -1083,7 +1084,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 200,
     mag: 2,
     talent: "Perfect Pumped Up",
-    talentDesc: "Recharger : +6% dégâts d'arme 10 s, 5 stacks.",
+    talentDesc: "Reloading: +6% weapon damage for 10 seconds, up to 5 stacks.",
   },
   {
     id: "the-send-off",
@@ -1093,7 +1094,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 14,
     talent: "Perfect Distance",
-    talentDesc: "+100% portée optimale. Recherche Technician.",
+    talentDesc: "+100% optimal range. Technician research.",
   },
   {
     id: "cuelebre",
@@ -1103,7 +1104,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 8,
     talent: "Perfect Jazz Hands",
-    talentDesc: "+50% vitesse de rechargement.",
+    talentDesc: "+50% reload speed.",
   },
   {
     id: "lockdown",
@@ -1113,7 +1114,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 75,
     mag: 5,
     talent: "Perfect Immobilize",
-    talentDesc: "+25% dégâts vs enserrés. Après 3 kills : enserrer.",
+    talentDesc: "+25% damage against immobilized targets. After 3 kills: immobilizes the target.",
   },
   {
     id: "tsunami",
@@ -1123,7 +1124,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 180,
     mag: 8,
     talent: "Perfect Pummel",
-    talentDesc: "2 kills consécutifs : recharge le chargeur et +40% dégâts 10 s.",
+    talentDesc: "2 consecutive kills: reloads the magazine and grants +40% damage for 10 seconds.",
   },
   {
     id: "like-glue",
@@ -1133,7 +1134,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 8,
     talent: "Perfect Brazen",
-    talentDesc: "+1% dégâts amplifiés au tir suivant par plomb qui touche (min. 4).",
+    talentDesc: "+1% amplified damage on the next shot for every pellet that hits (minimum 4).",
   },
   {
     id: "thorn",
@@ -1143,7 +1144,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 120,
     mag: 8,
     talent: "Perfect Brazen",
-    talentDesc: "+1% dégâts amplifiés au tir suivant par plomb qui touche (min. 4).",
+    talentDesc: "+1% amplified damage on the next shot for every pellet that hits (minimum 4).",
   },
   {
     id: "the-mop",
@@ -1153,7 +1154,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 200,
     mag: 6,
     talent: "Armor on Kill",
-    talentDesc: "+10% armure au kill (attribut unique Six12).",
+    talentDesc: "+10% armor on kill (Six12 exclusive attribute).",
   },
   {
     id: "trader",
@@ -1163,7 +1164,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 30,
     talent: "Perfect Back and Forth",
-    talentDesc: "Swap vers cette arme : +13% cadence et +12% dégâts 10 s.",
+    talentDesc: "Swapping to this weapon: +13% rate of fire and +12% damage for 10 seconds.",
   },
   {
     id: "bakers-dozen",
@@ -1173,7 +1174,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 13,
     talent: "Perfect Lucky Shot",
-    talentDesc: "+30% chargeur. Tirs manqués depuis la couverture reviennent au chargeur.",
+    talentDesc: "+30% magazine size. Shots missed while in cover are returned to the magazine.",
   },
   {
     id: "stage-left",
@@ -1183,7 +1184,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 20,
     talent: "Perfect Sledgehammer",
-    talentDesc: "Dégâts de grenade : marque. Cibles marquées : +40% dégâts à l'armure.",
+    talentDesc: "Grenade damage marks the target. Marked targets: +40% damage to armor.",
   },
   {
     id: "surge",
@@ -1193,7 +1194,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Spike",
-    talentDesc: "Headshots : +25% dégâts de compétence pendant 15 s.",
+    talentDesc: "Headshots: +25% skill damage for 15 seconds.",
   },
   {
     id: "artists-tool",
@@ -1203,7 +1204,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 600,
     mag: 20,
     talent: "Perfect Rifleman",
-    talentDesc: "Headshots : +11% dégâts d'arme 5 s, 6 stacks.",
+    talentDesc: "Headshots: +11% weapon damage for 5 seconds, up to 6 stacks.",
   },
   {
     id: "whisper",
@@ -1213,7 +1214,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 600,
     mag: 30,
     talent: "Perfectly Behind You",
-    talentDesc: "+20% dégâts vs ennemis qui ne vous ciblent pas.",
+    talentDesc: "+20% damage against enemies that are not targeting you.",
   },
   {
     id: "bittersweet",
@@ -1223,7 +1224,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 10,
     talent: "Transfusion",
-    talentDesc: "Headshots : stacks. Tirer un allié/compétence le répare selon les stacks.",
+    talentDesc: "Headshots: builds stacks. Shooting an ally or skill repairs it based on stacks.",
   },
   {
     id: "ekims-long-stick",
@@ -1233,7 +1234,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 55,
     mag: 5,
     talent: "Perfect Ranger",
-    talentDesc: "+2% dégâts d'arme par 3 m de distance.",
+    talentDesc: "+2% weapon damage for every 3m of distance to the target.",
   },
   {
     id: "the-darkness",
@@ -1243,7 +1244,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 10,
     talent: "Perfect Eyeless",
-    talentDesc: "+35% dégâts vs aveuglés. Après 3 kills : aveugler la prochaine cible.",
+    talentDesc: "+35% damage against blinded targets. After 3 kills: blinds the next target.",
   },
   {
     id: "designated-hitter",
@@ -1253,7 +1254,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 5,
     talent: "Perfect Reformation",
-    talentDesc: "Headshots : +80% réparation de compétence pendant 15 s.",
+    talentDesc: "Headshots: +80% skill repair for 15 seconds.",
   },
   {
     id: "commando",
@@ -1263,7 +1264,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 260,
     mag: 10,
     talent: "Perfectly Naked",
-    talentDesc: "Toucher un ennemi sans armure : +50% HSD pendant 8 s.",
+    talentDesc: "Hitting an enemy with no armor: +50% Headshot Damage for 8 seconds.",
   },
   {
     id: "relic",
@@ -1273,7 +1274,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 275,
     mag: 20,
     talent: "Perfectly Determined",
-    talentDesc: "Kill headshot : le prochain tir est un headshot critique garanti.",
+    talentDesc: "Headshot kill: the next shot is a guaranteed critical headshot.",
   },
   {
     id: "scalpel",
@@ -1283,7 +1284,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 7,
     talent: "Future Perfection",
-    talentDesc: "Kills d'arme : +1 palier 19 s. Palier 6 : overcharge.",
+    talentDesc: "Weapon kills: +1 skill tier for 19 seconds. At tier 6: overcharge.",
   },
   {
     id: "instigator",
@@ -1293,7 +1294,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 55,
     mag: 5,
     talent: "Perfect Soft Spot",
-    talentDesc: "Détruire un point faible : +24% dégâts d'arme pendant 15 s.",
+    talentDesc: "Destroying a weak point: +24% weapon damage for 15 seconds.",
   },
   {
     id: "brutus",
@@ -1303,7 +1304,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 7,
     talent: "Perfectly Behind You",
-    talentDesc: "+25% dégâts vs ennemis qui ne vous ciblent pas.",
+    talentDesc: "+25% damage against enemies that are not targeting you.",
   },
   {
     id: "shroud",
@@ -1313,7 +1314,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 7,
     talent: "High Priority Target",
-    talentDesc: "+125% dégâts d'arme vs l'ennemi du plus haut rang encore en combat.",
+    talentDesc: "+125% weapon damage against the highest-ranking enemy still in combat.",
   },
   {
     id: "prophet",
@@ -1323,7 +1324,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 6,
     talent: "Perfectly Determined",
-    talentDesc: "Kill headshot : le prochain tir est un headshot critique garanti.",
+    talentDesc: "Headshot kill: the next shot is a guaranteed critical headshot.",
   },
   {
     id: "sharpshooters-93r",
@@ -1333,7 +1334,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 20,
     talent: "Perfect Unwavering",
-    talentDesc: "Swap vers cette arme : +400% maniement 5 s. Kills refresh.",
+    talentDesc: "Swapping to this weapon: +400% weapon handling for 5 seconds. Kills refresh the effect.",
   },
   {
     id: "mozambique-special",
@@ -1343,7 +1344,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 310,
     mag: 7,
     talent: "Perfect Breadbasket",
-    talentDesc: "Tirs au corps : +70% HSD au prochain headshot, 2 stacks.",
+    talentDesc: "Body shots: +70% Headshot Damage on the next headshot, up to 2 stacks.",
   },
   {
     id: "maxim-9",
@@ -1353,7 +1354,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 400,
     mag: 17,
     talent: "Perfect Spike",
-    talentDesc: "Headshots : +25% dégâts de compétence pendant 15 s.",
+    talentDesc: "Headshots: +25% skill damage for 15 seconds.",
   },
   {
     id: "p320-xcompact",
@@ -1363,7 +1364,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 375,
     mag: 15,
     talent: "Perfect Preservation",
-    talentDesc: "Tuer répare 12% d'armure / 5 s. Kill headshot : 24%.",
+    talentDesc: "Kill repairs 12% of your armor over 5 seconds. Headshot kill: 24%.",
   },
   {
     id: "lightning-rod",
@@ -1373,7 +1374,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 380,
     mag: 15,
     talent: "Perfect Salvage",
-    talentDesc: "Tuer : 85% de chance de recharger le chargeur.",
+    talentDesc: "Kill: 85% chance to reload the magazine.",
   },
   {
     id: "diceros-special",
@@ -1383,7 +1384,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 200,
     mag: 6,
     talent: "Perfect Optimist",
-    talentDesc: "+4% dégâts d'arme par 10% de munitions manquantes.",
+    talentDesc: "+4% weapon damage for every 10% magazine missing.",
   },
   {
     id: "mosquito",
@@ -1393,16 +1394,16 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 310,
     mag: 15,
     talent: "Mosquito Song",
-    talentDesc: "5 stacks partagés : la cible vous aggro 5 s et prend +25% dégâts à l'armure.",
+    talentDesc: "5 shared stacks: the target aggros you for 5 seconds and takes +25% damage to armor.",
   },
 ];
 
 export const WEAPON_TYPE_LABELS: Record<WeaponDef["type"], string> = {
-  ar: "Fusil d'assaut",
-  lmg: "Mitrailleuse",
-  smg: "Pistolet-mitrailleur",
-  shotgun: "Fusil à pompe",
-  mmr: "Fusil de précision",
-  rifle: "Fusil",
-  pistol: "Pistolet",
+  ar: "Assault Rifle",
+  lmg: "LMG",
+  smg: "SMG",
+  shotgun: "Shotgun",
+  mmr: "Marksman Rifle",
+  rifle: "Rifle",
+  pistol: "Pistol",
 };
