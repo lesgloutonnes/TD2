@@ -71,6 +71,7 @@ export const STAT_LABELS: Record<StatKey, string> = {
   swapSpeed: "Vitesse de changement",
   optimalRange: "Portée optimale",
   threat: "Menace",
+  protectionFromElites: "Protection contre les élites",
 };
 
 export const STAT_MAX: Partial<Record<StatKey, number>> = {
@@ -165,6 +166,7 @@ export const PERCENT_STATS = new Set<StatKey>([
   "swapSpeed",
   "optimalRange",
   "threat",
+  "protectionFromElites",
 ]);
 
 export const SHD_WATCH: StatBonus[] = [

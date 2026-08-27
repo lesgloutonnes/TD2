@@ -90,7 +90,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Chance de critique",
     three: "+20% Dégâts critiques",
-    four: "Hostile Negotiations — les critiques marquent (3 max). Les critiques infligent 60% des dégâts aux autres marques.",
+    four: "Crowd Control — les critiques marquent (3 max, 20 s). Les critiques infligent 60% des dégâts aux autres marques. Kill marqué : +10% CHD (10 stacks).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "chd", value: 20 }],
     backpackTalent: {
@@ -107,14 +107,14 @@ export const GEAR_SETS: GearSetDef[] = [
     name: "Hotshot",
     color: "#c9a44a",
     core: "red",
-    two: "+30% Dégâts MMR & maniement",
-    three: "+30% Dégâts à la tête",
-    four: "Headache — combo de tirs à la tête : bonus de dégâts, armure bonus, recharge du chargeur.",
-    twoStats: [
-      { stat: "mmrDamage", value: 30 },
+    two: "+30% Dégâts MMR",
+    three: "+30% Dégâts à la tête & +30% maniement",
+    four: "Headache — premier headshot MMR : +80% au suivant. 2e : armure bonus. 3e : recharge. Ensuite les 3 bonus à chaque headshot consécutif.",
+    twoStats: [{ stat: "mmrDamage", value: 30 }],
+    threeStats: [
+      { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
-    threeStats: [{ stat: "hsd", value: 30 }],
     backpackTalent: {
       name: "Blessed",
       description: "Un tir à la tête manqué n'annule plus le cycle.",
@@ -235,7 +235,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Effets de statut",
     three: "+30% Vitesse de rechargement",
-    four: "Rules of Engagement — tuer un ennemi marqué donne des Hollow-Point (+20% dégâts, saignement).",
+    four: "Rules of Engagement — tuer un ennemi marqué donne des Hollow-Point (+40% dégâts, saignement).",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
     backpackTalent: {
@@ -244,7 +244,7 @@ export const GEAR_SETS: GearSetDef[] = [
     },
     chestTalent: {
       name: "Parabellum Rounds",
-      description: "Amplification Hollow-Point : 20% → 35% (pas pour le groupe).",
+      description: "Amplification Hollow-Point : 40% → 60% (pas pour le groupe).",
     },
   },
   {
@@ -252,18 +252,18 @@ export const GEAR_SETS: GearSetDef[] = [
     name: "True Patriot",
     color: "#3d5a9a",
     core: "blue",
-    two: "+30% Capacité de munitions",
+    two: "+15% Maniement d'arme",
     three: "+30% Taille du chargeur",
-    four: "Red, White and Blue — debuffs cycliques : +8% dégâts reçus, 2% réparation/s, -8% dégâts infligés. Explosion Full Flag.",
-    twoStats: [{ stat: "ammoCapacity", value: 30 }],
+    four: "Red, White and Blue — debuffs cycliques : +15% dégâts reçus, 2% réparation/s, -10% dégâts infligés. Explosion Full Flag.",
+    twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "magazineSize", value: 30 }],
     backpackTalent: {
       name: "Patriotic Boost",
-      description: "Debuffs : 8/2/8 → 12/3/12.",
+      description: "Debuffs : 15/2/10 → 30/5/20.",
     },
     chestTalent: {
       name: "Waving the Flag",
-      description: "Rotation des debuffs : 2 s → 1,5 s.",
+      description: "Rotation des debuffs : 1,5 s → 1 s.",
     },
   },
   {
@@ -271,18 +271,24 @@ export const GEAR_SETS: GearSetDef[] = [
     name: "Aces and Eights",
     color: "#2a2a2a",
     core: "red",
-    two: "+15% Dégâts MMR",
-    three: "+30% Dégâts à la tête",
-    four: "Dead Man's Hand — 5 cartes retournées : le prochain tir est amplifié de 30%. Meilleure main = plus de tirs.",
-    twoStats: [{ stat: "mmrDamage", value: 15 }],
-    threeStats: [{ stat: "hsd", value: 30 }],
+    two: "+30% Dégâts MMR & +30% Dégâts fusil",
+    three: "+30% Dégâts à la tête & +30% maniement",
+    four: "Dead Man's Hand — 5 cartes retournées : le prochain tir est amplifié de 75%. Meilleure main = plus de tirs.",
+    twoStats: [
+      { stat: "mmrDamage", value: 30 },
+      { stat: "rifleDamage", value: 30 },
+    ],
+    threeStats: [
+      { stat: "hsd", value: 30 },
+      { stat: "weaponHandling", value: 30 },
+    ],
     backpackTalent: {
       name: "Ace in the Sleeve",
       description: "Un tir amplifié supplémentaire.",
     },
     chestTalent: {
       name: "No Limit",
-      description: "Bonus Dead Man's Hand : 30% → 50%.",
+      description: "Bonus Dead Man's Hand : 75% → 100%.",
     },
   },
   {
@@ -354,11 +360,11 @@ export const GEAR_SETS: GearSetDef[] = [
     threeStats: [],
     backpackTalent: {
       name: "Heatstroke",
-      description: "+25% dégâts d'arme vs ennemis en feu de la tourelle. +25% portée.",
+      description: "+40% dégâts amplifiés vs ennemis en feu de la tourelle. +25% portée.",
     },
     chestTalent: {
       name: "Chain Combustion",
-      description: "Les ennemis enflammés par la tourelle enflamment les autres à 2 m.",
+      description: "Les ennemis enflammés par la tourelle enflamment les autres à 10 m.",
     },
   },
   {
@@ -385,24 +391,24 @@ export const GEAR_SETS: GearSetDef[] = [
     name: "Breaking Point",
     color: "#8a4a2a",
     core: "red",
-    two: "+25% Dégâts fusil & MMR",
-    three: "+30% Dégâts à la tête & +15% maniement",
-    four: "On Point — stacks en tirant, reload : +2% maniement et dégâts par stack pendant 10 s.",
+    two: "+30% Dégâts fusil & MMR",
+    three: "+30% Dégâts à la tête & +30% maniement",
+    four: "On Point — stacks en tirant, reload : +2% maniement et +4% dégâts d'arme par stack pendant 20 s.",
     twoStats: [
-      { stat: "rifleDamage", value: 25 },
-      { stat: "mmrDamage", value: 25 },
+      { stat: "rifleDamage", value: 30 },
+      { stat: "mmrDamage", value: 30 },
     ],
     threeStats: [
       { stat: "hsd", value: 30 },
-      { stat: "weaponHandling", value: 15 },
+      { stat: "weaponHandling", value: 30 },
     ],
     backpackTalent: {
       name: "Point of Honor",
-      description: "Bonus dégâts On Point : 2% → 3%.",
+      description: "Bonus dégâts On Point : 4% → 9%.",
     },
     chestTalent: {
       name: "Point of no Return",
-      description: "Durée On Point : 10 s → 15 s.",
+      description: "Durée On Point : 20 s → 40 s.",
     },
   },
   {
@@ -475,12 +481,12 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Taille du chargeur",
     three: "+30% Dégâts mitrailleuse",
-    four: "Throttle Control — tirer construit des stacks (50 max) : +0,5% maniement et +4% CHD par stack.",
+    four: "Throttle Control — tirer construit des stacks (50 max) : +0,5% maniement et +5% CHD par stack.",
     twoStats: [{ stat: "magazineSize", value: 30 }],
     threeStats: [{ stat: "lmgDamage", value: 30 }],
     backpackTalent: {
       name: "Snowball",
-      description: "CHD par stack : 4% → 7%.",
+      description: "CHD par stack : 5% → 8%.",
     },
     chestTalent: {
       name: "Sustainability",
@@ -494,12 +500,12 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+10% Dégâts d'arme",
     three: "+30% Maniement d'arme",
-    four: "Camaraderie — tuer une cible marquée donne des stacks (3% WD + 2% CHD) selon les alliés/compétences.",
+    four: "Camaraderie — tuer une cible marquée (10 s) donne des stacks (3% WD + 3% CHD) selon les alliés/compétences.",
     twoStats: [{ stat: "weaponDamage", value: 10 }],
     threeStats: [{ stat: "weaponHandling", value: 30 }],
     backpackTalent: {
       name: "One for All",
-      description: "Dégâts d'arme par stack : 3% → 5%.",
+      description: "Dégâts d'arme par stack : 3% → 6%.",
     },
     chestTalent: {
       name: "All for One",
@@ -546,6 +552,25 @@ export const GEAR_SETS: GearSetDef[] = [
     chestTalent: {
       name: "Overcharged Nanites",
       description: "Efficacité de soin : 150% → 225%.",
+    },
+  },
+  {
+    id: "ember-engine",
+    name: "Ember Engine",
+    color: "#e25822",
+    core: "yellow",
+    two: "+8% Efficacité de compétence",
+    three: "+30% Effets de statut",
+    four: "Spontaneous Combustion — chaque statut a 40% de chance d'appliquer Brûlure. Si c'était déjà Brûlure : +25% dégâts de brûlure.",
+    twoStats: [{ stat: "skillEfficiency", value: 8 }],
+    threeStats: [{ stat: "statusEffects", value: 30 }],
+    backpackTalent: {
+      name: "White Hot",
+      description: "Durée du debuff de dégâts de brûlure : +50%.",
+    },
+    chestTalent: {
+      name: "Flashpoint",
+      description: "Chance de Brûlure de Spontaneous Combustion : 40% → 60%.",
     },
   },
 ];

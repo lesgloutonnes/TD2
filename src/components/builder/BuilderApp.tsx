@@ -96,7 +96,7 @@ export function BuilderApp() {
     <div className="app-shell">
       <header className="topbar">
         <div>
-          <p className="eyebrow">The Division 2</p>
+          <p className="eyebrow">The Division 2 · Y8S3 Red Horizon</p>
           <h1>Gear Builder</h1>
         </div>
         <label className="name-field">
@@ -332,8 +332,8 @@ export function BuilderApp() {
       {toast ? <div className="toast">{toast}</div> : null}
 
       <footer className="legal">
-        Fan-made, hors-ligne, sans compte. Données basées sur le live 2026 (brands, sets, talents,
-        nommés, exotiques). Non affilié à Ubisoft.
+        Fan-made, hors-ligne, sans compte. Données live Y8S3 Red Horizon (27 août 2026) :
+        marques, sets, talents, nommés, exotiques. Non affilié à Ubisoft.
       </footer>
     </div>
   );

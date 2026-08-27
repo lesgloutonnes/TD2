@@ -321,6 +321,39 @@ export const WEAPONS: WeaponDef[] = [
     talent: "Salvage",
     talentDesc: "Tuer recharge 50% du chargeur.",
   },
+  {
+    id: "fafnir",
+    name: "Fafnir",
+    type: "shotgun",
+    quality: "exotic",
+    rpm: 70,
+    mag: 8,
+    talent: "Dragon's Breath",
+    talentDesc:
+      "Chaque tir a 40% de chance d'appliquer Brûlure. Les dégâts d'arme sont amplifiés de 50% de votre bonus d'effets de statut. Mods : +15% CHC, +5 chargeur, +10% maniement.",
+  },
+  {
+    id: "teapot",
+    name: "Teapot",
+    type: "rifle",
+    quality: "named",
+    rpm: 300,
+    mag: 20,
+    talent: "Perfect Boiling Point",
+    talentDesc:
+      "Les 48% premiers du chargeur : -100% chance de critique. Le reste : 100% chance de critique.",
+  },
+  {
+    id: "steamer",
+    name: "Steamer",
+    type: "ar",
+    quality: "named",
+    rpm: 850,
+    mag: 30,
+    talent: "Perfect Boiling Point",
+    talentDesc:
+      "Les 48% premiers du chargeur : -100% chance de critique. Le reste : 100% chance de critique.",
+  },
 ];
 
 export const WEAPON_TYPE_LABELS: Record<WeaponDef["type"], string> = {
