@@ -67,7 +67,7 @@ export function StatsPanel({
 
       <div className="index-card">
         <div>
-          <p className="eyebrow">Offense score</p>
+          <p className="eyebrow">Build index</p>
           <strong>{stats.offensiveIndex}</strong>
         </div>
         <div>
@@ -83,7 +83,8 @@ export function StatsPanel({
         </div>
       </div>
       <small className="hint index-hint">
-        Relative estimate — not DPS. Assumes talent / 4pc uptime noted in Analysis.
+        Relative stack compare for planning only — not DPS. Farm the gear in-game, then verify at the
+        shooting range. Talent / 4pc notes are assumed uptime.
       </small>
 
       <div className="chc-meter">

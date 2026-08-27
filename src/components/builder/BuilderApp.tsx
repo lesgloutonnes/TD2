@@ -182,6 +182,10 @@ export function BuilderApp() {
         <div>
           <p className="eyebrow">The Division 2 · Y8S3 Red Horizon</p>
           <h1>Gear Builder</h1>
+          <p className="tagline">
+            Plan the loadout here. Farm in-game. Test damage at the shooting range — this tool does
+            not calculate DPS.
+          </p>
         </div>
         <label className="name-field">
           <span>Build name</span>

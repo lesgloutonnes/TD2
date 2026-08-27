@@ -80,12 +80,14 @@ h1 {
   color: var(--amber);
 }
 
-.eyebrow {
-  margin: 0 0 4px;
-  color: var(--orange);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+.tagline {
+  margin: 8px 0 0;
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  text-transform: none;
 }
 
 .name-field,

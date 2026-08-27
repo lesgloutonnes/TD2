@@ -642,7 +642,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     100 * wdFactor * typeFactor * critFactor * hsFactor * dtaFactor * dthFactor,
   );
   notes.push(
-    "Offense score is a relative estimate (not DPS): WD × weapon type × crit × headshot × DtA/DtH. Talents/4pc use assumed uptime.",
+    "Build index is a relative stack compare for planning (not DPS): WD × weapon type × crit × headshot × DtA/DtH. Validate damage at the shooting range.",
   );
 
   if (equippedSlots === 0) {

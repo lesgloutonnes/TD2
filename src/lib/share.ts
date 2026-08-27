@@ -207,10 +207,10 @@ function applyLibraryExpertise(loadout: Loadout, level = 12): Loadout {
 export const PRESETS: { id: string; name: string; blurb: string; build: () => Loadout }[] = [
   {
     id: "striker",
-    name: "Striker DPS",
+    name: "Striker",
     blurb: "4 Striker + Česká + Grupo. Meta AR / LMG.",
     build: () => {
-      const loadout = emptyLoadout("Striker DPS");
+      const loadout = emptyLoadout("Striker");
       loadout.gear.mask = createPiece("mask", "set:striker");
       loadout.gear.backpack = createPiece("backpack", "set:striker");
       loadout.gear.chest = createPiece("chest", "set:striker");
@@ -267,10 +267,10 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
   },
   {
     id: "skill",
-    name: "Skill DPS",
+    name: "Skill build",
     blurb: "Empress / Wyvern / Hana-U + Capacitor. Technician.",
     build: () => {
-      const loadout = emptyLoadout("Skill DPS");
+      const loadout = emptyLoadout("Skill build");
       loadout.gear.mask = createPiece("mask", "brand:empress", "yellow");
       loadout.gear.backpack = createPiece("backpack", "brand:wyvern", "yellow");
       loadout.gear.chest = createPiece("chest", "brand:hana-u", "yellow");
