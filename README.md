@@ -4,6 +4,20 @@ Planificateur de builds pour **Tom Clancy's The Division 2**.
 
 Outil fan-made, 100 % dans le navigateur : marques, gear sets, pièces nommées, exotiques, armes, compétences, spécialisation, calcul des bonus et partage par URL.
 
+## Lancer sans npm (Windows)
+
+Double-cliquez sur **`lancer-builder.bat`**.
+
+Ça ouvre http://localhost:3000 dans le navigateur. Aucun Node/npm à installer : Windows PowerShell sert le site déjà généré dans `www/`. Laissez la fenêtre noire ouverte tant que vous jouez avec le builder, puis fermez-la pour arrêter.
+
+Si Windows bloque le script : clic droit sur `lancer-builder.ps1` → Propriétés → Débloquer, ou :
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+## Lancer avec npm (développement)
+
 ```bash
 npm install
 npm run dev
