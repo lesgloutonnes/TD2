@@ -1,10 +1,11 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
-import { createPiece } from "./piece";
+import { applyGearSet, createPiece } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
-import { NAMED_AND_EXOTICS, catalogById } from "./data/catalog";
+import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor, clampStat } from "./data/attributes";
+import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
 import { pieceInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
@@ -425,6 +426,53 @@ function testStatCaps() {
   assert(clampStat("chc", -3) === 0, "no negative");
 }
 
+function testCatalogSlotLockedCore() {
+  const refactorGloves = catalogForSlot("gloves").find((item) => item.id === "set:refactor");
+  const refactorMask = catalogForSlot("mask").find((item) => item.id === "set:refactor");
+  const strikerGloves = catalogForSlot("gloves").find((item) => item.id === "set:striker");
+  const scChest = catalogForSlot("chest").find((item) => item.id === "set:system-corruption");
+  assert(refactorGloves?.lockedCore === "blue", "Refactor gants bleus dans le picker");
+  assert(refactorMask?.lockedCore === "yellow", "Refactor masque jaune dans le picker");
+  assert(strikerGloves?.lockedCore === "red", "Striker reste rouge sur chaque pièce");
+  assert(scChest?.lockedCore === "blue", "System Corruption gilet bleu dans le picker");
+}
+
+function testEverySetPieceCore() {
+  for (const set of GEAR_SETS) {
+    const cores = gearSetCores(set);
+    for (const slot of SLOTS) {
+      const piece = createPiece(slot, `set:${set.id}`, "red");
+      assert(
+        piece.core === cores[slot],
+        `${set.name} ${slot}: expected ${cores[slot]}, got ${piece.core}`,
+      );
+    }
+  }
+}
+
+function testApplyGearSetAllSlots() {
+  const refactor = applyGearSet(emptyLoadout(), "set:refactor");
+  assert(refactor.gear.mask?.core === "yellow", "apply Refactor masque");
+  assert(refactor.gear.chest?.core === "yellow", "apply Refactor gilet");
+  assert(refactor.gear.holster?.core === "yellow", "apply Refactor holster");
+  assert(refactor.gear.backpack?.core === "blue", "apply Refactor sac");
+  assert(refactor.gear.gloves?.core === "blue", "apply Refactor gants");
+  assert(refactor.gear.kneepads?.core === "blue", "apply Refactor genouillères");
+  assert(
+    SLOTS.every((slot) => refactor.gear[slot]?.sourceId === "set:refactor"),
+    "6 pièces Refactor",
+  );
+
+  const striker = applyGearSet(emptyLoadout(), "set:striker");
+  assert(
+    SLOTS.every((slot) => striker.gear[slot]?.core === "red"),
+    "Striker 6 pièces rouges",
+  );
+
+  const ignored = applyGearSet(emptyLoadout(), "brand:providence");
+  assert(SLOTS.every((slot) => ignored.gear[slot] === null), "une marque ne remplit pas le set");
+}
+
 function testInspectEmpty() {
   const inspect = pieceInspect("mask", emptyLoadout());
   assert(inspect.empty, "empty slot inspect");
@@ -530,6 +578,9 @@ const tests = [
   testSystemCorruptionSlotCores,
   testKindColors,
   testStatCaps,
+  testCatalogSlotLockedCore,
+  testEverySetPieceCore,
+  testApplyGearSetAllSlots,
   testInspectEmpty,
   testInspectProvidenceTiers,
   testInspectStrikerTalents,

@@ -1,6 +1,6 @@
 import type { CatalogItem } from "../types";
 import { BRANDS } from "./brands";
-import { GEAR_SETS } from "./gear-sets";
+import { GEAR_SETS, gearSetCore } from "./gear-sets";
 
 /**
  * Nommés et exotiques d'équipement (live Y8S3).
@@ -1244,5 +1244,12 @@ export function catalogById(id: string): CatalogItem | undefined {
 }
 
 export function catalogForSlot(slot: import("../types").Slot): CatalogItem[] {
-  return CATALOG.filter((item) => item.slots === "all" || item.slots.includes(slot));
+  return CATALOG.filter((item) => item.slots === "all" || item.slots.includes(slot)).map(
+    (item) => {
+      if (!item.gearSetId) return item;
+      const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
+      if (!set) return item;
+      return { ...item, lockedCore: gearSetCore(set, slot) };
+    },
+  );
 }
