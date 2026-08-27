@@ -45,7 +45,11 @@ Open [http://localhost:3000](http://localhost:3000).
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
+- Skill mods on equipped skills (damage / haste / duration / repair / …)
+- Brand HE cores recalibratable; exotic / gear set / rare named cores stay locked
+- Weapons listed by type then name in optgroups
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
+- Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
 - Armor model: flat piece armor + blue cores + Total Armor %
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)

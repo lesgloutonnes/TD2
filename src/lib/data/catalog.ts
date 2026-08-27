@@ -1250,7 +1250,7 @@ export const CATALOG: CatalogItem[] = [
       kind: "brand",
       brandId: brand.id,
       slots: "all",
-      lockedCore: brand.core,
+      // Native brand core is a default only — HE brand cores are recalibratable in-game.
     }),
   ),
   ...GEAR_SETS.map(
@@ -1273,14 +1273,16 @@ export function catalogById(id: string): CatalogItem | undefined {
 export function catalogForSlot(slot: import("../types").Slot): CatalogItem[] {
   return CATALOG.filter((item) => item.slots === "all" || item.slots.includes(slot)).map(
     (item) => {
-      if (item.gearSetId) {
+      if ((item.kind === "gear-set" || item.gearSetId) && item.gearSetId) {
         const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
         if (set) return { ...item, lockedCore: gearSetCore(set, slot) };
       }
-      if (item.lockedCore) return item;
-      if (item.brandId) {
-        const brand = BRANDS.find((entry) => entry.id === item.brandId);
-        if (brand) return { ...item, lockedCore: brand.core };
+      if (item.kind === "exotic" && item.lockedCore) return item;
+      if (item.kind === "named" && item.lockedCore) return item;
+      // Brand HE / recalibratable named: never surface a locked core in the picker.
+      if (item.lockedCore) {
+        const { lockedCore: _ignored, ...rest } = item;
+        return rest;
       }
       return item;
     },

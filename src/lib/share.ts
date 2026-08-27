@@ -1,9 +1,11 @@
-import type { EquippedWeapon, Loadout, WeaponSlot } from "./types";
+import type { EquippedSkill, EquippedWeapon, Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
 import { createPiece } from "./piece";
 import { EXPERTISE_MAX, canBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
 import { defaultWeaponMods, sanitizeWeaponMods } from "./data/weapon-mods";
+import { defaultSkillMods, sanitizeSkillMods } from "./data/skill-mods";
+import { SKILLS } from "./data/skills";
 import { catalogById } from "./data/catalog";
 import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
 
@@ -14,6 +16,35 @@ function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
     expertise,
     mods: def ? defaultWeaponMods(def.type) : [],
   };
+}
+
+function withSkill(skillId: string): EquippedSkill {
+  return { skillId, mods: defaultSkillMods() };
+}
+
+/** Accept legacy string skill ids and current EquippedSkill objects. */
+function normalizeSkills(
+  raw: Loadout["skills"] | Array<string | EquippedSkill | null> | undefined | null,
+): [EquippedSkill | null, EquippedSkill | null] {
+  const slots: [EquippedSkill | null, EquippedSkill | null] = [null, null];
+  if (!Array.isArray(raw)) return slots;
+  for (let i = 0; i < 2; i += 1) {
+    const entry = raw[i];
+    if (!entry) continue;
+    if (typeof entry === "string") {
+      if (!SKILLS.some((skill) => skill.id === entry)) continue;
+      slots[i] = withSkill(entry);
+      continue;
+    }
+    if (typeof entry === "object" && "skillId" in entry && entry.skillId) {
+      if (!SKILLS.some((skill) => skill.id === entry.skillId)) continue;
+      slots[i] = {
+        skillId: entry.skillId,
+        mods: sanitizeSkillMods(entry.mods),
+      };
+    }
+  }
+  return slots;
 }
 
 export function encodeLoadout(loadout: Loadout): string {
@@ -109,7 +140,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     name: parsed.name || base.name,
     gear,
     weapons,
-    skills: parsed.skills ?? base.skills,
+    skills: normalizeSkills(parsed.skills),
     specialization: parsed.specialization ?? null,
     shdWatch: parsed.shdWatch ?? true,
   };
@@ -220,7 +251,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("st-elmo", 12);
       loadout.weapons.secondary = withWeapon("lexington", 12);
       loadout.weapons.sidearm = withWeapon("liberty", 12);
-      loadout.skills = ["reviver-hive", "crusader-shield"];
+      loadout.skills = [withSkill("reviver-hive"), withSkill("crusader-shield")];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
     },
@@ -240,7 +271,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("lexington", 12);
       loadout.weapons.secondary = withWeapon("famas", 12);
       loadout.weapons.sidearm = withWeapon("d50", 12);
-      loadout.skills = ["reviver-hive", "striker-drone"];
+      loadout.skills = [withSkill("reviver-hive"), withSkill("striker-drone")];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
     },
@@ -260,7 +291,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("st-elmo", 12);
       loadout.weapons.secondary = withWeapon("carbine-7", 12);
       loadout.weapons.sidearm = withWeapon("liberty", 12);
-      loadout.skills = ["crusader-shield", "reviver-hive"];
+      loadout.skills = [withSkill("crusader-shield"), withSkill("reviver-hive")];
       loadout.specialization = "gunner";
       return applyLibraryExpertise(loadout);
     },
@@ -282,7 +313,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("capacitor", 12);
       loadout.weapons.secondary = withWeapon("lexington", 12);
       loadout.weapons.sidearm = withWeapon("d50", 12);
-      loadout.skills = ["artillery-turret", "striker-drone"];
+      loadout.skills = [withSkill("artillery-turret"), withSkill("striker-drone")];
       loadout.specialization = "technician";
       return applyLibraryExpertise(loadout);
     },
@@ -302,7 +333,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("acs-12", 12);
       loadout.weapons.secondary = withWeapon("scorpio", 12);
       loadout.weapons.sidearm = withWeapon("liberty", 12);
-      loadout.skills = ["bulwark-shield", "decoy"];
+      loadout.skills = [withSkill("bulwark-shield"), withSkill("decoy")];
       loadout.specialization = "firewall";
       return applyLibraryExpertise(loadout);
     },
@@ -322,7 +353,7 @@ export const PRESETS: { id: string; name: string; blurb: string; build: () => Lo
       loadout.weapons.primary = withWeapon("dark-winter", 12);
       loadout.weapons.secondary = withWeapon("chatterbox", 12);
       loadout.weapons.sidearm = withWeapon("d50", 12);
-      loadout.skills = ["reviver-hive", "blinder-firefly"];
+      loadout.skills = [withSkill("reviver-hive"), withSkill("blinder-firefly")];
       loadout.specialization = "firewall";
       return applyLibraryExpertise(loadout);
     },

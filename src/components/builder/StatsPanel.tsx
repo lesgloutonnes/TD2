@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComputedStats, Loadout } from "@/lib/types";
+import type { ComputedStats } from "@/lib/types";
 import { formatFlatAmount, formatStat, STAT_LABELS } from "@/lib/data/attributes";
 import type { StatKey } from "@/lib/types";
 
@@ -46,10 +46,8 @@ const HIGHLIGHT: StatKey[] = [
 ];
 
 export function StatsPanel({
-  loadout,
   stats,
 }: {
-  loadout: Loadout;
   stats: ComputedStats;
 }) {
   return (
@@ -76,10 +74,6 @@ export function StatsPanel({
             {stats.skillTierCapped}
             <span className="muted"> / 6</span>
           </strong>
-        </div>
-        <div>
-          <p className="eyebrow">Primary expertise</p>
-          <strong>{loadout.weapons.primary?.expertise ?? 0}</strong>
         </div>
       </div>
       <small className="hint index-hint">
