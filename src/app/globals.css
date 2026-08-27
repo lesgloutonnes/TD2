@@ -437,6 +437,42 @@ select:focus {
   gap: 8px;
 }
 
+.picker-row-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.picker-row-wrap .picker-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.set-all-btn {
+  flex: none;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swatch-col {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  align-content: center;
+  flex: none;
+}
+
+.core-pip-mini {
+  width: 9px;
+  height: 9px;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  flex: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
 .picker-row {
   width: 100%;
   padding: 10px;

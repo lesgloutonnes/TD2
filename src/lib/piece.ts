@@ -1,4 +1,4 @@
-import type { CatalogItem, CoreType, GearPiece, Slot } from "./types";
+import type { CatalogItem, CoreType, GearPiece, Loadout, Slot } from "./types";
 import { ALL_TALENTS } from "./data/talents";
 import { catalogById } from "./data/catalog";
 import {
@@ -6,6 +6,7 @@ import {
   defaultMod,
   gearSetAttribute,
   hasGearMod,
+  SLOTS,
 } from "./data/attributes";
 import { GEAR_SETS, gearSetCore } from "./data/gear-sets";
 
@@ -65,4 +66,14 @@ function defaultTalent(slot: Slot, source: CatalogItem | undefined): string | un
 export function pieceLabel(piece: GearPiece): string {
   const source = catalogById(piece.sourceId);
   return source?.name ?? "Pièce inconnue";
+}
+
+/** Équipe les 6 emplacements avec le set, chacun avec le cœur in-game de son slot. */
+export function applyGearSet(loadout: Loadout, sourceId: string): Loadout {
+  const source = catalogById(sourceId);
+  if (source?.kind !== "gear-set") return loadout;
+  return {
+    ...loadout,
+    gear: Object.fromEntries(SLOTS.map((slot) => [slot, createPiece(slot, sourceId)])) as Loadout["gear"],
+  };
 }

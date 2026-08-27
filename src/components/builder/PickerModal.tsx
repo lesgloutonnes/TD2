@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { ItemKind, Slot } from "@/lib/types";
 import { catalogForSlot } from "@/lib/data/catalog";
-import { itemKindColor } from "@/lib/data/attributes";
+import { CORE_COLORS, CORE_OPTION_LABELS, itemKindColor } from "@/lib/data/attributes";
 
 const KIND_LABELS: Record<ItemKind, string> = {
   brand: "Marques",
@@ -16,10 +16,12 @@ export function PickerModal({
   slot,
   onClose,
   onPick,
+  onPickSet,
 }: {
   slot: Slot;
   onClose: () => void;
   onPick: (sourceId: string) => void;
+  onPickSet: (sourceId: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<ItemKind | "all">("all");
@@ -79,22 +81,37 @@ export function PickerModal({
         </div>
         <div className="picker-list">
           {items.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="picker-row"
-              onClick={() => onPick(item.id)}
-            >
-              <span className="swatch" style={{ background: itemKindColor(item.kind) }} />
-              <span className="picker-copy">
-                <strong>{item.name}</strong>
-                <small>
-                  {KIND_LABELS[item.kind]}
-                  {item.uniqueTalent ? ` · ${item.uniqueTalent.name}` : ""}
-                  {item.note ? ` · ${item.note}` : ""}
-                </small>
-              </span>
-            </button>
+            <div key={item.id} className="picker-row-wrap">
+              <button type="button" className="picker-row" onClick={() => onPick(item.id)}>
+                <span className="swatch" style={{ background: itemKindColor(item.kind) }} />
+                {item.lockedCore ? (
+                  <span
+                    className="core-pip-mini"
+                    title={CORE_OPTION_LABELS[item.lockedCore]}
+                    style={{ background: CORE_COLORS[item.lockedCore] }}
+                  />
+                ) : null}
+                <span className="picker-copy">
+                  <strong>{item.name}</strong>
+                  <small>
+                    {KIND_LABELS[item.kind]}
+                    {item.lockedCore ? ` · ${CORE_OPTION_LABELS[item.lockedCore]}` : ""}
+                    {item.uniqueTalent ? ` · ${item.uniqueTalent.name}` : ""}
+                    {item.note ? ` · ${item.note}` : ""}
+                  </small>
+                </span>
+              </button>
+              {item.kind === "gear-set" ? (
+                <button
+                  type="button"
+                  className="ghost-btn set-all-btn"
+                  title="Équiper les 6 emplacements avec ce set"
+                  onClick={() => onPickSet(item.id)}
+                >
+                  6 pièces
+                </button>
+              ) : null}
+            </div>
           ))}
           {items.length === 0 ? <p className="empty">Aucun résultat.</p> : null}
         </div>

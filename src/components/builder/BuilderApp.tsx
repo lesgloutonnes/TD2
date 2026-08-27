@@ -3,9 +3,16 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import type { GearPiece, Loadout, Slot, WeaponSlot } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
-import { createPiece, pieceLabel } from "@/lib/piece";
+import { applyGearSet, createPiece, pieceLabel } from "@/lib/piece";
 import { catalogById } from "@/lib/data/catalog";
-import { EMPTY_SLOT_COLOR, itemKindColor, SLOT_LABELS, SLOTS } from "@/lib/data/attributes";
+import {
+  CORE_COLORS,
+  CORE_OPTION_LABELS,
+  EMPTY_SLOT_COLOR,
+  itemKindColor,
+  SLOT_LABELS,
+  SLOTS,
+} from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPONS, WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
 import {
@@ -161,12 +168,21 @@ export function BuilderApp() {
                       if (!piece) setPickerOpen(true);
                     }}
                   >
-                    <span
-                      className="swatch"
-                      style={{
-                        background: source ? itemKindColor(source.kind) : EMPTY_SLOT_COLOR,
-                      }}
-                    />
+                    <span className="swatch-col">
+                      <span
+                        className="swatch"
+                        style={{
+                          background: source ? itemKindColor(source.kind) : EMPTY_SLOT_COLOR,
+                        }}
+                      />
+                      {piece ? (
+                        <span
+                          className="core-pip-mini"
+                          title={CORE_OPTION_LABELS[piece.core]}
+                          style={{ background: CORE_COLORS[piece.core] }}
+                        />
+                      ) : null}
+                    </span>
                     <span>
                       <small>{SLOT_LABELS[slot]}</small>
                       <strong>{piece ? pieceLabel(piece) : "Vide"}</strong>
@@ -330,6 +346,12 @@ export function BuilderApp() {
           onPick={(sourceId) => {
             updateGear(activeSlot, createPiece(activeSlot, sourceId, loadout.gear[activeSlot]?.core));
             setPickerOpen(false);
+          }}
+          onPickSet={(sourceId) => {
+            setLoadout((current) => applyGearSet(current, sourceId));
+            setPickerOpen(false);
+            const source = catalogById(sourceId);
+            if (source) flash(`${source.name} : 6 pièces équipées.`);
           }}
         />
       ) : null}

@@ -594,3 +594,14 @@ export const GEAR_SETS: GearSetDef[] = [
 export function gearSetCore(set: GearSetDef, slot: Slot): CoreType {
   return set.slotCores?.[slot] ?? set.core;
 }
+
+export function gearSetCores(set: GearSetDef): Record<Slot, CoreType> {
+  return {
+    mask: gearSetCore(set, "mask"),
+    backpack: gearSetCore(set, "backpack"),
+    chest: gearSetCore(set, "chest"),
+    gloves: gearSetCore(set, "gloves"),
+    holster: gearSetCore(set, "holster"),
+    kneepads: gearSetCore(set, "kneepads"),
+  };
+}
