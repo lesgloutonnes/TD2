@@ -143,6 +143,9 @@ export function computeStats(loadout: Loadout): ComputedStats {
     addBonuses(values, piece.attributes);
     if (hasGearMod(slot)) addBonuses(values, piece.mods);
     if (source.extraStats) addBonuses(values, source.extraStats);
+    if (source.uniqueTalent) {
+      notes.push(`${source.name} : ${source.uniqueTalent.name}. ${source.uniqueTalent.description}`);
+    }
   }
 
   if (ninja) {

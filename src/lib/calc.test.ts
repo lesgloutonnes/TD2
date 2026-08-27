@@ -1,6 +1,9 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
 import { createPiece } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
+import { NAMED_AND_EXOTICS, catalogById } from "./data/catalog";
+import { WEAPONS } from "./data/weapons";
+import { BRANDS } from "./data/brands";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, itemKindColor, clampStat } from "./data/attributes";
 
 function assert(condition: unknown, message: string) {
@@ -198,6 +201,145 @@ function testHotshotHandlingMove() {
   assert(stats.values.weaponHandling === 30, "Hotshot handling en 3pc");
 }
 
+function testNamedBrandCorrections() {
+  const zeroFs = catalogById("zero-fs");
+  assert(zeroFs?.brandId === "badger", "Zero F's Given est Badger Tuff");
+  assert(zeroFs?.slots !== "all" && zeroFs?.slots.includes("chest"), "Zero F's gilet");
+  assert(zeroFs?.uniqueTalent?.name === "Perfect Unbreakable", "Zero F's Perfect Unbreakable");
+
+  const pointman = catalogById("pointman");
+  assert(pointman?.brandId === "gila", "Pointman est Gila Guard");
+  assert(pointman?.uniqueTalent?.name === "Perfect Vanguard", "Pointman Perfect Vanguard");
+
+  const chainkiller = catalogById("chainkiller");
+  assert(chainkiller?.brandId === "walker", "Chainkiller est Walker");
+}
+
+function testNamedExtraStats() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.expertise = 0;
+  loadout.gear.gloves = createPiece("gloves", "contractors-gloves");
+  loadout.gear.kneepads = createPiece("kneepads", "foxs-prayer");
+  const stats = computeStats(loadout);
+  assert(stats.values.damageToArmor === 8, `Contractor's +8 DtA, got ${stats.values.damageToArmor}`);
+  assert(stats.values.damageToHealth === 8, `Fox's +8 DtH, got ${stats.values.damageToHealth}`);
+}
+
+function testPicaroExtraCore() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.expertise = 0;
+  loadout.gear.holster = createPiece("holster", "picaros-holster");
+  const stats = computeStats(loadout);
+  assert(stats.cores.yellow === 1, `Picaro's cœur jaune, got yellow=${stats.cores.yellow}`);
+  assert(stats.cores.red === 1, `Picaro's cœur rouge extra, got red=${stats.cores.red}`);
+}
+
+function testCatalogCoverage() {
+  const ids = NAMED_AND_EXOTICS.map((item) => item.id);
+  assert(new Set(ids).size === ids.length, "ids nommés/exotiques uniques");
+
+  const named = NAMED_AND_EXOTICS.filter((item) => item.kind === "named");
+  const exotic = NAMED_AND_EXOTICS.filter((item) => item.kind === "exotic");
+  assert(named.length >= 50, `au moins 50 nommés, got ${named.length}`);
+  assert(exotic.length >= 20, `au moins 20 exotiques gear, got ${exotic.length}`);
+
+  const namedBrands = new Set(named.map((item) => item.brandId).filter(Boolean));
+  const expected = [
+    "providence",
+    "ceska",
+    "grupo",
+    "walker",
+    "fenris",
+    "petrov",
+    "overlord",
+    "sokolov",
+    "airaldi",
+    "badger",
+    "douglas",
+    "gila",
+    "belstone",
+    "511",
+    "golan",
+    "empress",
+    "wyvern",
+    "alps",
+    "china-light",
+    "brazos",
+    "hana-u",
+    "murakami",
+    "richter",
+    "electrique",
+    "habsburg",
+    "lengmo",
+    "imminence",
+    "urban-lookout",
+    "unit-alloys",
+    "royal-works",
+    "edelweiss",
+    "yaahl",
+  ];
+  for (const brandId of expected) {
+    assert(namedBrands.has(brandId), `nommé manquant pour ${brandId}`);
+    assert(BRANDS.some((brand) => brand.id === brandId), `marque inconnue ${brandId}`);
+  }
+
+  for (const required of [
+    "vile",
+    "btsu-datagloves",
+    "collector",
+    "nurses-kneepads",
+    "overdogs",
+    "force-multiplier",
+    "matador",
+    "devils-due",
+    "equalizer",
+    "benefactor",
+  ]) {
+    assert(catalogById(required), `catalogue manque ${required}`);
+  }
+}
+
+function testWeaponCatalog() {
+  const ids = WEAPONS.map((weapon) => weapon.id);
+  assert(new Set(ids).size === ids.length, "ids armes uniques");
+  const named = WEAPONS.filter((weapon) => weapon.quality === "named");
+  const exotic = WEAPONS.filter((weapon) => weapon.quality === "exotic");
+  assert(named.length >= 25, `au moins 25 armes nommées, got ${named.length}`);
+  assert(exotic.length >= 20, `au moins 20 armes exotiques, got ${exotic.length}`);
+  for (const required of [
+    "caduceus",
+    "ouroboros",
+    "lady-death",
+    "ravenous",
+    "merciless",
+    "sweet-dreams",
+    "whiplash",
+    "kingbreaker",
+    "harmony",
+    "lexington",
+    "st-elmo",
+  ]) {
+    assert(
+      WEAPONS.some((weapon) => weapon.id === required),
+      `arme manquante ${required}`,
+    );
+  }
+}
+
+function testUniqueTalentNote() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.expertise = 0;
+  loadout.gear.chest = createPiece("chest", "the-sacrifice");
+  const stats = computeStats(loadout);
+  assert(
+    stats.notes.some((note) => note.includes("Perfect Glass Cannon")),
+    "note talent unique Sacrifice",
+  );
+}
+
 function testSlotCoreColors() {
   const loadout = emptyLoadout();
   assert(slotColor("mask", loadout) === EMPTY_SLOT_COLOR, "empty slot grey");
@@ -238,6 +380,12 @@ const tests = [
   testEmberEngine,
   testAcesY8s3,
   testHotshotHandlingMove,
+  testNamedBrandCorrections,
+  testNamedExtraStats,
+  testPicaroExtraCore,
+  testCatalogCoverage,
+  testWeaponCatalog,
+  testUniqueTalentNote,
   testSlotCoreColors,
   testKindColors,
   testStatCaps,
