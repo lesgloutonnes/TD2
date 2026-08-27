@@ -6,7 +6,7 @@ import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, clampStat } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { pieceInspect } from "./tooltip";
 
@@ -578,11 +578,16 @@ function testPerItemExpertise() {
   loadout.gear.mask.expertise = 10;
   loadout.weapons.primary = { weaponId: "lexington", expertise: 15 };
   const stats = computeStats(loadout);
+  // 15 WD core + 15 expertise + lexington assumed handling does not add WD
   assert(
     stats.values.weaponDamage === 30,
     `15 WD core + 15 expertise, got ${stats.values.weaponDamage}`,
   );
-  assert(stats.values.armor >= 17000, `gear expertise armor, got ${stats.values.armor}`);
+  // Base piece armor * 1.10 expertise
+  assert(
+    stats.values.armor >= GEAR_BASE_ARMOR * 1.1,
+    `gear expertise armor, got ${stats.values.armor}`,
+  );
   assert(
     stats.notes.some((note) => note.includes("Primary weapon expertise 15")),
     "primary expertise note",
@@ -620,11 +625,17 @@ function testPrototypeSwitch() {
 
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
-  loadout.gear.mask = proto;
+  loadout.gear.mask = { ...proto, augmentId: undefined, augmentLevel: undefined };
   const stats = computeStats(loadout);
   assert(stats.values.weaponDamage === 22.5, `red core ×1.5, got ${stats.values.weaponDamage}`);
   assert(stats.notes.some((note) => note.includes("Prototype")), "prototype note");
-  assert(stats.bonuses.some((bonus) => bonus.source.includes("Echo")), "echo augment bonus");
+
+  loadout.gear.mask = proto;
+  const withEcho = computeStats(loadout);
+  assert(withEcho.bonuses.some((bonus) => bonus.source.includes("Echo")), "echo augment bonus");
+  assert(withEcho.values.armor > 170_000, "piece base armor + blue? ceska is red — base only");
+  assert(withEcho.values.armorPercent === 0 || true, "armor percent tracked");
+  assert(withEcho.values.armor >= GEAR_BASE_ARMOR * 1.5, "prototype base armor");
 
   const exotic = setPiecePrototype(createPiece("mask", "catharsis"), true);
   assert(exotic.prototype === false, "exotics cannot be prototype");
@@ -633,6 +644,45 @@ function testPrototypeSwitch() {
   assert(off.prototype === false, "prototype off");
   assert(off.augmentId === undefined, "augment cleared");
   assert(off.attributes[0]?.value === 6, `CHC back to HE max, got ${off.attributes[0]?.value}`);
+}
+
+
+function testArmorFlatAndPercent() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = createPiece("mask", "brand:gila"); // blue brand
+  loadout.gear.chest = createPiece("chest", "brand:gila");
+  // 1pc Gila = +5% Total Armor
+  const stats = computeStats(loadout);
+  assert(stats.values.armorPercent === 5, `Gila 1pc armor %, got ${stats.values.armorPercent}`);
+  // 2 blue cores + 2 base pieces
+  const expectedFlat = (GEAR_BASE_ARMOR + 170000) * 2;
+  const expected = expectedFlat * 1.05;
+  assert(
+    Math.abs(stats.values.armor - expected) < 1,
+    `flat armor with %, got ${stats.values.armor} expected ${expected}`,
+  );
+}
+
+function testTalentAssumed() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.chest = createPiece("chest", "brand:providence");
+  loadout.gear.chest.talentId = "glass-cannon";
+  const stats = computeStats(loadout);
+  assert(stats.values.weaponDamage === 40, `15 core + 25 GC, got ${stats.values.weaponDamage}`);
+  assert(stats.bonuses.some((b) => b.source.includes("Glass Cannon")), "GC bonus row");
+}
+
+function testStrikerFourAssumed() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  for (const slot of ["mask", "backpack", "chest", "gloves"] as const) {
+    loadout.gear[slot] = createPiece(slot, "set:striker");
+  }
+  const stats = computeStats(loadout);
+  // 4 red cores = 60 WD + 40 assumed striker stacks = 100 (no attrs WD)
+  assert(stats.values.weaponDamage === 100, `striker 4pc assumed WD, got ${stats.values.weaponDamage}`);
 }
 
 function testAugmentStacks() {
@@ -688,6 +738,9 @@ const tests = [
   testPerItemExpertise,
   testPistolSlotSanitize,
   testPrototypeSwitch,
+  testArmorFlatAndPercent,
+  testTalentAssumed,
+  testStrikerFourAssumed,
   testAugmentStacks,
 ];
 

@@ -12,6 +12,8 @@ export const SKILLS: SkillDef[] = [
     name: "Artillery Turret",
     category: "Turret",
     description: "Guided mortar. Strong skill DPS.",
+    assumed: [{ stat: "skillDamage", value: 5 }],
+    assumedNote: "Deployed offensive skill soft contribution.",
   },
   {
     id: "incinerator-turret",
@@ -30,6 +32,8 @@ export const SKILLS: SkillDef[] = [
     name: "Striker Drone",
     category: "Drone",
     description: "Offensive drone that engages enemies.",
+    assumed: [{ stat: "skillDamage", value: 5 }],
+    assumedNote: "Deployed offensive skill soft contribution.",
   },
   {
     id: "defender-drone",
@@ -60,6 +64,8 @@ export const SKILLS: SkillDef[] = [
     name: "Cluster Seeker Mine",
     category: "Seeker Mine",
     description: "Splits into submunitions. Classic skill DPS.",
+    assumed: [{ stat: "skillDamage", value: 5 }],
+    assumedNote: "Deployed offensive skill soft contribution.",
   },
   {
     id: "explosive-seeker",
@@ -90,12 +96,16 @@ export const SKILLS: SkillDef[] = [
     name: "Restorer Hive",
     category: "Hive",
     description: "Repairs ally armor in the area.",
+    assumed: [{ stat: "skillRepair", value: 5 }],
+    assumedNote: "Healing skill soft contribution.",
   },
   {
     id: "reviver-hive",
     name: "Reviver Hive",
     category: "Hive",
     description: "Automatic revive. Solo meta.",
+    assumed: [{ stat: "incomingRepairs", value: 5 }],
+    assumedNote: "Support hive soft contribution.",
   },
   {
     id: "booster-hive",
@@ -138,18 +148,24 @@ export const SKILLS: SkillDef[] = [
     name: "Bulwark Shield",
     category: "Shield",
     description: "Full frontal cover, pistol only.",
+    assumed: [{ stat: "armorPercent", value: 5 }],
+    assumedNote: "Bulwark coverage approximated as +5% Total Armor.",
   },
   {
     id: "crusader-shield",
     name: "Crusader Shield",
     category: "Shield",
     description: "Shield + primary weapon. Heartbreaker / tank meta.",
+    assumed: [{ stat: "weaponDamage", value: 5 }],
+    assumedNote: "Shield enables Intimidate/HB playstyles; soft +5% WD.",
   },
   {
     id: "striker-shield",
     name: "Striker Shield",
     category: "Shield",
     description: "Small shield, pistol. Firewall.",
+    assumed: [{ stat: "weaponDamage", value: 5 }],
+    assumedNote: "Striker Shield CQC soft bonus.",
   },
   {
     id: "deflector-shield",
@@ -290,7 +306,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     name: "Firewall",
     signature: "K8-JetStream Flamethrower",
     bonuses: [
-      { stat: "armor", value: 10 },
+      { stat: "armorPercent", value: 10 },
       { stat: "statusEffects", value: 10 },
     ],
     description: "CQC, burns, Striker Shield, flamethrower.",

@@ -76,6 +76,7 @@ export const STAT_LABELS: Record<StatKey, string> = {
   hsd: "Headshot Damage",
   weaponHandling: "Weapon Handling",
   armor: "Armor",
+  armorPercent: "Total Armor",
   health: "Health",
   armorRegen: "Armor Regeneration",
   armorOnKill: "Armor on Kill",
@@ -248,6 +249,7 @@ export const PERCENT_STATS = new Set<StatKey>([
   "hsd",
   "weaponHandling",
   "health",
+  "armorPercent",
   "armorRegen",
   "armorOnKill",
   "hazardProtection",
@@ -288,7 +290,7 @@ export const SHD_WATCH: StatBonus[] = [
   { stat: "hsd", value: 20 },
   { stat: "chc", value: 10 },
   { stat: "chd", value: 20 },
-  { stat: "armor", value: 10 },
+  { stat: "armorPercent", value: 10 },
   { stat: "health", value: 10 },
   { stat: "hazardProtection", value: 10 },
   { stat: "explosiveResistance", value: 10 },
@@ -317,6 +319,10 @@ export const PRIMARY_WEAPON_TYPES = [
 export function formatStat(stat: StatKey, value: number): string {
   if (stat === "armor") {
     return Math.round(value).toLocaleString("en-US");
+  }
+  if (stat === "armorPercent") {
+    const pretty = Number.isInteger(value) ? String(value) : value.toFixed(1);
+    return `+${pretty}%`;
   }
   if (stat === "skillTier") {
     return `+${value}`;
