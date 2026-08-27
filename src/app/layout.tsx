@@ -17,7 +17,7 @@ const mono = Share_Tech_Mono({
 export const metadata: Metadata = {
   title: "TD2 Gear Builder",
   description:
-    "Planificateur de builds pour Tom Clancy's The Division 2 : marques, gear sets, talents, armes et stats en direct.",
+    "Planificateur de builds The Division 2 — live Y8S3 Red Horizon : marques, gear sets, talents, armes et stats.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

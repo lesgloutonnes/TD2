@@ -205,6 +205,79 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description: "Changer vers le pistolet : headshots pistolet massifs. Regulus / Liberty.",
     },
   },
+  {
+    id: "trick-shot",
+    name: "Trick Shot",
+    kind: "named",
+    brandId: "imminence",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Perfect Reassigned",
+      description: "Tuer un ennemi : 1 munition spéciale aléatoire dans le pistolet. CD 8 s.",
+    },
+    talentSlot: "chest",
+  },
+  {
+    id: "rushdown",
+    name: "Rushdown",
+    kind: "named",
+    brandId: "richter",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Tag Team",
+      description:
+        "Le dernier ennemi blessé par une compétence est marqué. Dégâts d'arme sur cette cible : -12 s de recharges actives. CD 4 s.",
+    },
+    talentSlot: "chest",
+  },
+  {
+    id: "melon-baller",
+    name: "Melon Baller",
+    kind: "named",
+    brandId: "airaldi",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfect Concussion",
+      description:
+        "Headshot : +20% dégâts totaux d'arme pendant 1,5 s (5 s au fusil de précision). Kill headshot : +15% pendant 10 s.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "keeper",
+    name: "Keeper",
+    kind: "named",
+    brandId: "511",
+    slots: ["backpack"],
+    uniqueTalent: {
+      name: "Perfect Protector",
+      description:
+        "Quand le bouclier prend des dégâts : +25% armure bonus, et les alliés gagnent 35% de votre armure en bonus pendant 3 s. CD 3 s.",
+    },
+    talentSlot: "backpack",
+  },
+  {
+    id: "iron-will",
+    name: "Iron Will",
+    kind: "exotic",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Resolved",
+      description:
+        "Le prochain tir au corps compte comme un headshot. CD 2 s (PvE) / 3 s (PvP). Fusil de précision, fusil ou pistolet requis.",
+    },
+  },
+  {
+    id: "loaded-for-bear",
+    name: "Loaded for Bear",
+    kind: "exotic",
+    slots: ["gloves"],
+    uniqueTalent: {
+      name: "Afterburn",
+      description:
+        "Les impacts appliquent des stacks (20 max par cible). Recharger consomme les stacks : +2% dégâts d'arme par stack.",
+    },
+  },
 ];
 
 export const CATALOG: CatalogItem[] = [

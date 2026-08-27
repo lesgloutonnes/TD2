@@ -61,7 +61,8 @@ export type StatKey =
   | "pulseResistance"
   | "swapSpeed"
   | "optimalRange"
-  | "threat";
+  | "threat"
+  | "protectionFromElites";
 
 export type StatBonus = {
   stat: StatKey;

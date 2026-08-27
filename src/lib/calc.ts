@@ -62,6 +62,7 @@ const STAT_KEYS: StatKey[] = [
   "swapSpeed",
   "optimalRange",
   "threat",
+  "protectionFromElites",
 ];
 
 function emptyValues(): Record<StatKey, number> {

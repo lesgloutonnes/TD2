@@ -110,6 +110,19 @@ export const CHEST_TALENTS: GearTalent[] = [
     description: "Tous les dégâts infligés +30%. Tous les dégâts reçus +60%.",
     perfect: true,
   },
+  {
+    id: "reassigned",
+    name: "Reassigned",
+    slot: "chest",
+    description: "Tuer un ennemi : 1 munition spéciale aléatoire dans le pistolet.",
+  },
+  {
+    id: "perfect-reassigned",
+    name: "Perfect Reassigned",
+    slot: "chest",
+    description: "Tuer un ennemi : 1 munition spéciale aléatoire dans le pistolet. CD 8 s.",
+    perfect: true,
+  },
 ];
 
 export const BACKPACK_TALENTS: GearTalent[] = [
@@ -208,6 +221,29 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Perfect Vigilance",
     slot: "backpack",
     description: "+25% dégâts totaux d'arme. Prendre des dégâts désactive le buff 3 s.",
+    perfect: true,
+  },
+  {
+    id: "concussion",
+    name: "Concussion",
+    slot: "backpack",
+    description:
+      "Headshot : +15% dégâts totaux d'arme pendant 1,5 s (3 s au fusil de précision). Kill headshot : +10% pendant 10 s.",
+  },
+  {
+    id: "perfect-concussion",
+    name: "Perfect Concussion",
+    slot: "backpack",
+    description:
+      "Headshot : +20% dégâts totaux d'arme pendant 1,5 s (5 s au fusil de précision). Kill headshot : +15% pendant 10 s.",
+    perfect: true,
+  },
+  {
+    id: "perfect-protector",
+    name: "Perfect Protector",
+    slot: "backpack",
+    description:
+      "Quand le bouclier prend des dégâts : +25% armure bonus, alliés +35% de votre armure pendant 3 s. CD 3 s.",
     perfect: true,
   },
 ];
