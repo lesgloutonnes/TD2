@@ -1,53 +1,31 @@
-# Lance le Gear Builder sur http://localhost:3000 sans Node/npm.
-# Sert le dossier www/ (site statique) via HttpListener, integre a Windows.
+# Gear Builder local server — no Node/npm required.
+# Serves the www/ folder via .NET HttpListener (built into Windows).
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $site = Join-Path $root "www"
-if (-not (Test-Path (Join-Path $site "index.html"))) {
+if (-not (Test-Path -LiteralPath (Join-Path $site "index.html"))) {
     $site = Join-Path $root "out"
 }
-
-if (-not (Test-Path (Join-Path $site "index.html"))) {
+if (-not (Test-Path -LiteralPath (Join-Path $site "index.html"))) {
     Write-Host ""
-    Write-Host "Dossier du site introuvable (www\\index.html)."
-    Write-Host "Ce depot doit contenir le build statique."
+    Write-Host "Site introuvable : www\index.html"
+    Write-Host "Recuperez le dossier www/ du depot (branche avec le lanceur Windows)."
     Write-Host ""
     Read-Host "Entree pour fermer"
     exit 1
 }
 
-$site = (Resolve-Path $site).Path
-$port = 3000
-$maxPort = 3010
-$listener = $null
-$prefix = $null
+$site = [IO.Path]::GetFullPath((Resolve-Path -LiteralPath $site).Path)
+$siteRoot = $site.TrimEnd("\", "/") + [IO.Path]::DirectorySeparatorChar
 
-while ($port -le $maxPort) {
-    $candidate = "http://127.0.0.1:$port/"
-    $tryListener = New-Object System.Net.HttpListener
-    $tryListener.Prefixes.Add($candidate)
-    try {
-        $tryListener.Start()
-        $listener = $tryListener
-        $prefix = $candidate
-        break
-    } catch {
-        $tryListener.Close()
-        $port++
-    }
-}
-
-if (-not $listener) {
-    Write-Host "Impossible d'ouvrir un port entre 3000 et $maxPort."
-    Read-Host "Entree pour fermer"
-    exit 1
-}
-
-$mime = @{
+$mimeMap = @{
     ".html"  = "text/html; charset=utf-8"
-    ".js"    = "application/javascript; charset=utf-8"
+    ".htm"   = "text/html; charset=utf-8"
+    ".js"    = "text/javascript; charset=utf-8"
+    ".mjs"   = "text/javascript; charset=utf-8"
     ".css"   = "text/css; charset=utf-8"
     ".json"  = "application/json; charset=utf-8"
     ".svg"   = "image/svg+xml"
@@ -64,30 +42,113 @@ $mime = @{
     ".map"   = "application/json"
 }
 
-$url = $prefix.TrimEnd("/")
-Write-Host ""
-Write-Host "  Gear Builder pret : $url"
-Write-Host "  Dossier           : $site"
-Write-Host "  Fermer cette fenetre ou Ctrl+C pour arreter."
-Write-Host ""
-
-Start-Process $url
+function Get-ContentType([string]$path) {
+    $ext = [IO.Path]::GetExtension($path)
+    if ([string]::IsNullOrEmpty($ext)) { return "application/octet-stream" }
+    $key = $ext.ToLowerInvariant()
+    if ($mimeMap.Contains($key)) { return [string]$mimeMap[$key] }
+    return "application/octet-stream"
+}
 
 function Get-SafePath([string]$urlPath) {
-    $decoded = [Uri]::UnescapeDataString($urlPath)
-    if ($decoded -eq "/" -or $decoded -eq "") {
+    if ([string]::IsNullOrEmpty($urlPath) -or $urlPath -eq "/") {
         return (Join-Path $site "index.html")
     }
-    $relative = $decoded.TrimStart("/").Replace("/", [IO.Path]::DirectorySeparatorChar)
-    $full = [IO.Path]::GetFullPath((Join-Path $site $relative))
-    $rootWithSep = $site.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
-    if (-not $full.StartsWith($rootWithSep, [StringComparison]::OrdinalIgnoreCase) -and $full -ne $site) {
+    $decoded = [Uri]::UnescapeDataString($urlPath)
+    $trimmed = $decoded.TrimStart([char[]]@([char]'/', [char]'\') )
+    $combined = $siteRoot + ($trimmed -replace "/", [string][IO.Path]::DirectorySeparatorChar)
+    $full = [IO.Path]::GetFullPath($combined)
+    if (-not $full.StartsWith($siteRoot, [StringComparison]::OrdinalIgnoreCase)) {
         return $null
     }
-    if (Test-Path $full -PathType Container) {
+    if ((Test-Path -LiteralPath $full) -and (Get-Item -LiteralPath $full).PSIsContainer) {
         return (Join-Path $full "index.html")
     }
     return $full
+}
+
+function Send-Bytes {
+    param(
+        [Parameter(Mandatory = $true)] $Response,
+        [Parameter(Mandatory = $true)] [int] $Status,
+        [Parameter(Mandatory = $true)] [string] $ContentType,
+        [Parameter(Mandatory = $true)] [byte[]] $Bytes
+    )
+    $Response.StatusCode = $Status
+    $Response.StatusDescription = "OK"
+    if ($Status -ge 400) { $Response.StatusDescription = "Error" }
+    $Response.ContentType = $ContentType
+    $Response.ContentLength64 = [int64]$Bytes.LongLength
+    $Response.SendChunked = $false
+    $Response.KeepAlive = $false
+    $Response.OutputStream.Write($Bytes, 0, [int]$Bytes.LongLength)
+}
+
+function Send-File {
+    param(
+        [Parameter(Mandatory = $true)] $Response,
+        [Parameter(Mandatory = $true)] [int] $Status,
+        [Parameter(Mandatory = $true)] [string] $Path
+    )
+    $Response.StatusCode = $Status
+    $Response.StatusDescription = "OK"
+    $Response.ContentType = (Get-ContentType $Path)
+    $Response.SendChunked = $false
+    $Response.KeepAlive = $false
+    $stream = [IO.File]::Open($Path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+    try {
+        $Response.ContentLength64 = [int64]$stream.Length
+        $stream.CopyTo($Response.OutputStream)
+    } finally {
+        $stream.Dispose()
+    }
+}
+
+$port = 3000
+$maxPort = 3010
+$listener = $null
+$opened = 0
+
+while ($port -le $maxPort) {
+    $tryListener = New-Object System.Net.HttpListener
+    $tryListener.IgnoreWriteExceptions = $true
+    $tryListener.Prefixes.Add("http://127.0.0.1:$port/")
+    try {
+        $tryListener.Prefixes.Add("http://localhost:$port/")
+    } catch {
+        # localhost prefix is optional
+    }
+    try {
+        $tryListener.Start()
+        $listener = $tryListener
+        $opened = $port
+        break
+    } catch {
+        $tryListener.Close()
+        $port++
+    }
+}
+
+if (-not $listener) {
+    Write-Host "Impossible d'ouvrir un port entre 3000 et $maxPort."
+    Write-Host $_.Exception.Message
+    Read-Host "Entree pour fermer"
+    exit 1
+}
+
+$url = "http://127.0.0.1:$opened/"
+Write-Host ""
+Write-Host "  TD2 Gear Builder"
+Write-Host "  ----------------"
+Write-Host "  Ouvrez : $url"
+Write-Host "  Dossier : $site"
+Write-Host "  Ctrl+C ou fermez cette fenetre pour arreter."
+Write-Host ""
+
+try {
+    Start-Process $url | Out-Null
+} catch {
+    Write-Host "Ouvrez le lien ci-dessus dans le navigateur."
 }
 
 try {
@@ -95,37 +156,46 @@ try {
         $context = $listener.GetContext()
         $request = $context.Request
         $response = $context.Response
+        $path = $request.Url.AbsolutePath
         try {
-            $file = Get-SafePath $request.Url.AbsolutePath
-            if (-not $file -or -not (Test-Path $file -PathType Leaf)) {
-                $fallback = Join-Path $site "404.html"
-                $response.StatusCode = 404
-                if (Test-Path $fallback) { $file = $fallback } else { $file = $null }
-            } else {
-                $response.StatusCode = 200
-            }
-
-            if ($file) {
-                $ext = [IO.Path]::GetExtension($file).ToLowerInvariant()
-                if ($mime.ContainsKey($ext)) {
-                    $response.ContentType = $mime[$ext]
+            if ($path -eq "/favicon.ico") {
+                $ico = Join-Path $site "favicon.ico"
+                if (Test-Path -LiteralPath $ico) {
+                    Send-File -Response $response -Status 200 -Path $ico
                 } else {
-                    $response.ContentType = "application/octet-stream"
+                    $response.StatusCode = 204
+                    $response.ContentLength64 = 0
                 }
-                $bytes = [IO.File]::ReadAllBytes($file)
-                $response.ContentLength64 = $bytes.Length
-                $response.OutputStream.Write($bytes, 0, $bytes.Length)
             } else {
-                $msg = [Text.Encoding]::UTF8.GetBytes("404")
-                $response.OutputStream.Write($msg, 0, $msg.Length)
+                $file = Get-SafePath $path
+                if ($file -and (Test-Path -LiteralPath $file)) {
+                    Send-File -Response $response -Status 200 -Path $file
+                    Write-Host ("  {0} {1}" -f $request.HttpMethod, $path)
+                } else {
+                    $notFound = Join-Path $site "404.html"
+                    if (Test-Path -LiteralPath $notFound) {
+                        Send-File -Response $response -Status 404 -Path $notFound
+                    } else {
+                        $msg = [Text.Encoding]::UTF8.GetBytes("404")
+                        Send-Bytes -Response $response -Status 404 -ContentType "text/plain; charset=utf-8" -Bytes $msg
+                    }
+                    Write-Host ("  404 {0}" -f $path)
+                }
             }
         } catch {
-            $response.StatusCode = 500
+            Write-Host ("  ERREUR {0} : {1}" -f $path, $_.Exception.Message) -ForegroundColor Red
+            try {
+                $msg = [Text.Encoding]::UTF8.GetBytes("Erreur serveur: " + $_.Exception.Message)
+                Send-Bytes -Response $response -Status 500 -ContentType "text/plain; charset=utf-8" -Bytes $msg
+            } catch {
+                try { $response.StatusCode = 500 } catch { }
+            }
         } finally {
-            $response.OutputStream.Close()
+            try { $response.OutputStream.Flush() } catch { }
+            try { $response.Close() } catch { }
         }
     }
 } finally {
-    $listener.Stop()
-    $listener.Close()
+    try { $listener.Stop() } catch { }
+    try { $listener.Close() } catch { }
 }

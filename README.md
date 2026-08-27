@@ -10,6 +10,8 @@ Double-cliquez sur **`lancer-builder.bat`**.
 
 Ça ouvre http://localhost:3000 dans le navigateur. Aucun Node/npm à installer : Windows PowerShell sert le site déjà généré dans `www/`. Laissez la fenêtre noire ouverte tant que vous jouez avec le builder, puis fermez-la pour arrêter.
 
+Si le navigateur affiche une **erreur 500**, mettez à jour `lancer-builder.ps1` (le premier serveur plantait en envoyant les fichiers). Relancez le `.bat` et regardez les lignes `ERREUR` dans la fenêtre noire.
+
 Si Windows bloque le script : clic droit sur `lancer-builder.ps1` → Propriétés → Débloquer, ou :
 
 ```powershell
