@@ -538,6 +538,12 @@ select:focus {
   font-size: 28px;
 }
 
+.index-hint {
+  display: block;
+  margin: -4px 0 4px;
+  color: var(--muted);
+}
+
 .chc-meter {
   display: grid;
   gap: 8px;

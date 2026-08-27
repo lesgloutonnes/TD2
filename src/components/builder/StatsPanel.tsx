@@ -12,6 +12,7 @@ const HIGHLIGHT: StatKey[] = [
   "damageToArmor",
   "damageToHealth",
   "armor",
+  "armorPercent",
   "armorRegen",
   "armorOnKill",
   "hazardProtection",
@@ -57,7 +58,7 @@ export function StatsPanel({
 
       <div className="index-card">
         <div>
-          <p className="eyebrow">Offensive index</p>
+          <p className="eyebrow">Offense score</p>
           <strong>{stats.offensiveIndex}</strong>
         </div>
         <div>
@@ -72,6 +73,9 @@ export function StatsPanel({
           <strong>{loadout.weapons.primary?.expertise ?? 0}</strong>
         </div>
       </div>
+      <small className="hint index-hint">
+        Relative estimate — not DPS. Assumes talent / 4pc uptime noted in Analysis.
+      </small>
 
       <div className="chc-meter">
         <div className="chc-label">

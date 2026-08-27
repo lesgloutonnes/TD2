@@ -6,12 +6,16 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Glass Cannon",
     slot: "chest",
     description: "All damage dealt is amplified by 25%. All incoming damage is amplified by 50%.",
+    assumed: [{ stat: "weaponDamage", value: 25 }, { stat: "skillDamage", value: 25 }],
+    assumedNote: "Assumes Glass Cannon active (+25% all damage dealt).",
   },
   {
     id: "obliterate",
     name: "Obliterate",
     slot: "chest",
     description: "Critical hits increase total weapon damage by 1% for 5s. Stacks up to 25 times.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Assumes ~15 Obliterate stacks.",
   },
   {
     id: "unbreakable",
@@ -24,12 +28,16 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Intimidate",
     slot: "chest",
     description: "While within 8m of an enemy, total weapon damage is increased by 35% if you have bonus armor.",
+    assumed: [{ stat: "weaponDamage", value: 35 }],
+    assumedNote: "Assumes Intimidate active (bonus armor + CQC).",
   },
   {
     id: "spotter",
     name: "Spotter",
     slot: "chest",
     description: "Increases total weapon and skill damage against pulsed targets by 15%.",
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "skillDamage", value: 15 }],
+    assumedNote: "Assumes targets are pulsed.",
   },
   {
     id: "headhunter",
@@ -44,12 +52,19 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description:
       "Killing an enemy with a weapon grants 25% skill damage for 10s. Killing an enemy with a skill grants 25% weapon damage for 10s.",
+    assumed: [
+      { stat: "weaponDamage", value: 15 },
+      { stat: "skillDamage", value: 15 },
+    ],
+    assumedNote: "Assumes alternating weapon/skill kills.",
   },
   {
     id: "spark",
     name: "Spark",
     slot: "chest",
     description: "Destroying an enemy skill grants 25% total weapon and skill damage for 20s.",
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "skillDamage", value: 15 }],
+    assumedNote: "Assumes ~60% Spark uptime.",
   },
   {
     id: "vanguard",
@@ -63,6 +78,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Focus",
     slot: "chest",
     description: "While standing still, gain 1% total weapon damage per second, up to 10%. Moving resets the bonus.",
+    assumed: [{ stat: "weaponDamage", value: 10 }],
+    assumedNote: "Assumes Focus at full stacks (standing still).",
   },
   {
     id: "efficient",
@@ -76,6 +93,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Braced",
     slot: "chest",
     description: "While in cover, gain 40% weapon handling.",
+    assumed: [{ stat: "weaponHandling", value: 40 }],
+    assumedNote: "Assumes Braced in cover.",
   },
   {
     id: "mad-bomber",
@@ -94,6 +113,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Wicked",
     slot: "chest",
     description: "Applying a Status Effect grants 18% total weapon damage for 20s.",
+    assumed: [{ stat: "weaponDamage", value: 18 }],
+    assumedNote: "Assumes Wicked uptime after status application.",
   },
   {
     id: "protector",
@@ -106,6 +127,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Berserk",
     slot: "chest",
     description: "Gain 2% total weapon damage for every 10% of missing armor, up to 20%.",
+    assumed: [{ stat: "weaponDamage", value: 12 }],
+    assumedNote: "Assumes ~60% missing armor (mid Berserk).",
   },
   {
     id: "perfect-glass-cannon",
@@ -113,6 +136,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "All damage dealt is amplified by 30%. All incoming damage is amplified by 60%.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 30 }, { stat: "skillDamage", value: 30 }],
+    assumedNote: "Assumes Perfect Glass Cannon active.",
   },
   {
     id: "reassigned",
@@ -157,6 +182,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "Destroying an enemy skill grants 30% total weapon and skill damage for 20s.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 18 }, { stat: "skillDamage", value: 18 }],
+    assumedNote: "Assumes ~60% Perfect Spark uptime.",
   },
   {
     id: "perfect-focus",
@@ -165,6 +192,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     description:
       "While standing still, gain 1.2% total weapon damage per second, up to 12%. Moving resets the bonus.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 12 }],
+    assumedNote: "Assumes Perfect Focus at full stacks.",
   },
   {
     id: "perfect-efficient",
@@ -180,6 +209,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "While in cover, gain 50% weapon handling.",
     perfect: true,
+    assumed: [{ stat: "weaponHandling", value: 50 }],
+    assumedNote: "Assumes Perfect Braced in cover.",
   },
   {
     id: "perfect-intimidate",
@@ -208,6 +239,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "While within 5m of an ally or skill, gain 20% total weapon damage.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Assumes Perfect Companion active.",
   },
   {
     id: "perfect-obliterate",
@@ -253,6 +286,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "Below 30% armor, landing a headshot while in cover repairs 30% armor. 2s cooldown.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "skillDamage", value: 15 }],
+    assumedNote: "Assumes Perfect Overwatch.",
   },
   {
     id: "perfect-mad-bomber",
@@ -284,6 +319,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     description:
       "While in combat, each active skill generates stacks, granting 1.5% skill damage and 2% skill repair per stack, up to 18 stacks per skill.",
     perfect: true,
+    assumed: [{ stat: "skillDamage", value: 20 }, { stat: "skillRepair", value: 20 }],
+    assumedNote: "Assumes mid Kinetic Momentum stacks on both skills.",
   },
 ];
 
@@ -293,6 +330,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Vigilance",
     slot: "backpack",
     description: "Increases total weapon damage by 25%. Taking damage disables the buff for 4s.",
+    assumed: [{ stat: "weaponDamage", value: 25 }],
+    assumedNote: "Assumes Vigilance (not damaged recently).",
   },
   {
     id: "adrenaline-rush",
@@ -311,12 +350,16 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Companion",
     slot: "backpack",
     description: "While within 5m of an ally or skill, gain 15% total weapon damage.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Assumes ally or skill within 5m.",
   },
   {
     id: "combined-arms",
     name: "Combined Arms",
     slot: "backpack",
     description: "Using a skill grants 25% total weapon damage for 8s.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Assumes Combined Arms after skill use.",
   },
   {
     id: "opportunistic",
@@ -336,12 +379,16 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Safeguard",
     slot: "backpack",
     description: "Repairing an ally grants them 25% increased healing received for 4s.",
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "skillDamage", value: 12 }],
+    assumedNote: "Assumes Overwatch cover pulse uptime.",
   },
   {
     id: "tech-support",
     name: "Tech Support",
     slot: "backpack",
     description: "Killing an enemy with a skill grants 25% skill damage and skill repair for 15s.",
+    assumed: [{ stat: "skillDamage", value: 25 }, { stat: "skillRepair", value: 25 }],
+    assumedNote: "Assumes Tech Support after skill kill.",
   },
   {
     id: "unstoppable-force",
@@ -361,6 +408,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Galvanize",
     slot: "backpack",
     description: "Applying a Status Effect grants allies within 20m 40% bonus armor for 10s.",
+    assumed: [{ stat: "weaponDamage", value: 10 }],
+    assumedNote: "Assumes Versatile weapon-swap uptime.",
   },
   {
     id: "clutch",
@@ -387,6 +436,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description: "Increases total weapon damage by 25%. Taking damage disables the buff for 3s.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 30 }],
+    assumedNote: "Assumes Perfect Vigilance.",
   },
   {
     id: "concussion",
@@ -439,6 +490,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description: "Using a skill grants 30% total weapon damage for 10s.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 30 }],
+    assumedNote: "Assumes Perfect Combined Arms.",
   },
   {
     id: "perfect-tech-support",
@@ -446,6 +499,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description: "Killing an enemy with a skill grants 30% skill damage and skill repair for 15s.",
     perfect: true,
+    assumed: [{ stat: "skillDamage", value: 30 }, { stat: "skillRepair", value: 30 }],
+    assumedNote: "Assumes Perfect Tech Support.",
   },
   {
     id: "perfect-calculated",
@@ -551,6 +606,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description: "While in cover, gain 20% total weapon damage.",
     perfect: true,
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Assumes Perfect Versatile.",
   },
 ];
 

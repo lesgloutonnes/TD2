@@ -28,6 +28,7 @@ export type StatKey =
   | "hsd"
   | "weaponHandling"
   | "armor"
+  | "armorPercent"
   | "health"
   | "armorRegen"
   | "armorOnKill"
@@ -90,6 +91,9 @@ export type GearSetDef = {
   four: string;
   twoStats: StatBonus[];
   threeStats: StatBonus[];
+  /** Assumed average 4pc talent contribution for the analyzer. */
+  fourStats?: StatBonus[];
+  fourAssumedNote?: string;
   backpackTalent: { name: string; description: string };
   chestTalent: { name: string; description: string };
 };
@@ -100,6 +104,9 @@ export type GearTalent = {
   slot: "chest" | "backpack";
   description: string;
   perfect?: boolean;
+  /** Assumed uptime bonuses for the analyzer (combat procs averaged). */
+  assumed?: StatBonus[];
+  assumedNote?: string;
 };
 
 export type CatalogItem = {
@@ -127,6 +134,9 @@ export type WeaponDef = {
   mag: number;
   talent: string;
   talentDesc: string;
+  /** Soft analyzer bonuses when this weapon is the primary. */
+  assumed?: StatBonus[];
+  assumedNote?: string;
 };
 
 export type SkillDef = {
@@ -134,6 +144,9 @@ export type SkillDef = {
   name: string;
   category: string;
   description: string;
+  /** Soft analyzer bonuses while this skill is equipped. */
+  assumed?: StatBonus[];
+  assumedNote?: string;
 };
 
 export type SpecializationDef = {

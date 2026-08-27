@@ -108,7 +108,7 @@ export const BRANDS: Brand[] = [
     bonuses: [
       [{ stat: "shotgunDamage", value: 12 }],
       [{ stat: "armorOnKill", value: 10 }],
-      [{ stat: "armor", value: 15 }],
+      [{ stat: "armorPercent", value: 15 }],
     ],
   },
   {
@@ -128,7 +128,7 @@ export const BRANDS: Brand[] = [
     name: "Gila Guard",
     color: "#2f6b4f",
     bonuses: [
-      [{ stat: "armor", value: 5 }],
+      [{ stat: "armorPercent", value: 5 }],
       [{ stat: "hazardProtection", value: 20 }],
       [{ stat: "armorRegen", value: 2 }],
     ],
@@ -150,7 +150,7 @@ export const BRANDS: Brand[] = [
     name: "Uzina Getica",
     color: "#5a6e5a",
     bonuses: [
-      [{ stat: "armor", value: 5 }],
+      [{ stat: "armorPercent", value: 5 }],
       [{ stat: "armorOnKill", value: 10 }],
       [{ stat: "hazardProtection", value: 30 }],
     ],

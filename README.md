@@ -33,8 +33,13 @@ Open [http://localhost:3000](http://localhost:3000).
 - 37 brands and 28 gear sets (**live Y8S3 Red Horizon**, 27 Aug 2026)
 - Named items per brand (sheet 22/03/26 + Y8S3): Chainkiller, Vigil, Backbone, The Setup, Bober, Equalizer…
 - Exotics (Vile, BTSU, Collector, Nurse's Kneepads, Investor, Blacklisters, Caduceus, Ouroboros…)
+- Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
+- Per-piece / per-weapon expertise
+- Armor model: flat piece armor + blue cores + Total Armor %
+- Assumed uptime for common chest/backpack talents and major 4pc set bonuses
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: +1 piece for each brand/set already equipped
+- Offense score (relative estimate, not DPS)
 - Presets: Striker, All Red, Heartbreaker, Skill DPS, Foundry, Hunter's Fury
 - Local save and share link
 

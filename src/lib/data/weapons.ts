@@ -10,6 +10,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Optimized",
     talentDesc: "Weapon mods are 30% more effective.",
+    assumed: [{ stat: "weaponHandling", value: 5 }],
+    assumedNote: "Optimized mods approximated as mild handling.",
   },
   {
     id: "st-elmo",
@@ -20,6 +22,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 50,
     talent: "Actum Est",
     talentDesc: "Perfect Perfectly Fast Hands + periodic Shock ammo. Ideal for Striker / Heartbreaker.",
+    assumed: [{ stat: "weaponHandling", value: 10 }, { stat: "reloadSpeed", value: 15 }],
+    assumedNote: "Actum Est / Fast Hands uptime approximated.",
   },
   {
     id: "eagle-bearer",
@@ -30,6 +34,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 40,
     talent: "Eagle's Strike",
     talentDesc: "Hits: damage stacks. Headshots: armor stacks. Dark Hours raid.",
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "armorOnKill", value: 5 }],
+    assumedNote: "Eagle stacks assumed mid fight.",
   },
   {
     id: "famas",
@@ -91,6 +97,8 @@ export const WEAPONS: WeaponDef[] = [
     talent: "Adaptive Instincts",
     talentDesc:
       "Body shots / headshots / critical hits build stacks of Critical Hit Chance, Critical Hit Damage, and rate of fire bonuses.",
+    assumed: [{ stat: "chc", value: 10 }, { stat: "chd", value: 15 }],
+    assumedNote: "Chameleon buffs assumed mid distance.",
   },
   {
     id: "capacitor",
@@ -101,6 +109,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 40,
     talent: "Capacitance",
     talentDesc: "Firing builds stacks of skill damage. Skill DPS build.",
+    assumed: [{ stat: "skillDamage", value: 20 }],
+    assumedNote: "Capacitor skill damage stacks assumed mid fight.",
   },
   {
     id: "pestilence",

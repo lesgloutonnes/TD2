@@ -10,8 +10,9 @@ import type {
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
-import { SPECIALIZATIONS } from "./data/skills";
+import { SPECIALIZATIONS, SKILLS } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
+import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
   CHC_CAP,
@@ -35,6 +36,7 @@ const STAT_KEYS: StatKey[] = [
   "hsd",
   "weaponHandling",
   "armor",
+  "armorPercent",
   "health",
   "armorRegen",
   "armorOnKill",
@@ -92,9 +94,52 @@ function addCore(
   prototype = false,
 ) {
   cores[core] += 1;
+  // Flat armor from blue cores is applied in resolveFlatArmor (with piece base).
+  if (core === "blue") return;
   const base = CORE_VALUES[core];
   const mult = prototype ? prototypeCoreMult(core) : 1;
   addBonuses(values, [{ stat: base.stat, value: base.value * mult }]);
+}
+
+/** Flat armor from equipped pieces: base + blue cores, expertise, then Total Armor %. */
+function resolveFlatArmor(
+  loadout: Loadout,
+  armorPercent: number,
+  notes: string[],
+): number {
+  let flat = 0;
+  let piecesWithArmor = 0;
+  for (const slot of SLOTS) {
+    const piece = loadout.gear[slot];
+    if (!piece) continue;
+    const source = catalogById(piece.sourceId);
+    if (!source) continue;
+    piecesWithArmor += 1;
+    const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
+    const protoMult = isPrototype ? PROTOTYPE_ATTR_MULT : 1;
+    let pieceFlat = GEAR_BASE_ARMOR * protoMult;
+    const blueCores =
+      (piece.core === "blue" ? 1 : 0) +
+      (piece.extraCores ?? source.extraCores ?? []).filter((core) => core === "blue").length;
+    if (blueCores > 0) {
+      pieceFlat += CORE_VALUES.blue.value * protoMult * blueCores;
+    }
+    if (piece.expertise > 0) {
+      pieceFlat *= 1 + piece.expertise / 100;
+    }
+    flat += pieceFlat;
+  }
+  if (piecesWithArmor === 0) return 0;
+  const beforePercent = flat;
+  flat *= 1 + armorPercent / 100;
+  notes.push(
+    `Armor: ${Math.round(beforePercent).toLocaleString("en-US")} flat` +
+      (armorPercent > 0
+        ? ` × (1 + ${armorPercent}% Total Armor) = ${Math.round(flat).toLocaleString("en-US")}`
+        : "") +
+      ".",
+  );
+  return flat;
 }
 
 export function emptyLoadout(name = "New build"): Loadout {
@@ -231,17 +276,25 @@ export function computeStats(loadout: Loadout): ComputedStats {
     notes.push(
       `Augment ${augment.name}: ${stack.count} piece${stack.count > 1 ? "s" : ""} → ${stack.total}% ${augment.effectLabel}.`,
     );
-    if (augment.statHint === "explosiveDamage") {
+    if (augment.id === "echo") {
+      // Double-hit chance ≈ effective weapon damage contribution.
+      values.weaponDamage += Math.round(stack.total * 0.5 * 10) / 10;
+    } else if (augment.id === "anomaly") {
+      values.skillRepair += Math.round(stack.total * 0.15 * 10) / 10;
+      values.incomingRepairs += Math.round(stack.total * 0.1 * 10) / 10;
+    } else if (augment.id === "quantum") {
+      values.hazardProtection += Math.round(stack.total * 0.5 * 10) / 10;
+    } else if (augment.id === "trapper") {
+      values.statusEffects += Math.round(stack.total * 0.5 * 10) / 10;
+    } else if (augment.statHint === "explosiveDamage") {
       values.explosiveDamage += stack.total;
     } else if (augment.statHint === "statusEffects") {
       values.statusEffects += stack.total;
     } else if (augment.statHint === "skillHaste") {
-      // Synesthesia is a CDR proc, not flat haste — count half as a soft proxy.
       values.skillHaste += Math.round(stack.total * 0.25 * 10) / 10;
     } else if (augment.statHint === "magazineSize") {
       values.magazineSize += Math.round(stack.total * 0.5 * 10) / 10;
     } else if (augment.statHint === "health") {
-      // Entropy conversion rate stacks; shown as Health % proxy in the analyzer.
       values.health += stack.total;
     }
   }
@@ -283,6 +336,14 @@ export function computeStats(loadout: Loadout): ComputedStats {
 
     if (pieces >= 2) addBonuses(values, set.twoStats);
     if (pieces >= 3) addBonuses(values, set.threeStats);
+    if (fourPiece && set.fourStats?.length) {
+      addBonuses(values, set.fourStats);
+      notes.push(
+        `${set.name} 4pc assumed: ${formatBonusList(set.fourStats)}${
+          set.fourAssumedNote ? ` (${set.fourAssumedNote})` : ""
+        }.`,
+      );
+    }
 
     bonuses.push({
       source: set.name,
@@ -291,6 +352,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
         pieces >= 2 ? `2pc: ${set.two}` : `2pc locked (${pieces}/2)`,
         pieces >= 3 ? `3pc: ${set.three}` : `3pc locked (${pieces}/3)`,
         fourPiece ? `4pc: ${set.four}` : `4pc locked (${pieces}/4)`,
+        fourPiece && set.fourAssumedNote ? `Assumed: ${set.fourAssumedNote}` : null,
         fourPiece && backpackIsSet ? `Backpack: ${set.backpackTalent.name}` : null,
         fourPiece && chestIsSet ? `Chest: ${set.chestTalent.name}` : null,
       ]
@@ -316,26 +378,32 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
+  // Chest / backpack talent assumed uptime bonuses.
+  for (const slot of ["chest", "backpack"] as const) {
+    const piece = loadout.gear[slot];
+    if (!piece?.talentId) continue;
+    const talent = ALL_TALENTS.find((item) => item.id === piece.talentId);
+    if (!talent?.assumed?.length) continue;
+    addBonuses(values, talent.assumed);
+    bonuses.push({
+      source: `Talent · ${talent.name}`,
+      label: formatBonusList(talent.assumed),
+      detail: talent.assumedNote ?? talent.description,
+      pieces: 1,
+      required: 1,
+      active: true,
+      color: "#c9a227",
+    });
+    notes.push(
+      `Talent ${talent.name} (assumed): ${formatBonusList(talent.assumed)}${
+        talent.assumedNote ? ` — ${talent.assumedNote}` : ""
+      }.`,
+    );
+  }
+
   if (loadout.shdWatch) {
     addBonuses(values, SHD_WATCH);
     notes.push("SHD Watch 1000 active (offensive, defensive, and utility bonuses).");
-  }
-
-  // Per-piece gear expertise: +1% of that piece's armor per level (approx. base armor).
-  let gearExpertiseArmor = 0;
-  let gearExpertisePieces = 0;
-  for (const slot of SLOTS) {
-    const piece = loadout.gear[slot];
-    if (!piece || !piece.expertise) continue;
-    const baseArmor = piece.prototype ? GEAR_BASE_ARMOR * PROTOTYPE_ATTR_MULT : GEAR_BASE_ARMOR;
-    gearExpertiseArmor += (baseArmor * piece.expertise) / 100;
-    gearExpertisePieces += 1;
-  }
-  if (gearExpertisePieces > 0) {
-    values.armor += gearExpertiseArmor;
-    notes.push(
-      `Gear expertise on ${gearExpertisePieces} piece${gearExpertisePieces > 1 ? "s" : ""}: +${Math.round(gearExpertiseArmor).toLocaleString("en-US")} Armor.`,
-    );
   }
 
   // Per-weapon expertise: primary feeds the offensive index (active weapon).
@@ -350,6 +418,48 @@ export function computeStats(loadout: Loadout): ComputedStats {
       notes.push(
         `${slot === "secondary" ? "Secondary" : "Sidearm"} expertise ${exp} stored (applies when that weapon is used).`,
       );
+    }
+  }
+
+  // Primary weapon talent assumed bonuses.
+  const primaryWeapon = loadout.weapons.primary
+    ? WEAPONS.find((weapon) => weapon.id === loadout.weapons.primary?.weaponId)
+    : undefined;
+  if (primaryWeapon?.assumed?.length) {
+    addBonuses(values, primaryWeapon.assumed);
+    bonuses.push({
+      source: `Weapon · ${primaryWeapon.name}`,
+      label: formatBonusList(primaryWeapon.assumed),
+      detail: primaryWeapon.assumedNote ?? `${primaryWeapon.talent}: ${primaryWeapon.talentDesc}`,
+      pieces: 1,
+      required: 1,
+      active: true,
+      color: "#d4af37",
+    });
+    notes.push(
+      `Primary ${primaryWeapon.name} talent assumed: ${formatBonusList(primaryWeapon.assumed)}.`,
+    );
+  }
+
+  // Equipped skills: analysis entries + optional soft bonuses.
+  for (const skillId of loadout.skills) {
+    if (!skillId) continue;
+    const skill = SKILLS.find((item) => item.id === skillId);
+    if (!skill) continue;
+    bonuses.push({
+      source: `Skill · ${skill.name}`,
+      label: skill.category,
+      detail: skill.assumedNote ?? skill.description,
+      pieces: 1,
+      required: 1,
+      active: true,
+      color: "#7ec8e8",
+    });
+    if (skill.assumed?.length) {
+      addBonuses(values, skill.assumed);
+      notes.push(`Skill ${skill.name} assumed: ${formatBonusList(skill.assumed)}.`);
+    } else {
+      notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
     }
   }
 
@@ -369,6 +479,9 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
+  // Flat armor after all armorPercent sources (brands, sets, SHD, talents, specs).
+  values.armor = resolveFlatArmor(loadout, values.armorPercent, notes);
+
   const chcCapped = Math.min(values.chc, CHC_CAP);
   const chcOvercap = Math.max(0, values.chc - CHC_CAP);
   const skillTierCapped = Math.min(values.skillTier, SKILL_TIER_CAP);
@@ -377,9 +490,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     notes.push(`CHC over cap: ${values.chc.toFixed(1)}% → 60%. ${chcOvercap.toFixed(1)}% wasted.`);
   }
 
-  const primary = loadout.weapons.primary
-    ? WEAPONS.find((weapon) => weapon.id === loadout.weapons.primary?.weaponId)
-    : undefined;
+  const primary = primaryWeapon;
   const typeDamage = primary ? weaponTypeStat(primary.type, values) : 0;
 
   const critFactor = 1 + (chcCapped / 100) * (values.chd / 100);
@@ -390,6 +501,9 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const dthFactor = 1 + values.damageToHealth / 200;
   const offensiveIndex = Math.round(
     100 * wdFactor * typeFactor * critFactor * hsFactor * dtaFactor * dthFactor,
+  );
+  notes.push(
+    "Offense score is a relative estimate (not DPS): WD × weapon type × crit × headshot × DtA/DtH. Talents/4pc use assumed uptime.",
   );
 
   if (equippedSlots === 0) {
@@ -436,8 +550,8 @@ export function formatBonusList(bonuses: StatBonus[]): string {
   return bonuses
     .map((bonus) => {
       if (bonus.stat === "skillTier") return `+${bonus.value} Skill Tier`;
-      if (bonus.stat === "armor" && bonus.value <= 20) {
-        return `+${bonus.value}% ${STAT_LABELS[bonus.stat]}`;
+      if (bonus.stat === "armor") {
+        return `+${Math.round(bonus.value).toLocaleString("en-US")} ${STAT_LABELS[bonus.stat]}`;
       }
       return `+${bonus.value}% ${STAT_LABELS[bonus.stat]}`;
     })

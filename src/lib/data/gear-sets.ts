@@ -11,6 +11,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Striker's Gamble — every hit increases total weapon damage by 0.65% (100 stacks). Stacks decay out of combat.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "rateOfFire", value: 15 }],
+    fourStats: [{ stat: "weaponDamage", value: 40 }],
+    fourAssumedNote: "Assumes ~62 Striker stacks (0.65% × 62 ≈ 40% Weapon Damage).",
     backpackTalent: {
       name: "Risk Management",
       description: "Damage per Striker's Gamble stack: 0.65% → 1%.",
@@ -33,6 +35,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "lmgDamage", value: 15 },
     ],
     threeStats: [{ stat: "weaponHandling", value: 15 }],
+    fourStats: [{ stat: "weaponDamage", value: 25 }],
+    fourAssumedNote: "Assumes ~25 Heartstopper stacks (+25% Weapon Damage).",
     backpackTalent: {
       name: "Cold",
       description: "Bonus armor per stack: 1% → 2%.",
@@ -52,6 +56,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "From the Shadows / Into the Light — gain stacks while in cover (Critical Hit Damage + Rate of Fire) and out of cover (Armor Regeneration).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
+    fourStats: [{ stat: "chd", value: 20 }, { stat: "rateOfFire", value: 10 }],
+    fourAssumedNote: "Assumes mid stacks From the Shadows out of cover mix.",
     backpackTalent: {
       name: "Into the Light",
       description: "Max Into the Light stacks: 50 → 100, gain and consumption doubled.",
@@ -74,6 +80,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "smgDamage", value: 15 },
     ],
     threeStats: [{ stat: "armorOnKill", value: 20 }],
+    fourStats: [{ stat: "weaponDamage", value: 30 }],
+    fourAssumedNote: "Assumes CQC (+20% WD) plus ~2 Apex stacks.",
     backpackTalent: {
       name: "Overwhelming Force",
       description: "Disorient radius: 5m → 10m.",
@@ -93,6 +101,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Crowd Control — critical hits mark enemies (max 3, 20s). Critical hits deal 60% of their damage to other marked targets. Killing a marked target grants +10% Critical Hit Damage (10 stacks).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "chd", value: 20 }],
+    fourStats: [{ stat: "chd", value: 30 }],
+    fourAssumedNote: "Assumes marked targets + ~3 kill stacks of CHD.",
     backpackTalent: {
       name: "Critical Measures",
       description: "Damage dealt to other marked targets: 60% → 100%.",
@@ -178,6 +188,11 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillHaste", value: 15 },
       { stat: "skillDuration", value: 30 },
     ],
+    fourStats: [
+      { stat: "weaponDamage", value: 15 },
+      { stat: "skillDamage", value: 15 },
+    ],
+    fourAssumedNote: "Ground Control at full armor: +15% weapon and skill damage.",
     backpackTalent: {
       name: "Strategic Combat Support",
       description: "Proximity repair: 60% → 120%.",
@@ -195,8 +210,10 @@ export const GEAR_SETS: GearSetDef[] = [
     two: "+10% Total Armor",
     three: "+1% Armor Regeneration and +50% Shield Health",
     four: "Makeshift Repairs — 25% of damage taken (by you or your shield) is repaired over 10s.",
-    twoStats: [{ stat: "armor", value: 10 }],
+    twoStats: [{ stat: "armorPercent", value: 10 }],
     threeStats: [{ stat: "armorRegen", value: 1 }],
+    fourStats: [{ stat: "armorPercent", value: 5 }],
+    fourAssumedNote: "Makeshift Repairs approximated as +5% Total Armor effective.",
     backpackTalent: {
       name: "Process Refinery",
       description: "Repair duration: 10s → 5s.",
@@ -301,6 +318,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Aggressive Recon — a signature weapon kill grants +15% signature weapon damage for 10s and +25% reload speed. Regenerates signature weapon ammo every 60s.",
     twoStats: [],
     threeStats: [{ stat: "weaponDamage", value: 10 }],
+    fourStats: [{ stat: "weaponDamage", value: 10 }],
+    fourAssumedNote: "Signature weapon damage uptime approximated as +10% Weapon Damage.",
     backpackTalent: {
       name: "Signature Moves",
       description: "+50% weapon damage for 15s after emptying your signature weapon. Signature weapon ammo capacity doubled.",
@@ -365,7 +384,9 @@ export const GEAR_SETS: GearSetDef[] = [
     three: "+40% Burn Damage",
     four: "Incinerator Turret Prototype — a 360° turret, immune to your own fire, explodes when destroyed.",
     twoStats: [{ stat: "skillHealth", value: 15 }],
-    threeStats: [],
+    threeStats: [{ stat: "statusEffects", value: 15 }],
+    fourStats: [{ stat: "skillDamage", value: 10 }],
+    fourAssumedNote: "Incinerator Prototype burn contribution approximated as +10% Skill Damage.",
     backpackTalent: {
       name: "Heatstroke",
       description: "+40% amplified damage against enemies set on fire by the turret. +25% range.",
@@ -384,7 +405,7 @@ export const GEAR_SETS: GearSetDef[] = [
     three: "+15% Total Armor",
     four: "Stoic — gain +3% damage resistance for each enemy targeting you (multiplied by group size).",
     twoStats: [{ stat: "health", value: 70 }],
-    threeStats: [{ stat: "armor", value: 15 }],
+    threeStats: [{ stat: "armorPercent", value: 15 }],
     backpackTalent: {
       name: "Polyethylene Plating",
       description: "Stoic bonus: 3% → 4%.",
@@ -539,7 +560,7 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "weaponHandling", value: 10 }],
     threeStats: [
       { stat: "weaponDamage", value: 5 },
-      { stat: "armor", value: 5 },
+      { stat: "armorPercent", value: 5 },
       { stat: "skillEfficiency", value: 5 },
     ],
     backpackTalent: {
