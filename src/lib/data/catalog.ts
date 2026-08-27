@@ -3,10 +3,10 @@ import { BRANDS } from "./brands";
 import { GEAR_SETS, gearSetCore } from "./gear-sets";
 
 /**
- * Nommés et exotiques d'équipement (live Y8S3).
- * Organisé marque par marque, puis exotiques par emplacement.
- * Base : sheet communautaire (à jour au 22 mars 2026) + pièces Y8S2/Y8S3 postérieures.
- * Saisonniers meme (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…) volontairement omis.
+ * Named and exotic gear (Y8S3 live).
+ * Organized brand by brand, then exotics by slot.
+ * Base: community sheet (up to date as of March 22, 2026) + later Y8S2/Y8S3 pieces.
+ * Meme seasonal items (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…) intentionally omitted.
  */
 export const NAMED_AND_EXOTICS: CatalogItem[] = [
   // --- Providence Defense ---
@@ -18,7 +18,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Vigilance",
-      description: "+25% dégâts totaux d'arme. Prendre des dégâts désactive le buff 3 s.",
+      description: "+25% total weapon damage. Taking damage disables the buff for 3s.",
     },
     talentSlot: "backpack",
   },
@@ -30,7 +30,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Perfect Glass Cannon",
-      description: "Dégâts infligés +30%. Dégâts reçus +60%.",
+      description: "Damage dealt +30%. Damage taken +60%.",
     },
     talentSlot: "chest",
   },
@@ -45,7 +45,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Clutch",
       description:
-        "Armure détruite : les critiques réparent 3,5% d'armure et les tirs 0,6% de santé pendant 5 s. CD 15 s.",
+        "Armor destroyed: critical hits repair 3.5% armor and shots repair 0.6% health for 5s. Cooldown 15s.",
     },
     talentSlot: "backpack",
   },
@@ -59,9 +59,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Bewildered",
       description:
-        "50% des dégâts d'arme sont infligés à un autre ennemi dans les 30 m. S'il n'y en a pas, dégâts normaux. Ne s'applique pas aux plaques d'armure.",
+        "50% of weapon damage is dealt to another enemy within 30m. If there isn't one, normal damage applies. Does not apply to armor plates.",
     },
-    note: "Genouillères Česká (événement 1er avril, loot pool ensuite). Talent Bewildered.",
+    note: "Česká kneepads (April Fools event, later added to the loot pool). Bewildered talent.",
   },
 
   // --- Grupo Sombra ---
@@ -74,7 +74,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Spark",
       description:
-        "Détruire une compétence ennemie : +30% dégâts totaux d'arme et de compétence pendant 20 s.",
+        "Destroying an enemy skill: +30% total weapon and skill damage for 20s.",
     },
     talentSlot: "chest",
   },
@@ -89,7 +89,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Headhunter",
       description:
-        "Après un headshot, le prochain headshot dans les 5 s est amplifié (150% des dégâts du premier, plafonné).",
+        "After a headshot, the next headshot within 5s is amplified (150% of the first shot's damage, capped).",
     },
     talentSlot: "chest",
   },
@@ -102,7 +102,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Adrenaline Rush",
       description:
-        "Tuer à moins de 8 m : 25% armure bonus (max 50%). Dure 10 s.",
+        "Killing within 8m: 25% bonus armor (max 50%). Lasts 10s.",
     },
     talentSlot: "backpack",
   },
@@ -117,7 +117,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Overwatch",
       description:
-        "Rester en couverture 5 s : +15% dégâts totaux d'arme et de compétence pour vous et les alliés (15 s).",
+        "Staying in cover for 5s: +15% total weapon and skill damage for you and allies (15s).",
     },
     talentSlot: "chest",
   },
@@ -130,7 +130,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "petrov",
     slots: ["gloves"],
     extraStats: [{ stat: "damageToArmor", value: 8 }],
-    note: "Gants Petrov avec +8% dégâts à l'armure (au-dessus du plafond 6%).",
+    note: "Petrov gloves with +8% Damage to Armor (above the 6% cap).",
   },
   {
     id: "vedmedytsya",
@@ -140,10 +140,10 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Perfect Braced",
-      description: "En couverture : +50% maniement d'arme.",
+      description: "While in cover: +50% weapon handling.",
     },
     talentSlot: "chest",
-    note: "Recherche de spécialisation Gunner.",
+    note: "Gunner specialization research.",
   },
 
   // --- Overlord Armaments ---
@@ -154,7 +154,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "overlord",
     slots: ["kneepads"],
     extraStats: [{ stat: "damageToHealth", value: 8 }],
-    note: "Genouillères Overlord avec +8% dégâts à la santé (au-dessus du plafond 6%).",
+    note: "Overlord kneepads with +8% Damage to Health (above the 6% cap).",
   },
 
   // --- Sokolov Concern ---
@@ -166,7 +166,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["gloves"],
     extraStats: [{ stat: "statusEffects", value: 10 }],
     extraCores: ["blue"],
-    note: "Gants Sokolov : +10% effets de statut extra + cœur bleu.",
+    note: "Sokolov gloves: +10% extra Status Effects + blue core.",
   },
 
   // --- Airaldi Holdings ---
@@ -179,7 +179,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Focus",
       description:
-        "Rester à l'arrêt : +1,2% dégâts totaux d'arme par seconde, jusqu'à 12%. Bouger réinitialise.",
+        "Staying still: +1.2% total weapon damage per second, up to 12%. Moving resets it.",
     },
     talentSlot: "chest",
   },
@@ -193,7 +193,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Concussion",
       description:
-        "Headshot : +20% dégâts totaux d'arme pendant 1,5 s (5 s au fusil de précision). Kill headshot : +15% pendant 10 s.",
+        "Headshot: +20% total weapon damage for 1.5s (5s with a sniper rifle). Headshot kill: +15% for 10s.",
     },
     talentSlot: "backpack",
   },
@@ -208,7 +208,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Unbreakable",
       description:
-        "Quand l'armure est détruite, répare 100% de l'armure. Recharge 60 s. Kit d'armure gratuit pendant 7 s.",
+        "When armor is destroyed, repairs 100% of armor. Cooldown 60s. Free armor kit for 7s.",
     },
     talentSlot: "chest",
   },
@@ -219,7 +219,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "badger",
     slots: ["holster"],
     extraStats: [{ stat: "ammoCapacity", value: 10 }],
-    note: "Holster Badger (recherche Firewall) : +10% capacité de munitions.",
+    note: "Badger holster (Firewall specialization research): +10% ammo capacity.",
   },
 
   // --- Douglas & Harding ---
@@ -231,7 +231,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "hsd", value: 20 }],
     extraCores: ["red"],
-    note: "Masque Douglas : +20% dégâts headshot extra (jet unique) + cœur rouge.",
+    note: "Douglas mask: +20% extra Headshot Damage (single roll) + red core.",
   },
 
   // --- Gila Guard ---
@@ -244,7 +244,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Vanguard",
       description:
-        "Déployer un bouclier : invulnérable 7 s et 60% de votre armure en bonus aux alliés (20 s). CD 60 s.",
+        "Deploying a shield: invulnerable for 7s and grants allies 60% of your armor as bonus armor (20s). Cooldown 60s.",
     },
     talentSlot: "chest",
   },
@@ -256,7 +256,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "skillHaste", value: 10 }],
     extraCores: ["yellow"],
-    note: "Masque Gila : Scanner Pulse Haste 100% (approximé haste) + cœur jaune.",
+    note: "Gila mask: 100% Scanner Pulse Haste (approximated as Skill Haste) + yellow core.",
   },
   {
     id: "sawyers-kneepads",
@@ -266,7 +266,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["kneepads"],
     extraStats: [{ stat: "armorRegen", value: 1 }],
     extraCores: ["red"],
-    note: "Genouillères Gila : régénération d'armure extra + cœur rouge.",
+    note: "Gila kneepads: extra armor regen + red core.",
   },
   {
     id: "chill-out",
@@ -276,7 +276,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "skillHaste", value: 10 }],
     extraCores: ["yellow"],
-    note: "Masque saisonnier Gila : 2 emplacements de mods (le builder n'en simule qu'un) + cœur jaune.",
+    note: "Gila seasonal mask: 2 mod slots (the builder only simulates one) + yellow core.",
   },
 
   // --- Belstone Armory ---
@@ -289,7 +289,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Efficient",
       description:
-        "Utiliser un kit d'armure hors combat n'en consomme pas. En combat, +30% réparation de kit.",
+        "Using an armor kit out of combat doesn't consume it. In combat, +30% kit repair.",
     },
     talentSlot: "chest",
   },
@@ -301,7 +301,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Bloodsucker",
-      description: "Tuer : 12% armure bonus par ennemi proche, jusqu'à 60%. Dure 10 s.",
+      description: "Killing: 12% bonus armor per nearby enemy, up to 60%. Lasts 10s.",
     },
     talentSlot: "backpack",
   },
@@ -315,7 +315,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["gloves"],
     extraStats: [{ stat: "armorOnKill", value: 10 }],
     extraCores: ["red"],
-    note: "Gants 5.11 : +10% armure au kill extra + cœur rouge.",
+    note: "5.11 gloves: +10% extra Armor on Kill + red core.",
   },
   {
     id: "keeper",
@@ -327,7 +327,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Protector",
       description:
-        "Quand le bouclier prend des dégâts : +25% armure bonus, et les alliés gagnent 35% de votre armure en bonus pendant 3 s. CD 3 s.",
+        "When the shield takes damage: +25% bonus armor, and allies gain 35% of your armor as bonus armor for 3s. Cooldown 3s.",
     },
     talentSlot: "backpack",
   },
@@ -342,7 +342,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Intimidate",
       description:
-        "À moins de 8 m, +40% dégâts totaux d'arme si vous avez de l'armure bonus.",
+        "Within 8m, +40% total weapon damage if you have bonus armor.",
     },
     talentSlot: "chest",
   },
@@ -354,7 +354,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Wicked",
-      description: "Appliquer un statut : +21% dégâts totaux d'arme pendant 20 s.",
+      description: "Applying a status effect: +21% total weapon damage for 20s.",
     },
     talentSlot: "backpack",
   },
@@ -369,7 +369,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Skilled",
       description:
-        "Tuer avec une compétence : +25% dégâts de compétence pendant 15 s. Stacks jusqu'à 3.",
+        "Killing with a skill: +25% Skill Damage for 15s. Stacks up to 3.",
     },
     talentSlot: "chest",
   },
@@ -382,7 +382,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Calculated",
       description:
-        "Tuer avec une compétence : réduit toutes les recharges actives de 20%.",
+        "Killing with a skill: reduces all active cooldowns by 20%.",
     },
     talentSlot: "backpack",
   },
@@ -396,7 +396,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     extraStats: [{ stat: "pistolDamage", value: 10 }],
     extraCores: ["red"],
-    note: "Holster Wyvern : dégâts de pistolet extra, dégâts de mêlée élevés, cœur rouge.",
+    note: "Wyvern holster: extra pistol damage, high melee damage, red core.",
   },
   {
     id: "impetus",
@@ -408,7 +408,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Kinetic Momentum",
       description:
-        "En combat, chaque compétence active (ou hors CD) génère des stacks : +1,5% dégâts de compétence et +2% réparation par stack, 18 max par compétence.",
+        "In combat, each active skill (or off cooldown) generates stacks: +1.5% Skill Damage and +2% repair per stack, 18 max per skill.",
     },
     talentSlot: "chest",
   },
@@ -423,7 +423,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Tech Support",
       description:
-        "Tuer avec une compétence : +30% dégâts/réparation de compétence pendant 15 s.",
+        "Killing with a skill: +30% skill damage/repair for 15s.",
     },
     talentSlot: "backpack",
   },
@@ -435,7 +435,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["gloves"],
     extraStats: [{ stat: "skillHealth", value: 20 }],
     extraCores: ["yellow"],
-    note: "Gants Alps (recherche Technician) : +20% santé de compétence extra.",
+    note: "Alps gloves (Technician specialization research): +20% extra skill health.",
   },
 
   // --- China Light Industries ---
@@ -448,7 +448,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Shock and Awe",
       description:
-        "Tuer avec une compétence : pulse les ennemis à 20 m pendant 8 s. CD 10 s.",
+        "Killing with a skill: pulses enemies within 20m for 8s. Cooldown 10s.",
     },
     talentSlot: "backpack",
   },
@@ -461,7 +461,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "brazos",
     slots: ["holster"],
     extraCores: ["red"],
-    note: "Holster Brazos : cœur jaune naturel + cœur rouge bonus.",
+    note: "Brazos holster: innate yellow core + bonus red core.",
   },
   {
     id: "hermano",
@@ -472,7 +472,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Overclock",
       description:
-        "Alliés à 15 m d'une compétence déployée : +30% vitesse de rechargement et −0,6 s de recharges actives par seconde.",
+        "Allies within 15m of a deployed skill: +30% reload speed and −0.6s active cooldowns per second.",
     },
     talentSlot: "backpack",
   },
@@ -486,7 +486,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Combined Arms",
-      description: "Utiliser une compétence : +30% dégâts totaux d'arme pendant 10 s.",
+      description: "Using a skill: +30% total weapon damage for 10s.",
     },
     talentSlot: "backpack",
   },
@@ -500,7 +500,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["kneepads"],
     extraStats: [{ stat: "armorRegen", value: 1 }],
     extraCores: ["yellow"],
-    note: "Genouillères Murakami : +1% régénération d'armure extra + cœur jaune.",
+    note: "Murakami kneepads: +1% extra armor regen + yellow core.",
   },
 
   // --- Richter & Kaiser ---
@@ -514,7 +514,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Tag Team",
       description:
-        "Le dernier ennemi blessé par une compétence est marqué. Dégâts d'arme sur cette cible : -12 s de recharges actives. CD 4 s.",
+        "The last enemy damaged by a skill is marked. Weapon damage on that target: -12s active cooldowns. Cooldown 4s.",
     },
     talentSlot: "chest",
   },
@@ -526,7 +526,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     extraStats: [{ stat: "skillHealth", value: 20 }],
     extraCores: ["yellow"],
-    note: "Holster Richter : +50% santé de bouclier (approximé par santé de compétence) + cœur jaune.",
+    note: "Richter holster: +50% shield health (approximated as skill health) + yellow core.",
   },
 
   // --- Electrique ---
@@ -539,7 +539,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Companion",
       description:
-        "Allié ou compétence à moins de 5 m : +20% dégâts totaux d'arme.",
+        "Ally or skill within 5m: +20% total weapon damage.",
     },
     talentSlot: "chest",
   },
@@ -552,7 +552,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Galvanize",
       description:
-        "Appliquer un statut : alliés à 20 m gagnent 50% armure bonus pendant 10 s.",
+        "Applying a status effect: allies within 20m gain 50% bonus armor for 10s.",
     },
     talentSlot: "backpack",
   },
@@ -566,7 +566,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Perfect Trauma",
-      description: "Headshot : applique saignement aux ennemis à 10 m. CD 12 s.",
+      description: "Headshot: applies bleed to enemies within 10m. Cooldown 12s.",
     },
     talentSlot: "chest",
   },
@@ -578,7 +578,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Creeping Death",
-      description: "Appliquer un statut : se propage à 12 m. CD 12 s.",
+      description: "Applying a status effect: spreads to enemies within 12m. Cooldown 12s.",
     },
     talentSlot: "backpack",
   },
@@ -593,7 +593,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfectly Unstoppable Force",
       description:
-        "Tuer : +7% dégâts totaux d'arme pendant 15 s, 5 stacks. Un kill grenade donne 2 stacks.",
+        "Killing: +7% total weapon damage for 15s, 5 stacks. A grenade kill grants 2 stacks.",
     },
     talentSlot: "backpack",
   },
@@ -606,7 +606,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfectly Mad Bomber",
       description:
-        "Rayon de grenade +75%. Kill grenade remboursée. Les grenades se cuisinent. +15% armure bonus en visant une grenade.",
+        "Grenade radius +75%. Grenade kills are refunded. Grenades can be cooked. +15% bonus armor while aiming a grenade.",
     },
     talentSlot: "chest",
   },
@@ -621,7 +621,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Versatile",
       description:
-        "Changer d'arme (types différents) : +45% dégâts totaux à moins de 15 m (pompe/SMG), +45% au-delà de 25 m (fusil/MMR), +20% entre 15 et 25 m (LMG/AR). 10 s, une fois / 5 s par type.",
+        "Swapping weapons (different types): +45% total damage within 15m (shotgun/SMG), +45% beyond 25m (rifle/MMR), +20% between 15 and 25m (LMG/AR). 10s, once every 5s per type.",
     },
     talentSlot: "backpack",
   },
@@ -632,7 +632,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "legatus",
     slots: ["mask"],
     extraStats: [{ stat: "optimalRange", value: 50 }],
-    note: "Masque Legatus : +50% portée optimale extra.",
+    note: "Legatus mask: +50% extra optimal range.",
   },
 
   // --- Imminence Armaments ---
@@ -645,7 +645,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     extraCores: ["blue"],
     uniqueTalent: {
       name: "Perfect Reassigned",
-      description: "Tuer un ennemi : 1 munition spéciale aléatoire dans le pistolet. CD 8 s.",
+      description: "Killing an enemy: 1 random special round loaded into the pistol. Cooldown 8s.",
     },
     talentSlot: "chest",
   },
@@ -658,7 +658,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Leadership",
       description:
-        "Mouvement couverture à couverture : 20% de votre armure en bonus pour vous et les alliés (10 s). Triplé si vous finissez à moins de 10 m d'un ennemi. CD 10 s.",
+        "Cover-to-cover movement: 20% of your armor as bonus armor for you and allies (10s). Tripled if you end up within 10m of an enemy. Cooldown 10s.",
     },
     talentSlot: "backpack",
   },
@@ -669,7 +669,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "imminence",
     slots: ["kneepads"],
     extraStats: [{ stat: "threat", value: -50 }],
-    note: "Genouillères Imminence : −50% menace extra.",
+    note: "Imminence kneepads: −50% extra threat.",
   },
 
   // --- Urban Lookout ---
@@ -682,7 +682,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Protected Reload",
       description:
-        "Pendant un rechargement : +40% armure bonus. Les alliés rechargent : 0–30% de votre armure en bonus (selon cœurs bleus).",
+        "While reloading: +40% bonus armor. Allies reloading: 0–30% of your armor as bonus armor (depending on blue cores).",
     },
     talentSlot: "chest",
   },
@@ -693,7 +693,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "urban-lookout",
     slots: ["holster"],
     extraStats: [{ stat: "accuracy", value: 38 }],
-    note: "Holster Urban Lookout : +38% précision extra (jet unique).",
+    note: "Urban Lookout holster: +38% extra accuracy (single roll).",
   },
 
   // --- Unit Alloys ---
@@ -706,7 +706,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Obliterate",
       description:
-        "Les critiques augmentent les dégâts d'arme totaux de 1% pendant 5 s. 30 stacks max.",
+        "Critical hits increase total weapon damage by 1% for 5s. 30 stacks max.",
     },
     talentSlot: "chest",
   },
@@ -718,7 +718,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     extraStats: [{ stat: "rateOfFire", value: 5 }],
     extraCores: ["red"],
-    note: "Holster Unit Alloys : +5% cadence extra + cœur rouge.",
+    note: "Unit Alloys holster: +5% extra rate of fire + red core.",
   },
 
   // --- Royal Works ---
@@ -731,7 +731,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Gunslinger",
       description:
-        "Changer d'arme : +25% dégâts totaux d'arme pendant 8 s. CD 8 s.",
+        "Swapping weapons: +25% total weapon damage for 8s. Cooldown 8s.",
     },
     talentSlot: "chest",
   },
@@ -743,7 +743,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Composure",
-      description: "En couverture : +20% dégâts totaux d'arme.",
+      description: "While in cover: +20% total weapon damage.",
     },
     talentSlot: "backpack",
   },
@@ -758,7 +758,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Empathic Resolve",
       description:
-        "Réparer un allié : +3% à +20% dégâts totaux d'arme et de compétence pour lui pendant 10 s (selon palier de compétence).",
+        "Repairing an ally: grants them +3% to +20% total weapon and skill damage for 10s (depending on skill tier).",
     },
     talentSlot: "chest",
   },
@@ -770,7 +770,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Safeguard",
-      description: "Réparer un allié : +30% réparation reçue pendant 5 s.",
+      description: "Repairing an ally: +30% healing received for 5s.",
     },
     talentSlot: "backpack",
   },
@@ -785,7 +785,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfectly Opportunistic",
       description:
-        "Toucher un ennemi au fusil à pompe ou de précision : il subit +15% dégâts de toutes sources pendant 5 s.",
+        "Hitting an enemy with a shotgun or sniper rifle: they take +15% damage from all sources for 5s.",
     },
     talentSlot: "backpack",
   },
@@ -797,7 +797,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Perfect Spotter",
-      description: "+20% dégâts totaux d'arme et de compétence vs cibles pulsées.",
+      description: "+20% total weapon and skill damage vs pulsed targets.",
     },
     talentSlot: "chest",
   },
@@ -812,7 +812,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfectly Tamper Proof",
       description:
-        "Ennemis à 3 m d'une hive, tourelle, pulse distant ou leurre : choc. Armement 2 s, CD 8 s par compétence.",
+        "Enemies within 3m of a hive, turret, remote pulse, or decoy: shocked. 2s arming time, 8s cooldown per skill.",
     },
     talentSlot: "backpack",
   },
@@ -825,7 +825,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfectly Explosive Delivery",
       description:
-        "Lancer une compétence : explosion 1,5 s après l'atterrissage (5 m), puis toutes les 5 s. Dégâts selon palier. Une fois par compétence.",
+        "Throwing a skill: explodes 1.5s after landing (5m radius), then every 5s. Damage depends on skill tier. Once per skill.",
     },
     talentSlot: "chest",
   },
@@ -840,7 +840,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Entrench",
       description:
-        "Sous 30% d'armure, un headshot depuis la couverture répare 30% d'armure. CD 2 s.",
+        "Below 30% armor, a headshot from cover repairs 30% armor. Cooldown 2s.",
     },
     talentSlot: "chest",
   },
@@ -851,7 +851,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "zwiadowka",
     slots: ["gloves"],
     extraStats: [{ stat: "weaponHandling", value: 15 }],
-    note: "Gants Zwiadowka : +15% maniement extra (jet unique).",
+    note: "Zwiadowka gloves: +15% extra weapon handling (single roll).",
   },
 
   // --- Shiny Monkey Gear ---
@@ -865,7 +865,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Perfect Energize",
       description:
-        "Utiliser un kit d'armure : +1 palier de compétence pendant 15 s. Déjà palier 6 : overcharge. CD 30 s.",
+        "Using an armor kit: +1 skill tier for 15s. Already at tier 6: overcharge. Cooldown 30s.",
     },
     talentSlot: "backpack",
   },
@@ -877,7 +877,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["kneepads"],
     extraStats: [{ stat: "statusEffects", value: 16 }],
     extraCores: ["yellow"],
-    note: "Genouillères Shiny Monkey : +16% effets de statut extra + cœur jaune.",
+    note: "Shiny Monkey kneepads: +16% extra Status Effects + yellow core.",
   },
 
   // --- Yaahl Gear ---
@@ -889,10 +889,10 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["mask"],
     extraStats: [{ stat: "damageToHealth", value: 14 }],
     extraCores: ["blue"],
-    note: "Masque Yaahl : +14% dégâts à la santé extra + cœur bleu.",
+    note: "Yaahl mask: +14% extra Damage to Health + blue core.",
   },
 
-  // ========== Exotiques — masques ==========
+  // ========== Exotics — masks ==========
   {
     id: "coyotes-mask",
     name: "Coyote's Mask",
@@ -901,7 +901,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Pack Instincts",
       description:
-        "Selon la distance : CHD (proche), CHC (moyen) ou HSD (loin). Moyenne builder : +8% CHC et +8% CHD.",
+        "Depending on distance: Critical Hit Damage (close), Critical Hit Chance (mid), or Headshot Damage (far). Builder average: +8% Critical Hit Chance and +8% Critical Hit Damage.",
     },
     extraStats: [
       { stat: "chc", value: 8 },
@@ -916,7 +916,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Toxic Delivery",
       description:
-        "Appliquer un statut ou infliger des dégâts de compétence pose un DoT. La force scale avec effets de statut et dégâts de compétence.",
+        "Applying a status effect or dealing skill damage applies a DoT. Its strength scales with Status Effects and Skill Damage.",
     },
   },
   {
@@ -927,7 +927,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Vicious Cycle",
       description:
-        "Prendre des dégâts construit un buff. Armure basse : burst de réparation et statut aux ennemis proches.",
+        "Taking damage builds a buff. At low armor: a burst of repair and applies a status effect to nearby enemies.",
     },
   },
   {
@@ -938,7 +938,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Chain Reaction",
       description:
-        "Masque Brooklyn. Les dégâts de compétence et d'arme se renforcent mutuellement. Drop : Army Terminal / élites Charlie.",
+        "Brooklyn mask. Skill damage and weapon damage boost each other. Drops from: Army Terminal / Charlie elites.",
     },
   },
   {
@@ -949,7 +949,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Jury Rigged",
       description:
-        "Autorise des combinaisons de compétences inhabituelles et booste les mods de compétence équipés.",
+        "Allows unusual skill combinations and boosts equipped skill mods.",
     },
   },
   {
@@ -960,11 +960,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Slotted",
       description:
-        "Bonus selon la couleur de chaque attribut non-cœur : rouge +10% CHD, jaune +5% efficacité de compétence, bleu +1% régén armure.",
+        "Bonus based on the color of each non-core attribute: red +10% Critical Hit Damage, yellow +5% skill efficiency, blue +1% armor regen.",
     },
   },
 
-  // ========== Exotiques — sacs ==========
+  // ========== Exotics — backpacks ==========
   {
     id: "memento",
     name: "Memento",
@@ -974,7 +974,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Kill Confirmed",
       description:
-        "Ramasser un trophée : stacks de WD, armure et skill. 3 cœurs. Excellent hybride.",
+        "Picking up a trophy: stacks of Weapon Damage, armor, and skill damage. 3 cores. Excellent hybrid piece.",
     },
   },
   {
@@ -986,7 +986,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Resourceful",
       description:
-        "Compte +1 pièce pour chaque marque et set déjà équipé. Permet d'activer plusieurs bonus 2pc / 3pc / 4pc.",
+        "Counts as +1 piece for every brand and set already equipped. Allows activating multiple 2pc / 3pc / 4pc bonuses.",
     },
   },
   {
@@ -996,7 +996,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "One Step Ahead",
-      description: "Grenades et kits bonus. Utiliser une grenade : buff de dégâts / armure.",
+      description: "Bonus grenades and kits. Using a grenade: damage/armor buff.",
     },
   },
   {
@@ -1007,7 +1007,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Close Air Support",
       description:
-        "Sac Brooklyn. Les compétences déployées renforcent les dégâts d'arme à proximité, et inversement.",
+        "Brooklyn backpack. Deployed skills boost nearby weapon damage, and vice versa.",
     },
   },
   {
@@ -1018,11 +1018,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Field Medic",
       description:
-        "Utiliser un kit ou une compétence de soin : burst de réparation pour le groupe et haste de compétence.",
+        "Using a kit or a healing skill: a burst of repair for the group and Skill Haste.",
     },
   },
 
-  // ========== Exotiques — gilets ==========
+  // ========== Exotics — chest pieces ==========
   {
     id: "ridgeways-pride",
     name: "Ridgeway's Pride",
@@ -1030,7 +1030,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Bleeding Heart",
-      description: "Dégâts d'arme appliquent saignement. Soigne selon les cibles en saignement.",
+      description: "Weapon damage applies bleed. Heals based on bleeding targets.",
     },
   },
   {
@@ -1040,7 +1040,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["chest"],
     uniqueTalent: {
       name: "Ablative Nanoplating",
-      description: "Quand l'armure casse : hive d'armure pour vous et les alliés proches.",
+      description: "When armor breaks: deploys an armor hive for you and nearby allies.",
     },
   },
   {
@@ -1051,7 +1051,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Resolved",
       description:
-        "Le prochain tir au corps compte comme un headshot. CD 2 s (PvE) / 3 s (PvP). Fusil de précision, fusil ou pistolet requis.",
+        "The next body shot counts as a headshot. Cooldown 2s (PvE) / 3s (PvP). Requires a sniper rifle, rifle, or pistol.",
     },
   },
   {
@@ -1062,7 +1062,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Hoarder",
       description:
-        "Ramasser munitions ou kits : stacks de dégâts d'arme et d'armure. Les ennemis droppent plus de loot.",
+        "Picking up ammo or kits: stacks of weapon damage and armor. Enemies drop more loot.",
     },
   },
   {
@@ -1073,11 +1073,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Instigator",
       description:
-        "Augmente la menace et convertit une partie des dégâts reçus en armure bonus pour le groupe.",
+        "Increases threat and converts a portion of damage taken into bonus armor for the group.",
     },
   },
 
-  // ========== Exotiques — gants ==========
+  // ========== Exotics — gloves ==========
   {
     id: "loaded-for-bear",
     name: "Loaded for Bear",
@@ -1086,7 +1086,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Afterburn",
       description:
-        "Les impacts appliquent des stacks (20 max par cible). Recharger consomme les stacks : +2% dégâts d'arme par stack.",
+        "Weapon hits apply stacks (20 max per target). Reloading consumes the stacks: +2% weapon damage per stack.",
     },
   },
   {
@@ -1098,7 +1098,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Transference",
       description:
-        "Déployer une hive : overcharge pour vous et les alliés proches. Les kills de compétence réduisent le CD de la hive.",
+        "Deploying a hive: overcharge for you and nearby allies. Skill kills reduce the hive's cooldown.",
     },
   },
   {
@@ -1109,7 +1109,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Bloodsport",
       description:
-        "La mêlée applique un saignement. Dégâts d'arme bonus contre les cibles qui saignent.",
+        "Melee attacks apply bleed. Bonus weapon damage against bleeding targets.",
     },
   },
   {
@@ -1120,7 +1120,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     extraStats: [{ stat: "statusEffects", value: 10 }],
     uniqueTalent: {
       name: "Discharge",
-      description: "La mêlée applique un choc. Les ennemis choqués subissent plus de dégâts.",
+      description: "Melee attacks apply shock. Shocked enemies take more damage.",
     },
   },
   {
@@ -1132,11 +1132,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Top Dog",
       description:
-        "Kills CQC : armure au kill et stacks de dégâts d'arme. Très utilisé en Striker / Heartbreaker.",
+        "CQC kills: armor on kill and stacks of weapon damage. Widely used with Striker / Heartbreaker.",
     },
   },
 
-  // ========== Exotiques — holsters ==========
+  // ========== Exotics — holsters ==========
   {
     id: "waveform",
     name: "Waveform",
@@ -1144,7 +1144,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     uniqueTalent: {
       name: "Capacitance",
-      description: "Dégâts de compétence construisent un bonus de dégâts d'arme, et inversement.",
+      description: "Skill damage builds a weapon damage bonus, and vice versa.",
     },
   },
   {
@@ -1154,7 +1154,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     uniqueTalent: {
       name: "Dragon's Negation",
-      description: "Ennemis proches : brûlure. Contrôle de foule CQC.",
+      description: "Nearby enemies: burn. CQC crowd control.",
     },
   },
   {
@@ -1164,7 +1164,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     uniqueTalent: {
       name: "Quick Draw",
-      description: "Changer vers le pistolet : headshots pistolet massifs. Regulus / Liberty.",
+      description: "Swapping to the pistol: massive pistol headshot damage. Regulus / Liberty.",
     },
   },
   {
@@ -1175,11 +1175,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Gladius",
       description:
-        "Tuer avec le pistolet : armure bonus. Changer d'arme vers le pistolet : cadence et dégâts pistolet.",
+        "Killing with the pistol: bonus armor. Swapping to the pistol: rate of fire and pistol damage.",
     },
   },
 
-  // ========== Exotiques — genouillères ==========
+  // ========== Exotics — kneepads ==========
   {
     id: "nurses-kneepads",
     name: "Nurse's Kneepads",
@@ -1189,7 +1189,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "First Aid Associate",
       description:
-        "Vous et les alliés à 10 m : +40% protection contre les aléas. Socle des builds support / Toxic DZ.",
+        "You and allies within 10m: +40% hazard protection. Core piece for support / Toxic DZ builds.",
     },
   },
   {
@@ -1200,7 +1200,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Escape Plan",
       description:
-        "Vault, rester immobile 5 s ou subir un statut : bonus de vitesse de déplacement (max 20%). −50% pénalité de mobilité des statuts.",
+        "Vaulting, staying still for 5s, or being affected by a status effect: movement speed bonus (max 20%). −50% status effect mobility penalty.",
     },
   },
   {
@@ -1211,7 +1211,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Ostracize",
       description:
-        "Marque un ennemi : vous prenez 600% de dégâts amplifiés de lui, +20% dégâts amplifiés aux autres. Une marque à la fois.",
+        "Marks an enemy: you take 600% amplified damage from them, and deal +20% amplified damage to others. One mark at a time.",
     },
   },
 ];

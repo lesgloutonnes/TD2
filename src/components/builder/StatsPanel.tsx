@@ -45,23 +45,23 @@ export function StatsPanel({
   return (
     <aside className="stats-panel">
       <header className="panel-head">
-        <p className="eyebrow">Analyse</p>
-        <h2>Stats du build</h2>
+        <p className="eyebrow">Analysis</p>
+        <h2>Build stats</h2>
       </header>
 
       <div className="core-row">
-        <CorePip kind="red" value={stats.cores.red} label="Rouges" />
-        <CorePip kind="blue" value={stats.cores.blue} label="Bleus" />
-        <CorePip kind="yellow" value={stats.cores.yellow} label="Jaunes" />
+        <CorePip kind="red" value={stats.cores.red} label="Red" />
+        <CorePip kind="blue" value={stats.cores.blue} label="Blue" />
+        <CorePip kind="yellow" value={stats.cores.yellow} label="Yellow" />
       </div>
 
       <div className="index-card">
         <div>
-          <p className="eyebrow">Indice offensif</p>
+          <p className="eyebrow">Offensive index</p>
           <strong>{stats.offensiveIndex}</strong>
         </div>
         <div>
-          <p className="eyebrow">Paliers</p>
+          <p className="eyebrow">Skill Tiers</p>
           <strong>
             {stats.skillTierCapped}
             <span className="muted"> / 6</span>
@@ -75,10 +75,10 @@ export function StatsPanel({
 
       <div className="chc-meter">
         <div className="chc-label">
-          <span>Chances de coups critiques</span>
+          <span>Critical Hit Chance</span>
           <span>
             {stats.chcCapped.toFixed(1)}%
-            {stats.chcOvercap > 0 ? ` · +${stats.chcOvercap.toFixed(1)}% hors cap` : ""}
+            {stats.chcOvercap > 0 ? ` · +${stats.chcOvercap.toFixed(1)}% over cap` : ""}
           </span>
         </div>
         <div className="meter">
@@ -87,7 +87,7 @@ export function StatsPanel({
             style={{ width: `${Math.min(100, (stats.values.chc / 60) * 100)}%` }}
           />
         </div>
-        <small>Cap dur à 60%. La montre SHD apporte déjà 10%.</small>
+        <small>Hard cap at 60%. SHD Watch already provides 10%.</small>
       </div>
 
       <ul className="stat-list">
@@ -104,10 +104,10 @@ export function StatsPanel({
       </ul>
 
       <section>
-        <h3>Bonus actifs</h3>
+        <h3>Active bonuses</h3>
         <div className="bonus-list">
           {stats.bonuses.length === 0 ? (
-            <p className="empty">Aucun bonus de marque ou de set.</p>
+            <p className="empty">No brand or gear set bonus.</p>
           ) : (
             stats.bonuses.map((bonus) => (
               <article key={bonus.source} className="bonus-card">

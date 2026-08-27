@@ -86,7 +86,7 @@ function addCore(values: Record<StatKey, number>, cores: Record<CoreType, number
   addBonuses(values, [CORE_VALUES[core]]);
 }
 
-export function emptyLoadout(name = "Nouveau build"): Loadout {
+export function emptyLoadout(name = "New build"): Loadout {
   return {
     name,
     gear: {
@@ -115,7 +115,7 @@ export type GearCounts = {
   ninja: boolean;
 };
 
-/** Compte les pièces de marque / set, NinjaBike inclus (+1 sur chaque marque et set déjà présents). */
+/** Count brand / set pieces, including NinjaBike (+1 for each brand and set already present). */
 export function gearCounts(loadout: Loadout): GearCounts {
   const brandCounts = new Map<string, number>();
   const setCounts = new Map<string, number>();
@@ -178,7 +178,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   }
 
   if (ninja) {
-    notes.push("NinjaBike : +1 pièce pour chaque marque et set déjà équipés.");
+    notes.push("NinjaBike: +1 piece for each brand and gear set already equipped.");
   }
 
   for (const brand of BRANDS) {
@@ -190,7 +190,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
     bonuses.push({
       source: brand.name,
-      label: `${tiers} pièce${tiers > 1 ? "s" : ""}`,
+      label: `${tiers} piece${tiers > 1 ? "s" : ""}`,
       detail: brand.bonuses
         .slice(0, tiers)
         .map((tier, index) => `${index + 1}pc: ${formatBonusList(tier)}`)
@@ -217,13 +217,13 @@ export function computeStats(loadout: Loadout): ComputedStats {
 
     bonuses.push({
       source: set.name,
-      label: `${Math.min(pieces, 4)} pièce${pieces > 1 ? "s" : ""}`,
+      label: `${Math.min(pieces, 4)} piece${pieces > 1 ? "s" : ""}`,
       detail: [
-        pieces >= 2 ? `2pc: ${set.two}` : `2pc verrouillé (${pieces}/2)`,
-        pieces >= 3 ? `3pc: ${set.three}` : `3pc verrouillé (${pieces}/3)`,
-        fourPiece ? `4pc: ${set.four}` : `4pc verrouillé (${pieces}/4)`,
-        fourPiece && backpackIsSet ? `Sac: ${set.backpackTalent.name}` : null,
-        fourPiece && chestIsSet ? `Gilet: ${set.chestTalent.name}` : null,
+        pieces >= 2 ? `2pc: ${set.two}` : `2pc locked (${pieces}/2)`,
+        pieces >= 3 ? `3pc: ${set.three}` : `3pc locked (${pieces}/3)`,
+        fourPiece ? `4pc: ${set.four}` : `4pc locked (${pieces}/4)`,
+        fourPiece && backpackIsSet ? `Backpack: ${set.backpackTalent.name}` : null,
+        fourPiece && chestIsSet ? `Chest: ${set.chestTalent.name}` : null,
       ]
         .filter(Boolean)
         .join(" · "),
@@ -234,27 +234,27 @@ export function computeStats(loadout: Loadout): ComputedStats {
     });
 
     if (fourPiece && chestIsSet) {
-      notes.push(`${set.name} — talent gilet : ${set.chestTalent.name}. ${set.chestTalent.description}`);
+      notes.push(`${set.name} — chest talent: ${set.chestTalent.name}. ${set.chestTalent.description}`);
     }
     if (fourPiece && backpackIsSet) {
-      notes.push(`${set.name} — talent sac : ${set.backpackTalent.name}. ${set.backpackTalent.description}`);
+      notes.push(`${set.name} — backpack talent: ${set.backpackTalent.name}. ${set.backpackTalent.description}`);
     }
     if (fourPiece && !chestIsSet) {
-      notes.push(`${set.name} 4pc actif, mais le gilet n'est pas du set (talent chest inactif).`);
+      notes.push(`${set.name} 4pc is active, but the chest is not from the set (chest talent inactive).`);
     }
     if (fourPiece && !backpackIsSet) {
-      notes.push(`${set.name} 4pc actif, mais le sac n'est pas du set (talent backpack inactif).`);
+      notes.push(`${set.name} 4pc is active, but the backpack is not from the set (backpack talent inactive).`);
     }
   }
 
   if (loadout.shdWatch) {
     addBonuses(values, SHD_WATCH);
-    notes.push("Montre SHD 1000 active (bonus offensifs, défensifs et utilitaires).");
+    notes.push("SHD Watch 1000 active (offensive, defensive, and utility bonuses).");
   }
 
   if (loadout.expertise > 0) {
     values.weaponDamage += loadout.expertise;
-    notes.push(`Expertise ${loadout.expertise} : +${loadout.expertise}% dégâts d'arme.`);
+    notes.push(`Expertise ${loadout.expertise}: +${loadout.expertise}% Weapon Damage.`);
   }
 
   if (loadout.specialization) {
@@ -278,7 +278,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const skillTierCapped = Math.min(values.skillTier, SKILL_TIER_CAP);
 
   if (chcOvercap > 0) {
-    notes.push(`CHC au-dessus du cap : ${values.chc.toFixed(1)}% → 60%. ${chcOvercap.toFixed(1)}% gaspillés.`);
+    notes.push(`CHC over cap: ${values.chc.toFixed(1)}% → 60%. ${chcOvercap.toFixed(1)}% wasted.`);
   }
 
   const primary = loadout.weapons.primary
@@ -297,7 +297,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   );
 
   if (equippedSlots === 0) {
-    notes.push("Équipez des pièces pour voir les bonus de marque, de set et les stats.");
+    notes.push("Equip gear to see brand bonuses, gear set bonuses, and stats.");
   }
 
   return {
@@ -339,7 +339,7 @@ function weaponTypeStat(
 export function formatBonusList(bonuses: StatBonus[]): string {
   return bonuses
     .map((bonus) => {
-      if (bonus.stat === "skillTier") return `+${bonus.value} palier`;
+      if (bonus.stat === "skillTier") return `+${bonus.value} Skill Tier`;
       if (bonus.stat === "armor" && bonus.value <= 20) {
         return `+${bonus.value}% ${STAT_LABELS[bonus.stat]}`;
       }

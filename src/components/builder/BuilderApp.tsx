@@ -8,6 +8,7 @@ import { catalogById } from "@/lib/data/catalog";
 import {
   CORE_COLORS,
   CORE_OPTION_LABELS,
+  CORE_SHORT_LABELS,
   EMPTY_SLOT_COLOR,
   itemKindColor,
   SLOT_LABELS,
@@ -106,12 +107,12 @@ export function BuilderApp() {
     const url = `${window.location.origin}${window.location.pathname}#b=${encoded}`;
     window.location.hash = `b=${encoded}`;
     await navigator.clipboard.writeText(url);
-    flash("Lien de build copié.");
+    flash("Build link copied.");
   }
 
   function persist() {
     saveBuild(loadout);
-    flash("Build enregistré dans le navigateur.");
+    flash("Build saved in this browser.");
   }
 
   return (
@@ -122,7 +123,7 @@ export function BuilderApp() {
           <h1>Gear Builder</h1>
         </div>
         <label className="name-field">
-          <span>Nom du build</span>
+          <span>Build name</span>
           <input
             value={loadout.name}
             onChange={(event) => setLoadout({ ...loadout, name: event.target.value })}
@@ -133,10 +134,10 @@ export function BuilderApp() {
             Reset
           </button>
           <button type="button" className="ghost-btn" onClick={persist}>
-            Sauvegarder
+            Save
           </button>
           <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
-            Partager
+            Share
           </button>
         </div>
       </header>
@@ -149,7 +150,7 @@ export function BuilderApp() {
             className="preset-card"
             onClick={() => {
               setLoadout(preset.build());
-              flash(`${preset.name} chargé.`);
+              flash(`${preset.name} loaded.`);
             }}
           >
             <strong>{preset.name}</strong>
@@ -225,13 +226,13 @@ export function BuilderApp() {
                     </span>
                     <span>
                       <small>{SLOT_LABELS[slot]}</small>
-                      <strong>{piece ? pieceLabel(piece) : "Vide"}</strong>
+                      <strong>{piece ? pieceLabel(piece) : "Empty"}</strong>
                       <em>
                         {piece
-                          ? `${piece.core === "red" ? "Rouge" : piece.core === "blue" ? "Bleu" : "Jaune"}${
+                          ? `${CORE_SHORT_LABELS[piece.core]}${
                               source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""
                             }`
-                          : "Cliquer pour équiper"}
+                          : "Click to equip"}
                       </em>
                     </span>
                   </button>
@@ -253,26 +254,26 @@ export function BuilderApp() {
 
           <section className="kit-grid">
             <WeaponSelect
-              label="Arme primaire"
+              label="Primary weapon"
               slot="primary"
               value={loadout.weapons.primary?.weaponId ?? ""}
               onChange={setWeapon}
             />
             <WeaponSelect
-              label="Arme secondaire"
+              label="Secondary weapon"
               slot="secondary"
               value={loadout.weapons.secondary?.weaponId ?? ""}
               onChange={setWeapon}
             />
             <WeaponSelect
-              label="Pistolet"
+              label="Sidearm"
               slot="sidearm"
               value={loadout.weapons.sidearm?.weaponId ?? ""}
               types={["pistol"]}
               onChange={setWeapon}
             />
             <label className="field">
-              <span>Compétence 1</span>
+              <span>Skill 1</span>
               <select
                 value={loadout.skills[0] ?? ""}
                 onChange={(event) =>
@@ -282,7 +283,7 @@ export function BuilderApp() {
                   })
                 }
               >
-                <option value="">Aucune</option>
+                <option value="">None</option>
                 {SKILLS.map((skill) => (
                   <option key={skill.id} value={skill.id}>
                     {skill.category} — {skill.name}
@@ -291,7 +292,7 @@ export function BuilderApp() {
               </select>
             </label>
             <label className="field">
-              <span>Compétence 2</span>
+              <span>Skill 2</span>
               <select
                 value={loadout.skills[1] ?? ""}
                 onChange={(event) =>
@@ -301,7 +302,7 @@ export function BuilderApp() {
                   })
                 }
               >
-                <option value="">Aucune</option>
+                <option value="">None</option>
                 {SKILLS.map((skill) => (
                   <option key={skill.id} value={skill.id}>
                     {skill.category} — {skill.name}
@@ -310,14 +311,14 @@ export function BuilderApp() {
               </select>
             </label>
             <label className="field">
-              <span>Spécialisation</span>
+              <span>Specialization</span>
               <select
                 value={loadout.specialization ?? ""}
                 onChange={(event) =>
                   setLoadout({ ...loadout, specialization: event.target.value || null })
                 }
               >
-                <option value="">Aucune</option>
+                <option value="">None</option>
                 {SPECIALIZATIONS.map((spec) => (
                   <option key={spec.id} value={spec.id}>
                     {spec.name} — {spec.signature}
@@ -331,7 +332,7 @@ export function BuilderApp() {
                 checked={loadout.shdWatch}
                 onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
               />
-              <span>Montre SHD 1000</span>
+              <span>SHD Watch 1000</span>
             </label>
             <label className="field">
               <span>Expertise ({loadout.expertise})</span>
@@ -349,7 +350,7 @@ export function BuilderApp() {
 
           {saved.length > 0 ? (
             <section className="saved">
-              <h3>Builds enregistrés</h3>
+              <h3>Saved builds</h3>
               <ul>
                 {saved.map((item) => (
                   <li key={item.id}>
@@ -370,7 +371,7 @@ export function BuilderApp() {
                         deleteBuild(item.id);
                       }}
                     >
-                      Supprimer
+                      Delete
                     </button>
                   </li>
                 ))}
@@ -398,7 +399,7 @@ export function BuilderApp() {
             setLoadout((current) => applyGearSet(current, sourceId));
             setPickerOpen(false);
             const source = catalogById(sourceId);
-            if (source) flash(`${source.name} : 6 pièces équipées.`);
+            if (source) flash(`${source.name}: 6 pieces equipped.`);
           }}
         />
       ) : null}
@@ -406,8 +407,8 @@ export function BuilderApp() {
       {toast ? <div className="toast">{toast}</div> : null}
 
       <footer className="legal">
-        Fan-made, hors-ligne, sans compte. Données live Y8S3 Red Horizon (27 août 2026) :
-        marques, sets, talents, nommés, exotiques. Non affilié à Ubisoft.
+        Fan-made, offline, no account. Live Y8S3 Red Horizon data (27 Aug 2026):
+        brands, gear sets, talents, named items, exotics. Not affiliated with Ubisoft.
       </footer>
     </div>
   );
@@ -432,7 +433,7 @@ function WeaponSelect({
     <label className="field">
       <span>{label}</span>
       <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
-        <option value="">Aucune</option>
+        <option value="">None</option>
         {options.map((weapon) => (
           <option key={weapon.id} value={weapon.id}>
             {WEAPON_TYPE_LABELS[weapon.type]} — {weapon.name}

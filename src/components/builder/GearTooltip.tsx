@@ -47,8 +47,8 @@ export function GearTooltip({
         style={style}
       >
         <p className="tt-kind">{inspect.slotLabel}</p>
-        <h3>Emplacement vide</h3>
-        <p className="tt-empty">Cliquer pour équiper</p>
+        <h3>Empty slot</h3>
+        <p className="tt-empty">Click to equip</p>
       </div>
     );
   }
@@ -76,7 +76,7 @@ export function GearTooltip({
       {inspect.extraCores.map((extra, index) => (
         <div key={`${extra.core}-${index}`} className="tt-core extra">
           <span className="tt-core-pip" style={{ background: extra.color }} />
-          <span>Cœur bonus · {extra.label}</span>
+          <span>Bonus core · {extra.label}</span>
         </div>
       ))}
 
@@ -93,7 +93,7 @@ export function GearTooltip({
 
       {inspect.talent ? (
         <div className={inspect.talent.locked ? "tt-talent locked" : "tt-talent"}>
-          <p className="tt-kind">{inspect.talent.locked ? "Talent verrouillé" : "Talent"}</p>
+          <p className="tt-kind">{inspect.talent.locked ? "Locked talent" : "Talent"}</p>
           <strong>{inspect.talent.name}</strong>
           <p>{inspect.talent.description}</p>
         </div>

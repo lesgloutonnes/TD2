@@ -476,7 +476,7 @@ function testApplyGearSetAllSlots() {
 function testInspectEmpty() {
   const inspect = pieceInspect("mask", emptyLoadout());
   assert(inspect.empty, "empty slot inspect");
-  assert(inspect.slotLabel === "Masque", "slot label");
+  assert(inspect.slotLabel === "Mask", "slot label");
 }
 
 function testInspectProvidenceTiers() {

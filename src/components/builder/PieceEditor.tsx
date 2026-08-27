@@ -46,27 +46,27 @@ export function PieceEditor({
       <header className="panel-head">
         <div>
           <p className="eyebrow">{SLOT_LABELS[slot]}</p>
-          <h2>{piece ? source?.name ?? "Pièce" : "Emplacement vide"}</h2>
+          <h2>{piece ? source?.name ?? "Piece" : "Empty slot"}</h2>
         </div>
         <div className="editor-actions">
           <button type="button" className="ghost-btn" onClick={onSwap}>
-            {piece ? "Changer" : "Équiper"}
+            {piece ? "Change" : "Equip"}
           </button>
           {piece ? (
             <button type="button" className="ghost-btn danger" onClick={onClear}>
-              Retirer
+              Remove
             </button>
           ) : null}
         </div>
       </header>
 
       {!piece ? (
-        <p className="empty">Choisissez une marque, un set, un nommé ou un exotique.</p>
+        <p className="empty">Pick a brand, gear set, named item, or exotic.</p>
       ) : (
         <>
           {source?.uniqueTalent ? (
             <div className="talent-box">
-              <p className="eyebrow">Talent unique</p>
+              <p className="eyebrow">Unique talent</p>
               <strong>{source.uniqueTalent.name}</strong>
               <p>{source.uniqueTalent.description}</p>
             </div>
@@ -77,7 +77,7 @@ export function PieceEditor({
           ) : null}
 
           <label className="field">
-            <span>Cœur</span>
+            <span>Core</span>
             <select
               disabled={coreLocked}
               value={piece.core}
@@ -105,7 +105,7 @@ export function PieceEditor({
           {piece.attributes.map((attribute, index) => (
             <StatRow
               key={`${attribute.stat}-${index}`}
-              label={`Attribut ${index + 1}`}
+              label={`Attribute ${index + 1}`}
               stat={attribute.stat}
               value={attribute.value}
               groups={ATTRIBUTE_GROUPS}
@@ -143,7 +143,7 @@ export function PieceEditor({
                 />
               ))
             : (
-              <p className="hint">Pas de mod sur cet emplacement (masque, sac et gilet seulement).</p>
+              <p className="hint">No gear mod on this slot (mask, backpack, and chest only).</p>
             )}
 
           {talentOptions.length > 0 && !talentLocked ? (
@@ -153,7 +153,7 @@ export function PieceEditor({
                 value={piece.talentId ?? ""}
                 onChange={(event) => onChange({ ...piece, talentId: event.target.value })}
               >
-                <option value="">Aucun</option>
+                <option value="">None</option>
                 {talentOptions
                   .filter((talent) => !talent.perfect)
                   .map((talent) => (
@@ -183,7 +183,7 @@ function GearSetHint({ setId, slot }: { setId: string; slot: Slot }) {
   if (!talent) return null;
   return (
     <div className="talent-box">
-      <p className="eyebrow">Talent de set (4 pièces)</p>
+      <p className="eyebrow">Gear set talent (4 pieces)</p>
       <strong>{talent.name}</strong>
       <p>{talent.description}</p>
     </div>
@@ -234,7 +234,7 @@ function StatRow({
           max={max}
           step={statStep(stat)}
           value={value}
-          title={max != null ? `Plafond live : ${formatStat(stat, max)}` : undefined}
+          title={max != null ? `Live cap: ${formatStat(stat, max)}` : undefined}
           onChange={(event) => onValue(parseStatInput(event.target.value))}
         />
       </div>

@@ -65,10 +65,10 @@ function defaultTalent(slot: Slot, source: CatalogItem | undefined): string | un
 
 export function pieceLabel(piece: GearPiece): string {
   const source = catalogById(piece.sourceId);
-  return source?.name ?? "Pièce inconnue";
+  return source?.name ?? "Unknown piece";
 }
 
-/** Équipe les 6 emplacements avec le set, chacun avec le cœur in-game de son slot. */
+/** Equip all 6 slots with the set, each with that slot's in-game core. */
 export function applyGearSet(loadout: Loadout, sourceId: string): Loadout {
   const source = catalogById(sourceId);
   if (source?.kind !== "gear-set") return loadout;

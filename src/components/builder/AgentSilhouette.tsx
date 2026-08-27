@@ -28,7 +28,7 @@ export function AgentSilhouette({
       viewBox="0 0 100 110"
       className="agent-svg"
       role="img"
-      aria-label="Silhouette de l'agent avec emplacements d'équipement"
+      aria-label="Agent silhouette with gear slots"
     >
       <defs>
         <linearGradient id="body" x1="0" x2="0" y1="0" y2="1">

@@ -125,7 +125,7 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
           const n = index + 1;
           return {
             key: `${n}pc`,
-            label: `${n} pièce${n > 1 ? "s" : ""}`,
+            label: `${n} piece${n > 1 ? "s" : ""}`,
             detail: formatBonusList(bonus),
             active: pieces >= n,
           };
@@ -152,31 +152,31 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
         tiers: [
           {
             key: "2pc",
-            label: "2 pièces",
+            label: "2 pieces",
             detail: set.two,
             active: pieces >= 2,
           },
           {
             key: "3pc",
-            label: "3 pièces",
+            label: "3 pieces",
             detail: set.three,
             active: pieces >= 3,
           },
           {
             key: "4pc",
-            label: "4 pièces",
+            label: "4 pieces",
             detail: set.four,
             active: fourPiece,
           },
           {
             key: "backpack-talent",
-            label: "Talent sac",
+            label: "Backpack talent",
             detail: `${set.backpackTalent.name} — ${set.backpackTalent.description}`,
             active: fourPiece && backpackIsSet,
           },
           {
             key: "chest-talent",
-            label: "Talent gilet",
+            label: "Chest talent",
             detail: `${set.chestTalent.name} — ${set.chestTalent.description}`,
             active: fourPiece && chestIsSet,
           },

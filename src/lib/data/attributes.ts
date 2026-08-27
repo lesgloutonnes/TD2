@@ -10,24 +10,30 @@ export const SLOTS: Slot[] = [
 ];
 
 export const SLOT_LABELS: Record<Slot, string> = {
-  mask: "Masque",
-  backpack: "Sac à dos",
-  chest: "Gilet",
-  gloves: "Gants",
+  mask: "Mask",
+  backpack: "Backpack",
+  chest: "Chest",
+  gloves: "Gloves",
   holster: "Holster",
-  kneepads: "Genouillères",
+  kneepads: "Kneepads",
 };
 
 export const CORE_LABELS: Record<CoreType, string> = {
-  red: "Dégâts d'arme",
-  blue: "Armure",
-  yellow: "Palier de compétence",
+  red: "Weapon Damage",
+  blue: "Armor",
+  yellow: "Skill Tier",
+};
+
+export const CORE_SHORT_LABELS: Record<CoreType, string> = {
+  red: "Red",
+  blue: "Blue",
+  yellow: "Yellow",
 };
 
 export const CORE_OPTION_LABELS: Record<CoreType, string> = {
-  red: "Rouge — Dégâts d'arme",
-  blue: "Bleu — Armure",
-  yellow: "Jaune — Palier de compétence",
+  red: "Red — Weapon Damage",
+  blue: "Blue — Armor",
+  yellow: "Yellow — Skill Tier",
 };
 
 export const CORE_VALUES: Record<CoreType, StatBonus> = {
@@ -44,7 +50,7 @@ export const CORE_COLORS: Record<CoreType, string> = {
 
 export const EMPTY_SLOT_COLOR = "#3a414c";
 
-/** Couleurs d'identification TD2 : high-end or, set émeraude, exo rouge. */
+/** TD2 ID colors: high-end gold, gear set emerald, exotic red. */
 export const KIND_COLORS: Record<ItemKind, string> = {
   brand: "#d4af37",
   named: "#d4af37",
@@ -57,54 +63,54 @@ export function itemKindColor(kind: ItemKind): string {
 }
 
 export const KIND_LABELS: Record<ItemKind, string> = {
-  brand: "Marques",
-  "gear-set": "Sets",
-  named: "Nommés",
-  exotic: "Exotiques",
+  brand: "Brands",
+  "gear-set": "Gear Sets",
+  named: "Named",
+  exotic: "Exotics",
 };
 
 export const STAT_LABELS: Record<StatKey, string> = {
-  weaponDamage: "Dégâts d'arme",
-  chc: "Chances de coups critiques",
-  chd: "Dégâts des coups critiques",
-  hsd: "Dégâts des tirs à la tête",
-  weaponHandling: "Maniement d'arme",
-  armor: "Armure",
-  health: "Santé",
-  armorRegen: "Régénération d'armure",
-  armorOnKill: "Armure à la mort",
-  hazardProtection: "Protection contre les aléas",
-  explosiveResistance: "Résistance aux explosifs",
-  incomingRepairs: "Réparations reçues",
-  skillDamage: "Dégâts de compétence",
-  skillHaste: "Hâte de compétence",
-  skillDuration: "Durée de compétence",
-  skillRepair: "Compétences de réparation",
-  skillEfficiency: "Efficacité de compétence",
-  skillHealth: "Santé de compétence",
-  statusEffects: "Effets de statut",
-  skillTier: "Palier de compétence",
-  arDamage: "Dégâts des fusils d'assaut",
-  lmgDamage: "Dégâts des mitrailleuses",
-  smgDamage: "Dégâts des pistolets-mitrailleurs",
-  shotgunDamage: "Dégâts des fusils à pompe",
-  mmrDamage: "Dégâts des fusils de précision",
-  rifleDamage: "Dégâts des fusils",
-  pistolDamage: "Dégâts des pistolets",
-  reloadSpeed: "Vitesse de rechargement",
-  magazineSize: "Taille du chargeur",
-  ammoCapacity: "Capacité de munitions",
-  rateOfFire: "Cadence de tir",
-  stability: "Stabilité",
-  accuracy: "Précision",
-  damageToArmor: "Dégâts à l'armure",
-  damageToHealth: "Dégâts à la santé",
-  explosiveDamage: "Dégâts explosifs",
-  pulseResistance: "Résistance aux impulsions",
-  swapSpeed: "Vitesse de changement d'arme",
-  optimalRange: "Portée optimale",
-  threat: "Menace accrue",
-  protectionFromElites: "Protection contre les élites",
+  weaponDamage: "Weapon Damage",
+  chc: "Critical Hit Chance",
+  chd: "Critical Hit Damage",
+  hsd: "Headshot Damage",
+  weaponHandling: "Weapon Handling",
+  armor: "Armor",
+  health: "Health",
+  armorRegen: "Armor Regeneration",
+  armorOnKill: "Armor on Kill",
+  hazardProtection: "Hazard Protection",
+  explosiveResistance: "Explosive Resistance",
+  incomingRepairs: "Incoming Repairs",
+  skillDamage: "Skill Damage",
+  skillHaste: "Skill Haste",
+  skillDuration: "Skill Duration",
+  skillRepair: "Skill Repair",
+  skillEfficiency: "Skill Efficiency",
+  skillHealth: "Skill Health",
+  statusEffects: "Status Effects",
+  skillTier: "Skill Tier",
+  arDamage: "Assault Rifle Damage",
+  lmgDamage: "LMG Damage",
+  smgDamage: "SMG Damage",
+  shotgunDamage: "Shotgun Damage",
+  mmrDamage: "Marksman Rifle Damage",
+  rifleDamage: "Rifle Damage",
+  pistolDamage: "Pistol Damage",
+  reloadSpeed: "Reload Speed",
+  magazineSize: "Magazine Size",
+  ammoCapacity: "Ammo Capacity",
+  rateOfFire: "Rate of Fire",
+  stability: "Stability",
+  accuracy: "Accuracy",
+  damageToArmor: "Damage to Armor",
+  damageToHealth: "Damage to Health",
+  explosiveDamage: "Explosive Damage",
+  pulseResistance: "Pulse Resistance",
+  swapSpeed: "Swap Speed",
+  optimalRange: "Optimal Range",
+  threat: "Threat",
+  protectionFromElites: "Protection from Elites",
 };
 
 export const STAT_MAX: Partial<Record<StatKey, number>> = {
@@ -132,11 +138,11 @@ export const STAT_MAX: Partial<Record<StatKey, number>> = {
 
 export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
   {
-    label: "Offensif",
+    label: "Offensive",
     stats: ["chc", "chd", "hsd", "weaponHandling", "damageToArmor", "damageToHealth"],
   },
   {
-    label: "Défensif",
+    label: "Defensive",
     stats: [
       "armorRegen",
       "armorOnKill",
@@ -147,7 +153,7 @@ export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
     ],
   },
   {
-    label: "Compétence",
+    label: "Skill",
     stats: [
       "skillDamage",
       "skillHaste",
@@ -163,9 +169,9 @@ export const ATTRIBUTE_GROUPS: { label: string; stats: StatKey[] }[] = [
 export const ATTRIBUTE_OPTIONS: StatKey[] = ATTRIBUTE_GROUPS.flatMap((group) => group.stats);
 
 export const MOD_GROUPS: { label: string; stats: StatKey[] }[] = [
-  { label: "Offensif", stats: ["chc", "chd", "hsd"] },
+  { label: "Offensive", stats: ["chc", "chd", "hsd"] },
   {
-    label: "Défensif",
+    label: "Defensive",
     stats: [
       "armorOnKill",
       "incomingRepairs",
@@ -176,7 +182,7 @@ export const MOD_GROUPS: { label: string; stats: StatKey[] }[] = [
     ],
   },
   {
-    label: "Compétence",
+    label: "Skill",
     stats: ["skillHaste", "skillDamage", "skillDuration", "skillRepair", "statusEffects"],
   },
 ];
@@ -268,7 +274,7 @@ export const EXPERTISE_MAX = 30;
 
 export function formatStat(stat: StatKey, value: number): string {
   if (stat === "armor") {
-    return Math.round(value).toLocaleString("fr-FR");
+    return Math.round(value).toLocaleString("en-US");
   }
   if (stat === "skillTier") {
     return `+${value}`;
