@@ -19,7 +19,7 @@ function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
 }
 
 function withSkill(skillId: string): EquippedSkill {
-  return { skillId, mods: defaultSkillMods() };
+  return { skillId, mods: defaultSkillMods(skillId) };
 }
 
 /** Accept legacy string skill ids and current EquippedSkill objects. */
@@ -40,7 +40,7 @@ function normalizeSkills(
       if (!SKILLS.some((skill) => skill.id === entry.skillId)) continue;
       slots[i] = {
         skillId: entry.skillId,
-        mods: sanitizeSkillMods(entry.mods),
+        mods: sanitizeSkillMods(entry.skillId, entry.mods),
       };
     }
   }

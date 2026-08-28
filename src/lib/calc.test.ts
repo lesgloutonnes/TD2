@@ -821,22 +821,27 @@ function testSkillModsContribute() {
   loadout.skills = [
     {
       skillId: "striker-drone",
-      mods: [
-        { stat: "skillDamage", value: 10 },
-        { stat: "skillHaste", value: 12 },
-        { stat: "skillDuration", value: 8 },
-      ],
+      mods: ["skill-health", "duration", "damage"],
     },
-    null,
+    {
+      skillId: "oxidizer",
+      mods: ["extra-payload", "status", "radius"],
+    },
   ];
   const stats = computeStats(loadout);
-  // Soft assumed +5 skill damage on Striker Drone + 10 from mods.
-  assert(stats.values.skillDamage === 15, `skill mod damage, got ${stats.values.skillDamage}`);
-  assert(stats.values.skillHaste === 12, `skill mod haste, got ${stats.values.skillHaste}`);
-  assert(stats.values.skillDuration === 8, `skill mod duration, got ${stats.values.skillDuration}`);
+  assert(stats.values.skillDamage >= 11, `drone damage mod + assumed, got ${stats.values.skillDamage}`);
+  assert(stats.values.skillHealth >= 12, `drone skill health mod, got ${stats.values.skillHealth}`);
   assert(
-    stats.notes.some((note) => note.includes("Skill mods on")),
-    "skill mod note present",
+    stats.notes.some((note) => note.includes("Extra Payload")),
+    "chem launcher extra payload note",
+  );
+  assert(
+    stats.notes.some((note) => note.includes("Skill Health")),
+    "drone skill health note",
+  );
+  assert(
+    stats.bonuses.some((bonus) => bonus.source.includes("Skill mods · Striker Drone")),
+    "skill mods bonus row",
   );
 }
 
@@ -849,6 +854,33 @@ function testLegacySkillShareMigrate() {
   assert(decoded?.skills[0]?.skillId === "reviver-hive", "legacy skill 1 migrated");
   assert(decoded?.skills[1]?.skillId === "crusader-shield", "legacy skill 2 migrated");
   assert((decoded?.skills[0]?.mods?.length ?? 0) === 3, "default skill mods applied");
+  assert(
+    decoded?.skills[0]?.mods?.every((mod) => typeof mod === "string"),
+    "skill mods are attachment ids",
+  );
+}
+
+function testLegacyStatSkillModsMigrate() {
+  const dirty = {
+    ...emptyLoadout("Old skill mods"),
+    skills: [
+      {
+        skillId: "sniper-turret",
+        mods: [
+          { stat: "skillDamage", value: 10 },
+          { stat: "skillHaste", value: 12 },
+          { stat: "skillDuration", value: 8 },
+        ],
+      },
+      null,
+    ],
+  };
+  const decoded = decodeLoadout(encodeLoadout(dirty as unknown as Loadout));
+  assert(decoded?.skills[0]?.skillId === "sniper-turret", "sniper turret kept");
+  assert(
+    decoded?.skills[0]?.mods?.includes("extra-ammo"),
+    `legacy stat mods remapped to turret attachments, got ${decoded?.skills[0]?.mods?.join(",")}`,
+  );
 }
 
 function testArmorRegenFlatDerived() {
@@ -1026,6 +1058,7 @@ const tests = [
   testWeaponListSorting,
   testSkillModsContribute,
   testLegacySkillShareMigrate,
+  testLegacyStatSkillModsMigrate,
   testArmorRegenFlatDerived,
   testHealthFlatDerived,
   testInvestorSlotted,

@@ -250,6 +250,11 @@ select:focus {
   gap: 8px;
 }
 
+.skill-mod-effect {
+  align-self: end;
+  padding-bottom: 8px;
+}
+
 @media (max-width: 720px) {
   .weapon-mod-row {
     grid-template-columns: 1fr;

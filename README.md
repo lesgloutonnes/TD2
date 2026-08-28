@@ -47,7 +47,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
-- Skill mods on equipped skills (damage / haste / duration / repair / …)
+- Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
 - Brand HE cores recalibratable; exotic / gear set / rare named cores stay locked
 - Weapons listed by type then name in optgroups
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances

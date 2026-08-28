@@ -219,8 +219,11 @@ export type EquippedWeapon = {
 
 export type EquippedSkill = {
   skillId: string;
-  /** Skill mod slots (simplified kit — damage / haste / duration / …). */
-  mods?: StatBonus[];
+  /**
+   * Skill attachment mod ids (one per skill mod slot).
+   * In-game style: Extra Ammo, Skill Health, Extra Payload — not gear attribute rolls.
+   */
+  mods?: string[];
 };
 
 export type Loadout = {
