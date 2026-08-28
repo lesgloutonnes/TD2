@@ -133,7 +133,18 @@ export type CatalogItem = {
   assumedNote?: string;
   /** Override gear mod socket count (default: 1 on mask/chest/backpack, else 0). */
   modSlots?: number;
+  /**
+   * Native / most common core for this item.
+   * On exotics, also used as the locked core unless `coreLocked` is false (e.g. Investor).
+   */
   lockedCore?: CoreType;
+  /**
+   * Explicit core lock override.
+   * - `false`: core can vary / be recalibrated even on an exotic (Investor).
+   * - `true`: force lock (rare multi-core packages).
+   * Default: exotic with lockedCore → locked; brand / named / gear-set → unlocked.
+   */
+  coreLocked?: boolean;
   ninja?: boolean;
   note?: string;
 };

@@ -270,13 +270,25 @@ function testLockedBrandAndExoticCores() {
     JSON.stringify(memento.extraCores) === JSON.stringify(["blue", "yellow"]),
     "Memento bonus blue+yellow",
   );
-  // Exotic / rare named locks ignore inherited recalibration.
+  assert(createPiece("backpack", "memento", "yellow").core === "red", "Memento package stays locked");
+
+  // Most exotics ignore inherited recalibration.
   assert(createPiece("holster", "waveform", "red").core === "yellow", "Waveform ignores inherited red");
   assert(createPiece("mask", "catharsis", "red").core === "blue", "Catharsis ignores inherited red");
-  // Brand HE + normal named cores are recalibratable in-game.
+
+  // Investor exotic: core rolls per drop — recalibratable in the planner.
+  assert(createPiece("mask", "investor", "blue").core === "blue", "Investor can be blue");
+  assert(createPiece("mask", "investor", "yellow").core === "yellow", "Investor can be yellow");
+  assert(createPiece("mask", "investor").core === "red", "Investor native default red");
+
+  // Brand HE + named + gear sets: cores recalibratable.
   assert(createPiece("mask", "brand:empress", "red").core === "red", "Empress brand recalibrates to red");
   assert(createPiece("mask", "brand:empress").core === "yellow", "Empress native yellow");
   assert(createPiece("holster", "forge", "red").core === "red", "Forge named recalibrates to red");
+  assert(createPiece("holster", "claws-out").core === "red", "Claws Out native red");
+  assert(createPiece("holster", "claws-out", "yellow").core === "yellow", "Claws Out core recalibratable");
+  assert(createPiece("mask", "set:striker", "blue").core === "blue", "Striker set core recalibratable");
+  assert(createPiece("mask", "set:striker").core === "red", "Striker native red");
   assert(createPiece("holster", "waveform").core === "yellow", "Waveform skill tier");
   assert(createPiece("gloves", "btsu-datagloves").core === "yellow", "BTSU skill tier");
   assert(createPiece("chest", "tardigrade").core === "blue", "Tardigrade armor");
@@ -285,6 +297,10 @@ function testLockedBrandAndExoticCores() {
   assert(waveformPicker?.lockedCore === "yellow", "Waveform locked yellow in picker");
   const catharsisPicker = catalogForSlot("mask").find((item) => item.id === "catharsis");
   assert(catharsisPicker?.lockedCore === "blue", "Catharsis locked blue in picker");
+  const investorPicker = catalogForSlot("mask").find((item) => item.id === "investor");
+  assert(investorPicker?.lockedCore === undefined, "Investor not locked in picker");
+  const mementoPicker = catalogForSlot("backpack").find((item) => item.id === "memento");
+  assert(mementoPicker?.lockedCore === "red", "Memento package locked in picker");
   const deathgripsPicker = catalogForSlot("gloves").find((item) => item.id === "deathgrips");
   assert(deathgripsPicker?.lockedCore === undefined, "Deathgrips named recalibratable in picker");
   const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
@@ -293,6 +309,8 @@ function testLockedBrandAndExoticCores() {
   assert(badgerPicker?.lockedCore === undefined, "Badger brand recalibratable in picker");
   const empressPicker = catalogForSlot("mask").find((item) => item.id === "brand:empress");
   assert(empressPicker?.lockedCore === undefined, "Empress brand recalibratable in picker");
+  const strikerPicker = catalogForSlot("gloves").find((item) => item.id === "set:striker");
+  assert(strikerPicker?.lockedCore === undefined, "Striker set recalibratable in picker");
 }
 
 function testCatalogCoverage() {
@@ -424,18 +442,19 @@ function testSlotCoreColors() {
 }
 
 function testRefactorSlotCores() {
-  const mask = createPiece("mask", "set:refactor", "red");
-  const chest = createPiece("chest", "set:refactor", "red");
-  const holster = createPiece("holster", "set:refactor", "red");
-  const backpack = createPiece("backpack", "set:refactor", "red");
-  const gloves = createPiece("gloves", "set:refactor", "red");
-  const kneepads = createPiece("kneepads", "set:refactor", "red");
+  const mask = createPiece("mask", "set:refactor");
+  const chest = createPiece("chest", "set:refactor");
+  const holster = createPiece("holster", "set:refactor");
+  const backpack = createPiece("backpack", "set:refactor");
+  const gloves = createPiece("gloves", "set:refactor");
+  const kneepads = createPiece("kneepads", "set:refactor");
   assert(mask.core === "yellow", "Refactor masque jaune");
   assert(chest.core === "yellow", "Refactor gilet jaune");
   assert(holster.core === "yellow", "Refactor holster jaune");
   assert(backpack.core === "blue", "Refactor sac bleu");
   assert(gloves.core === "blue", "Refactor gants bleus");
   assert(kneepads.core === "blue", "Refactor genouillères bleues");
+  assert(createPiece("mask", "set:refactor", "red").core === "red", "Refactor masque recalibrable");
 
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
@@ -489,21 +508,26 @@ function testCatalogSlotLockedCore() {
   const refactorMask = catalogForSlot("mask").find((item) => item.id === "set:refactor");
   const strikerGloves = catalogForSlot("gloves").find((item) => item.id === "set:striker");
   const scChest = catalogForSlot("chest").find((item) => item.id === "set:system-corruption");
-  assert(refactorGloves?.lockedCore === "blue", "Refactor gants bleus dans le picker");
-  assert(refactorMask?.lockedCore === "yellow", "Refactor masque jaune dans le picker");
-  assert(strikerGloves?.lockedCore === "red", "Striker reste rouge sur chaque pièce");
-  assert(scChest?.lockedCore === "blue", "System Corruption gilet bleu dans le picker");
+  // Gear-set cores are defaults only — not locked in the picker.
+  assert(refactorGloves?.lockedCore === undefined, "Refactor gloves unlocked in picker");
+  assert(refactorMask?.lockedCore === undefined, "Refactor mask unlocked in picker");
+  assert(strikerGloves?.lockedCore === undefined, "Striker unlocked in picker");
+  assert(scChest?.lockedCore === undefined, "System Corruption unlocked in picker");
+  assert(createPiece("gloves", "set:refactor").core === "blue", "Refactor gloves native blue");
+  assert(createPiece("mask", "set:refactor").core === "yellow", "Refactor mask native yellow");
 }
 
 function testEverySetPieceCore() {
   for (const set of GEAR_SETS) {
     const cores = gearSetCores(set);
     for (const slot of SLOTS) {
-      const piece = createPiece(slot, `set:${set.id}`, "red");
+      const native = createPiece(slot, `set:${set.id}`);
       assert(
-        piece.core === cores[slot],
-        `${set.name} ${slot}: expected ${cores[slot]}, got ${piece.core}`,
+        native.core === cores[slot],
+        `${set.name} ${slot} native: expected ${cores[slot]}, got ${native.core}`,
       );
+      const recal = createPiece(slot, `set:${set.id}`, "red");
+      assert(recal.core === "red", `${set.name} ${slot} recalibrates to red`);
     }
   }
 }

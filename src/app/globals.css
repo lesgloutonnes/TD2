@@ -749,6 +749,28 @@ select:focus {
   font-size: 12px;
 }
 
+.locked-extras {
+  display: grid;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+
+.locked-extra-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.locked-extra-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .tt-prototype {
   margin: 0 0 8px;
   color: #c084fc;

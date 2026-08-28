@@ -1,6 +1,7 @@
 import type { CatalogItem } from "../types";
 import { BRANDS } from "./brands";
 import { GEAR_SETS, gearSetCore } from "./gear-sets";
+import { lockedCoreFor } from "./core-lock";
 
 /**
  * Named and exotic gear (Y8S3 live).
@@ -396,7 +397,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     lockedCore: "red",
     extraStats: [{ stat: "pistolDamage", value: 10 }],
-    note: "Wyvern holster: extra pistol damage, high melee damage; locked red core (overrides brand yellow).",
+    note: "Wyvern holster: +10% pistol damage (locked special). Native red core (recalibratable; brand is yellow).",
   },
   {
     id: "impetus",
@@ -954,12 +955,14 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     name: "Investor",
     kind: "exotic",
     lockedCore: "red",
+    coreLocked: false,
     slots: ["mask"],
     uniqueTalent: {
       name: "Slotted",
       description:
         "Bonus based on the color of each non-core attribute: red +10% Critical Hit Damage, yellow +5% skill efficiency, blue +1% armor regen.",
     },
+    note: "Core can roll red / blue / yellow on each drop (not locked). Third attribute replaces the gear mod slot.",
   },
 
   // ========== Exotics — backpacks ==========
@@ -968,6 +971,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     name: "Memento",
     kind: "exotic",
     lockedCore: "red",
+    coreLocked: true,
     slots: ["backpack"],
     extraCores: ["blue", "yellow"],
     uniqueTalent: {
@@ -981,6 +985,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       { stat: "skillDamage", value: 15 },
     ],
     assumedNote: "Assumes mid Kill Confirmed trophy stacks in combat.",
+    note: "Fixed 3-core package (red + blue + yellow) — not recalibratable.",
   },
   {
     id: "ninjabike",
@@ -1260,7 +1265,7 @@ export const CATALOG: CatalogItem[] = [
       kind: "gear-set",
       gearSetId: set.id,
       slots: "all",
-      lockedCore: set.core,
+      // Native set core is a default only — gear-set cores are recalibratable in the planner.
     }),
   ),
   ...NAMED_AND_EXOTICS,
@@ -1273,18 +1278,22 @@ export function catalogById(id: string): CatalogItem | undefined {
 export function catalogForSlot(slot: import("../types").Slot): CatalogItem[] {
   return CATALOG.filter((item) => item.slots === "all" || item.slots.includes(slot)).map(
     (item) => {
+      // Resolve slot-native core for gear sets (default only — not a lock).
+      let resolved = item;
       if ((item.kind === "gear-set" || item.gearSetId) && item.gearSetId) {
         const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
-        if (set) return { ...item, lockedCore: gearSetCore(set, slot) };
+        if (set) {
+          resolved = { ...item, lockedCore: gearSetCore(set, slot) };
+        }
       }
-      if (item.kind === "exotic" && item.lockedCore) return item;
-      if (item.kind === "named" && item.lockedCore) return item;
-      // Brand HE / recalibratable named: never surface a locked core in the picker.
-      if (item.lockedCore) {
-        const { lockedCore: _ignored, ...rest } = item;
+      const locked = lockedCoreFor(slot, resolved);
+      if (locked) return { ...resolved, lockedCore: locked };
+      // Unlocked pieces: do not surface lockedCore in the picker (native stays via createPiece).
+      if (resolved.lockedCore != null || resolved.coreLocked != null) {
+        const { lockedCore: _core, coreLocked: _flag, ...rest } = resolved;
         return rest;
       }
-      return item;
+      return resolved;
     },
   );
 }
