@@ -16,6 +16,10 @@ import {
   sanitizeWeaponMods,
   weaponModMultiplier,
 } from "./data/weapon-mods";
+import {
+  formatSkillModSummary,
+  skillModAssumedBonuses,
+} from "./data/skill-mods";
 import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
@@ -573,7 +577,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     );
   }
 
-  // Equipped skills: analysis entries + skill mods + optional soft bonuses.
+  // Equipped skills: analysis entries + skill attachments + optional soft bonuses.
   for (const equipped of loadout.skills) {
     if (!equipped?.skillId) continue;
     const skill = SKILLS.find((item) => item.id === equipped.skillId);
@@ -593,9 +597,20 @@ export function computeStats(loadout: Loadout): ComputedStats {
     } else {
       notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
     }
-    if (equipped.mods?.length) {
-      addBonuses(values, equipped.mods);
-      notes.push(`Skill mods on ${skill.name}: ${formatBonusList(equipped.mods)}.`);
+    const modBonuses = skillModAssumedBonuses(skill.id, equipped.mods);
+    if (modBonuses.length) addBonuses(values, modBonuses);
+    const modSummary = formatSkillModSummary(skill.id, equipped.mods);
+    if (modSummary) {
+      notes.push(`Skill mods on ${skill.name}: ${modSummary}.`);
+      bonuses.push({
+        source: `Skill mods · ${skill.name}`,
+        label: skill.category,
+        detail: modSummary,
+        pieces: 1,
+        required: 1,
+        active: true,
+        color: "#5aa8c8",
+      });
     }
   }
 
