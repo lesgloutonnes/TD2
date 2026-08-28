@@ -153,7 +153,17 @@ function defaultTalent(slot: Slot, source: CatalogItem | undefined): string | un
 
 export function pieceLabel(piece: GearPiece): string {
   const source = catalogById(piece.sourceId);
-  return source?.name ?? "Unknown piece";
+  if (!source) return "Unknown piece";
+  return catalogItemLabel(source);
+}
+
+/** Named pieces show "Name — Brand" so the affiliation is obvious in lists. */
+export function catalogItemLabel(source: CatalogItem): string {
+  if (source.kind === "named" && source.brandId) {
+    const brand = BRANDS.find((item) => item.id === source.brandId);
+    if (brand) return `${source.name} — ${brand.name}`;
+  }
+  return source.name;
 }
 
 /** Equip all 6 slots with the set, each with that slot's in-game core. */

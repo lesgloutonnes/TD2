@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import type { ItemKind, Slot } from "@/lib/types";
 import { catalogForSlot } from "@/lib/data/catalog";
+import { BRANDS } from "@/lib/data/brands";
+import { catalogItemLabel } from "@/lib/piece";
 import {
   CORE_COLORS,
   CORE_OPTION_LABELS,
@@ -29,7 +31,13 @@ export function PickerModal({
     return catalogForSlot(slot).filter((item) => {
       if (kind !== "all" && item.kind !== kind) return false;
       if (!needle) return true;
-      return item.name.toLowerCase().includes(needle);
+      const brandName =
+        item.brandId != null
+          ? (BRANDS.find((brand) => brand.id === item.brandId)?.name ?? "")
+          : "";
+      const haystack =
+        `${item.name} ${brandName} ${item.uniqueTalent?.name ?? ""} ${item.note ?? ""}`.toLowerCase();
+      return haystack.includes(needle);
     });
   }, [kind, query, slot]);
 
@@ -90,7 +98,7 @@ export function PickerModal({
                   />
                 ) : null}
                 <span className="picker-copy">
-                  <strong>{item.name}</strong>
+                  <strong>{catalogItemLabel(item)}</strong>
                   <small>
                     {KIND_LABELS[item.kind]}
                     {item.lockedCore ? ` · ${CORE_OPTION_LABELS[item.lockedCore]}` : ""}

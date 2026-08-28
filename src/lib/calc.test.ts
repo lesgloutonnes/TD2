@@ -1,5 +1,5 @@
 import { computeStats, emptyLoadout, slotColor } from "./calc";
-import { applyGearSet, createPiece, setPiecePrototype, setWeaponPrototype } from "./piece";
+import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPiecePrototype, setWeaponPrototype } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
@@ -218,6 +218,21 @@ function testNamedBrandCorrections() {
   assert(spotOn?.slots !== "all" && spotOn?.slots.includes("holster"), "Spot-On holster");
   const bulldog = catalogById("bulldog");
   assert(bulldog?.slots !== "all" && bulldog?.slots.includes("backpack"), "Bulldog sac");
+}
+
+function testNamedPieceBrandLabel() {
+  const punch = catalogById("punch-drunk");
+  assert(punch, "Punch Drunk exists");
+  assert(
+    catalogItemLabel(punch!) === "Punch Drunk — Douglas & Harding",
+    `named label with brand, got ${catalogItemLabel(punch!)}`,
+  );
+  assert(
+    pieceLabel(createPiece("mask", "punch-drunk")) === "Punch Drunk — Douglas & Harding",
+    "equipped named piece shows brand",
+  );
+  assert(catalogItemLabel(catalogById("brand:gila")!) === "Gila Guard", "brand entry unchanged");
+  assert(catalogItemLabel(catalogById("set:striker")!) === "Striker's Battlegear", "set unchanged");
 }
 
 function testNamedExtraStats() {
@@ -979,6 +994,7 @@ const tests = [
   testAcesY8s3,
   testHotshotHandlingMove,
   testNamedBrandCorrections,
+  testNamedPieceBrandLabel,
   testNamedExtraStats,
   testPicaroExtraCore,
   testLockedBrandAndExoticCores,
