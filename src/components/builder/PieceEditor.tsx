@@ -7,6 +7,7 @@ import {
   ATTRIBUTE_GROUPS,
   canBePrototype,
   clampStat,
+  CORE_COLORS,
   CORE_OPTION_LABELS,
   defaultAttributes,
   defaultMods,
@@ -30,7 +31,7 @@ import {
   augmentById,
   clampAugmentLevel,
 } from "@/lib/data/augments";
-import { isCoreLocked, setPiecePrototype } from "@/lib/piece";
+import { isCoreLocked, coreLockHint, setPiecePrototype } from "@/lib/piece";
 
 export function PieceEditor({
   slot,
@@ -180,12 +181,39 @@ export function PieceEditor({
                 </option>
               ))}
             </select>
-            {coreLocked ? (
-              <small className="hint">Core locked (exotic / gear set / rare named).</small>
-            ) : (
-              <small className="hint">Recalibratable — change freely like in-game.</small>
-            )}
+            <small className="hint">{coreLockHint(slot, source)}</small>
           </label>
+
+          {piece.extraCores?.length ? (
+            <div className="locked-extras">
+              <p className="eyebrow">Bonus cores (locked)</p>
+              <ul className="locked-extra-list">
+                {piece.extraCores.map((core) => (
+                  <li key={core}>
+                    <span
+                      className="core-pip-mini"
+                      style={{ background: CORE_COLORS[core] }}
+                      title={CORE_OPTION_LABELS[core]}
+                    />
+                    {CORE_OPTION_LABELS[core]}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {source?.extraStats?.length ? (
+            <div className="locked-extras">
+              <p className="eyebrow">Special attributes (locked)</p>
+              <ul className="locked-extra-list">
+                {source.extraStats.map((stat) => (
+                  <li key={stat.stat}>
+                    {STAT_LABELS[stat.stat]} · {formatStat(stat.stat, stat.value)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <label className="field expertise-field">
             <span>Expertise ({piece.expertise})</span>
