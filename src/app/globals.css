@@ -1058,34 +1058,49 @@ select:focus {
 
 .phone-presets .preset-card {
   flex: none;
-  width: min(240px, 78vw);
+  width: min(220px, 72vw);
   scroll-snap-align: start;
-  min-height: 72px;
+  min-height: 64px;
   text-align: left;
 }
 
 .phone-agent-card {
   display: grid;
-  gap: 10px;
-  padding: 10px;
+  grid-template-columns: minmax(92px, 118px) 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
   background: rgba(16, 21, 28, 0.85);
   border: 1px solid var(--line);
 }
 
 .phone-agent-card .agent-svg {
-  width: min(180px, 46vw);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 .is-phone .slot-grid {
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .is-phone .slot-card {
-  min-height: 64px;
-  padding: 8px;
+  min-height: 52px;
+  padding: 6px 8px;
   align-items: stretch;
+}
+
+.is-phone .slot-card .swatch {
+  height: 32px;
+}
+
+.is-phone .core-row,
+.is-phone .index-card {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.is-phone .index-card {
+  grid-template-columns: 1fr 1fr;
 }
 
 .is-phone .agent-meta {
