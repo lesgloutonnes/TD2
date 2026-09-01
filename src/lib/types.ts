@@ -236,8 +236,8 @@ export type EquippedWeapon = {
 export type EquippedSkill = {
   skillId: string;
   /**
-   * Skill attachment mod ids (one per skill mod slot).
-   * In-game style: Extra Ammo, Skill Health, Extra Payload — not gear attribute rolls.
+   * Skill attachment mod ids (one per live Gear 2.0 slot).
+   * Per-variant pools with max rolls; they only affect that skill.
    */
   mods?: string[];
 };

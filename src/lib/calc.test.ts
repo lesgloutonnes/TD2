@@ -9,7 +9,7 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
-import { weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import { pieceInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
@@ -920,27 +920,69 @@ function testSkillModsContribute() {
   loadout.skills = [
     {
       skillId: "striker-drone",
-      mods: ["skill-health", "duration", "damage"],
+      mods: ["battery-duration", "hull-health", "feed-damage"],
     },
     {
       skillId: "oxidizer",
-      mods: ["extra-payload", "status", "radius"],
+      mods: ["agitator-damage", "pneumatics-ammo"],
     },
   ];
   const stats = computeStats(loadout);
-  assert(stats.values.skillDamage >= 11, `drone damage mod + assumed, got ${stats.values.skillDamage}`);
-  assert(stats.values.skillHealth >= 12, `drone skill health mod, got ${stats.values.skillHealth}`);
+  assert(stats.values.skillDamage === 5, `drone assumed only, mods stay local, got ${stats.values.skillDamage}`);
+  assert(stats.values.skillHealth === 0, `skill health mods are not character-wide, got ${stats.values.skillHealth}`);
   assert(
-    stats.notes.some((note) => note.includes("Extra Payload")),
-    "chem launcher extra payload note",
+    stats.notes.some((note) => note.includes("Extra Ammo") && note.includes("+1 ammo")),
+    "chem launcher extra ammo note",
   );
   assert(
-    stats.notes.some((note) => note.includes("Skill Health")),
+    stats.notes.some((note) => note.includes("Skill Health") && note.includes("+10%")),
     "drone skill health note",
   );
   assert(
     stats.bonuses.some((bonus) => bonus.source.includes("Skill mods · Striker Drone")),
     "skill mods bonus row",
+  );
+}
+
+function testLiveSkillModLibrary() {
+  const assault = skillModSlotsFor("assault-turret");
+  assert(assault.length === 3, `assault turret 3 slots, got ${assault.length}`);
+  assert(
+    !assault.some((slot) =>
+      slot.options.some((option) => option.id.includes("ammo") || option.id.includes("payload")),
+    ),
+    "assault turret has no extra ammo",
+  );
+  const sniper = skillModSlotsFor("sniper-turret");
+  assert(
+    sniper.some((slot) => slot.options.some((option) => option.id === "housing-sniper-ammo")),
+    "sniper housing extra ammo +1",
+  );
+  const oxidizer = skillModSlotsFor("oxidizer");
+  assert(oxidizer.length === 2, `chem launcher 2 slots, got ${oxidizer.length}`);
+  assert(oxidizer[0]?.label === "Agitator", "chem agitator slot");
+  assert(oxidizer[1]?.label === "Pneumatics", "chem pneumatics slot");
+  assert(
+    oxidizer[1]?.options.some((option) => option.id === "pneumatics-ammo" && option.effect === "+1 ammo"),
+    "chem extra ammo is +1 on pneumatics",
+  );
+  const decoy = skillModSlotsFor("decoy");
+  assert(decoy.length === 2, `decoy 2 slots, got ${decoy.length}`);
+  const sticky = skillModSlotsFor("sticky-explosive");
+  assert(sticky.length === 2, `sticky 2 slots, got ${sticky.length}`);
+  const gunnerPulse = skillModSlotsFor("scanner-pulse", "gunner");
+  assert(
+    gunnerPulse.some((slot) =>
+      slot.options.some((option) => option.id === "gunner-directional-transmitter"),
+    ),
+    "gunner unique pulse mod",
+  );
+  const noSpecPulse = skillModSlotsFor("scanner-pulse", null);
+  assert(
+    !noSpecPulse.some((slot) =>
+      slot.options.some((option) => option.id === "gunner-directional-transmitter"),
+    ),
+    "gunner unique hidden without spec",
   );
 }
 
@@ -977,7 +1019,7 @@ function testLegacyStatSkillModsMigrate() {
   const decoded = decodeLoadout(encodeLoadout(dirty as unknown as Loadout));
   assert(decoded?.skills[0]?.skillId === "sniper-turret", "sniper turret kept");
   assert(
-    decoded?.skills[0]?.mods?.includes("extra-ammo"),
+    decoded?.skills[0]?.mods?.includes("housing-sniper-ammo"),
     `legacy stat mods remapped to turret attachments, got ${decoded?.skills[0]?.mods?.join(",")}`,
   );
 }
@@ -1167,6 +1209,7 @@ const tests = [
   testAugmentPublishedCurves,
   testWeaponListSorting,
   testSkillModsContribute,
+  testLiveSkillModLibrary,
   testLegacySkillShareMigrate,
   testLegacyStatSkillModsMigrate,
   testArmorRegenFlatDerived,
