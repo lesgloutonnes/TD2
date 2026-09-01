@@ -1,4 +1,4 @@
-import type { CoreType, ItemKind, Slot, StatBonus, StatKey } from "../types";
+import type { CoreType, ItemKind, Slot, StatBonus, StatKey, WeaponSlot } from "../types";
 
 export const SLOTS: Slot[] = [
   "mask",
@@ -16,6 +16,18 @@ export const SLOT_LABELS: Record<Slot, string> = {
   gloves: "Gloves",
   holster: "Holster",
   kneepads: "Kneepads",
+};
+
+export const WEAPON_SLOT_LABELS: Record<WeaponSlot, string> = {
+  primary: "Primary weapon",
+  secondary: "Secondary weapon",
+  sidearm: "Sidearm",
+};
+
+export const WEAPON_QUALITY_LABELS: Record<"high-end" | "named" | "exotic", string> = {
+  "high-end": "High-End",
+  named: "Named",
+  exotic: "Exotic",
 };
 
 export const CORE_LABELS: Record<CoreType, string> = {

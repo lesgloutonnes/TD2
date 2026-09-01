@@ -166,6 +166,8 @@ export type WeaponDef = {
   mag: number;
   talent: string;
   talentDesc: string;
+  /** Locked named / exotic attributes shown on the tooltip. */
+  extraStats?: StatBonus[];
   /** Soft analyzer bonuses when this weapon is the primary. */
   assumed?: StatBonus[];
   assumedNote?: string;

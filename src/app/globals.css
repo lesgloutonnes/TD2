@@ -676,6 +676,13 @@ select:focus {
 .picker-modal {
   width: min(1120px, 100%);
   max-height: min(88vh, 920px);
+  display: flex;
+  flex-direction: column;
+}
+
+.picker-modal .picker-grid {
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-head {
@@ -781,6 +788,24 @@ select:focus {
 .picker-tile-all:focus-visible {
   background: rgba(46, 204, 113, 0.22);
   outline: none;
+}
+
+.picker-tile.is-selected {
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.48),
+    0 0 0 2px var(--amber);
+}
+
+.weapon-tile-meta {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.weapon-slot-card {
+  width: 100%;
+  text-align: left;
 }
 
 .picker-row-wrap {

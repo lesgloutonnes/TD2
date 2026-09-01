@@ -10,6 +10,7 @@ import type {
   StatKey,
   WeaponMod,
   WeaponSlot,
+  WeaponType,
 } from "@/lib/types";
 import { computeStats, emptyLoadout, slotColor } from "@/lib/calc";
 import { applyGearSet, createPiece, pieceLabel, setWeaponPrototype } from "@/lib/piece";
@@ -27,11 +28,12 @@ import {
   SLOT_LABELS,
   SLOTS,
   STAT_LABELS,
+  WEAPON_QUALITY_LABELS,
   canWeaponBePrototype,
   weaponDisplayColor,
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
-import { WEAPONS } from "@/lib/data/weapons";
+import { WEAPON_TYPE_LABELS, weaponById } from "@/lib/data/weapons";
 import {
   clampWeaponMod,
   defaultWeaponMods,
@@ -45,7 +47,6 @@ import {
   skillModOptionLabel,
   skillModSlotsFor,
   skillModOptionById,
-  weaponsByType,
 } from "@/lib/data/skill-mods";
 import {
   AUGMENT_LEVEL_MAX,
@@ -54,7 +55,7 @@ import {
   augmentById,
   clampAugmentLevel,
 } from "@/lib/data/augments";
-import { pieceInspect } from "@/lib/tooltip";
+import { pieceInspect, weaponInspect } from "@/lib/tooltip";
 import {
   decodeLoadout,
   deleteBuild,
@@ -67,7 +68,9 @@ import {
 } from "@/lib/share";
 import { AgentSilhouette } from "@/components/builder/AgentSilhouette";
 import { GearTooltip } from "@/components/builder/GearTooltip";
+import { WeaponTooltip } from "@/components/builder/WeaponTooltip";
 import { PickerModal } from "@/components/builder/PickerModal";
+import { WeaponPickerModal } from "@/components/builder/WeaponPickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
 
@@ -138,7 +141,7 @@ export function BuilderApp() {
           weapons: { ...current.weapons, [slot]: null },
         };
       }
-      const def = WEAPONS.find((weapon) => weapon.id === weaponId);
+      const def = weaponById(weaponId);
       if (!def) return current;
       const prev = current.weapons[slot];
       const keepMods =
@@ -583,46 +586,67 @@ function WeaponSelect({
   onExpertiseChange: (slot: WeaponSlot, expertise: number) => void;
   onModChange: (slot: WeaponSlot, index: number, mod: WeaponMod) => void;
   onUpdate: (slot: WeaponSlot, next: EquippedWeapon) => void;
-  types?: Array<(typeof WEAPONS)[number]["type"]>;
+  types: readonly WeaponType[];
 }) {
-  const groups = weaponsByType(types);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [hoverRect, setHoverRect] = useState<DOMRect | null>(null);
+  const hoverLeaveTimer = useRef(0);
   const value = equipped?.weaponId ?? "";
   const expertise = equipped?.expertise ?? 0;
   const mods = equipped?.mods ?? [];
-  const selected = WEAPONS.find((weapon) => weapon.id === value);
+  const selected = value ? weaponById(value) : undefined;
   const prototypeAllowed = canWeaponBePrototype(selected?.quality);
   const isPrototype = Boolean(equipped?.prototype) && prototypeAllowed;
+  const qualityColor = selected
+    ? weaponDisplayColor(selected.quality, isPrototype)
+    : EMPTY_SLOT_COLOR;
+  const inspect = weaponInspect(slot, equipped);
+
+  function showHover(rect: DOMRect) {
+    window.clearTimeout(hoverLeaveTimer.current);
+    setHoverRect(rect);
+  }
+
+  function hideHover() {
+    window.clearTimeout(hoverLeaveTimer.current);
+    hoverLeaveTimer.current = window.setTimeout(() => setHoverRect(null), 80);
+  }
+
   return (
     <div className={isPrototype ? "field weapon-field is-prototype" : "field weapon-field"}>
-      <label className="field">
-        <span className="weapon-label-row">
-          {isPrototype ? <span className="weapon-proto-tint" aria-hidden="true" /> : null}
-          <span>{label}</span>
-          {selected ? (
-            <span
-              className="weapon-quality-dot"
-              title={isPrototype ? "Prototype" : selected.quality}
-              style={{ background: weaponDisplayColor(selected.quality, isPrototype) }}
-            />
-          ) : null}
+      <button
+        type="button"
+        className={hoverRect && !pickerOpen ? "slot-card weapon-slot-card hovered" : "slot-card weapon-slot-card"}
+        aria-describedby={`weapon-tooltip-${slot}`}
+        onClick={() => {
+          hideHover();
+          setPickerOpen(true);
+        }}
+        onMouseEnter={(event) => showHover(event.currentTarget.getBoundingClientRect())}
+        onMouseLeave={hideHover}
+        onFocus={(event) => showHover(event.currentTarget.getBoundingClientRect())}
+        onBlur={hideHover}
+      >
+        <span className="swatch-col">
+          <span
+            className={isPrototype ? "swatch swatch-prototype" : "swatch"}
+            style={{ background: qualityColor }}
+          />
         </span>
-        <select value={value} onChange={(event) => onChange(slot, event.target.value)}>
-          <option value="">None</option>
-          {groups.map((group) => (
-            <optgroup key={group.type} label={group.label}>
-              {group.weapons.map((weapon) => (
-                <option key={weapon.id} value={weapon.id}>
-                  {weapon.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </label>
+        <span>
+          <small>{label}</small>
+          <strong>{selected ? selected.name : "Empty"}</strong>
+          <em>
+            {selected
+              ? `${isPrototype ? "Prototype" : WEAPON_QUALITY_LABELS[selected.quality]} · ${WEAPON_TYPE_LABELS[selected.type]} · ${selected.rpm} RPM · mag ${selected.mag}`
+              : "Click to equip"}
+          </em>
+        </span>
+      </button>
       {selected && equipped ? (
         <>
           <small className="hint">
-            {selected.talent} · {selected.rpm} RPM · mag {selected.mag} · {selected.talentDesc}
+            {selected.talent} · {selected.talentDesc}
           </small>
           {prototypeAllowed ? (
             <label className="field checkbox prototype-switch">
@@ -758,6 +782,21 @@ function WeaponSelect({
             })}
           </div>
         </>
+      ) : null}
+
+      {hoverRect && !pickerOpen ? <WeaponTooltip inspect={inspect} anchor={hoverRect} /> : null}
+
+      {pickerOpen ? (
+        <WeaponPickerModal
+          title={label}
+          types={types}
+          selectedId={value}
+          onClose={() => setPickerOpen(false)}
+          onPick={(weaponId) => {
+            onChange(slot, weaponId);
+            setPickerOpen(false);
+          }}
+        />
       ) : null}
     </div>
   );

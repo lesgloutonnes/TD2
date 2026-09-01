@@ -9,8 +9,8 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
-import { skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
-import { pieceInspect } from "./tooltip";
+import { weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { pieceInspect, weaponInspect } from "./tooltip";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -587,7 +587,7 @@ function testWeaponCatalog() {
   const named = WEAPONS.filter((weapon) => weapon.quality === "named");
   const exotic = WEAPONS.filter((weapon) => weapon.quality === "exotic");
   assert(named.length >= 80, `au moins 80 armes nommées, got ${named.length}`);
-  assert(exotic.length >= 22, `au moins 22 armes exotiques, got ${exotic.length}`);
+  assert(exotic.length >= 35, `au moins 35 armes exotiques, got ${exotic.length}`);
   for (const required of [
     "caduceus",
     "ouroboros",
@@ -604,12 +604,25 @@ function testWeaponCatalog() {
     "the-grudge",
     "bakers-dozen",
     "shroud",
+    "dread-edict",
+    "sacrum-imperium",
+    "overlord",
+    "sheriff",
+    "underboss",
+    "lullaby",
+    "ruthless",
+    "first-sight",
+    "survivalist-d50",
   ]) {
     assert(
       WEAPONS.some((weapon) => weapon.id === required),
       `arme manquante ${required}`,
     );
   }
+  const elmo = WEAPONS.find((weapon) => weapon.id === "dread-edict");
+  assert(elmo?.talent === "Full Stop", "Dread Edict talent");
+  const whip = WEAPONS.find((weapon) => weapon.id === "whiplash");
+  assert(whip?.talent === "Faster Than Reloading", "Whiplash live talent");
 }
 
 function testUniqueTalentNote() {
@@ -839,6 +852,31 @@ function testInspectNinjaBoost() {
   if (bag.empty) return;
   assert(bag.talent?.name === "Resourceful", "ninja talent");
   assert(bag.affiliation === null, "ninja has no brand row");
+}
+
+function testWeaponInspect() {
+  const empty = weaponInspect("primary", null);
+  assert(empty.empty, "empty weapon inspect");
+  assert(empty.slotLabel === "Primary weapon", "weapon slot label");
+
+  const equipped = weaponInspect("primary", { weaponId: "st-elmo", expertise: 12, mods: [] });
+  assert(!equipped.empty, "equipped weapon inspect");
+  if (equipped.empty) return;
+  assert(equipped.name === "St. Elmo's Engine", "exotic name");
+  assert(equipped.quality === "exotic", "exotic quality");
+  assert(equipped.talent.name === "Actum Est", "exotic talent");
+  assert(equipped.rpm === 900, "rpm on tooltip");
+
+  const named = weaponInspect("secondary", { weaponId: "lexington", expertise: 0, mods: [] });
+  assert(!named.empty, "named inspect");
+  if (named.empty) return;
+  assert(named.qualityLabel === "Named", "named label");
+  assert(named.talent.name === "Optimized", "lexington talent");
+
+  const sheriff = weaponInspect("primary", { weaponId: "sheriff", expertise: 8, mods: [] });
+  assert(!sheriff.empty, "sheriff inspect");
+  if (sheriff.empty) return;
+  assert(sheriff.extraStats.some((stat) => stat.label.includes("Accuracy")), "sheriff accuracy extra");
 }
 
 function testPerItemExpertise() {
@@ -1331,6 +1369,7 @@ const tests = [
   testInspectProvidenceTiers,
   testInspectStrikerTalents,
   testInspectNinjaBoost,
+  testWeaponInspect,
   testPerItemExpertise,
   testPistolSlotSanitize,
   testPrototypeSwitch,

@@ -47,10 +47,10 @@ Open [http://localhost:3000](http://localhost:3000).
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods + 1 random secondary attribute); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
-- Skill mods: live Gear 2.0 named slots per variant (max rolls, this skill only). Assault Turret has no Extra Ammo; Chem Launcher is Agitator + Pneumatics (+1 ammo). Skill Tier is the main ammo/charge scaler.
-- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento and NinjaBike 3-core packages locked; Core Strength backpack 3-core locked; Sawyer's Kneepads blue locked)
-- Named unique talents and special attributes stay locked; the only named extra core is Picaro's Holster (bonus red). Y8S3 named pieces (Melon Baller, Keeper, Rushdown, Trick Shot) have talents only.
-- Weapons listed by type then name in optgroups
+- Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
+- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
+- Named unique talents and special attributes stay locked; bonus cores shown as locked extras
+- Weapons as tooltip-style tiles (named & exotic first): hover tooltip with talent, RPM, mag, mods
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
 - Armor model: flat piece armor + blue cores + Total Armor %
