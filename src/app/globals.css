@@ -309,7 +309,8 @@ select:focus {
   }
 }
 
-.gear-tooltip h3 {
+.gear-tooltip h3,
+.picker-tile h3 {
   text-transform: none;
   letter-spacing: 0.03em;
   font-size: 16px;
@@ -317,7 +318,8 @@ select:focus {
   margin: 0 0 8px;
 }
 
-.gear-tooltip .tt-kind {
+.gear-tooltip .tt-kind,
+.picker-tile .tt-kind {
   margin: 0 0 4px;
   color: var(--muted);
   font-size: 10px;
@@ -666,16 +668,114 @@ select:focus {
   padding: 18px;
 }
 
+.picker-modal {
+  width: min(1120px, 100%);
+  max-height: min(88vh, 920px);
+}
+
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: start;
 }
 
-.picker-list {
+.chip-row {
+  flex-wrap: wrap;
+}
+
+.picker-list,
+.picker-grid {
   overflow: auto;
+}
+
+.picker-list {
   display: grid;
   gap: 8px;
+}
+
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  align-content: start;
+  padding-right: 2px;
+}
+
+.picker-empty {
+  grid-column: 1 / -1;
+}
+
+.picker-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(28, 22, 14, 0.2), transparent 40%),
+    linear-gradient(180deg, #161b22 0%, #0c1016 100%);
+  border: 1px solid #c9a227;
+  border-radius: 2px;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(255, 179, 71, 0.08);
+}
+
+.picker-tile-hit {
+  display: block;
+  width: 100%;
+  flex: 1;
+  margin: 0;
+  padding: 12px 14px 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.picker-tile-hit:hover,
+.picker-tile-hit:focus-visible {
+  background: rgba(255, 107, 26, 0.1);
+  outline: none;
+}
+
+.picker-tile-hit:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--amber);
+}
+
+.picker-tile .tt-talent p,
+.picker-tile-note {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.picker-tile-note {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.picker-tile-all {
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.picker-tile-all:hover,
+.picker-tile-all:focus-visible {
+  background: rgba(46, 204, 113, 0.22);
+  outline: none;
 }
 
 .picker-row-wrap {
@@ -832,7 +932,8 @@ select:focus {
   .presets,
   .field-split,
   .core-row,
-  .index-card {
+  .index-card,
+  .picker-grid {
     grid-template-columns: 1fr;
   }
 }
