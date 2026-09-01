@@ -315,6 +315,7 @@ select:focus {
 }
 
 .gear-tooltip h3,
+.gear-inspect h3,
 .picker-tile h3 {
   text-transform: none;
   letter-spacing: 0.03em;
@@ -324,6 +325,7 @@ select:focus {
 }
 
 .gear-tooltip .tt-kind,
+.gear-inspect .tt-kind,
 .picker-tile .tt-kind {
   margin: 0 0 4px;
   color: var(--muted);
@@ -332,7 +334,8 @@ select:focus {
   text-transform: uppercase;
 }
 
-.gear-tooltip .tt-empty {
+.gear-tooltip .tt-empty,
+.gear-inspect .tt-empty {
   margin: 8px 0 0;
   color: var(--muted);
 }
@@ -966,4 +969,211 @@ select:focus {
   .picker-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.gear-inspect {
+  background:
+    linear-gradient(180deg, rgba(28, 22, 14, 0.2), transparent 40%),
+    linear-gradient(180deg, #161b22 0%, #0c1016 100%);
+  border: 1px solid #c9a227;
+  box-shadow: 0 0 0 1px rgba(255, 179, 71, 0.12);
+  border-radius: 2px;
+  padding: 12px 14px 10px;
+  font-size: 13px;
+}
+
+.gear-inspect h3 {
+  text-transform: none;
+  letter-spacing: 0.03em;
+  font-size: 16px;
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+
+.phone-inspect-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.phone-inspect-actions .primary-btn,
+.phone-inspect-actions .ghost-btn {
+  flex: 1;
+  min-height: 44px;
+}
+
+.app-shell.is-phone {
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px calc(88px + env(safe-area-inset-bottom, 0px));
+  min-height: 100dvh;
+}
+
+.phone-top {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.phone-top h1 {
+  font-size: 22px;
+}
+
+.phone-top-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.phone-top-actions {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+.phone-top-actions .ghost-btn,
+.phone-top-actions .primary-btn {
+  padding: 8px 10px;
+  min-height: 40px;
+}
+
+.phone-pane {
+  display: grid;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.phone-presets {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.phone-presets .preset-card {
+  flex: none;
+  width: min(240px, 78vw);
+  scroll-snap-align: start;
+  min-height: 72px;
+  text-align: left;
+}
+
+.phone-agent-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(16, 21, 28, 0.85);
+  border: 1px solid var(--line);
+}
+
+.phone-agent-card .agent-svg {
+  width: min(180px, 46vw);
+  margin: 0 auto;
+}
+
+.is-phone .slot-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.is-phone .slot-card {
+  min-height: 64px;
+  padding: 8px;
+  align-items: stretch;
+}
+
+.is-phone .agent-meta {
+  grid-template-columns: 1fr;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.is-phone .kit-grid {
+  grid-template-columns: 1fr;
+  padding: 0;
+}
+
+.is-phone .kit-spacer {
+  display: none;
+}
+
+.is-phone .editor,
+.is-phone .stats-panel,
+.is-phone .saved {
+  padding: 12px;
+}
+
+.is-phone .weapon-mod-row {
+  grid-template-columns: 1fr;
+}
+
+.phone-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 12;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: rgba(7, 9, 11, 0.94);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+.phone-dock-btn {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  min-height: 48px;
+  padding: 6px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.phone-dock-btn.active {
+  color: var(--amber);
+}
+
+.phone-dock-icon {
+  font-size: 16px;
+  line-height: 1;
+  color: inherit;
+}
+
+.is-phone .modal-backdrop {
+  padding: 0;
+  align-items: stretch;
+  place-items: stretch;
+}
+
+.is-phone .modal,
+.is-phone .picker-modal {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100dvh;
+  border-radius: 0;
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+}
+
+.is-phone .picker-grid {
+  grid-template-columns: 1fr;
+}
+
+.phone-toast {
+  left: 14px;
+  right: 14px;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
