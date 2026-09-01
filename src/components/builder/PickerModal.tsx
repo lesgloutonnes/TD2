@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CatalogItem, ItemKind, Slot } from "@/lib/types";
+import type { Brand, CatalogItem, ItemKind, Slot } from "@/lib/types";
 import { catalogForSlot } from "@/lib/data/catalog";
 import { BRANDS } from "@/lib/data/brands";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
@@ -167,27 +167,7 @@ function PickerTile({
 
         {item.note && !item.uniqueTalent ? <p className="picker-tile-note">{item.note}</p> : null}
 
-        {brand ? (
-          <div className="tt-affiliation">
-            <div className="tt-aff-head">
-              <span className="swatch" style={{ background: brand.color }} />
-              <strong>{brand.name}</strong>
-            </div>
-            {item.kind === "brand"
-              ? brand.bonuses.map((bonuses, index) => (
-                  <div key={`${brand.id}-${index}`} className="tt-tier">
-                    <span className="tt-mark" aria-hidden="true">
-                      ◆
-                    </span>
-                    <span>
-                      <small>{index + 1} piece</small>
-                      {formatBonusList(bonuses)}
-                    </span>
-                  </div>
-                ))
-              : null}
-          </div>
-        ) : null}
+        {brand ? <BrandBonusBlock brand={brand} /> : null}
 
         {set ? (
           <div className="tt-affiliation">
@@ -236,5 +216,27 @@ function PickerTile({
         </button>
       ) : null}
     </article>
+  );
+}
+
+function BrandBonusBlock({ brand }: { brand: Brand }) {
+  return (
+    <div className="tt-affiliation">
+      <div className="tt-aff-head">
+        <span className="swatch" style={{ background: brand.color }} />
+        <strong>{brand.name}</strong>
+      </div>
+      {brand.bonuses.map((bonuses, index) => (
+        <div key={`${brand.id}-${index}`} className="tt-tier">
+          <span className="tt-mark" aria-hidden="true">
+            ◆
+          </span>
+          <span>
+            <small>{index + 1} piece</small>
+            {formatBonusList(bonuses)}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }

@@ -56,6 +56,8 @@ import {
   clampAugmentLevel,
 } from "@/lib/data/augments";
 import { pieceInspect, weaponInspect } from "@/lib/tooltip";
+import { shouldOpenGearPicker } from "@/lib/gear-picker";
+import { usePhoneLayout } from "@/hooks/usePhoneLayout";
 import {
   decodeLoadout,
   deleteBuild,
@@ -67,7 +69,9 @@ import {
   subscribeSaved,
 } from "@/lib/share";
 import { AgentSilhouette } from "@/components/builder/AgentSilhouette";
+import { GearInspectCard } from "@/components/builder/GearInspectCard";
 import { GearTooltip } from "@/components/builder/GearTooltip";
+import { PhoneDock, type PhoneTab } from "@/components/builder/PhoneDock";
 import { WeaponTooltip } from "@/components/builder/WeaponTooltip";
 import { PickerModal } from "@/components/builder/PickerModal";
 import { WeaponPickerModal } from "@/components/builder/WeaponPickerModal";
@@ -93,6 +97,8 @@ export function BuilderApp() {
   const [toast, setToast] = useState<string | null>(null);
   const [hover, setHover] = useState<{ slot: Slot; rect: DOMRect } | null>(null);
   const hoverLeaveTimer = useRef<number>(0);
+  const isPhone = usePhoneLayout();
+  const [phoneTab, setPhoneTab] = useState<PhoneTab>("loadout");
 
   function showHover(slot: Slot, rect?: DOMRect) {
     window.clearTimeout(hoverLeaveTimer.current);
@@ -272,272 +278,384 @@ export function BuilderApp() {
     flash("Build saved in this browser.");
   }
 
-  return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">The Division 2 · Y8S3 Red Horizon</p>
-          <h1>Gear Builder</h1>
-          <p className="tagline">
-            Plan the loadout here. Farm in-game. Test damage at the shooting range — this tool does
-            not calculate DPS.
-          </p>
-        </div>
-        <label className="name-field">
-          <span>Build name</span>
-          <input
-            value={loadout.name}
-            onChange={(event) => setLoadout({ ...loadout, name: event.target.value })}
-          />
-        </label>
-        <div className="top-actions">
-          <button type="button" className="ghost-btn" onClick={() => setLoadout(emptyLoadout())}>
-            Reset
-          </button>
-          <button type="button" className="ghost-btn" onClick={persist}>
-            Save
-          </button>
-          <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
-            Share
-          </button>
-        </div>
-      </header>
+  function selectGearSlot(slot: Slot) {
+    const piece = loadout.gear[slot];
+    const openPicker = shouldOpenGearPicker(slot, activeSlot, piece);
+    setActiveSlot(slot);
+    hideHover();
+    if (openPicker) setPickerOpen(true);
+  }
 
-      <section className="presets">
-        {PRESETS.map((preset) => (
-          <button
-            key={preset.id}
-            type="button"
-            className="preset-card"
-            onClick={() => {
-              setLoadout(preset.build());
-              flash(`${preset.name} loaded.`);
+  const emptyHint = isPhone ? "Tap to equip" : "Click to equip";
+  const activeInspect = pieceInspect(activeSlot, loadout);
+
+  const slotButtons = SLOTS.map((slot) => {
+    const piece = loadout.gear[slot];
+    const source = piece ? catalogById(piece.sourceId) : undefined;
+    const hovered = !isPhone && hover?.slot === slot;
+    return (
+      <button
+        key={slot}
+        type="button"
+        className={
+          slot === activeSlot
+            ? hovered
+              ? "slot-card active hovered"
+              : "slot-card active"
+            : hovered
+              ? "slot-card hovered"
+              : "slot-card"
+        }
+        aria-describedby={`gear-tooltip-${slot}`}
+        onMouseEnter={
+          isPhone
+            ? undefined
+            : (event) => showHover(slot, event.currentTarget.getBoundingClientRect())
+        }
+        onMouseLeave={isPhone ? undefined : hideHover}
+        onFocus={
+          isPhone
+            ? undefined
+            : (event) => showHover(slot, event.currentTarget.getBoundingClientRect())
+        }
+        onBlur={isPhone ? undefined : hideHover}
+        onClick={() => selectGearSlot(slot)}
+      >
+        <span className="swatch-col">
+          <span
+            className={
+              piece?.prototype && source && source.kind !== "exotic"
+                ? "swatch swatch-prototype"
+                : "swatch"
+            }
+            style={{
+              background: source
+                ? itemDisplayColor(source.kind, Boolean(piece?.prototype))
+                : EMPTY_SLOT_COLOR,
             }}
-          >
-            <strong>{preset.name}</strong>
-            <span>{preset.blurb}</span>
-          </button>
-        ))}
-      </section>
-
-      <div className="workspace">
-        <div className="loadout-column">
-          <div className="agent-board">
-            <AgentSilhouette
-              activeSlot={activeSlot}
-              hoverSlot={hover?.slot ?? null}
-              slotColors={slotColors}
-              onSelect={(slot) => {
-                setActiveSlot(slot);
-                hideHover();
-                if (!loadout.gear[slot]) setPickerOpen(true);
-              }}
-              onHover={(slot, rect) => {
-                if (slot && rect) showHover(slot, rect);
-                else hideHover();
-              }}
+          />
+          {piece ? (
+            <span
+              className="core-pip-mini"
+              title={CORE_OPTION_LABELS[piece.core]}
+              style={{ background: CORE_COLORS[piece.core] }}
             />
-            <div className="slot-grid">
-              {SLOTS.map((slot) => {
-                const piece = loadout.gear[slot];
-                const source = piece ? catalogById(piece.sourceId) : undefined;
-                const hovered = hover?.slot === slot;
-                return (
-                  <button
-                    key={slot}
-                    type="button"
-                    className={
-                      slot === activeSlot
-                        ? hovered
-                          ? "slot-card active hovered"
-                          : "slot-card active"
-                        : hovered
-                          ? "slot-card hovered"
-                          : "slot-card"
-                    }
-                    aria-describedby={`gear-tooltip-${slot}`}
-                    onMouseEnter={(event) =>
-                      showHover(slot, event.currentTarget.getBoundingClientRect())
-                    }
-                    onMouseLeave={hideHover}
-                    onFocus={(event) =>
-                      showHover(slot, event.currentTarget.getBoundingClientRect())
-                    }
-                    onBlur={hideHover}
-                    onClick={() => {
-                      setActiveSlot(slot);
-                      hideHover();
-                      if (!piece) setPickerOpen(true);
-                    }}
-                  >
-                    <span className="swatch-col">
-                      <span
-                        className={
-                          piece?.prototype && source && source.kind !== "exotic"
-                            ? "swatch swatch-prototype"
-                            : "swatch"
-                        }
-                        style={{
-                          background: source
-                            ? itemDisplayColor(
-                                source.kind,
-                                Boolean(piece?.prototype),
-                              )
-                            : EMPTY_SLOT_COLOR,
-                        }}
-                      />
-                      {piece ? (
-                        <span
-                          className="core-pip-mini"
-                          title={CORE_OPTION_LABELS[piece.core]}
-                          style={{ background: CORE_COLORS[piece.core] }}
-                        />
-                      ) : null}
-                    </span>
-                    <span>
-                      <small>{SLOT_LABELS[slot]}</small>
-                      <strong>{piece ? pieceLabel(piece) : "Empty"}</strong>
-                      <em>
-                        {piece
-                          ? `${CORE_SHORT_LABELS[piece.core]}${
-                              piece.prototype && source?.kind !== "exotic" ? " · Prototype" : ""
-                            }${
-                              piece.prototype && augmentById(piece.augmentId)
-                                ? ` · ${augmentById(piece.augmentId)!.name}`
-                                : ""
-                            }${source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""}`
-                          : "Click to equip"}
-                      </em>
-                    </span>
-                  </button>
-                );
-              })}
+          ) : null}
+        </span>
+        <span>
+          <small>{SLOT_LABELS[slot]}</small>
+          <strong>{piece ? pieceLabel(piece) : "Empty"}</strong>
+          <em>
+            {piece
+              ? `${CORE_SHORT_LABELS[piece.core]}${
+                  piece.prototype && source?.kind !== "exotic" ? " · Prototype" : ""
+                }${
+                  piece.prototype && augmentById(piece.augmentId)
+                    ? ` · ${augmentById(piece.augmentId)!.name}`
+                    : ""
+                }${source?.uniqueTalent ? ` · ${source.uniqueTalent.name}` : ""}`
+              : emptyHint}
+          </em>
+        </span>
+      </button>
+    );
+  });
+
+  const specAndWatch = (
+    <div className="agent-meta">
+      <label className="field">
+        <span>Specialization</span>
+        <select
+          value={loadout.specialization ?? ""}
+          onChange={(event) =>
+            setLoadout({ ...loadout, specialization: event.target.value || null })
+          }
+        >
+          <option value="">None</option>
+          {SPECIALIZATIONS.map((spec) => (
+            <option key={spec.id} value={spec.id}>
+              {spec.name} — {spec.signature}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="field checkbox">
+        <input
+          type="checkbox"
+          checked={loadout.shdWatch}
+          onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
+        />
+        <span>SHD Watch 1000</span>
+      </label>
+    </div>
+  );
+
+  const kitGrid = (
+    <section className="kit-grid">
+      <WeaponSelect
+        label="Primary weapon"
+        slot="primary"
+        equipped={loadout.weapons.primary}
+        types={[...PRIMARY_WEAPON_TYPES]}
+        allowHover={!isPhone}
+        onChange={setWeapon}
+        onExpertiseChange={setWeaponExpertise}
+        onModChange={setWeaponMod}
+        onUpdate={updateWeapon}
+      />
+      <WeaponSelect
+        label="Secondary weapon"
+        slot="secondary"
+        equipped={loadout.weapons.secondary}
+        types={[...PRIMARY_WEAPON_TYPES]}
+        allowHover={!isPhone}
+        onChange={setWeapon}
+        onExpertiseChange={setWeaponExpertise}
+        onModChange={setWeaponMod}
+        onUpdate={updateWeapon}
+      />
+      <WeaponSelect
+        label="Sidearm"
+        slot="sidearm"
+        equipped={loadout.weapons.sidearm}
+        types={["pistol"]}
+        allowHover={!isPhone}
+        onChange={setWeapon}
+        onExpertiseChange={setWeaponExpertise}
+        onModChange={setWeaponMod}
+        onUpdate={updateWeapon}
+      />
+      <div className="kit-spacer" aria-hidden="true" />
+      <SkillSelect
+        label="Skill 1"
+        index={0}
+        value={loadout.skills[0]}
+        specialization={loadout.specialization}
+        onChange={setSkill}
+        onModChange={setSkillMod}
+      />
+      <SkillSelect
+        label="Skill 2"
+        index={1}
+        value={loadout.skills[1]}
+        specialization={loadout.specialization}
+        onChange={setSkill}
+        onModChange={setSkillMod}
+      />
+    </section>
+  );
+
+  const savedList =
+    saved.length > 0 ? (
+      <section className="saved">
+        <h3>Saved builds</h3>
+        <ul>
+          {saved.map((item) => (
+            <li key={item.id}>
+              <button
+                type="button"
+                className="ghost-btn"
+                onClick={() => {
+                  const next = loadBuild(item.id);
+                  if (next) setLoadout(next);
+                }}
+              >
+                {item.name}
+              </button>
+              <button
+                type="button"
+                className="ghost-btn danger"
+                onClick={() => {
+                  deleteBuild(item.id);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ) : null;
+
+  const pieceEditor = (
+    <PieceEditor
+      slot={activeSlot}
+      piece={loadout.gear[activeSlot]}
+      onChange={(piece) => updateGear(activeSlot, piece)}
+      onClear={() => updateGear(activeSlot, null)}
+      onSwap={() => {
+        hideHover();
+        setPickerOpen(true);
+      }}
+    />
+  );
+
+  return (
+    <div className={isPhone ? "app-shell is-phone" : "app-shell"}>
+      {isPhone ? (
+        <>
+          <header className="phone-top">
+            <div className="phone-top-row">
+              <div>
+                <p className="eyebrow">Y8S3 Red Horizon</p>
+                <h1>Builder</h1>
+              </div>
+              <div className="phone-top-actions">
+                <button type="button" className="ghost-btn" onClick={() => setLoadout(emptyLoadout())}>
+                  Reset
+                </button>
+                <button type="button" className="ghost-btn" onClick={persist}>
+                  Save
+                </button>
+                <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
+                  Share
+                </button>
+              </div>
             </div>
-            <div className="agent-meta">
-              <label className="field">
-                <span>Specialization</span>
-                <select
-                  value={loadout.specialization ?? ""}
-                  onChange={(event) =>
-                    setLoadout({ ...loadout, specialization: event.target.value || null })
-                  }
-                >
-                  <option value="">None</option>
-                  {SPECIALIZATIONS.map((spec) => (
-                    <option key={spec.id} value={spec.id}>
-                      {spec.name} — {spec.signature}
-                    </option>
+            <label className="name-field">
+              <span>Build name</span>
+              <input
+                value={loadout.name}
+                onChange={(event) => setLoadout({ ...loadout, name: event.target.value })}
+              />
+            </label>
+          </header>
+
+          <div className="phone-pane">
+            {phoneTab === "loadout" ? (
+              <>
+                <section className="phone-presets" aria-label="Presets">
+                  {PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      className="preset-card"
+                      onClick={() => {
+                        setLoadout(preset.build());
+                        flash(`${preset.name} loaded.`);
+                      }}
+                    >
+                      <strong>{preset.name}</strong>
+                      <span>{preset.blurb}</span>
+                    </button>
                   ))}
-                </select>
-              </label>
-              <label className="field checkbox">
-                <input
-                  type="checkbox"
-                  checked={loadout.shdWatch}
-                  onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
-                />
-                <span>SHD Watch 1000</span>
-              </label>
-            </div>
+                </section>
+                <div className="phone-agent-card">
+                  <AgentSilhouette
+                    activeSlot={activeSlot}
+                    hoverSlot={null}
+                    slotColors={slotColors}
+                    onSelect={selectGearSlot}
+                    onHover={() => {}}
+                  />
+                  <div className="slot-grid">{slotButtons}</div>
+                </div>
+                <section
+                  className="gear-inspect"
+                  style={activeInspect.empty ? undefined : { borderColor: activeInspect.kindColor }}
+                >
+                  <GearInspectCard inspect={activeInspect} emptyHint={emptyHint} />
+                  <div className="phone-inspect-actions">
+                    <button
+                      type="button"
+                      className="primary-btn"
+                      onClick={() => {
+                        hideHover();
+                        setPickerOpen(true);
+                      }}
+                    >
+                      {loadout.gear[activeSlot] ? "Change" : "Equip"}
+                    </button>
+                    <button type="button" className="ghost-btn" onClick={() => setPhoneTab("edit")}>
+                      Edit rolls
+                    </button>
+                  </div>
+                </section>
+                {specAndWatch}
+                {savedList}
+              </>
+            ) : null}
+            {phoneTab === "edit" ? pieceEditor : null}
+            {phoneTab === "kit" ? kitGrid : null}
+            {phoneTab === "stats" ? <StatsPanel stats={stats} /> : null}
           </div>
 
-          <PieceEditor
-            slot={activeSlot}
-            piece={loadout.gear[activeSlot]}
-            onChange={(piece) => updateGear(activeSlot, piece)}
-            onClear={() => updateGear(activeSlot, null)}
-            onSwap={() => {
-              hideHover();
-              setPickerOpen(true);
-            }}
-          />
+          <PhoneDock tab={phoneTab} onTab={setPhoneTab} />
+        </>
+      ) : (
+        <>
+          <header className="topbar">
+            <div>
+              <p className="eyebrow">The Division 2 · Y8S3 Red Horizon</p>
+              <h1>Gear Builder</h1>
+              <p className="tagline">
+                Plan the loadout here. Farm in-game. Test damage at the shooting range — this tool
+                does not calculate DPS.
+              </p>
+            </div>
+            <label className="name-field">
+              <span>Build name</span>
+              <input
+                value={loadout.name}
+                onChange={(event) => setLoadout({ ...loadout, name: event.target.value })}
+              />
+            </label>
+            <div className="top-actions">
+              <button type="button" className="ghost-btn" onClick={() => setLoadout(emptyLoadout())}>
+                Reset
+              </button>
+              <button type="button" className="ghost-btn" onClick={persist}>
+                Save
+              </button>
+              <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
+                Share
+              </button>
+            </div>
+          </header>
 
-          <section className="kit-grid">
-            <WeaponSelect
-              label="Primary weapon"
-              slot="primary"
-              equipped={loadout.weapons.primary}
-              types={[...PRIMARY_WEAPON_TYPES]}
-              onChange={setWeapon}
-              onExpertiseChange={setWeaponExpertise}
-              onModChange={setWeaponMod}
-              onUpdate={updateWeapon}
-            />
-            <WeaponSelect
-              label="Secondary weapon"
-              slot="secondary"
-              equipped={loadout.weapons.secondary}
-              types={[...PRIMARY_WEAPON_TYPES]}
-              onChange={setWeapon}
-              onExpertiseChange={setWeaponExpertise}
-              onModChange={setWeaponMod}
-              onUpdate={updateWeapon}
-            />
-            <WeaponSelect
-              label="Sidearm"
-              slot="sidearm"
-              equipped={loadout.weapons.sidearm}
-              types={["pistol"]}
-              onChange={setWeapon}
-              onExpertiseChange={setWeaponExpertise}
-              onModChange={setWeaponMod}
-              onUpdate={updateWeapon}
-            />
-            <div className="kit-spacer" aria-hidden="true" />
-            <SkillSelect
-              label="Skill 1"
-              index={0}
-              value={loadout.skills[0]}
-              specialization={loadout.specialization}
-              onChange={setSkill}
-              onModChange={setSkillMod}
-            />
-            <SkillSelect
-              label="Skill 2"
-              index={1}
-              value={loadout.skills[1]}
-              specialization={loadout.specialization}
-              onChange={setSkill}
-              onModChange={setSkillMod}
-            />
+          <section className="presets">
+            {PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="preset-card"
+                onClick={() => {
+                  setLoadout(preset.build());
+                  flash(`${preset.name} loaded.`);
+                }}
+              >
+                <strong>{preset.name}</strong>
+                <span>{preset.blurb}</span>
+              </button>
+            ))}
           </section>
 
-          {saved.length > 0 ? (
-            <section className="saved">
-              <h3>Saved builds</h3>
-              <ul>
-                {saved.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      type="button"
-                      className="ghost-btn"
-                      onClick={() => {
-                        const next = loadBuild(item.id);
-                        if (next) setLoadout(next);
-                      }}
-                    >
-                      {item.name}
-                    </button>
-                    <button
-                      type="button"
-                      className="ghost-btn danger"
-                      onClick={() => {
-                        deleteBuild(item.id);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-        </div>
+          <div className="workspace">
+            <div className="loadout-column">
+              <div className="agent-board">
+                <AgentSilhouette
+                  activeSlot={activeSlot}
+                  hoverSlot={hover?.slot ?? null}
+                  slotColors={slotColors}
+                  onSelect={selectGearSlot}
+                  onHover={(slot, rect) => {
+                    if (slot && rect) showHover(slot, rect);
+                    else hideHover();
+                  }}
+                />
+                <div className="slot-grid">{slotButtons}</div>
+                {specAndWatch}
+              </div>
+              {pieceEditor}
+              {kitGrid}
+              {savedList}
+            </div>
+            <StatsPanel stats={stats} />
+          </div>
+        </>
+      )}
 
-        <StatsPanel stats={stats} />
-      </div>
-
-      {hover && !pickerOpen ? (
+      {hover && !pickerOpen && !isPhone ? (
         <GearTooltip inspect={pieceInspect(hover.slot, loadout)} anchor={hover.rect} />
       ) : null}
 
@@ -546,25 +664,28 @@ export function BuilderApp() {
           slot={activeSlot}
           onClose={() => setPickerOpen(false)}
           onPick={(sourceId) => {
-            // Always resolve the piece's own locked/brand core — never inherit the previous slot core.
             updateGear(activeSlot, createPiece(activeSlot, sourceId));
             setPickerOpen(false);
+            if (isPhone) setPhoneTab("edit");
           }}
           onPickSet={(sourceId) => {
             setLoadout((current) => applyGearSet(current, sourceId));
             setPickerOpen(false);
+            if (isPhone) setPhoneTab("loadout");
             const source = catalogById(sourceId);
             if (source) flash(`${source.name}: 6 pieces equipped.`);
           }}
         />
       ) : null}
 
-      {toast ? <div className="toast">{toast}</div> : null}
+      {toast ? <div className={isPhone ? "toast phone-toast" : "toast"}>{toast}</div> : null}
 
-      <footer className="legal">
-        Fan-made, offline, no account. Live Y8S3 Red Horizon data (27 Aug 2026):
-        brands, gear sets, talents, named items, exotics. Not affiliated with Ubisoft.
-      </footer>
+      {isPhone ? null : (
+        <footer className="legal">
+          Fan-made, offline, no account. Live Y8S3 Red Horizon data (27 Aug 2026):
+          brands, gear sets, talents, named items, exotics. Not affiliated with Ubisoft.
+        </footer>
+      )}
     </div>
   );
 }
@@ -578,6 +699,7 @@ function WeaponSelect({
   onModChange,
   onUpdate,
   types,
+  allowHover = true,
 }: {
   label: string;
   slot: WeaponSlot;
@@ -587,6 +709,7 @@ function WeaponSelect({
   onModChange: (slot: WeaponSlot, index: number, mod: WeaponMod) => void;
   onUpdate: (slot: WeaponSlot, next: EquippedWeapon) => void;
   types: readonly WeaponType[];
+  allowHover?: boolean;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [hoverRect, setHoverRect] = useState<DOMRect | null>(null);
@@ -622,10 +745,18 @@ function WeaponSelect({
           hideHover();
           setPickerOpen(true);
         }}
-        onMouseEnter={(event) => showHover(event.currentTarget.getBoundingClientRect())}
-        onMouseLeave={hideHover}
-        onFocus={(event) => showHover(event.currentTarget.getBoundingClientRect())}
-        onBlur={hideHover}
+        onMouseEnter={
+          allowHover
+            ? (event) => showHover(event.currentTarget.getBoundingClientRect())
+            : undefined
+        }
+        onMouseLeave={allowHover ? hideHover : undefined}
+        onFocus={
+          allowHover
+            ? (event) => showHover(event.currentTarget.getBoundingClientRect())
+            : undefined
+        }
+        onBlur={allowHover ? hideHover : undefined}
       >
         <span className="swatch-col">
           <span
@@ -784,7 +915,7 @@ function WeaponSelect({
         </>
       ) : null}
 
-      {hoverRect && !pickerOpen ? <WeaponTooltip inspect={inspect} anchor={hoverRect} /> : null}
+      {hoverRect && !pickerOpen && allowHover ? <WeaponTooltip inspect={inspect} anchor={hoverRect} /> : null}
 
       {pickerOpen ? (
         <WeaponPickerModal
