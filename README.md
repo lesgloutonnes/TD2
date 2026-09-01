@@ -48,7 +48,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods + 1 random secondary attribute); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
 - Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
-- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
+- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento and NinjaBike 3-core packages locked; Sawyer's Kneepads blue locked)
 - Named unique talents and special attributes stay locked; bonus cores shown as locked extras
 - Weapons listed by type then name in optgroups
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
 - Soft assumed notes for common talents / 4pc (planning aid only)
 - Caps: CHC 60%, Skill Tier 6
-- NinjaBike: +1 piece for each brand/set already equipped
+- NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
 - Build index (relative stack compare — **not DPS**)
 - Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
 - Local save and share link

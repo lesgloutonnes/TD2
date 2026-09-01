@@ -813,13 +813,16 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     name: "NinjaBike Messenger Bag",
     kind: "exotic",
     lockedCore: "red",
+    coreLocked: true,
     slots: ["backpack"],
+    extraCores: ["blue", "yellow"],
     ninja: true,
     uniqueTalent: {
       name: "Resourceful",
       description:
         "Counts as +1 piece for every brand and set already equipped. Allows activating multiple 2pc / 3pc / 4pc bonuses.",
     },
+    note: "Fixed 3-core package (red + blue + yellow) — not recalibratable.",
   },
   {
     id: "acosta-go-bag",

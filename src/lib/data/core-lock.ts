@@ -7,7 +7,7 @@ import { GEAR_SETS, gearSetCore } from "./gear-sets";
  * - Brand HE / named / gear sets: cores recalibratable (unique talents & extraStats stay fixed).
  * - Most exotics: core locked to `lockedCore`.
  * - Exceptions: `coreLocked: false` (Investor — core rolls per drop).
- * - Multi-core exotic packages: `coreLocked: true` (Memento).
+ * - Multi-core exotic packages: `coreLocked: true` (Memento, NinjaBike).
  */
 export function lockedCoreFor(slot: Slot, source: CatalogItem | undefined): CoreType | undefined {
   if (!source) return undefined;

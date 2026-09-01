@@ -52,6 +52,10 @@ function testNinja() {
   const stats = computeStats(loadout);
   assert(stats.values.hsd === 13, `ninja 1pc hsd, got ${stats.values.hsd}`);
   assert(stats.values.chc >= 8, `ninja unlocks 2pc chc, got ${stats.values.chc}`);
+  assert(stats.cores.red === 2, `Providence + NinjaBike red, got red=${stats.cores.red}`);
+  assert(stats.cores.blue === 1 && stats.cores.yellow === 1, "NinjaBike extra blue+yellow cores");
+  assert(stats.values.weaponDamage === 30, `2 red cores, got ${stats.values.weaponDamage}`);
+  assert(stats.skillTierCapped === 1, `NinjaBike yellow core, got ${stats.skillTierCapped}`);
 }
 
 function testStriker4() {
@@ -273,6 +277,17 @@ function testLockedBrandAndExoticCores() {
   );
   assert(createPiece("backpack", "memento", "yellow").core === "red", "Memento package stays locked");
 
+  const ninja = createPiece("backpack", "ninjabike");
+  assert(ninja.core === "red", "NinjaBike primary red");
+  assert(
+    JSON.stringify(ninja.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "NinjaBike bonus blue+yellow",
+  );
+  assert(
+    createPiece("backpack", "ninjabike", "yellow").core === "red",
+    "NinjaBike package stays locked",
+  );
+
   // Most exotics ignore inherited recalibration.
   assert(createPiece("holster", "waveform", "red").core === "yellow", "Waveform ignores inherited red");
   assert(createPiece("mask", "catharsis", "red").core === "blue", "Catharsis ignores inherited red");
@@ -310,6 +325,12 @@ function testLockedBrandAndExoticCores() {
   assert(investorPicker?.lockedCore === undefined, "Investor not locked in picker");
   const mementoPicker = catalogForSlot("backpack").find((item) => item.id === "memento");
   assert(mementoPicker?.lockedCore === "red", "Memento package locked in picker");
+  const ninjaPicker = catalogForSlot("backpack").find((item) => item.id === "ninjabike");
+  assert(ninjaPicker?.lockedCore === "red", "NinjaBike package locked in picker");
+  assert(
+    JSON.stringify(ninjaPicker?.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "NinjaBike picker shows extra cores",
+  );
   const deathgripsPicker = catalogForSlot("gloves").find((item) => item.id === "deathgrips");
   assert(deathgripsPicker?.lockedCore === undefined, "Deathgrips named recalibratable in picker");
   const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
