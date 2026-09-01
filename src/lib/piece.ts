@@ -12,11 +12,10 @@ import { catalogById } from "./data/catalog";
 import {
   canBePrototype,
   canWeaponBePrototype,
-  defaultAttributes,
   defaultMods,
+  defaultPieceAttributes,
   EXPERTISE_MAX,
   gearModCount,
-  gearSetAttribute,
   scaleAttributesForPrototype,
   SLOTS,
 } from "./data/attributes";
@@ -29,10 +28,7 @@ export { isCoreLocked, lockedCoreFor, nativeCoreFor, coreLockHint } from "./data
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
   const source = catalogById(sourceId);
   const resolvedCore = resolveCore(slot, source, core);
-  const isGearSet = source?.kind === "gear-set";
-  const attributes = isGearSet
-    ? [gearSetAttribute(resolvedCore)]
-    : defaultAttributes(resolvedCore);
+  const attributes = defaultPieceAttributes(resolvedCore, source);
   const uniqueTalent = source?.uniqueTalent;
   const talentId = uniqueTalent
     ? ALL_TALENTS.find((talent) => talent.name === uniqueTalent.name)?.id

@@ -292,6 +292,14 @@ function testLockedBrandAndExoticCores() {
   assert(createPiece("holster", "waveform").core === "yellow", "Waveform skill tier");
   assert(createPiece("gloves", "btsu-datagloves").core === "yellow", "BTSU skill tier");
   assert(createPiece("chest", "tardigrade").core === "blue", "Tardigrade armor");
+  assert(createPiece("kneepads", "sawyers-kneepads").core === "blue", "Sawyer's armor core");
+  assert(
+    createPiece("kneepads", "sawyers-kneepads", "red").core === "blue",
+    "Sawyer's exotic core stays locked",
+  );
+  const sawyersPicker = catalogForSlot("kneepads").find((item) => item.id === "sawyers-kneepads");
+  assert(sawyersPicker?.lockedCore === "blue", "Sawyer's locked blue in picker");
+  assert(sawyersPicker?.kind === "exotic", "Sawyer's listed as exotic");
 
   const waveformPicker = catalogForSlot("holster").find((item) => item.id === "waveform");
   assert(waveformPicker?.lockedCore === "yellow", "Waveform locked yellow in picker");
@@ -383,9 +391,23 @@ function testCatalogCoverage() {
     "the-setup",
     "bober",
     "visionario",
+    "sawyers-kneepads",
+    "chill-out",
   ]) {
     assert(catalogById(required), `catalogue manque ${required}`);
   }
+
+  const sawyers = catalogById("sawyers-kneepads");
+  assert(sawyers?.kind === "exotic", "Sawyer's Kneepads est un exotique");
+  assert(!sawyers?.brandId, "Sawyer's n'est pas une marque Gila");
+  assert(sawyers?.uniqueTalent?.name === "Stand Your Ground", "Sawyer's Stand Your Ground");
+  assert(sawyers?.slots !== "all" && sawyers?.slots.includes("kneepads"), "Sawyer's genouillères");
+
+  const liquid = catalogById("liquid-engineer");
+  assert(
+    liquid?.uniqueTalent?.description.includes("adds and refreshes a stack of +12% bonus armor"),
+    "Perfect Bloodsucker stacking description",
+  );
 }
 
 function testWeaponCatalog() {
@@ -977,6 +999,14 @@ function testGearModSlots() {
   assert(mask.mods.length === 1, `standard mask 1 mod, got ${mask.mods.length}`);
   assert(gloves.mods.length === 0, `gloves no mod, got ${gloves.mods.length}`);
   assert(chill.mods.length === 2, `Chill Out 2 mods, got ${chill.mods.length}`);
+  assert(chill.core === "blue", `Chill Out native blue, got ${chill.core}`);
+  assert(!chill.extraCores?.length, "Chill Out has no bonus core");
+  assert(chill.attributes.length === 1, `Chill Out 1 secondary attr, got ${chill.attributes.length}`);
+  const chillSource = catalogById("chill-out");
+  assert(!chillSource?.extraStats?.length, "Chill Out secondary is not a locked extra");
+  assert(createPiece("mask", "chill-out", "red").core === "red", "Chill Out core is not locked");
+  const chillPicker = catalogForSlot("mask").find((item) => item.id === "chill-out");
+  assert(chillPicker?.lockedCore === undefined, "Chill Out not locked in picker");
 
   chill.mods[0] = { stat: "chc", value: 6 };
   chill.mods[1] = { stat: "chd", value: 12 };
@@ -988,6 +1018,8 @@ function testGearModSlots() {
   assert(stats.values.chc === 6, `chill mod CHC, got ${stats.values.chc}`);
   assert(stats.values.chd === 12, `chill mod CHD, got ${stats.values.chd}`);
   assert(stats.values.hazardProtection === 10, `chill attr hazard, got ${stats.values.hazardProtection}`);
+  assert(stats.cores.blue === 1, `Chill Out one blue core, got ${stats.cores.blue}`);
+  assert(stats.cores.yellow === 0, `Chill Out no yellow core, got ${stats.cores.yellow}`);
 }
 
 function testAttributePoolNoAoK() {

@@ -343,7 +343,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     id: "bloodsucker",
     name: "Bloodsucker",
     slot: "backpack",
-    description: "Killing an enemy grants 10% bonus armor per nearby enemy, up to 50%. Lasts 10s.",
+    description:
+      "Killing an enemy adds and refreshes a stack of +10% bonus armor for 10s. Max stack is 10.",
   },
   {
     id: "companion",
@@ -481,7 +482,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     id: "perfect-bloodsucker",
     name: "Perfect Bloodsucker",
     slot: "backpack",
-    description: "Killing an enemy grants 12% bonus armor per nearby enemy, up to 60%. Lasts 10s.",
+    description:
+      "Killing an enemy adds and refreshes a stack of +12% bonus armor for 10s. Max stack is 10.",
     perfect: true,
   },
   {

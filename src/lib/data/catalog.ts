@@ -259,25 +259,16 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     note: "Gila mask: 100% Scanner Pulse Haste (approximated as Skill Haste) + yellow core.",
   },
   {
-    id: "sawyers-kneepads",
-    name: "Sawyer's Kneepads",
-    kind: "named",
-    brandId: "gila",
-    slots: ["kneepads"],
-    extraStats: [{ stat: "armorRegenPercent", value: 1 }],
-    extraCores: ["red"],
-    note: "Gila kneepads: extra armor regen + red core.",
-  },
-  {
     id: "chill-out",
     name: "Chill Out",
     kind: "named",
     brandId: "gila",
     slots: ["mask"],
-    extraStats: [{ stat: "skillHaste", value: 10 }],
-    extraCores: ["yellow"],
+    lockedCore: "blue",
+    coreLocked: false,
+    attributeSlots: 1,
     modSlots: 2,
-    note: "Gila seasonal mask: 2 gear mod slots + yellow core.",
+    note: "Gila seasonal mask: native blue Armor core (recalibratable), one random secondary attribute (not locked), 2 gear mod slots.",
   },
 
   // --- Belstone Armory ---
@@ -302,7 +293,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["backpack"],
     uniqueTalent: {
       name: "Perfect Bloodsucker",
-      description: "Killing: 12% bonus armor per nearby enemy, up to 60%. Lasts 10s.",
+      description:
+        "Killing an enemy adds and refreshes a stack of +12% bonus armor for 10s. Max stack is 10.",
     },
     talentSlot: "backpack",
   },
@@ -1208,6 +1200,19 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
   },
 
   // ========== Exotics — kneepads ==========
+  {
+    id: "sawyers-kneepads",
+    name: "Sawyer's Kneepads",
+    kind: "exotic",
+    lockedCore: "blue",
+    slots: ["kneepads"],
+    uniqueTalent: {
+      name: "Stand Your Ground",
+      description:
+        "Cannot be staggered by explosions. Gain a stack every second you are not moving, each granting +3% total weapon damage (10 stacks max). Stop gaining stacks when moving; all stacks are lost 10s after moving.",
+    },
+    note: "Exotic kneepads (Odessa Sawyer) — not a Gila Guard named piece. Armor core is locked.",
+  },
   {
     id: "nurses-kneepads",
     name: "Nurse's Kneepads",

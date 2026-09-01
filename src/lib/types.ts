@@ -134,6 +134,11 @@ export type CatalogItem = {
   /** Override gear mod socket count (default: 1 on mask/chest/backpack, else 0). */
   modSlots?: number;
   /**
+   * Override secondary attribute count (default: 2, gear-set: 1).
+   * Chill Out: 1 random unlocked attribute + 2 mod slots.
+   */
+  attributeSlots?: number;
+  /**
    * Native / most common core for this item.
    * On exotics, also used as the locked core unless `coreLocked` is false (e.g. Investor).
    */

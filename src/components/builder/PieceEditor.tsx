@@ -9,12 +9,11 @@ import {
   clampStat,
   CORE_COLORS,
   CORE_OPTION_LABELS,
-  defaultAttributes,
   defaultMods,
+  defaultPieceAttributes,
   EXPERTISE_MAX,
   formatStat,
   gearModCount,
-  gearSetAttribute,
   MOD_GROUPS,
   parseStatInput,
   SLOT_LABELS,
@@ -167,10 +166,7 @@ export function PieceEditor({
                 onChange({
                   ...piece,
                   core,
-                  attributes:
-                    source?.kind === "gear-set"
-                      ? [gearSetAttribute(core)]
-                      : defaultAttributes(core),
+                  attributes: defaultPieceAttributes(core, source),
                   mods: defaultMods(gearModCount(slot, source), core),
                 });
               }}
