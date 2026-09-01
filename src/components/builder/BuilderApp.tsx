@@ -745,12 +745,17 @@ function WeaponSelect({
           hideHover();
           setPickerOpen(true);
         }}
-        onMouseEnter={
+        onPointerEnter={
           allowHover
             ? (event) => showHover(event.currentTarget.getBoundingClientRect())
             : undefined
         }
-        onMouseLeave={allowHover ? hideHover : undefined}
+        onPointerMove={
+          allowHover && !hoverRect
+            ? (event) => showHover(event.currentTarget.getBoundingClientRect())
+            : undefined
+        }
+        onPointerLeave={allowHover ? hideHover : undefined}
         onFocus={
           allowHover
             ? (event) => showHover(event.currentTarget.getBoundingClientRect())
