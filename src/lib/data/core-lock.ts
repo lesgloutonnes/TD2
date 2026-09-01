@@ -7,12 +7,16 @@ import { GEAR_SETS, gearSetCore } from "./gear-sets";
  * - Brand HE / named / gear sets: cores recalibratable (unique talents & extraStats stay fixed).
  * - Most exotics: core locked to `lockedCore`.
  * - Exceptions: `coreLocked: false` (Investor — core rolls per drop).
- * - Multi-core exotic packages: `coreLocked: true` (Memento).
+ * - Multi-core packages: `coreLocked: true` (Memento, NinjaBike) and Core Strength backpack.
  */
 export function lockedCoreFor(slot: Slot, source: CatalogItem | undefined): CoreType | undefined {
   if (!source) return undefined;
 
   if (source.coreLocked === false) return undefined;
+
+  if (source.gearSetId === "core-strength" && slot === "backpack") {
+    return nativeCoreFor(slot, source);
+  }
 
   if (source.coreLocked === true) {
     return source.lockedCore ?? nativeCoreFor(slot, source);
@@ -33,12 +37,20 @@ export function isCoreLocked(slot: Slot, source: CatalogItem | undefined): boole
   return lockedCoreFor(slot, source) !== undefined;
 }
 
+/** Extra cores that always come with this piece (named extras or multi-core packages). */
+export function packageExtraCores(slot: Slot, source: CatalogItem | undefined): CoreType[] {
+  if (!source) return [];
+  if (source.extraCores?.length) return [...source.extraCores];
+  if (source.gearSetId === "core-strength" && slot === "backpack") return ["blue", "yellow"];
+  return [];
+}
+
 export function coreLockHint(slot: Slot, source: CatalogItem | undefined): string {
   if (!isCoreLocked(slot, source)) {
     return "Recalibratable — change freely like in-game.";
   }
-  if (source?.extraCores?.length) {
-    return "Core package locked (exotic multi-core).";
+  if (packageExtraCores(slot, source).length) {
+    return "Core package locked (multi-core).";
   }
   return "Core locked (exotic).";
 }

@@ -18,13 +18,14 @@ function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
   };
 }
 
-function withSkill(skillId: string): EquippedSkill {
-  return { skillId, mods: defaultSkillMods(skillId) };
+function withSkill(skillId: string, spec?: string | null): EquippedSkill {
+  return { skillId, mods: defaultSkillMods(skillId, spec) };
 }
 
 /** Accept legacy string skill ids and current EquippedSkill objects. */
 function normalizeSkills(
   raw: Loadout["skills"] | Array<string | EquippedSkill | null> | undefined | null,
+  spec?: string | null,
 ): [EquippedSkill | null, EquippedSkill | null] {
   const slots: [EquippedSkill | null, EquippedSkill | null] = [null, null];
   if (!Array.isArray(raw)) return slots;
@@ -33,14 +34,14 @@ function normalizeSkills(
     if (!entry) continue;
     if (typeof entry === "string") {
       if (!SKILLS.some((skill) => skill.id === entry)) continue;
-      slots[i] = withSkill(entry);
+      slots[i] = withSkill(entry, spec);
       continue;
     }
     if (typeof entry === "object" && "skillId" in entry && entry.skillId) {
       if (!SKILLS.some((skill) => skill.id === entry.skillId)) continue;
       slots[i] = {
         skillId: entry.skillId,
-        mods: sanitizeSkillMods(entry.skillId, entry.mods),
+        mods: sanitizeSkillMods(entry.skillId, entry.mods, spec),
       };
     }
   }
@@ -151,7 +152,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     name: parsed.name || base.name,
     gear,
     weapons,
-    skills: normalizeSkills(parsed.skills),
+    skills: normalizeSkills(parsed.skills, parsed.specialization ?? null),
     specialization: parsed.specialization ?? null,
     shdWatch: parsed.shdWatch ?? true,
   };
