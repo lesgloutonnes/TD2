@@ -1,4 +1,4 @@
-import { computeStats, emptyLoadout, slotColor } from "./calc";
+import { computeStats, emptyLoadout, formatBonusList, slotColor } from "./calc";
 import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPiecePrototype, setWeaponPrototype } from "./piece";
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 import type { Loadout } from "./types";
@@ -9,8 +9,9 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
-import { weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import { pieceInspect, weaponInspect } from "./tooltip";
+import { shouldOpenGearPicker } from "./gear-picker";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -854,6 +855,33 @@ function testInspectNinjaBoost() {
   assert(bag.affiliation === null, "ninja has no brand row");
 }
 
+function testInspectNamedBrandTiers() {
+  const loadout = emptyLoadout();
+  loadout.gear.backpack = createPiece("backpack", "the-gift");
+  const inspect = pieceInspect("backpack", loadout);
+  assert(!inspect.empty, "gift inspect");
+  if (inspect.empty) return;
+  const brand = BRANDS.find((entry) => entry.id === "providence");
+  assert(brand, "providence exists");
+  if (!brand) return;
+  assert(inspect.kind === "named", "named kind");
+  assert(inspect.affiliation?.name === "Providence Defense", "named shows brand");
+  assert(inspect.affiliation?.tiers.length === brand.bonuses.length, "named lists 1/2/3pc like a brand");
+  brand.bonuses.forEach((bonuses, index) => {
+    assert(
+      inspect.affiliation?.tiers[index]?.detail === formatBonusList(bonuses),
+      `named ${index + 1}pc matches brand`,
+    );
+  });
+}
+
+function testGearPickerSecondTap() {
+  const equipped = createPiece("mask", "brand:providence");
+  assert(shouldOpenGearPicker("mask", "mask", null), "empty slot opens picker");
+  assert(!shouldOpenGearPicker("mask", "gloves", equipped), "other equipped slot just selects");
+  assert(shouldOpenGearPicker("mask", "mask", equipped), "second tap on highlight opens change");
+}
+
 function testWeaponInspect() {
   const empty = weaponInspect("primary", null);
   assert(empty.empty, "empty weapon inspect");
@@ -1369,6 +1397,8 @@ const tests = [
   testInspectProvidenceTiers,
   testInspectStrikerTalents,
   testInspectNinjaBoost,
+  testInspectNamedBrandTiers,
+  testGearPickerSecondTap,
   testWeaponInspect,
   testPerItemExpertise,
   testPistolSlotSanitize,

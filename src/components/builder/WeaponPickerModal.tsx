@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { WeaponDef, WeaponType } from "@/lib/types";
 import { weaponsSorted } from "@/lib/data/skill-mods";
 import { WEAPON_TYPE_LABELS } from "@/lib/data/weapons";
-import { WEAPON_QUALITY_LABELS, weaponDisplayColor } from "@/lib/data/attributes";
+import { STAT_LABELS, WEAPON_QUALITY_LABELS, formatStat, weaponDisplayColor } from "@/lib/data/attributes";
 
 type QualityFilter = "featured" | "all" | "named" | "exotic" | "high-end";
 
@@ -166,9 +166,24 @@ function WeaponTile({
           {WEAPON_QUALITY_LABELS[weapon.quality]} · {WEAPON_TYPE_LABELS[weapon.type]}
         </p>
         <h3 style={{ color }}>{weapon.name}</h3>
-        <p className="weapon-tile-meta">
-          {weapon.rpm} RPM · mag {weapon.mag}
-        </p>
+        <div className="tt-core">
+          <span className="tt-core-pip" style={{ background: color }} />
+          <span>Rate of fire {weapon.rpm} RPM</span>
+        </div>
+        <div className="tt-core extra">
+          <span className="tt-core-pip" style={{ background: color }} />
+          <span>Magazine {weapon.mag}</span>
+        </div>
+        {weapon.extraStats?.length ? (
+          <ul className="tt-stats">
+            {weapon.extraStats.map((stat) => (
+              <li key={stat.stat}>
+                <span>{STAT_LABELS[stat.stat]}</span>
+                <strong>{formatStat(stat.stat, stat.value)}</strong>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         <div className="tt-talent">
           <p className="tt-kind">Talent</p>
           <strong>{weapon.talent}</strong>
