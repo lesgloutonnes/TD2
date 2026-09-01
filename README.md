@@ -14,11 +14,21 @@ The optional **build index** in Analysis is only a relative stack comparison (we
 
 ## Run without npm (Windows)
 
-Double-click **`lancer-builder.bat`**.
+You can double-click **`www/index.html`** with this export: styles and clicks work without Node.
 
-That opens http://localhost:3000 in the browser. No Node/npm install: Windows PowerShell serves the site already built in `www/`. Leave the black window open while you use the builder, then close it to stop.
+**`lancer-builder.bat`** is still the most reliable local option. It opens http://localhost:3000. Leave the black window open while you use the builder, then close it to stop.
+
+If `index.html` looks broken (Times New Roman, huge silhouette, buttons that do nothing), the browser opened it as `file://` against an **old** export whose files still point at `/_next/...`. Use this repo’s current `www/` folder, or run `lancer-builder.bat`.
 
 If the browser shows an **HTTP 500**, update `lancer-builder.ps1` (the first server crashed while sending files). Rerun the `.bat` and look for `ERREUR` lines in the black window.
+
+## Upload via FTP (no Node on the host)
+
+The live site is already HTML + CSS + JS. Node is only needed on a PC when you change the source and rebuild.
+
+Upload the **contents** of `www/` (including the `_next` folder, `index.html`, `404.html`, favicon). PHP/SQL are not used.
+
+Save stays in the browser (`localStorage`). Share copies the build into the URL (`#b=...`).
 
 If Windows blocks the script: right-click `lancer-builder.ps1` → Properties → Unblock, or:
 
