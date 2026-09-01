@@ -16,10 +16,7 @@ import {
   sanitizeWeaponMods,
   weaponModMultiplier,
 } from "./data/weapon-mods";
-import {
-  formatSkillModSummary,
-  skillModAssumedBonuses,
-} from "./data/skill-mods";
+import { formatSkillModSummary } from "./data/skill-mods";
 import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
@@ -95,6 +92,9 @@ const STAT_KEYS: StatKey[] = [
   "optimalRange",
   "threat",
   "protectionFromElites",
+  "scannerPulseHaste",
+  "meleeDamage",
+  "shieldHealth",
 ];
 
 function emptyValues(): Record<StatKey, number> {
@@ -603,9 +603,11 @@ export function computeStats(loadout: Loadout): ComputedStats {
     } else {
       notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
     }
-    const modBonuses = skillModAssumedBonuses(skill.id, equipped.mods);
-    if (modBonuses.length) addBonuses(values, modBonuses);
-    const modSummary = formatSkillModSummary(skill.id, equipped.mods);
+    const modSummary = formatSkillModSummary(
+      skill.id,
+      equipped.mods,
+      loadout.specialization,
+    );
     if (modSummary) {
       notes.push(`Skill mods on ${skill.name}: ${modSummary}.`);
       bonuses.push({

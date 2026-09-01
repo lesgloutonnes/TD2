@@ -27,146 +27,403 @@ export function weaponsByType(types?: readonly WeaponType[]) {
 }
 
 /**
- * In-game skill attachments (not gear attribute rolls).
- * Examples: Extra Payload on Chem Launcher, Skill Health on drones, Extra Ammo on Sniper Turret.
+ * Live Gear 2.0 skill attachments (level 40 max rolls).
+ * Named slots per platform, pools per variant — not shared family leftovers.
+ * Bonuses apply to this skill only (they do not raise gear Skill Damage / Haste).
+ * Ammo and charges from mods are small; Skill Tier is the main scaler.
  */
 export type SkillModOption = {
   id: string;
   name: string;
-  /** Short in-game style effect line. */
+  /** Max-roll effect line, this skill only. */
   effect: string;
-  /** Soft analyzer contribution when this attachment is selected. */
-  assumed?: StatBonus[];
+  /** Variants that can roll this. Omit = every variant of the platform. */
+  skills?: readonly string[];
+  /** Specialization unique mod; only listed when that spec is selected. */
+  spec?: string;
 };
 
 export type SkillModSlotDef = {
   id: string;
-  /** Slot name as in live TD2 (Housing / Battery / Payload…). */
+  /** In-game slot name (Firing Mechanism, Pneumatics, Hull…). */
   label: string;
   options: SkillModOption[];
+};
+
+const EMPTY: SkillModOption = {
+  id: "none",
+  name: "Empty",
+  effect: "No attachment in this slot.",
 };
 
 function opt(
   id: string,
   name: string,
   effect: string,
-  assumed?: StatBonus[],
+  skills?: readonly string[],
+  spec?: string,
 ): SkillModOption {
-  return { id, name, effect, assumed };
+  return { id, name, effect, skills, spec };
 }
 
-const OPT = {
-  damage: opt("damage", "Damage", "+Skill Damage on this skill", [
-    { stat: "skillDamage", value: 6 },
-  ]),
-  skillHealth: opt("skill-health", "Skill Health", "+Skill Health", [
-    { stat: "skillHealth", value: 12 },
-  ]),
-  duration: opt("duration", "Duration", "+Skill Duration", [
-    { stat: "skillDuration", value: 10 },
-  ]),
-  radius: opt("radius", "Radius", "+Effect / blast radius", [
-    { stat: "skillEfficiency", value: 6 },
-  ]),
-  haste: opt("haste", "Skill Haste", "+Skill Haste for this skill", [
-    { stat: "skillHaste", value: 10 },
-  ]),
-  repair: opt("repair", "Repair Amount", "+Skill Repair", [
-    { stat: "skillRepair", value: 12 },
-  ]),
-  status: opt("status", "Status Effects", "+Status Effects", [
-    { stat: "statusEffects", value: 8 },
-  ]),
-  extraAmmo: opt("extra-ammo", "Extra Ammo", "+Skill ammo / magazine charges"),
-  extraPayload: opt("extra-payload", "Extra Payload", "+Chem Launcher ammo charges"),
-  extraCharges: opt("extra-charges", "Extra Charges", "+1 skill charge before cooldown"),
-  range: opt("range", "Range", "+Optimal / engagement range", [
-    { stat: "skillEfficiency", value: 4 },
-  ]),
-  explodeRadius: opt(
-    "explosion-radius",
-    "Explosion Radius",
-    "+Explosion radius",
-    [{ stat: "explosiveDamage", value: 4 }],
-  ),
-  shieldHealth: opt("shield-health", "Shield Health", "+Shield Health", [
-    { stat: "skillHealth", value: 15 },
-  ]),
-  damageRegen: opt("damage-regen", "Damage to Skill Health", "Hits regenerate skill health", [
-    { stat: "skillHealth", value: 6 },
-  ]),
-};
-
-function slots(
-  defs: Array<[string, string, SkillModOption[]]>,
-): SkillModSlotDef[] {
+function slots(defs: Array<[string, string, SkillModOption[]]>): SkillModSlotDef[] {
   return defs.map(([id, label, options]) => ({ id, label, options }));
 }
 
-/** Category → attachment slots (live-style skill modding). */
-export const SKILL_MODS_BY_CATEGORY: Record<string, SkillModSlotDef[]> = {
-  Turret: slots([
-    ["feed", "Feed", [OPT.extraAmmo, OPT.damage, OPT.haste]],
-    ["housing", "Housing", [OPT.skillHealth, OPT.damageRegen, OPT.duration]],
-    ["targeting", "Targeting", [OPT.damage, OPT.range, OPT.status]],
-  ]),
-  Drone: slots([
-    ["housing", "Housing", [OPT.skillHealth, OPT.damageRegen, OPT.duration]],
-    ["battery", "Battery", [OPT.duration, OPT.haste, OPT.extraCharges]],
+/**
+ * Platform → named slots. Option `skills` / `spec` further restrict the pool.
+ * Max rolls: community live sheet (Namu / level 40 Gear 2.0).
+ */
+const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
+  Pulse: slots([
     [
-      "systems",
-      "Systems",
-      [OPT.damage, OPT.repair, OPT.range, OPT.status],
+      "coil",
+      "Coil",
+      [
+        opt("coil-radius", "Radius", "+10% radius", ["scanner-pulse", "remote-pulse"]),
+        opt("coil-cone", "Cone Size", "+7.5% cone size", ["jammer-pulse"]),
+        opt(
+          "gunner-directional-transmitter",
+          "Directional Transmitter",
+          "+15% radius (Gunner unique)",
+          ["scanner-pulse", "remote-pulse"],
+          "gunner",
+        ),
+      ],
+    ],
+    [
+      "housing",
+      "Housing",
+      [
+        opt("housing-haste", "Skill Haste", "+6% Skill Haste"),
+        opt("housing-duration", "Effect Duration", "+10% duration"),
+        opt("housing-health", "Skill Health", "+20% Skill Health"),
+        opt(
+          "gunner-microwave-amplifier",
+          "Microwave Amplifier",
+          "+15% duration (Gunner unique)",
+          undefined,
+          "gunner",
+        ),
+      ],
+    ],
+  ]),
+  Turret: slots([
+    [
+      "firing",
+      "Firing Mechanism",
+      [
+        opt("firing-damage", "Damage", "+5% Damage", [
+          "assault-turret",
+          "sniper-turret",
+          "artillery-turret",
+        ]),
+        opt("firing-burn", "Burn Damage", "+5% Burn Damage", ["incinerator-turret"]),
+        opt(
+          "demo-shd-cpu",
+          "SHD CPU V.2",
+          "+10% Damage (Demolitionist unique)",
+          ["assault-turret", "sniper-turret", "artillery-turret"],
+          "demolitionist",
+        ),
+      ],
+    ],
+    [
+      "housing",
+      "Housing",
+      [
+        opt("housing-duration", "Duration", "+7.5% Duration"),
+        opt("housing-health", "Skill Health", "+10% Skill Health"),
+        opt("housing-sniper-ammo", "Extra Sniper Ammo", "+1 sniper round", ["sniper-turret"]),
+        opt("housing-mortar-ammo", "Extra Mortar Ammo", "+1 mortar round", ["artillery-turret"]),
+        opt(
+          "demo-cyclone-magazine",
+          "Cyclone Magazine",
+          "+1 mortar round (Demolitionist unique)",
+          ["artillery-turret"],
+          "demolitionist",
+        ),
+      ],
+    ],
+    [
+      "targeting",
+      "Targeting",
+      [
+        opt("targeting-haste", "Skill Haste", "+7.5% Skill Haste"),
+        opt("targeting-duration", "Duration", "+7.5% Duration"),
+      ],
+    ],
+  ]),
+  Hive: slots([
+    [
+      "drones",
+      "Drones",
+      [
+        opt("drones-damage", "Damage", "+5% Damage", ["stinger-hive"]),
+        opt("drones-repair", "Repair", "+5% Repair", ["restorer-hive"]),
+        opt("drones-revive-armor", "Revive Armor Restore", "+10% armor on revive", [
+          "reviver-hive",
+        ]),
+        opt("drones-stim", "Stim Efficiency", "+10% stim efficiency", ["booster-hive"]),
+      ],
+    ],
+    [
+      "launcher",
+      "Launcher",
+      [
+        opt("launcher-range", "Range", "+5% range"),
+        opt("launcher-stinger-charges", "Extra Stinger Charges", "+1 charge", ["stinger-hive"]),
+        opt("launcher-repair-charges", "Extra Repair Charges", "+1 charge", ["restorer-hive"]),
+        opt("launcher-stim-charges", "Extra Stim Charges", "+1 charge", ["booster-hive"]),
+        opt(
+          "tech-sensor-package",
+          "Upgrade Sensor Package",
+          "+10% range (Technician unique)",
+          undefined,
+          "technician",
+        ),
+      ],
+    ],
+    [
+      "system",
+      "System",
+      [
+        opt("system-duration", "Duration", "+5% Duration"),
+        opt("system-health", "Skill Health", "+10% Skill Health"),
+        opt(
+          "tech-liquid-cooling",
+          "Liquid Cooling",
+          "+10% Duration (Technician unique)",
+          undefined,
+          "technician",
+        ),
+      ],
+    ],
+  ]),
+  "Chem Launcher": slots([
+    [
+      "agitator",
+      "Agitator",
+      [
+        opt("agitator-damage", "Damage", "+5% Damage", ["oxidizer"]),
+        opt("agitator-repair", "Repair", "+7.5% Repair", ["repair-chem"]),
+        opt("agitator-burn", "Burn Strength", "+7.5% Burn Strength", ["firestarter"]),
+        opt("agitator-foam-health", "Ensnare Foam Health", "+17.5% foam health", ["riot-foam"]),
+        opt("agitator-foam-duration", "Ensnare Duration", "+10% ensnare duration", ["riot-foam"]),
+      ],
+    ],
+    [
+      "pneumatics",
+      "Pneumatics",
+      [
+        opt("pneumatics-haste", "Skill Haste", "+7.5% Skill Haste"),
+        opt("pneumatics-ammo", "Extra Ammo", "+1 ammo"),
+        opt("pneumatics-radius", "Radius", "+7.5% radius"),
+        opt("pneumatics-duration", "Duration", "+5% Duration"),
+      ],
+    ],
+  ]),
+  Firefly: slots([
+    [
+      "propulsion",
+      "Propulsion",
+      [
+        opt("propulsion-haste", "Skill Haste", "+7.5% Skill Haste"),
+        opt("propulsion-speed", "Speed", "+10% speed"),
+      ],
+    ],
+    [
+      "payload",
+      "Payload",
+      [
+        opt("payload-damage", "Damage", "+7.5% Damage", ["burster-firefly", "demolisher-firefly"]),
+        opt("payload-blind", "Blind Duration", "+7.5% blind duration", ["blinder-firefly"]),
+      ],
+    ],
+    [
+      "targeting",
+      "Targeting",
+      [opt("targeting-extra-target", "Extra Target", "+1 max target")],
     ],
   ]),
   "Seeker Mine": slots([
-    ["payload", "Payload", [OPT.damage, OPT.explodeRadius, OPT.repair, OPT.status]],
-    ["drive", "Drive", [OPT.range, OPT.haste, OPT.duration]],
-    ["casing", "Casing", [OPT.skillHealth, OPT.extraCharges]],
+    [
+      "drive",
+      "Drive",
+      [
+        opt("drive-haste", "Skill Haste", "+6% Skill Haste"),
+        opt("drive-radius", "Radius", "+5% radius"),
+        opt("drive-damage", "Damage", "+5% Damage", [
+          "cluster-seeker",
+          "explosive-seeker",
+          "airburst-seeker",
+        ]),
+      ],
+    ],
+    [
+      "targeting",
+      "Targeting",
+      [
+        opt("targeting-health", "Skill Health", "+7.5% Skill Health"),
+        opt("targeting-cluster", "Extra Cluster Mines", "+1 submunition", ["cluster-seeker"]),
+        opt(
+          "survivalist-magnetic-disc",
+          "Magnetic Disc",
+          "+15% Skill Health (Survivalist unique)",
+          undefined,
+          "survivalist",
+        ),
+      ],
+    ],
+    [
+      "payload",
+      "Payload",
+      [
+        opt("payload-haste", "Skill Haste", "+6% Skill Haste"),
+        opt("payload-damage", "Damage", "+5% Damage", [
+          "cluster-seeker",
+          "explosive-seeker",
+          "airburst-seeker",
+        ]),
+        opt("payload-repair", "Repair", "+7.5% Repair", ["mender-seeker"]),
+        opt(
+          "survivalist-larrea",
+          "Larrea Infusion",
+          "+15% Repair (Survivalist unique)",
+          ["mender-seeker"],
+          "survivalist",
+        ),
+      ],
+    ],
   ]),
-  Hive: slots([
-    ["swarm", "Swarm", [OPT.damage, OPT.repair, OPT.status, OPT.haste]],
-    ["housing", "Housing", [OPT.skillHealth, OPT.radius, OPT.duration]],
-    ["stim", "Stim", [OPT.extraCharges, OPT.haste, OPT.radius]],
-  ]),
-  "Chem Launcher": slots([
-    ["payload", "Payload", [OPT.extraPayload, OPT.extraAmmo, OPT.damage, OPT.repair]],
-    ["mixture", "Mixture", [OPT.damage, OPT.status, OPT.repair, OPT.duration]],
-    ["dispersion", "Dispersion", [OPT.radius, OPT.range, OPT.haste]],
+  Drone: slots([
+    [
+      "battery",
+      "Battery",
+      [
+        opt("battery-duration", "Duration", "+7.5% Duration", [
+          "striker-drone",
+          "bombardier-drone",
+          "tactician-drone",
+          "fixer-drone",
+        ]),
+        opt("battery-defender-duration", "Defender Duration", "+7.5% duration", ["defender-drone"]),
+        opt(
+          "sharpshooter-graphene",
+          "Graphene Battery",
+          "+15% Duration (Sharpshooter unique)",
+          undefined,
+          "sharpshooter",
+        ),
+      ],
+    ],
+    [
+      "hull",
+      "Hull",
+      [
+        opt("hull-health", "Skill Health", "+10% Skill Health"),
+        opt("hull-bombs", "Extra Bombs", "+2 bombs", ["bombardier-drone"]),
+        opt("hull-scan", "Scan Range", "+10% scan range", ["tactician-drone"]),
+        opt(
+          "sharpshooter-carbon",
+          "Carbon Fiber Frame",
+          "+20% scan range (Sharpshooter unique)",
+          ["tactician-drone"],
+          "sharpshooter",
+        ),
+      ],
+    ],
+    [
+      "feed",
+      "Feed",
+      [
+        opt("feed-damage", "Damage", "+5% Damage", ["striker-drone"]),
+        opt("feed-reduction", "Damage Reduction", "+6% damage reduction", ["defender-drone"]),
+        opt("feed-repair", "Armor Repair", "+7.5% Repair", ["fixer-drone"]),
+      ],
+    ],
   ]),
   Shield: slots([
-    ["plate", "Plate", [OPT.shieldHealth, OPT.skillHealth, OPT.damageRegen]],
-    ["capacitor", "Capacitor", [OPT.haste, OPT.duration, OPT.extraCharges]],
-    ["projector", "Projector", [OPT.range, OPT.status, OPT.damage]],
-  ]),
-  Pulse: slots([
-    ["scanner", "Scanner", [OPT.radius, OPT.range, OPT.haste]],
-    ["battery", "Battery", [OPT.duration, OPT.extraCharges, OPT.haste]],
-    ["firmware", "Firmware", [OPT.status, OPT.damage, OPT.skillHealth]],
-  ]),
-  Firefly: slots([
-    ["payload", "Payload", [OPT.damage, OPT.status, OPT.explodeRadius]],
-    ["thruster", "Thruster", [OPT.range, OPT.haste, OPT.duration]],
-    ["hull", "Hull", [OPT.skillHealth, OPT.extraCharges]],
-  ]),
-  Decoy: slots([
-    ["holo", "Holo", [OPT.skillHealth, OPT.duration, OPT.radius]],
-    ["battery", "Battery", [OPT.duration, OPT.haste, OPT.extraCharges]],
-    ["emitter", "Emitter", [OPT.range, OPT.status]],
-  ]),
-  Trap: slots([
-    ["charge", "Charge", [OPT.damage, OPT.status, OPT.repair]],
-    ["sensor", "Sensor", [OPT.radius, OPT.range, OPT.haste]],
-    ["casing", "Casing", [OPT.skillHealth, OPT.duration, OPT.extraCharges]],
+    [
+      "circuit",
+      "Circuit Board",
+      [
+        opt("circuit-health", "Shield Health", "+5% Shield Health"),
+        opt("circuit-holstered", "Holstered Regen", "+5% holstered regeneration"),
+        opt("circuit-deflect", "Deflect Damage", "+5% deflected damage", ["deflector-shield"]),
+        opt("circuit-damage-bonus", "Damage Bonus", "+1% damage bonus", ["striker-shield"]),
+        opt(
+          "firewall-impact",
+          "Impact Hardening Armature",
+          "+8% Shield Health (Firewall unique)",
+          undefined,
+          "firewall",
+        ),
+      ],
+    ],
+    [
+      "coating",
+      "Hard Coating",
+      [
+        opt("coating-health", "Shield Health", "+5% Shield Health"),
+        opt("coating-active", "Active Regen", "+5% active regeneration"),
+        opt("coating-deflect", "Deflect Damage", "+5% deflected damage", ["deflector-shield"]),
+        opt(
+          "firewall-polymer",
+          "Polymer Exterior",
+          "+8% active regeneration (Firewall unique)",
+          undefined,
+          "firewall",
+        ),
+      ],
+    ],
+    [
+      "gyro",
+      "Gyro",
+      [
+        opt("gyro-holstered", "Holstered Regen", "+5% holstered regeneration"),
+        opt("gyro-deflect", "Deflect Damage", "+5% deflected damage", ["deflector-shield"]),
+        opt("gyro-damage-bonus", "Damage Bonus", "+5% damage bonus", ["striker-shield"]),
+      ],
+    ],
   ]),
   "Sticky Bomb": slots([
-    ["payload", "Payload", [OPT.damage, OPT.explodeRadius, OPT.status]],
-    ["fuse", "Fuse", [OPT.duration, OPT.haste, OPT.radius]],
-    ["shell", "Shell", [OPT.skillHealth, OPT.extraCharges, OPT.range]],
+    [
+      "launcher",
+      "Launcher",
+      [
+        opt("launcher-haste", "Skill Haste", "+5% Skill Haste"),
+        opt("launcher-duration", "Duration", "+7.5% Duration"),
+        opt("launcher-radius", "Explosion Radius", "+6% explosion radius"),
+      ],
+    ],
+    [
+      "payload",
+      "Payload",
+      [
+        opt("payload-damage", "Damage", "+7.5% Damage", ["sticky-burn", "sticky-explosive"]),
+        opt("payload-radius", "Explosion Radius", "+6% explosion radius"),
+        opt("payload-burn", "Burn Duration", "+5% burn duration", ["sticky-burn"]),
+      ],
+    ],
+  ]),
+  Trap: slots([
+    ["charge", "Charge", [opt("charge-duration", "Duration", "+5% Duration")]],
+    [
+      "electronic",
+      "Electronic",
+      [
+        opt("electronic-duration", "Duration", "+7.5% Duration"),
+        opt("electronic-radius", "Effect Radius", "+7.5% radius"),
+      ],
+    ],
+  ]),
+  Decoy: slots([
+    ["housing", "Housing", [opt("housing-health", "Skill Health", "+7.5% Skill Health")]],
+    ["projector", "Projector", [opt("projector-duration", "Duration", "+7.5% Duration")]],
   ]),
 };
 
-/** Prefer heal-oriented defaults on repair / support variants. */
 const SUPPORT_SKILL_IDS = new Set([
   "fixer-drone",
   "mender-seeker",
@@ -178,38 +435,97 @@ const SUPPORT_SKILL_IDS = new Set([
   "repair-trap",
 ]);
 
-export function skillModSlotsFor(skillId: string): SkillModSlotDef[] {
+function optionVisible(
+  option: SkillModOption,
+  skillId: string,
+  spec: string | null | undefined,
+): boolean {
+  if (option.spec && option.spec !== spec) return false;
+  if (option.skills && !option.skills.includes(skillId)) return false;
+  return true;
+}
+
+function withEmpty(options: SkillModOption[]): SkillModOption[] {
+  return [EMPTY, ...options];
+}
+
+/** Slots and the options this variant (and spec) can actually equip. */
+export function skillModSlotsFor(
+  skillId: string,
+  spec?: string | null,
+): SkillModSlotDef[] {
   const skill = SKILLS.find((item) => item.id === skillId);
   if (!skill) return [];
-  return SKILL_MODS_BY_CATEGORY[skill.category] ?? [];
+  const platform = PLATFORM_SLOTS[skill.category];
+  if (!platform) return [];
+  return platform.map((slot) => ({
+    ...slot,
+    options: withEmpty(
+      slot.options.filter((option) => optionVisible(option, skillId, spec)),
+    ),
+  }));
 }
 
 export function skillModOptionById(
   skillId: string,
   modId: string | undefined | null,
+  spec?: string | null,
 ): SkillModOption | undefined {
   if (!modId) return undefined;
-  for (const slot of skillModSlotsFor(skillId)) {
+  for (const slot of skillModSlotsFor(skillId, spec)) {
     const found = slot.options.find((option) => option.id === modId);
     if (found) return found;
   }
   return undefined;
 }
 
-function preferredDefault(skillId: string, slot: SkillModSlotDef): string {
-  const support = SUPPORT_SKILL_IDS.has(skillId);
-  const prefer = support
-    ? ["repair", "skill-health", "shield-health", "extra-charges", "haste", "radius"]
-    : ["extra-ammo", "extra-payload", "damage", "skill-health", "duration", "haste"];
-  for (const id of prefer) {
-    if (slot.options.some((option) => option.id === id)) return id;
-  }
-  return slot.options[0]!.id;
+export function skillModOptionLabel(option: SkillModOption): string {
+  if (option.id === "none") return "Empty";
+  return `${option.name}  ${option.effect}`;
 }
 
-/** Default attachment picks for a skill (one mod id per slot). */
-export function defaultSkillMods(skillId: string): string[] {
-  return skillModSlotsFor(skillId).map((slot) => preferredDefault(skillId, slot));
+function preferredDefault(skillId: string, slot: SkillModSlotDef): string {
+  const usable = slot.options.filter((option) => option.id !== "none" && !option.spec);
+  const prefer = SUPPORT_SKILL_IDS.has(skillId)
+    ? [
+        "repair",
+        "revive-armor",
+        "repair-charges",
+        "stim",
+        "ammo",
+        "health",
+        "shield-health",
+        "duration",
+        "haste",
+        "range",
+        "radius",
+      ]
+    : [
+        "extra-ammo",
+        "sniper-ammo",
+        "mortar-ammo",
+        "ammo",
+        "cluster",
+        "stinger-charges",
+        "bombs",
+        "extra-target",
+        "damage",
+        "burn",
+        "health",
+        "duration",
+        "haste",
+        "radius",
+      ];
+  for (const key of prefer) {
+    const hit = usable.find((option) => option.id === key || option.id.endsWith(`-${key}`));
+    if (hit) return hit.id;
+  }
+  return usable[0]?.id ?? "none";
+}
+
+/** Default attachment picks for planning (max-roll, no spec uniques). */
+export function defaultSkillMods(skillId: string, spec?: string | null): string[] {
+  return skillModSlotsFor(skillId, spec).map((slot) => preferredDefault(skillId, slot));
 }
 
 function isLegacyStatMods(mods: unknown): boolean {
@@ -222,20 +538,36 @@ function isLegacyStatMods(mods: unknown): boolean {
   );
 }
 
-/** Sanitize selected mod ids for a skill; migrates legacy StatBonus[] kits. */
-export function sanitizeSkillMods(skillId: string, mods: unknown): string[] {
-  const slots = skillModSlotsFor(skillId);
-  if (!slots.length) return [];
-  if (isLegacyStatMods(mods)) return defaultSkillMods(skillId);
+const LEGACY_ID_MAP: Record<string, string> = {
+  damage: "firing-damage",
+  "skill-health": "hull-health",
+  duration: "battery-duration",
+  haste: "targeting-haste",
+  repair: "feed-repair",
+  "extra-ammo": "housing-sniper-ammo",
+  "extra-payload": "pneumatics-ammo",
+  radius: "pneumatics-radius",
+  status: "agitator-burn",
+};
+
+/** Sanitize selected mod ids; migrates legacy StatBonus[] and old generic ids. */
+export function sanitizeSkillMods(
+  skillId: string,
+  mods: unknown,
+  spec?: string | null,
+): string[] {
+  const defined = skillModSlotsFor(skillId, spec);
+  if (!defined.length) return [];
+  if (isLegacyStatMods(mods)) return defaultSkillMods(skillId, spec);
   const selected = Array.isArray(mods)
     ? mods.filter((entry): entry is string => typeof entry === "string")
     : [];
-  return slots.map((slot, index) => {
-    const candidate = selected[index];
+  return defined.map((slot, index) => {
+    const raw = selected[index];
+    const candidate = raw && LEGACY_ID_MAP[raw] ? LEGACY_ID_MAP[raw] : raw;
     if (candidate && slot.options.some((option) => option.id === candidate)) {
       return candidate;
     }
-    // Also accept a valid mod id placed in the wrong slot index.
     if (candidate) {
       const match = slot.options.find((option) => option.id === candidate);
       if (match) return match.id;
@@ -244,24 +576,29 @@ export function sanitizeSkillMods(skillId: string, mods: unknown): string[] {
   });
 }
 
-/** Soft analyzer bonuses from selected skill attachments. */
-export function skillModAssumedBonuses(skillId: string, mods: string[] | undefined): StatBonus[] {
-  const selected = sanitizeSkillMods(skillId, mods);
-  const bonuses: StatBonus[] = [];
-  for (const modId of selected) {
-    const option = skillModOptionById(skillId, modId);
-    if (option?.assumed?.length) bonuses.push(...option.assumed);
-  }
-  return bonuses;
+/**
+ * Skill attachments never raise character-wide Skill Damage / Haste / Health.
+ * Kept so older call sites compile; analyzer uses notes instead.
+ */
+export function skillModAssumedBonuses(
+  _skillId: string,
+  _mods: string[] | undefined,
+): StatBonus[] {
+  return [];
 }
 
-export function formatSkillModSummary(skillId: string, mods: string[] | undefined): string {
-  const slots = skillModSlotsFor(skillId);
-  const selected = sanitizeSkillMods(skillId, mods);
-  return slots
+export function formatSkillModSummary(
+  skillId: string,
+  mods: string[] | undefined,
+  spec?: string | null,
+): string {
+  const defined = skillModSlotsFor(skillId, spec);
+  const selected = sanitizeSkillMods(skillId, mods, spec);
+  return defined
     .map((slot, index) => {
-      const option = skillModOptionById(skillId, selected[index]);
-      return option ? `${slot.label}: ${option.name} (${option.effect})` : null;
+      const option = slot.options.find((item) => item.id === selected[index]);
+      if (!option || option.id === "none") return null;
+      return `${slot.label}: ${option.name} ${option.effect}`;
     })
     .filter(Boolean)
     .join(" · ");

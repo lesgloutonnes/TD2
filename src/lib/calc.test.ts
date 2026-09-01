@@ -52,6 +52,10 @@ function testNinja() {
   const stats = computeStats(loadout);
   assert(stats.values.hsd === 13, `ninja 1pc hsd, got ${stats.values.hsd}`);
   assert(stats.values.chc >= 8, `ninja unlocks 2pc chc, got ${stats.values.chc}`);
+  assert(stats.cores.red === 2, `Providence + NinjaBike red, got red=${stats.cores.red}`);
+  assert(stats.cores.blue === 1 && stats.cores.yellow === 1, "NinjaBike extra blue+yellow cores");
+  assert(stats.values.weaponDamage === 30, `2 red cores, got ${stats.values.weaponDamage}`);
+  assert(stats.skillTierCapped === 1, `NinjaBike yellow core, got ${stats.skillTierCapped}`);
 }
 
 function testStriker4() {
@@ -254,6 +258,106 @@ function testPicaroExtraCore() {
   assert(loadout.gear.holster?.core === "yellow", "Picaro's primary core yellow");
   assert(stats.cores.yellow === 1, `Picaro's cœur jaune, got yellow=${stats.cores.yellow}`);
   assert(stats.cores.red === 1, `Picaro's cœur rouge extra, got red=${stats.cores.red}`);
+
+  const doubleRed = emptyLoadout();
+  doubleRed.shdWatch = false;
+  doubleRed.gear.holster = createPiece("holster", "picaros-holster", "red");
+  const redStats = computeStats(doubleRed);
+  assert(doubleRed.gear.holster?.core === "red", "Picaro's primary can be recalibrated to red");
+  assert(redStats.cores.red === 2, `Picaro's double red cores, got red=${redStats.cores.red}`);
+  assert(redStats.cores.yellow === 0, "Picaro's yellow gone after recalibrate");
+}
+
+function testNamedCoresAndExtras() {
+  const namedWithExtraCore = NAMED_AND_EXOTICS.filter(
+    (item) => item.kind === "named" && item.extraCores?.length,
+  );
+  assert(
+    namedWithExtraCore.length === 1 && namedWithExtraCore[0]?.id === "picaros-holster",
+    `only Picaro's has a named extra core, got ${namedWithExtraCore.map((item) => item.id).join(",")}`,
+  );
+
+  for (const id of ["firm-handshake", "nightwatcher", "deathgrips", "melon-baller", "keeper", "rushdown", "trick-shot"]) {
+    const piece = catalogById(id);
+    assert(piece, `${id} exists`);
+    assert(!piece?.extraCores?.length, `${id} must not invent an extra core`);
+  }
+
+  const handshake = createPiece("gloves", "firm-handshake");
+  assert(!handshake.extraCores?.length, "Firm Handshake no extra core on piece");
+  const handshakeLoadout = emptyLoadout();
+  handshakeLoadout.shdWatch = false;
+  handshakeLoadout.gear.gloves = handshake;
+  assert(computeStats(handshakeLoadout).values.statusEffects === 16, "Firm Handshake +16% status");
+
+  const night = catalogById("nightwatcher");
+  assert(
+    night?.extraStats?.some((stat) => stat.stat === "scannerPulseHaste" && stat.value === 100),
+    "Nightwatcher 100% scanner pulse haste",
+  );
+  assert(!night?.extraStats?.some((stat) => stat.stat === "skillHaste"), "Nightwatcher is not global skill haste");
+  const nightPiece = createPiece("mask", "nightwatcher");
+  assert(nightPiece.core === "blue", "Nightwatcher native Gila blue");
+  assert(createPiece("mask", "nightwatcher", "red").core === "red", "Nightwatcher core recalibratable");
+  const nightLoadout = emptyLoadout();
+  nightLoadout.shdWatch = false;
+  nightLoadout.gear.mask = nightPiece;
+  const nightStats = computeStats(nightLoadout);
+  assert(nightStats.values.scannerPulseHaste === 100, "pulse haste on Nightwatcher");
+  assert(nightStats.values.skillHaste === 0, "Nightwatcher does not add global skill haste");
+  assert(nightStats.cores.yellow === 0, "Nightwatcher no extra yellow");
+
+  const claws = catalogById("claws-out");
+  assert(claws?.extraStats?.some((stat) => stat.stat === "meleeDamage" && stat.value === 500), "Claws Out melee");
+  assert(claws?.extraStats?.some((stat) => stat.stat === "pistolDamage" && stat.value === 11), "Claws Out pistol 11%");
+
+  const forge = catalogById("forge");
+  assert(forge?.extraStats?.some((stat) => stat.stat === "shieldHealth" && stat.value === 50), "Forge +50% shield health");
+
+  const coyote = catalogById("coyotes-mask");
+  assert(!coyote?.extraStats?.length, "Coyote CHC/CHD is talent assumed, not extra stats");
+  assert(coyote?.assumed?.some((stat) => stat.stat === "chc"), "Coyote assumed CHC");
+
+  const btsu = catalogById("btsu-datagloves");
+  assert(!btsu?.extraStats?.length, "BTSU skill haste is a regular secondary, not extra");
+  const overdogs = catalogById("overdogs");
+  assert(!overdogs?.extraStats?.length, "Overdogs has no extra AoK");
+  const nurse = catalogById("nurses-kneepads");
+  assert(!nurse?.extraStats?.length, "Nurse hazard is the talent, not extra stat");
+
+  const shocker = catalogById("shocker-punch");
+  assert(shocker?.slots !== "all" && shocker?.slots.includes("holster"), "Shocker Punch is a holster");
+  assert(!shocker?.slots.includes("gloves"), "Shocker Punch is not gloves");
+  assert(shocker?.uniqueTalent?.name === "Defibrillator", "Shocker Punch Defibrillator");
+  assert(createPiece("holster", "shocker-punch").core === "blue", "Shocker Punch locked blue");
+  assert(createPiece("holster", "shocker-punch", "red").core === "blue", "Shocker Punch core stays locked");
+  assert(
+    catalogForSlot("holster").some((item) => item.id === "shocker-punch"),
+    "Shocker Punch in holster picker",
+  );
+  assert(
+    !catalogForSlot("gloves").some((item) => item.id === "shocker-punch"),
+    "Shocker Punch not in gloves picker",
+  );
+
+  const collector = catalogById("collector");
+  assert(collector?.lockedCore === "red", "Collector weapon damage core");
+  assert(collector?.uniqueTalent?.description.includes("grenade"), "Collector Hoarder is grenades");
+
+  const csBag = createPiece("backpack", "set:core-strength");
+  assert(csBag.core === "red", "Core Strength backpack primary red");
+  assert(
+    JSON.stringify(csBag.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "Core Strength backpack extra cores",
+  );
+  const csPicker = catalogForSlot("backpack").find((item) => item.id === "set:core-strength");
+  assert(csPicker?.lockedCore === "red", "Core Strength backpack locked in picker");
+  assert(
+    JSON.stringify(csPicker?.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "Core Strength backpack extras in picker",
+  );
+  const csGloves = catalogForSlot("gloves").find((item) => item.id === "set:core-strength");
+  assert(csGloves?.lockedCore === undefined, "Core Strength gloves still recalibratable");
 }
 
 function testLockedBrandAndExoticCores() {
@@ -261,10 +365,7 @@ function testLockedBrandAndExoticCores() {
   assert(createPiece("holster", "forge").core === "yellow", "Forge native yellow (Richter)");
   assert(createPiece("kneepads", "brand:badger").core === "blue", "Badger brand armor core");
   assert(createPiece("gloves", "deathgrips").core === "blue", "Deathgrips primary armor core");
-  assert(
-    JSON.stringify(createPiece("gloves", "deathgrips").extraCores) === JSON.stringify(["red"]),
-    "Deathgrips bonus red core",
-  );
+  assert(!createPiece("gloves", "deathgrips").extraCores?.length, "Deathgrips has no extra core");
   const memento = createPiece("backpack", "memento");
   assert(memento.core === "red", "Memento primary red");
   assert(
@@ -272,6 +373,17 @@ function testLockedBrandAndExoticCores() {
     "Memento bonus blue+yellow",
   );
   assert(createPiece("backpack", "memento", "yellow").core === "red", "Memento package stays locked");
+
+  const ninja = createPiece("backpack", "ninjabike");
+  assert(ninja.core === "red", "NinjaBike primary red");
+  assert(
+    JSON.stringify(ninja.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "NinjaBike bonus blue+yellow",
+  );
+  assert(
+    createPiece("backpack", "ninjabike", "yellow").core === "red",
+    "NinjaBike package stays locked",
+  );
 
   // Most exotics ignore inherited recalibration.
   assert(createPiece("holster", "waveform", "red").core === "yellow", "Waveform ignores inherited red");
@@ -310,6 +422,12 @@ function testLockedBrandAndExoticCores() {
   assert(investorPicker?.lockedCore === undefined, "Investor not locked in picker");
   const mementoPicker = catalogForSlot("backpack").find((item) => item.id === "memento");
   assert(mementoPicker?.lockedCore === "red", "Memento package locked in picker");
+  const ninjaPicker = catalogForSlot("backpack").find((item) => item.id === "ninjabike");
+  assert(ninjaPicker?.lockedCore === "red", "NinjaBike package locked in picker");
+  assert(
+    JSON.stringify(ninjaPicker?.extraCores) === JSON.stringify(["blue", "yellow"]),
+    "NinjaBike picker shows extra cores",
+  );
   const deathgripsPicker = catalogForSlot("gloves").find((item) => item.id === "deathgrips");
   assert(deathgripsPicker?.lockedCore === undefined, "Deathgrips named recalibratable in picker");
   const forgePicker = catalogForSlot("holster").find((item) => item.id === "forge");
@@ -601,6 +719,8 @@ function testCatalogSlotLockedCore() {
   assert(refactorMask?.lockedCore === undefined, "Refactor mask unlocked in picker");
   assert(strikerGloves?.lockedCore === undefined, "Striker unlocked in picker");
   assert(scChest?.lockedCore === undefined, "System Corruption unlocked in picker");
+  const csBackpack = catalogForSlot("backpack").find((item) => item.id === "set:core-strength");
+  assert(csBackpack?.lockedCore === "red", "Core Strength backpack locked in picker");
   assert(createPiece("gloves", "set:refactor").core === "blue", "Refactor gloves native blue");
   assert(createPiece("mask", "set:refactor").core === "yellow", "Refactor mask native yellow");
 }
@@ -614,6 +734,18 @@ function testEverySetPieceCore() {
         native.core === cores[slot],
         `${set.name} ${slot} native: expected ${cores[slot]}, got ${native.core}`,
       );
+      if (set.id === "core-strength" && slot === "backpack") {
+        assert(native.core === "red", "Core Strength backpack native red");
+        assert(
+          JSON.stringify(native.extraCores) === JSON.stringify(["blue", "yellow"]),
+          "Core Strength backpack extra blue+yellow",
+        );
+        assert(
+          createPiece(slot, `set:${set.id}`, "yellow").core === "red",
+          "Core Strength backpack 3-core package is locked",
+        );
+        continue;
+      }
       const recal = createPiece(slot, `set:${set.id}`, "red");
       assert(recal.core === "red", `${set.name} ${slot} recalibrates to red`);
     }
@@ -958,27 +1090,69 @@ function testSkillModsContribute() {
   loadout.skills = [
     {
       skillId: "striker-drone",
-      mods: ["skill-health", "duration", "damage"],
+      mods: ["battery-duration", "hull-health", "feed-damage"],
     },
     {
       skillId: "oxidizer",
-      mods: ["extra-payload", "status", "radius"],
+      mods: ["agitator-damage", "pneumatics-ammo"],
     },
   ];
   const stats = computeStats(loadout);
-  assert(stats.values.skillDamage >= 11, `drone damage mod + assumed, got ${stats.values.skillDamage}`);
-  assert(stats.values.skillHealth >= 12, `drone skill health mod, got ${stats.values.skillHealth}`);
+  assert(stats.values.skillDamage === 5, `drone assumed only, mods stay local, got ${stats.values.skillDamage}`);
+  assert(stats.values.skillHealth === 0, `skill health mods are not character-wide, got ${stats.values.skillHealth}`);
   assert(
-    stats.notes.some((note) => note.includes("Extra Payload")),
-    "chem launcher extra payload note",
+    stats.notes.some((note) => note.includes("Extra Ammo") && note.includes("+1 ammo")),
+    "chem launcher extra ammo note",
   );
   assert(
-    stats.notes.some((note) => note.includes("Skill Health")),
+    stats.notes.some((note) => note.includes("Skill Health") && note.includes("+10%")),
     "drone skill health note",
   );
   assert(
     stats.bonuses.some((bonus) => bonus.source.includes("Skill mods · Striker Drone")),
     "skill mods bonus row",
+  );
+}
+
+function testLiveSkillModLibrary() {
+  const assault = skillModSlotsFor("assault-turret");
+  assert(assault.length === 3, `assault turret 3 slots, got ${assault.length}`);
+  assert(
+    !assault.some((slot) =>
+      slot.options.some((option) => option.id.includes("ammo") || option.id.includes("payload")),
+    ),
+    "assault turret has no extra ammo",
+  );
+  const sniper = skillModSlotsFor("sniper-turret");
+  assert(
+    sniper.some((slot) => slot.options.some((option) => option.id === "housing-sniper-ammo")),
+    "sniper housing extra ammo +1",
+  );
+  const oxidizer = skillModSlotsFor("oxidizer");
+  assert(oxidizer.length === 2, `chem launcher 2 slots, got ${oxidizer.length}`);
+  assert(oxidizer[0]?.label === "Agitator", "chem agitator slot");
+  assert(oxidizer[1]?.label === "Pneumatics", "chem pneumatics slot");
+  assert(
+    oxidizer[1]?.options.some((option) => option.id === "pneumatics-ammo" && option.effect === "+1 ammo"),
+    "chem extra ammo is +1 on pneumatics",
+  );
+  const decoy = skillModSlotsFor("decoy");
+  assert(decoy.length === 2, `decoy 2 slots, got ${decoy.length}`);
+  const sticky = skillModSlotsFor("sticky-explosive");
+  assert(sticky.length === 2, `sticky 2 slots, got ${sticky.length}`);
+  const gunnerPulse = skillModSlotsFor("scanner-pulse", "gunner");
+  assert(
+    gunnerPulse.some((slot) =>
+      slot.options.some((option) => option.id === "gunner-directional-transmitter"),
+    ),
+    "gunner unique pulse mod",
+  );
+  const noSpecPulse = skillModSlotsFor("scanner-pulse", null);
+  assert(
+    !noSpecPulse.some((slot) =>
+      slot.options.some((option) => option.id === "gunner-directional-transmitter"),
+    ),
+    "gunner unique hidden without spec",
   );
 }
 
@@ -1015,7 +1189,7 @@ function testLegacyStatSkillModsMigrate() {
   const decoded = decodeLoadout(encodeLoadout(dirty as unknown as Loadout));
   assert(decoded?.skills[0]?.skillId === "sniper-turret", "sniper turret kept");
   assert(
-    decoded?.skills[0]?.mods?.includes("extra-ammo"),
+    decoded?.skills[0]?.mods?.includes("housing-sniper-ammo"),
     `legacy stat mods remapped to turret attachments, got ${decoded?.skills[0]?.mods?.join(",")}`,
   );
 }
@@ -1176,6 +1350,7 @@ const tests = [
   testNamedPieceBrandLabel,
   testNamedExtraStats,
   testPicaroExtraCore,
+  testNamedCoresAndExtras,
   testLockedBrandAndExoticCores,
   testCatalogCoverage,
   testLiveTalentLibrary,
@@ -1206,6 +1381,7 @@ const tests = [
   testAugmentPublishedCurves,
   testWeaponListSorting,
   testSkillModsContribute,
+  testLiveSkillModLibrary,
   testLegacySkillShareMigrate,
   testLegacyStatSkillModsMigrate,
   testArmorRegenFlatDerived,

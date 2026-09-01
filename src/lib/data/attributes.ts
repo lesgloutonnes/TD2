@@ -154,6 +154,9 @@ export const STAT_LABELS: Record<StatKey, string> = {
   optimalRange: "Optimal Range",
   threat: "Threat",
   protectionFromElites: "Protection from Elites",
+  scannerPulseHaste: "Scanner Pulse Haste",
+  meleeDamage: "Melee Damage",
+  shieldHealth: "Shield Health",
 };
 
 export const STAT_MAX: Partial<Record<StatKey, number>> = {
