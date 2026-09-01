@@ -528,6 +528,12 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const primaryWeapon = primaryEquipped
     ? WEAPONS.find((weapon) => weapon.id === primaryEquipped.weaponId)
     : undefined;
+  if (primaryWeapon?.extraStats?.length) {
+    addBonuses(values, primaryWeapon.extraStats);
+    notes.push(
+      `Primary ${primaryWeapon.name} innate: ${formatBonusList(primaryWeapon.extraStats)}.`,
+    );
+  }
   if (primaryWeapon?.assumed?.length) {
     addBonuses(values, primaryWeapon.assumed);
     bonuses.push({

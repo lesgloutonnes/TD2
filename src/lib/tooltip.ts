@@ -1,4 +1,4 @@
-import type { CoreType, ItemKind, Loadout, Slot } from "./types";
+import type { CoreType, EquippedWeapon, ItemKind, Loadout, Slot, WeaponSlot } from "./types";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
@@ -10,10 +10,15 @@ import {
   KIND_LABELS,
   SLOT_LABELS,
   STAT_LABELS,
+  WEAPON_QUALITY_LABELS,
+  WEAPON_SLOT_LABELS,
   formatStat,
   itemDisplayColor,
   prototypeCoreMult,
+  weaponDisplayColor,
 } from "./data/attributes";
+import { WEAPON_TYPE_LABELS, weaponById } from "./data/weapons";
+import { WEAPON_MOD_KIND_LABELS } from "./data/weapon-mods";
 import { formatBonusList, gearCounts } from "./calc";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 
@@ -231,5 +236,81 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     stats,
     talent,
     affiliation,
+  };
+}
+
+export type WeaponInspect =
+  | {
+      empty: true;
+      slot: WeaponSlot;
+      slotLabel: string;
+    }
+  | {
+      empty: false;
+      slot: WeaponSlot;
+      slotLabel: string;
+      name: string;
+      quality: "high-end" | "named" | "exotic";
+      qualityLabel: string;
+      qualityColor: string;
+      typeLabel: string;
+      rpm: number;
+      mag: number;
+      prototype: boolean;
+      expertise: number;
+      augment: { name: string; level: number; value: number; effectLabel: string; description: string } | null;
+      extraStats: InspectStat[];
+      mods: InspectStat[];
+      talent: { name: string; description: string };
+      assumedNote?: string;
+    };
+
+export function weaponInspect(slot: WeaponSlot, equipped: EquippedWeapon | null): WeaponInspect {
+  const slotLabel = WEAPON_SLOT_LABELS[slot];
+  if (!equipped) return { empty: true, slot, slotLabel };
+
+  const def = weaponById(equipped.weaponId);
+  if (!def) return { empty: true, slot, slotLabel };
+
+  const isPrototype = Boolean(equipped.prototype) && def.quality !== "exotic";
+  const extraStats: InspectStat[] = (def.extraStats ?? []).map((stat) => ({
+    label: STAT_LABELS[stat.stat],
+    value: formatStat(stat.stat, stat.value),
+  }));
+  const mods: InspectStat[] = (equipped.mods ?? []).map((mod) => ({
+    label: `${WEAPON_MOD_KIND_LABELS[mod.kind]} · ${STAT_LABELS[mod.stat]}`,
+    value: formatStat(mod.stat, mod.value),
+  }));
+
+  const augmentDef = isPrototype ? augmentById(equipped.augmentId) : undefined;
+  const augmentLevel = clampAugmentLevel(equipped.augmentLevel);
+  const augment = augmentDef
+    ? {
+        name: augmentDef.name,
+        level: augmentLevel,
+        value: augmentDef.valueAtLevel(augmentLevel),
+        effectLabel: augmentDef.effectLabel,
+        description: augmentDef.description,
+      }
+    : null;
+
+  return {
+    empty: false,
+    slot,
+    slotLabel,
+    name: def.name,
+    quality: def.quality,
+    qualityLabel: WEAPON_QUALITY_LABELS[def.quality],
+    qualityColor: weaponDisplayColor(def.quality, isPrototype),
+    typeLabel: WEAPON_TYPE_LABELS[def.type],
+    rpm: def.rpm,
+    mag: def.mag,
+    prototype: isPrototype,
+    expertise: equipped.expertise,
+    augment,
+    extraStats,
+    mods,
+    talent: { name: def.talent, description: def.talentDesc },
+    assumedNote: def.assumedNote,
   };
 }

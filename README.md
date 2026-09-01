@@ -60,7 +60,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
 - Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
 - Named unique talents and special attributes stay locked; bonus cores shown as locked extras
-- Weapons listed by type then name in optgroups
+- Weapons as tooltip-style tiles (named & exotic first): hover tooltip with talent, RPM, mag, mods
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
 - Armor model: flat piece armor + blue cores + Total Armor %
