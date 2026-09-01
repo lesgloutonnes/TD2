@@ -3,6 +3,7 @@ import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPieceProtot
 import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
 import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
+import { ALL_TALENTS, talentByName, talentsForSlot } from "./data/talents";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
@@ -292,6 +293,14 @@ function testLockedBrandAndExoticCores() {
   assert(createPiece("holster", "waveform").core === "yellow", "Waveform skill tier");
   assert(createPiece("gloves", "btsu-datagloves").core === "yellow", "BTSU skill tier");
   assert(createPiece("chest", "tardigrade").core === "blue", "Tardigrade armor");
+  assert(createPiece("kneepads", "sawyers-kneepads").core === "blue", "Sawyer's armor core");
+  assert(
+    createPiece("kneepads", "sawyers-kneepads", "red").core === "blue",
+    "Sawyer's exotic core stays locked",
+  );
+  const sawyersPicker = catalogForSlot("kneepads").find((item) => item.id === "sawyers-kneepads");
+  assert(sawyersPicker?.lockedCore === "blue", "Sawyer's locked blue in picker");
+  assert(sawyersPicker?.kind === "exotic", "Sawyer's listed as exotic");
 
   const waveformPicker = catalogForSlot("holster").find((item) => item.id === "waveform");
   assert(waveformPicker?.lockedCore === "yellow", "Waveform locked yellow in picker");
@@ -383,8 +392,74 @@ function testCatalogCoverage() {
     "the-setup",
     "bober",
     "visionario",
+    "sawyers-kneepads",
+    "chill-out",
   ]) {
     assert(catalogById(required), `catalogue manque ${required}`);
+  }
+
+  const sawyers = catalogById("sawyers-kneepads");
+  assert(sawyers?.kind === "exotic", "Sawyer's Kneepads est un exotique");
+  assert(!sawyers?.brandId, "Sawyer's n'est pas une marque Gila");
+  assert(sawyers?.uniqueTalent?.name === "Stand Your Ground", "Sawyer's Stand Your Ground");
+  assert(sawyers?.slots !== "all" && sawyers?.slots.includes("kneepads"), "Sawyer's genouillères");
+
+  const liquid = catalogById("liquid-engineer");
+  assert(
+    liquid?.uniqueTalent?.description.includes("adds and refreshes a stack of +12% bonus armor"),
+    "Perfect Bloodsucker stacking description",
+  );
+}
+
+function testLiveTalentLibrary() {
+  const names = ALL_TALENTS.map((talent) => talent.name);
+  assert(new Set(names).size === names.length, "talent names unique");
+  const ids = ALL_TALENTS.map((talent) => talent.id);
+  assert(new Set(ids).size === ids.length, "talent ids unique");
+
+  const chest = talentsForSlot("chest").filter((talent) => !talent.perfect).map((t) => t.id);
+  const pack = talentsForSlot("backpack").filter((talent) => !talent.perfect).map((t) => t.id);
+  assert(chest.includes("overwatch") && !pack.includes("overwatch"), "Overwatch is a chest talent");
+  assert(pack.includes("wicked") && !chest.includes("wicked"), "Wicked is a backpack talent");
+  assert(pack.includes("protector") && !chest.includes("protector"), "Protector is a backpack talent");
+  assert(chest.includes("tag-team") && !pack.includes("tag-team"), "Tag Team is a chest talent");
+
+  const intimidate = talentByName("Perfect Intimidate");
+  assert(intimidate.description.includes("gain 3 stacks each second"), "Intimidate stacking");
+  assert(intimidate.description.includes("max 10"), "Perfect Intimidate 10 stacks");
+
+  const headhunter = talentByName("Perfect Headhunter");
+  assert(headhunter.description.includes("killing an enemy with a headshot"), "Headhunter on kill");
+  assert(headhunter.description.includes("150%"), "Perfect Headhunter 150%");
+
+  const combined = talentByName("Perfect Combined Arms");
+  assert(combined.description.includes("total skill damage by 30%"), "Combined Arms is skill damage");
+
+  const safeguard = talentByName("Perfect Safeguard");
+  assert(safeguard.description.includes("While at full armor"), "Safeguard full armor");
+  assert(safeguard.description.includes("160%"), "Perfect Safeguard 160% repair");
+
+  const focus = talentByName("Perfect Focus");
+  assert(focus.description.includes("scoped 8×"), "Focus requires 8x scope");
+
+  const vanguard = talentByName("Perfect Vanguard");
+  assert(vanguard.description.includes("makes it invulnerable"), "Vanguard shields the shield");
+  assert(vanguard.description.includes("Cooldown: 25s"), "Perfect Vanguard 25s CD");
+
+  const skilled = talentByName("Perfect Skilled");
+  assert(skilled.description.includes("30% chance to reset"), "Skilled is a cooldown reset");
+
+  const vigilance = ALL_TALENTS.find((t) => t.id === "perfect-vigilance");
+  assert(vigilance?.assumed?.[0].value === 25, "Perfect Vigilance assumed 25% WD");
+
+  for (const item of NAMED_AND_EXOTICS) {
+    if (item.kind !== "named" || !item.uniqueTalent) continue;
+    const lib = ALL_TALENTS.find((talent) => talent.name === item.uniqueTalent!.name);
+    if (!lib) continue;
+    assert(
+      item.uniqueTalent.description === lib.description,
+      `${item.name} unique talent text must match ${lib.name}`,
+    );
   }
 }
 
@@ -977,6 +1052,14 @@ function testGearModSlots() {
   assert(mask.mods.length === 1, `standard mask 1 mod, got ${mask.mods.length}`);
   assert(gloves.mods.length === 0, `gloves no mod, got ${gloves.mods.length}`);
   assert(chill.mods.length === 2, `Chill Out 2 mods, got ${chill.mods.length}`);
+  assert(chill.core === "blue", `Chill Out native blue, got ${chill.core}`);
+  assert(!chill.extraCores?.length, "Chill Out has no bonus core");
+  assert(chill.attributes.length === 1, `Chill Out 1 secondary attr, got ${chill.attributes.length}`);
+  const chillSource = catalogById("chill-out");
+  assert(!chillSource?.extraStats?.length, "Chill Out secondary is not a locked extra");
+  assert(createPiece("mask", "chill-out", "red").core === "red", "Chill Out core is not locked");
+  const chillPicker = catalogForSlot("mask").find((item) => item.id === "chill-out");
+  assert(chillPicker?.lockedCore === undefined, "Chill Out not locked in picker");
 
   chill.mods[0] = { stat: "chc", value: 6 };
   chill.mods[1] = { stat: "chd", value: 12 };
@@ -988,6 +1071,8 @@ function testGearModSlots() {
   assert(stats.values.chc === 6, `chill mod CHC, got ${stats.values.chc}`);
   assert(stats.values.chd === 12, `chill mod CHD, got ${stats.values.chd}`);
   assert(stats.values.hazardProtection === 10, `chill attr hazard, got ${stats.values.hazardProtection}`);
+  assert(stats.cores.blue === 1, `Chill Out one blue core, got ${stats.cores.blue}`);
+  assert(stats.cores.yellow === 0, `Chill Out no yellow core, got ${stats.cores.yellow}`);
 }
 
 function testAttributePoolNoAoK() {
@@ -1055,6 +1140,7 @@ const tests = [
   testPicaroExtraCore,
   testLockedBrandAndExoticCores,
   testCatalogCoverage,
+  testLiveTalentLibrary,
   testWeaponCatalog,
   testUniqueTalentNote,
   testSlotCoreColors,

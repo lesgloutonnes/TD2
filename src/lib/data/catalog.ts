@@ -2,11 +2,13 @@ import type { CatalogItem } from "../types";
 import { BRANDS } from "./brands";
 import { GEAR_SETS, gearSetCore } from "./gear-sets";
 import { lockedCoreFor } from "./core-lock";
+import { talentByName } from "./talents";
 
 /**
  * Named and exotic gear (Y8S3 live).
  * Organized brand by brand, then exotics by slot.
  * Base: community sheet (up to date as of March 22, 2026) + later Y8S2/Y8S3 pieces.
+ * Named Perfect talent text is sourced from the live PvE talent library (`talents.ts`).
  * Meme seasonal items (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…) intentionally omitted.
  */
 export const NAMED_AND_EXOTICS: CatalogItem[] = [
@@ -17,10 +19,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "providence",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Vigilance",
-      description: "+25% total weapon damage. Taking damage disables the buff for 3s.",
-    },
+    uniqueTalent: talentByName("Perfect Vigilance"),
     talentSlot: "backpack",
   },
   {
@@ -29,10 +28,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "providence",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Glass Cannon",
-      description: "Damage dealt +30%. Damage taken +60%.",
-    },
+    uniqueTalent: talentByName("Perfect Glass Cannon"),
     talentSlot: "chest",
   },
 
@@ -43,11 +39,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "ceska",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Clutch",
-      description:
-        "Armor destroyed: critical hits repair 3.5% armor and shots repair 0.6% health for 5s. Cooldown 15s.",
-    },
+    uniqueTalent: talentByName("Perfect Clutch"),
     talentSlot: "backpack",
   },
   {
@@ -72,11 +64,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "grupo",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Spark",
-      description:
-        "Destroying an enemy skill: +30% total weapon and skill damage for 20s.",
-    },
+    uniqueTalent: talentByName("Perfect Spark"),
     talentSlot: "chest",
   },
 
@@ -87,11 +75,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "walker",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Headhunter",
-      description:
-        "After a headshot, the next headshot within 5s is amplified (150% of the first shot's damage, capped).",
-    },
+    uniqueTalent: talentByName("Perfect Headhunter"),
     talentSlot: "chest",
   },
   {
@@ -100,11 +84,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "walker",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Adrenaline Rush",
-      description:
-        "Killing within 8m: 25% bonus armor (max 50%). Lasts 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Adrenaline Rush"),
     talentSlot: "backpack",
   },
 
@@ -115,11 +95,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "fenris",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Overwatch",
-      description:
-        "Staying in cover for 5s: +15% total weapon and skill damage for you and allies (15s).",
-    },
+    uniqueTalent: talentByName("Perfect Overwatch"),
     talentSlot: "chest",
   },
 
@@ -139,10 +115,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "petrov",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Braced",
-      description: "While in cover: +50% weapon handling.",
-    },
+    uniqueTalent: talentByName("Perfect Braced"),
     talentSlot: "chest",
     note: "Gunner specialization research.",
   },
@@ -177,11 +150,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "airaldi",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Focus",
-      description:
-        "Staying still: +1.2% total weapon damage per second, up to 12%. Moving resets it.",
-    },
+    uniqueTalent: talentByName("Perfect Focus"),
     talentSlot: "chest",
   },
   {
@@ -191,11 +160,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "airaldi",
     slots: ["backpack"],
     extraCores: ["blue"],
-    uniqueTalent: {
-      name: "Perfect Concussion",
-      description:
-        "Headshot: +20% total weapon damage for 1.5s (5s with a sniper rifle). Headshot kill: +15% for 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Concussion"),
     talentSlot: "backpack",
   },
 
@@ -206,11 +171,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "badger",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Unbreakable",
-      description:
-        "When armor is destroyed, repairs 100% of armor. Cooldown 60s. Free armor kit for 7s.",
-    },
+    uniqueTalent: talentByName("Perfect Unbreakable"),
     talentSlot: "chest",
   },
   {
@@ -241,11 +202,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "gila",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Vanguard",
-      description:
-        "Deploying a shield: invulnerable for 7s and grants allies 60% of your armor as bonus armor (20s). Cooldown 60s.",
-    },
+    uniqueTalent: talentByName("Perfect Vanguard"),
     talentSlot: "chest",
   },
   {
@@ -259,25 +216,16 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     note: "Gila mask: 100% Scanner Pulse Haste (approximated as Skill Haste) + yellow core.",
   },
   {
-    id: "sawyers-kneepads",
-    name: "Sawyer's Kneepads",
-    kind: "named",
-    brandId: "gila",
-    slots: ["kneepads"],
-    extraStats: [{ stat: "armorRegenPercent", value: 1 }],
-    extraCores: ["red"],
-    note: "Gila kneepads: extra armor regen + red core.",
-  },
-  {
     id: "chill-out",
     name: "Chill Out",
     kind: "named",
     brandId: "gila",
     slots: ["mask"],
-    extraStats: [{ stat: "skillHaste", value: 10 }],
-    extraCores: ["yellow"],
+    lockedCore: "blue",
+    coreLocked: false,
+    attributeSlots: 1,
     modSlots: 2,
-    note: "Gila seasonal mask: 2 gear mod slots + yellow core.",
+    note: "Gila seasonal mask: native blue Armor core (recalibratable), one random secondary attribute (not locked), 2 gear mod slots.",
   },
 
   // --- Belstone Armory ---
@@ -287,11 +235,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "belstone",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Efficient",
-      description:
-        "Using an armor kit out of combat doesn't consume it. In combat, +30% kit repair.",
-    },
+    uniqueTalent: talentByName("Perfect Efficient"),
     talentSlot: "chest",
   },
   {
@@ -300,10 +244,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "belstone",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Bloodsucker",
-      description: "Killing: 12% bonus armor per nearby enemy, up to 60%. Lasts 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Bloodsucker"),
     talentSlot: "backpack",
   },
 
@@ -325,11 +266,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "511",
     slots: ["backpack"],
     extraCores: ["yellow"],
-    uniqueTalent: {
-      name: "Perfect Protector",
-      description:
-        "When the shield takes damage: +25% bonus armor, and allies gain 35% of your armor as bonus armor for 3s. Cooldown 3s.",
-    },
+    uniqueTalent: talentByName("Perfect Protector"),
     talentSlot: "backpack",
   },
 
@@ -340,11 +277,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "golan",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Intimidate",
-      description:
-        "Within 8m, +40% total weapon damage if you have bonus armor.",
-    },
+    uniqueTalent: talentByName("Perfect Intimidate"),
     talentSlot: "chest",
   },
   {
@@ -353,10 +286,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "golan",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Wicked",
-      description: "Applying a status effect: +21% total weapon damage for 20s.",
-    },
+    uniqueTalent: talentByName("Perfect Wicked"),
     talentSlot: "backpack",
   },
 
@@ -367,11 +297,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "empress",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Skilled",
-      description:
-        "Killing with a skill: +25% Skill Damage for 15s. Stacks up to 3.",
-    },
+    uniqueTalent: talentByName("Perfect Skilled"),
     talentSlot: "chest",
   },
   {
@@ -380,11 +306,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "empress",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Calculated",
-      description:
-        "Killing with a skill: reduces all active cooldowns by 20%.",
-    },
+    uniqueTalent: talentByName("Perfect Calculated"),
     talentSlot: "backpack",
   },
 
@@ -405,11 +327,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "wyvern",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Kinetic Momentum",
-      description:
-        "In combat, each active skill (or off cooldown) generates stacks: +1.5% Skill Damage and +2% repair per stack, 18 max per skill.",
-    },
+    uniqueTalent: talentByName("Perfect Kinetic Momentum"),
     talentSlot: "chest",
   },
 
@@ -420,11 +338,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "alps",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Tech Support",
-      description:
-        "Killing with a skill: +30% skill damage/repair for 15s.",
-    },
+    uniqueTalent: talentByName("Perfect Tech Support"),
     talentSlot: "backpack",
   },
   {
@@ -444,11 +358,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "china-light",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Shock and Awe",
-      description:
-        "Killing with a skill: pulses enemies within 20m for 8s. Cooldown 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Shock and Awe"),
     talentSlot: "backpack",
   },
 
@@ -468,11 +378,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "brazos",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Overclock",
-      description:
-        "Allies within 15m of a deployed skill: +30% reload speed and −0.6s active cooldowns per second.",
-    },
+    uniqueTalent: talentByName("Perfect Overclock"),
     talentSlot: "backpack",
   },
 
@@ -483,10 +389,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "hana-u",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Combined Arms",
-      description: "Using a skill: +30% total weapon damage for 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Combined Arms"),
     talentSlot: "backpack",
   },
 
@@ -509,11 +412,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "richter",
     slots: ["chest"],
     extraCores: ["red"],
-    uniqueTalent: {
-      name: "Tag Team",
-      description:
-        "The last enemy damaged by a skill is marked. Weapon damage on that target: -12s active cooldowns. Cooldown 4s.",
-    },
+    uniqueTalent: talentByName("Tag Team"),
     talentSlot: "chest",
   },
   {
@@ -533,11 +432,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "electrique",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Companion",
-      description:
-        "Ally or skill within 5m: +20% total weapon damage.",
-    },
+    uniqueTalent: talentByName("Perfect Companion"),
     talentSlot: "chest",
   },
   {
@@ -546,11 +441,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "electrique",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Galvanize",
-      description:
-        "Applying a status effect: allies within 20m gain 50% bonus armor for 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Galvanize"),
     talentSlot: "backpack",
   },
 
@@ -561,10 +452,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "habsburg",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Trauma",
-      description: "Headshot: applies bleed to enemies within 10m. Cooldown 12s.",
-    },
+    uniqueTalent: talentByName("Perfect Trauma"),
     talentSlot: "chest",
   },
   {
@@ -573,10 +461,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "habsburg",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Creeping Death",
-      description: "Applying a status effect: spreads to enemies within 12m. Cooldown 12s.",
-    },
+    uniqueTalent: talentByName("Perfect Creeping Death"),
     talentSlot: "backpack",
   },
 
@@ -587,11 +472,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "lengmo",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfectly Unstoppable Force",
-      description:
-        "Killing: +7% total weapon damage for 15s, 5 stacks. A grenade kill grants 2 stacks.",
-    },
+    uniqueTalent: talentByName("Perfectly Unstoppable Force"),
     talentSlot: "backpack",
   },
   {
@@ -600,11 +481,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "lengmo",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfectly Mad Bomber",
-      description:
-        "Grenade radius +75%. Grenade kills are refunded. Grenades can be cooked. +15% bonus armor while aiming a grenade.",
-    },
+    uniqueTalent: talentByName("Perfectly Mad Bomber"),
     talentSlot: "chest",
   },
 
@@ -615,11 +492,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "legatus",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Versatile",
-      description:
-        "Swapping weapons (different types): +45% total damage within 15m (shotgun/SMG), +45% beyond 25m (rifle/MMR), +20% between 15 and 25m (LMG/AR). 10s, once every 5s per type.",
-    },
+    uniqueTalent: talentByName("Perfect Versatile"),
     talentSlot: "backpack",
   },
   {
@@ -640,10 +513,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "imminence",
     slots: ["chest"],
     extraCores: ["blue"],
-    uniqueTalent: {
-      name: "Perfect Reassigned",
-      description: "Killing an enemy: 1 random special round loaded into the pistol. Cooldown 8s.",
-    },
+    uniqueTalent: talentByName("Perfect Reassigned"),
     talentSlot: "chest",
   },
   {
@@ -652,11 +522,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "imminence",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Leadership",
-      description:
-        "Cover-to-cover movement: 20% of your armor as bonus armor for you and allies (10s). Tripled if you end up within 10m of an enemy. Cooldown 10s.",
-    },
+    uniqueTalent: talentByName("Perfect Leadership"),
     talentSlot: "backpack",
   },
   {
@@ -676,11 +542,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "urban-lookout",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Protected Reload",
-      description:
-        "While reloading: +40% bonus armor. Allies reloading: 0–30% of your armor as bonus armor (depending on blue cores).",
-    },
+    uniqueTalent: talentByName("Perfect Protected Reload"),
     talentSlot: "chest",
   },
   {
@@ -700,11 +562,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "unit-alloys",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Obliterate",
-      description:
-        "Critical hits increase total weapon damage by 1% for 5s. 30 stacks max.",
-    },
+    uniqueTalent: talentByName("Perfect Obliterate"),
     talentSlot: "chest",
   },
   {
@@ -724,11 +582,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "royal-works",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Gunslinger",
-      description:
-        "Swapping weapons: +25% total weapon damage for 8s. Cooldown 8s.",
-    },
+    uniqueTalent: talentByName("Perfect Gunslinger"),
     talentSlot: "chest",
   },
   {
@@ -737,10 +591,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "royal-works",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Composure",
-      description: "While in cover: +20% total weapon damage.",
-    },
+    uniqueTalent: talentByName("Perfect Composure"),
     talentSlot: "backpack",
   },
 
@@ -751,11 +602,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "edelweiss",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Empathic Resolve",
-      description:
-        "Repairing an ally: grants them +3% to +20% total weapon and skill damage for 10s (depending on skill tier).",
-    },
+    uniqueTalent: talentByName("Perfect Empathic Resolve"),
     talentSlot: "chest",
   },
   {
@@ -764,10 +611,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "edelweiss",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Safeguard",
-      description: "Repairing an ally: +30% healing received for 5s.",
-    },
+    uniqueTalent: talentByName("Perfect Safeguard"),
     talentSlot: "backpack",
   },
 
@@ -778,11 +622,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "uzina",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfectly Opportunistic",
-      description:
-        "Hitting an enemy with a shotgun or sniper rifle: they take +15% damage from all sources for 5s.",
-    },
+    uniqueTalent: talentByName("Perfectly Opportunistic"),
     talentSlot: "backpack",
   },
   {
@@ -791,10 +631,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "uzina",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Spotter",
-      description: "+20% total weapon and skill damage vs pulsed targets.",
-    },
+    uniqueTalent: talentByName("Perfect Spotter"),
     talentSlot: "chest",
   },
 
@@ -805,11 +642,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "palisade",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfectly Tamper Proof",
-      description:
-        "Enemies within 3m of a hive, turret, remote pulse, or decoy: shocked. 2s arming time, 8s cooldown per skill.",
-    },
+    uniqueTalent: talentByName("Perfectly Tamper Proof"),
     talentSlot: "backpack",
   },
   {
@@ -818,11 +651,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "palisade",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfectly Explosive Delivery",
-      description:
-        "Throwing a skill: explodes 1.5s after landing (5m radius), then every 5s. Damage depends on skill tier. Once per skill.",
-    },
+    uniqueTalent: talentByName("Perfectly Explosive Delivery"),
     talentSlot: "chest",
   },
 
@@ -833,11 +662,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "zwiadowka",
     slots: ["chest"],
-    uniqueTalent: {
-      name: "Perfect Entrench",
-      description:
-        "Below 30% armor, a headshot from cover repairs 30% armor. Cooldown 2s.",
-    },
+    uniqueTalent: talentByName("Perfect Entrench"),
     talentSlot: "chest",
   },
   {
@@ -857,11 +682,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "shiny-monkey",
     slots: ["backpack"],
-    uniqueTalent: {
-      name: "Perfect Energize",
-      description:
-        "Using an armor kit: +1 skill tier for 15s. Already at tier 6: overcharge. Cooldown 30s.",
-    },
+    uniqueTalent: talentByName("Perfect Energize"),
     talentSlot: "backpack",
   },
   {
@@ -1208,6 +1029,19 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
   },
 
   // ========== Exotics — kneepads ==========
+  {
+    id: "sawyers-kneepads",
+    name: "Sawyer's Kneepads",
+    kind: "exotic",
+    lockedCore: "blue",
+    slots: ["kneepads"],
+    uniqueTalent: {
+      name: "Stand Your Ground",
+      description:
+        "Cannot be staggered by explosions. Gain a stack every second you are not moving, each granting +3% total weapon damage (10 stacks max). Stop gaining stacks when moving; all stacks are lost 10s after moving.",
+    },
+    note: "Exotic kneepads (Odessa Sawyer) — not a Gila Guard named piece. Armor core is locked.",
+  },
   {
     id: "nurses-kneepads",
     name: "Nurse's Kneepads",

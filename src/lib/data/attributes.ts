@@ -247,6 +247,25 @@ export function gearModCount(
   return hasGearMod(slot) ? 1 : 0;
 }
 
+/** Secondary attribute rolls (Chill Out = 1; gear sets = 1). */
+export function gearAttributeCount(source?: {
+  attributeSlots?: number;
+  kind?: ItemKind;
+} | null): number {
+  if (source?.attributeSlots != null) return Math.max(0, source.attributeSlots);
+  if (source?.kind === "gear-set") return 1;
+  return 2;
+}
+
+/** Default secondary attributes for a newly equipped / re-cored piece. */
+export function defaultPieceAttributes(
+  core: CoreType,
+  source?: { attributeSlots?: number; kind?: ItemKind } | null,
+): StatBonus[] {
+  if (source?.kind === "gear-set") return [gearSetAttribute(core)];
+  return defaultAttributes(core).slice(0, gearAttributeCount(source));
+}
+
 export function defaultMods(count: number, core: CoreType): StatBonus[] {
   return Array.from({ length: count }, () => defaultMod(core));
 }

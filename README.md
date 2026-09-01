@@ -45,10 +45,10 @@ Open [http://localhost:3000](http://localhost:3000).
 - Prototype purple tint on gear/weapons (reverts to gold / set green when off)
 - Prototype + Augment on non-exotic weapons (primary Augment stacks with gear)
 - Per-piece / per-weapon expertise
-- Gear mod slots on mask / chest / backpack (Chill Out: 2 mods); gloves / holster / kneepads have none
+- Gear mod slots on mask / chest / backpack (Chill Out: 2 mods + 1 random secondary attribute); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
 - Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
-- Brand / named / gear-set cores recalibratable; most exotic cores locked (Investor flexible; Memento 3-core package locked)
+- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
 - Named unique talents and special attributes stay locked; bonus cores shown as locked extras
 - Weapons listed by type then name in optgroups
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
