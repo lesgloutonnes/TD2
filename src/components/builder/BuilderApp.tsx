@@ -42,6 +42,7 @@ import {
 import {
   defaultSkillMods,
   sanitizeSkillMods,
+  skillModOptionLabel,
   skillModSlotsFor,
   skillModOptionById,
   weaponsByType,
@@ -228,8 +229,8 @@ export function BuilderApp() {
           skillId,
           mods:
             prev?.skillId === skillId && prev.mods?.length
-              ? sanitizeSkillMods(skillId, prev.mods)
-              : defaultSkillMods(skillId),
+              ? sanitizeSkillMods(skillId, prev.mods, current.specialization)
+              : defaultSkillMods(skillId, current.specialization),
         };
       }
       return { ...current, skills };
@@ -240,7 +241,11 @@ export function BuilderApp() {
     setLoadout((current) => {
       const equipped = current.skills[index];
       if (!equipped) return current;
-      const mods = sanitizeSkillMods(equipped.skillId, equipped.mods);
+      const mods = sanitizeSkillMods(
+        equipped.skillId,
+        equipped.mods,
+        current.specialization,
+      );
       mods[modIndex] = modId;
       const skills: [EquippedSkill | null, EquippedSkill | null] = [
         current.skills[0],
@@ -480,6 +485,7 @@ export function BuilderApp() {
               label="Skill 1"
               index={0}
               value={loadout.skills[0]}
+              specialization={loadout.specialization}
               onChange={setSkill}
               onModChange={setSkillMod}
             />
@@ -487,6 +493,7 @@ export function BuilderApp() {
               label="Skill 2"
               index={1}
               value={loadout.skills[1]}
+              specialization={loadout.specialization}
               onChange={setSkill}
               onModChange={setSkillMod}
             />
@@ -760,18 +767,21 @@ function SkillSelect({
   label,
   index,
   value,
+  specialization,
   onChange,
   onModChange,
 }: {
   label: string;
   index: 0 | 1;
   value: EquippedSkill | null;
+  specialization: string | null;
   onChange: (index: 0 | 1, skillId: string) => void;
   onModChange: (index: 0 | 1, modIndex: number, modId: string) => void;
 }) {
   const selected = SKILLS.find((skill) => skill.id === value?.skillId);
-  const slots = selected ? skillModSlotsFor(selected.id) : [];
-  const mods = selected && value ? sanitizeSkillMods(selected.id, value.mods) : [];
+  const slots = selected ? skillModSlotsFor(selected.id, specialization) : [];
+  const mods =
+    selected && value ? sanitizeSkillMods(selected.id, value.mods, specialization) : [];
   const categories = [...new Set(SKILLS.map((skill) => skill.category))];
   return (
     <div className="field weapon-field">
@@ -796,30 +806,38 @@ function SkillSelect({
       {selected ? (
         <>
           <small className="hint">{selected.description}</small>
-          <div className="weapon-mods">
+          <div className="weapon-mods skill-mod-grid">
             <p className="eyebrow">Skill mods</p>
             <small className="hint">
-              Attachments for this skill (ammo, skill health, payload…) — not gear attribute rolls.
+              Live Gear 2.0 slots for this variant, max rolls. They only change this skill
+              — not gear Skill Damage / Haste. Extra ammo and charges are +1 per slot; Skill
+              Tier is the main scaler.
             </small>
             {slots.map((slot, modIndex) => {
-              const selectedMod = skillModOptionById(selected.id, mods[modIndex]);
+              const selectedMod = skillModOptionById(
+                selected.id,
+                mods[modIndex],
+                specialization,
+              );
               return (
                 <div key={slot.id} className="weapon-mod-row">
                   <label className="field">
                     <span>{slot.label}</span>
                     <select
-                      value={mods[modIndex] ?? ""}
+                      value={mods[modIndex] ?? "none"}
                       onChange={(event) => onModChange(index, modIndex, event.target.value)}
                     >
                       {slot.options.map((option) => (
                         <option key={option.id} value={option.id}>
-                          {option.name}
+                          {skillModOptionLabel(option)}
                         </option>
                       ))}
                     </select>
                   </label>
                   <small className="hint skill-mod-effect">
-                    {selectedMod?.effect ?? ""}
+                    {selectedMod?.id === "none"
+                      ? selectedMod.effect
+                      : `${selectedMod?.effect ?? ""} · this skill only`}
                   </small>
                 </div>
               );

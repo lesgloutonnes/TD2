@@ -20,10 +20,16 @@ import {
   SLOTS,
 } from "./data/attributes";
 import { clampAugmentLevel, defaultAugmentId } from "./data/augments";
-import { resolveCore } from "./data/core-lock";
+import { resolveCore, packageExtraCores } from "./data/core-lock";
 import { BRANDS } from "./data/brands";
 
-export { isCoreLocked, lockedCoreFor, nativeCoreFor, coreLockHint } from "./data/core-lock";
+export {
+  isCoreLocked,
+  lockedCoreFor,
+  nativeCoreFor,
+  coreLockHint,
+  packageExtraCores,
+} from "./data/core-lock";
 
 export function createPiece(slot: Slot, sourceId: string, core?: CoreType): GearPiece {
   const source = catalogById(sourceId);
@@ -97,15 +103,10 @@ export function setWeaponPrototype(
 function extraCoresFor(
   slot: Slot,
   source: CatalogItem | undefined,
-  primary: CoreType,
+  _primary: CoreType,
 ): CoreType[] {
-  let extras: CoreType[] = [];
-  if (source?.extraCores) extras = [...source.extraCores];
-  else if (source?.gearSetId === "core-strength" && slot === "backpack") {
-    extras = ["blue", "yellow"];
-  }
-  // Bonus cores only — never duplicate the primary core.
-  return extras.filter((core) => core !== primary);
+  // Keep extras even if they match the primary (Picaro's can be double red).
+  return packageExtraCores(slot, source);
 }
 
 function defaultTalent(slot: Slot, source: CatalogItem | undefined): string | undefined {

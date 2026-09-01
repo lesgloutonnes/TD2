@@ -14,21 +14,11 @@ The optional **build index** in Analysis is only a relative stack comparison (we
 
 ## Run without npm (Windows)
 
-You can double-click **`www/index.html`** with this export: styles and clicks work without Node.
+Double-click **`lancer-builder.bat`**.
 
-**`lancer-builder.bat`** is still the most reliable local option. It opens http://localhost:3000. Leave the black window open while you use the builder, then close it to stop.
-
-If `index.html` looks broken (Times New Roman, huge silhouette, buttons that do nothing), the browser opened it as `file://` against an **old** export whose files still point at `/_next/...`. Use this repo’s current `www/` folder, or run `lancer-builder.bat`.
+That opens http://localhost:3000 in the browser. No Node/npm install: Windows PowerShell serves the site already built in `www/`. Leave the black window open while you use the builder, then close it to stop.
 
 If the browser shows an **HTTP 500**, update `lancer-builder.ps1` (the first server crashed while sending files). Rerun the `.bat` and look for `ERREUR` lines in the black window.
-
-## Upload via FTP (no Node on the host)
-
-The live site is already HTML + CSS + JS. Node is only needed on a PC when you change the source and rebuild.
-
-Upload the **contents** of `www/` (including the `_next` folder, `index.html`, `404.html`, favicon). PHP/SQL are not used.
-
-Save stays in the browser (`localStorage`). Share copies the build into the URL (`#b=...`).
 
 If Windows blocks the script: right-click `lancer-builder.ps1` → Properties → Unblock, or:
 
@@ -57,9 +47,9 @@ Open [http://localhost:3000](http://localhost:3000).
 - Per-piece / per-weapon expertise
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods + 1 random secondary attribute); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
-- Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
-- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
-- Named unique talents and special attributes stay locked; bonus cores shown as locked extras
+- Skill mods: live Gear 2.0 named slots per variant (max rolls, this skill only). Assault Turret has no Extra Ammo; Chem Launcher is Agitator + Pneumatics (+1 ammo). Skill Tier is the main ammo/charge scaler.
+- Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento and NinjaBike 3-core packages locked; Core Strength backpack 3-core locked; Sawyer's Kneepads blue locked)
+- Named unique talents and special attributes stay locked; the only named extra core is Picaro's Holster (bonus red). Y8S3 named pieces (Melon Baller, Keeper, Rushdown, Trick Shot) have talents only.
 - Weapons listed by type then name in optgroups
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
@@ -69,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
 - Soft assumed notes for common talents / 4pc (planning aid only)
 - Caps: CHC 60%, Skill Tier 6
-- NinjaBike: +1 piece for each brand/set already equipped
+- NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
 - Build index (relative stack compare — **not DPS**)
 - Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
 - Local save and share link

@@ -1,7 +1,7 @@
 import type { CatalogItem } from "../types";
 import { BRANDS } from "./brands";
 import { GEAR_SETS, gearSetCore } from "./gear-sets";
-import { lockedCoreFor } from "./core-lock";
+import { lockedCoreFor, packageExtraCores } from "./core-lock";
 import { talentByName } from "./talents";
 
 /**
@@ -48,13 +48,12 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "ceska",
     slots: ["kneepads"],
-    extraStats: [{ stat: "chd", value: 12 }],
     uniqueTalent: {
       name: "Bewildered",
       description:
         "50% of weapon damage is dealt to another enemy within 30m. If there isn't one, normal damage applies. Does not apply to armor plates.",
     },
-    note: "Česká kneepads (April Fools event, later added to the loot pool). Bewildered talent.",
+    note: "Česká kneepads (April Fools event, later added to the loot pool). Bewildered talent only — no extra CHD core/stat.",
   },
 
   // --- Grupo Sombra ---
@@ -138,9 +137,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "sokolov",
     slots: ["gloves"],
-    extraStats: [{ stat: "statusEffects", value: 10 }],
-    extraCores: ["blue"],
-    note: "Sokolov gloves: +10% extra Status Effects + blue core.",
+    extraStats: [{ stat: "statusEffects", value: 16 }],
+    note: "Sokolov gloves: +16% extra Status Effects (named attribute, not an extra core). Brand core: red, recalibratable.",
   },
 
   // --- Airaldi Holdings ---
@@ -159,9 +157,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "airaldi",
     slots: ["backpack"],
-    extraCores: ["blue"],
     uniqueTalent: talentByName("Perfect Concussion"),
     talentSlot: "backpack",
+    note: "Airaldi backpack (Y8S3). Perfect Concussion only — no extra core.",
   },
 
   // --- Badger Tuff ---
@@ -211,9 +209,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "gila",
     slots: ["mask"],
-    extraStats: [{ stat: "skillHaste", value: 10 }],
-    extraCores: ["yellow"],
-    note: "Gila mask: 100% Scanner Pulse Haste (approximated as Skill Haste) + yellow core.",
+    extraStats: [{ stat: "scannerPulseHaste", value: 100 }],
+    note: "Gila mask: +100% Scanner Pulse Haste (pulse only, not global Skill Haste). Brand core: blue, recalibratable. No extra yellow core.",
   },
   {
     id: "chill-out",
@@ -256,8 +253,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "511",
     slots: ["gloves"],
     extraStats: [{ stat: "armorOnKill", value: 10 }],
-    extraCores: ["red"],
-    note: "5.11 gloves: brand blue (Armor) core + bonus red (Weapon Damage) core +10% Armor on Kill.",
+    note: "5.11 gloves: +10% Armor on Kill (named extra). Brand core: blue, recalibratable. No extra red core.",
   },
   {
     id: "keeper",
@@ -265,9 +261,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "511",
     slots: ["backpack"],
-    extraCores: ["yellow"],
     uniqueTalent: talentByName("Perfect Protector"),
     talentSlot: "backpack",
+    note: "5.11 backpack (Y8S3). Perfect Protector only — no extra core.",
   },
 
   // --- Golan Gear ---
@@ -318,8 +314,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "wyvern",
     slots: ["holster"],
     lockedCore: "red",
-    extraStats: [{ stat: "pistolDamage", value: 10 }],
-    note: "Wyvern holster: +10% pistol damage (locked special). Native red core (recalibratable; brand is yellow).",
+    extraStats: [{ stat: "pistolDamage", value: 11 }, { stat: "meleeDamage", value: 500 }],
+    note: "Wyvern holster: +11% pistol damage and +500% melee (named extras). Native red core (recalibratable; brand is yellow).",
   },
   {
     id: "impetus",
@@ -347,8 +343,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "alps",
     slots: ["gloves"],
-    extraStats: [{ stat: "skillHealth", value: 20 }],
-    note: "Alps gloves (Technician specialization research): +20% extra skill health. Brand core: yellow.",
+    extraStats: [{ stat: "skillHealth", value: 25 }],
+    note: "Alps gloves (Technician specialization research): +25% extra skill health. Brand core: yellow.",
   },
 
   // --- China Light Industries ---
@@ -370,7 +366,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     brandId: "brazos",
     slots: ["holster"],
     extraCores: ["red"],
-    note: "Brazos holster: brand yellow core + bonus red core.",
+    note: "Brazos holster: brand yellow core + bonus red Weapon Damage core (15%). Primary is recalibratable; the extra red stays (can be double red).",
   },
   {
     id: "hermano",
@@ -411,9 +407,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "richter",
     slots: ["chest"],
-    extraCores: ["red"],
     uniqueTalent: talentByName("Tag Team"),
     talentSlot: "chest",
+    note: "Richter chest (Y8S3). Tag Team only — no extra core.",
   },
   {
     id: "forge",
@@ -421,8 +417,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "richter",
     slots: ["holster"],
-    extraStats: [{ stat: "skillHealth", value: 20 }],
-    note: "Richter holster: +50% shield health (approximated as skill health). Brand core: yellow.",
+    extraStats: [{ stat: "shieldHealth", value: 50 }],
+    note: "Richter holster: +50% Shield Health (named extra, not a core). Brand core: yellow, recalibratable.",
   },
 
   // --- Electrique ---
@@ -512,9 +508,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "imminence",
     slots: ["chest"],
-    extraCores: ["blue"],
     uniqueTalent: talentByName("Perfect Reassigned"),
     talentSlot: "chest",
+    note: "Imminence chest (Y8S3). Perfect Reassigned only — no extra core.",
   },
   {
     id: "capn",
@@ -718,10 +714,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Depending on distance: Critical Hit Damage (close), Critical Hit Chance (mid), or Headshot Damage (far). Builder average: +8% Critical Hit Chance and +8% Critical Hit Damage.",
     },
-    extraStats: [
+    assumed: [
       { stat: "chc", value: 8 },
       { stat: "chd", value: 8 },
     ],
+    assumedNote: "Pack Instincts averaged across close / mid / far range — not extra cores.",
   },
   {
     id: "vile",
@@ -813,13 +810,16 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     name: "NinjaBike Messenger Bag",
     kind: "exotic",
     lockedCore: "red",
+    coreLocked: true,
     slots: ["backpack"],
+    extraCores: ["blue", "yellow"],
     ninja: true,
     uniqueTalent: {
       name: "Resourceful",
       description:
         "Counts as +1 piece for every brand and set already equipped. Allows activating multiple 2pc / 3pc / 4pc bonuses.",
     },
+    note: "Fixed 3-core package (red + blue + yellow) — not recalibratable.",
   },
   {
     id: "acosta-go-bag",
@@ -901,8 +901,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Hoarder",
       description:
-        "Picking up ammo or kits: stacks of weapon damage and armor. Enemies drop more loot.",
+        "+3 grenade capacity, +50% grenade radius, +35% grenade damage, and +25% grenade damage per extra enemy in the blast. Regenerates grenades every 30s while you have fewer than 2.",
     },
+    note: "Exotic chest. Weapon Damage core is locked. Talent is grenade-focused (not extra cores).",
   },
   {
     id: "provocator",
@@ -936,7 +937,6 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "exotic",
     lockedCore: "yellow",
     slots: ["gloves"],
-    extraStats: [{ stat: "skillHaste", value: 10 }],
     uniqueTalent: {
       name: "Transference",
       description:
@@ -956,32 +956,33 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     },
   },
   {
-    id: "shocker-punch",
-    name: "Shocker Punch",
-    kind: "exotic",
-    lockedCore: "blue",
-    slots: ["gloves"],
-    extraStats: [{ stat: "statusEffects", value: 10 }],
-    uniqueTalent: {
-      name: "Discharge",
-      description: "Melee attacks apply shock. Shocked enemies take more damage.",
-    },
-  },
-  {
     id: "overdogs",
     name: "Overdogs",
     kind: "exotic",
     lockedCore: "red",
     slots: ["gloves"],
-    extraStats: [{ stat: "armorOnKill", value: 10 }],
     uniqueTalent: {
-      name: "Top Dog",
+      name: "Weakest Link",
       description:
-        "CQC kills: armor on kill and stacks of weapon damage. Widely used with Striker / Heartbreaker.",
+        "Amplifies weapon damage by 30% against the lowest-ranking enemy currently in combat (tier hierarchy).",
     },
+    note: "Exotic gloves. Weapon Damage core is locked. CHC/CHD secondaries — no extra Armor on Kill core/stat.",
   },
 
   // ========== Exotics — holsters ==========
+  {
+    id: "shocker-punch",
+    name: "Shocker Punch",
+    kind: "exotic",
+    lockedCore: "blue",
+    slots: ["holster"],
+    uniqueTalent: {
+      name: "Defibrillator",
+      description:
+        "Shock stun on you is reduced by 50%. A shield grants +100% melee damage. Combined with St. Elmo's Engine: extra +100% melee and the next melee applies Shock (5m radius with all three). Cooldown 15s.",
+    },
+    note: "Exotic holster (not gloves). Armor core is locked. Secondaries are Explosive Resistance / Hazard Protection — not extra cores.",
+  },
   {
     id: "waveform",
     name: "Waveform",
@@ -1048,12 +1049,12 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "exotic",
     lockedCore: "yellow",
     slots: ["kneepads"],
-    extraStats: [{ stat: "hazardProtection", value: 10 }],
     uniqueTalent: {
       name: "First Aid Associate",
       description:
         "You and allies within 10m: +40% hazard protection. Core piece for support / Toxic DZ builds.",
     },
+    note: "Exotic kneepads. Skill Tier core is locked. The +40% hazard is the talent, not an extra core/stat on the piece.",
   },
   {
     id: "acosta-kneepads",
@@ -1118,6 +1119,10 @@ export function catalogForSlot(slot: import("../types").Slot): CatalogItem[] {
         const set = GEAR_SETS.find((entry) => entry.id === item.gearSetId);
         if (set) {
           resolved = { ...item, lockedCore: gearSetCore(set, slot) };
+          const extras = packageExtraCores(slot, resolved);
+          if (extras.length) {
+            resolved = { ...resolved, extraCores: extras, coreLocked: true };
+          }
         }
       }
       const locked = lockedCoreFor(slot, resolved);
