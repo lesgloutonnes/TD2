@@ -2394,6 +2394,93 @@ function testGearCatalogLiveHoles() {
   assert(grupo?.bonuses[2]?.some((b) => b.stat === "hsd" && b.value === 39), "Grupo 3pc 39% HSD live");
 }
 
+function testY8S3SkillPveSheetGaps() {
+  const byId = new Map(SKILLS.map((skill) => [skill.id, skill]));
+  const booster = byId.get("booster-hive");
+  assert(booster?.assumed?.some((stat) => stat.stat === "hazardProtection" && stat.value === 5), "Booster assumed hazard");
+  assert(booster?.assumed?.some((stat) => stat.stat === "meleeDamage" && stat.value === 5), "Booster assumed melee");
+  assert(!booster?.assumed?.some((stat) => stat.stat === "weaponDamage"), "Booster Hive is not weapon damage");
+
+  const artificer = byId.get("artificer-hive");
+  assert(artificer?.assumed?.some((stat) => stat.stat === "skillDamage" && stat.value === 10), "Artificer PvE 10% buff");
+  assert(artificer?.assumed?.some((stat) => stat.stat === "skillRepair" && stat.value === 10), "Artificer PvE 10% skill repair");
+  assert(artificer?.description.includes("+10%"), "Artificer description cites live PvE buff");
+
+  const airburst = byId.get("airburst-seeker");
+  assert(airburst?.description.toLowerCase().includes("burn"), "Airburst PvE burn");
+  assert(airburst?.assumed?.some((stat) => stat.stat === "statusEffects"), "Airburst burn as status hint");
+
+  assert(byId.get("explosive-seeker")?.description.toLowerCase().includes("bleed"), "Explosive seeker bleed");
+  assert(byId.get("artillery-turret")?.description.toLowerCase().includes("bleed"), "Artillery bleed");
+  assert(byId.get("jammer-pulse")?.description.toLowerCase().includes("omnidirectional"), "Jammer is radius EMP");
+  assert(byId.get("achilles-pulse")?.description.includes("Skill Tier"), "Achilles zone count scales");
+
+  const jammer = skillModSlotsFor("jammer-pulse");
+  assert(
+    jammer.some((slot) => slot.options.some((option) => option.id === "coil-radius")),
+    "Jammer coil is Radius",
+  );
+  assert(
+    !jammer.some((slot) => slot.options.some((option) => option.id === "coil-cone")),
+    "Jammer is not a cone",
+  );
+  const banshee = skillModSlotsFor("banshee-pulse");
+  assert(
+    banshee.some((slot) => slot.options.some((option) => option.id === "coil-cone")),
+    "Banshee keeps cone size",
+  );
+
+  const artificerMods = skillModSlotsFor("artificer-hive");
+  assert(
+    artificerMods.some((slot) => slot.options.some((option) => option.id === "drones-skill-repair")),
+    "Artificer drones Skill Repair",
+  );
+  assert(
+    artificerMods.some((slot) => slot.options.some((option) => option.id === "launcher-artificer-charges")),
+    "Artificer extra charges",
+  );
+  const reviverMods = skillModSlotsFor("reviver-hive");
+  assert(
+    reviverMods.some((slot) => slot.options.some((option) => option.id === "launcher-reviver-charges")),
+    "Reviver extra charges",
+  );
+
+  const shrapnel = skillModSlotsFor("shrapnel-trap");
+  assert(
+    shrapnel.some((slot) => slot.options.some((option) => option.id === "charge-extra")),
+    "Trap extra traps",
+  );
+  assert(
+    shrapnel.some((slot) => slot.options.some((option) => option.id === "electronic-damage")),
+    "Shrapnel electronic damage",
+  );
+  assert(
+    !shrapnel.some((slot) => slot.options.some((option) => option.id === "electronic-repair")),
+    "Shrapnel does not roll repair",
+  );
+  const repairTrap = skillModSlotsFor("repair-trap");
+  assert(
+    repairTrap.some((slot) => slot.options.some((option) => option.id === "electronic-repair")),
+    "Repair Trap electronic repair",
+  );
+  const shock = skillModSlotsFor("shock-trap");
+  assert(
+    shock.some((slot) => slot.options.some((option) => option.id === "electronic-shock")),
+    "Shock Trap shock duration",
+  );
+
+  const airburstMods = skillModSlotsFor("airburst-seeker");
+  assert(
+    airburstMods.some((slot) => slot.options.some((option) => option.id === "payload-burn")),
+    "Airburst payload burn duration",
+  );
+  const emp = skillModSlotsFor("sticky-emp");
+  assert(
+    emp.some((slot) => slot.options.some((option) => option.id === "payload-emp-radius")),
+    "EMP sticky blast radius",
+  );
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2480,6 +2567,7 @@ const tests = [
   testQuickstep,
   testGearCatalogLiveHoles,
   testY8s3LiveHeTalentPicker,
+  testY8S3SkillPveSheetGaps,
 ];
 
 let failed = 0;

@@ -74,6 +74,9 @@ function slots(defs: Array<[string, string, SkillModOption[]]>): SkillModSlotDef
  * Platform → named slots. Option `skills` / `spec` further restrict the pool.
  * Max rolls: Namu wiki Gear 2.0 / level 40 tables (live Y8S3 PvE).
  * Official Y8S3 skill-change tables are Conflict / PvP Dark Zone only — not applied here.
+ * The same live PDF also lists PvE base/tier lines; used to fill variant-gated attachment holes
+ * (Jammer Radius, Hive Extra Charges for Reviver/Artificer, Trap unique lines, Airburst Burn)
+ * with family-typical Gear 2.0 caps when Namu does not publish a max %.
  * Smart Cover slot names from Namu; max rolls unpublished there, so family-typical Gear 2.0 caps.
  */
 const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
@@ -82,13 +85,13 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
       "coil",
       "Coil",
       [
-        opt("coil-radius", "Radius", "+10% radius", ["scanner-pulse", "remote-pulse"]),
-        opt("coil-cone", "Cone Size", "+7.5% cone size", ["jammer-pulse", "banshee-pulse"]),
+        opt("coil-radius", "Radius", "+10% radius", ["scanner-pulse", "remote-pulse", "jammer-pulse"]),
+        opt("coil-cone", "Cone Size", "+7.5% cone size", ["banshee-pulse"]),
         opt(
           "gunner-directional-transmitter",
           "Directional Transmitter",
           "+15% radius (Gunner unique)",
-          ["scanner-pulse", "remote-pulse", "banshee-pulse"],
+          ["scanner-pulse", "remote-pulse", "jammer-pulse", "banshee-pulse"],
           "gunner",
         ),
       ],
@@ -163,6 +166,7 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
       [
         opt("drones-damage", "Damage", "+5% Damage", ["stinger-hive"]),
         opt("drones-repair", "Repair", "+5% Repair", ["restorer-hive"]),
+        opt("drones-skill-repair", "Skill Repair", "+5% Skill Repair", ["artificer-hive"]),
         opt("drones-revive-armor", "Revive Armor Restore", "+10% armor on revive", [
           "reviver-hive",
         ]),
@@ -177,6 +181,8 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
         opt("launcher-stinger-charges", "Extra Stinger Charges", "+1 charge", ["stinger-hive"]),
         opt("launcher-repair-charges", "Extra Repair Charges", "+1 charge", ["restorer-hive"]),
         opt("launcher-stim-charges", "Extra Stim Charges", "+1 charge", ["booster-hive"]),
+        opt("launcher-reviver-charges", "Extra Charges", "+1 charge", ["reviver-hive"]),
+        opt("launcher-artificer-charges", "Extra Charges", "+1 charge", ["artificer-hive"]),
         opt(
           "tech-sensor-package",
           "Upgrade Sensor Package",
@@ -287,6 +293,7 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
           "explosive-seeker",
           "airburst-seeker",
         ]),
+        opt("payload-burn", "Burn Duration", "+5% burn duration", ["airburst-seeker"]),
         opt("payload-repair", "Repair", "+7.5% Repair", ["mender-seeker"]),
         opt(
           "survivalist-larrea",
@@ -406,17 +413,28 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
         opt("payload-damage", "Damage", "+7.5% Damage", ["sticky-burn", "sticky-explosive"]),
         opt("payload-radius", "Explosion Radius", "+6% explosion radius"),
         opt("payload-burn", "Burn Duration", "+5% burn duration", ["sticky-burn"]),
+        opt("payload-emp-radius", "EMP Blast Radius", "+6% EMP blast radius", ["sticky-emp"]),
       ],
     ],
   ]),
   Trap: slots([
-    ["charge", "Charge", [opt("charge-duration", "Duration", "+5% Duration")]],
+    [
+      "charge",
+      "Charge",
+      [
+        opt("charge-duration", "Duration", "+5% Duration"),
+        opt("charge-extra", "Extra Traps", "+1 trap"),
+      ],
+    ],
     [
       "electronic",
       "Electronic",
       [
         opt("electronic-duration", "Duration", "+7.5% Duration"),
         opt("electronic-radius", "Effect Radius", "+7.5% radius"),
+        opt("electronic-damage", "Damage", "+5% Damage", ["shrapnel-trap"]),
+        opt("electronic-repair", "Repair", "+7.5% Repair", ["repair-trap"]),
+        opt("electronic-shock", "Shock Duration", "+7.5% shock duration", ["shock-trap"]),
       ],
     ],
   ]),
@@ -552,6 +570,7 @@ function preferredDefault(skillId: string, slot: SkillModSlotDef): string {
         "stinger-charges",
         "bombs",
         "extra-target",
+        "extra",
         "damage",
         "burn",
         "health",
