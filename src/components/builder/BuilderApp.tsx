@@ -88,6 +88,7 @@ import { WeaponPickerModal } from "@/components/builder/WeaponPickerModal";
 import { SkillPickerModal } from "@/components/builder/SkillPickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
+import { SeasonPanel } from "@/components/builder/SeasonPanel";
 
 const emptySaved: SavedBuildListItem[] = [];
 
@@ -485,6 +486,7 @@ export function BuilderApp() {
           })}
         </div>
       ) : null}
+      <SeasonPanel loadout={loadout} onChange={setLoadout} />
     </div>
   );
 

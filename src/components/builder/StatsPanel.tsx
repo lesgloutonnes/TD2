@@ -7,6 +7,7 @@ import type { StatKey } from "@/lib/types";
 
 const HIGHLIGHT: StatKey[] = [
   "weaponDamage",
+  "signatureWeaponDamage",
   "chc",
   "chd",
   "hsd",

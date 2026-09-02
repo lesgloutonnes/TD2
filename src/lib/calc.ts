@@ -40,6 +40,7 @@ import {
   resolveHealthFlat,
   resolveShdWatchBonuses,
 } from "./data/attributes";
+import { applySeasonModifiers } from "./data/season-modifiers";
 import {
   clampExpertise,
   coreStrengthConversion,
@@ -103,6 +104,7 @@ const STAT_KEYS: StatKey[] = [
   "scannerPulseHaste",
   "meleeDamage",
   "shieldHealth",
+  "signatureWeaponDamage",
 ];
 
 function emptyValues(): Record<StatKey, number> {
@@ -654,6 +656,8 @@ export function computeStats(loadout: Loadout): ComputedStats {
       });
     }
   }
+
+  applySeasonModifiers(loadout, values, bonuses, notes, includeAssumed);
 
   if (loadout.specialization) {
     const spec = SPECIALIZATIONS.find((item) => item.id === loadout.specialization);
