@@ -1,0 +1,27 @@
+---
+description: Live Y8S3 brand, gear-set, named, and exotic rules
+globs: src/lib/data/brands.ts,src/lib/data/gear-sets.ts,src/lib/data/catalog.ts,src/lib/data/talents.ts,src/lib/data/attributes.ts,src/lib/data/core-lock.ts,src/lib/data/augments.ts
+alwaysApply: false
+---
+
+Named Perfect talent **text** comes from `talents.ts` via `talentByName`. Exception: named talents that are not the HE version (Rushdown Tag Team is **12s**, HE Tag Team is 6s) — write the named text inline.
+
+Source of truth for Y8S3 PvE brands/sets: live PDF https://ubi.li/4Yvr2. PTS PDF https://ubi.li/zdyhH is contrast only.
+
+Do not regress live-vs-PTS:
+
+- Airaldi 2pc HSD **26%** (PTS 13%). Grupo 3pc HSD **39%**.
+- Murakami stays 15% duration / **35%** repair / **18%** skill damage (PTS swap is not live).
+- Ember Engine 4pc **40%** Burn chance, chest Flashpoint **60%**, backpack White Hot +50% duration (PTS was 20/40). `fourStats` may be a Status proxy — never fake burn DPS.
+- Aces Dead Man's Hand **75%**, No Limit **100%**. Hotshot Headache **80%**. Negotiator 10% CHD / 10 stacks. OD Hollow-Point 40%, Parabellum 60%. Tipping Scales 5%/stack, Snowball 5→8. Exuro 10m / Heatstroke 40%.
+- True Patriot 4pc base rotation **2s**; chest Waving the Flag **1s**.
+- Concentrated Company Camaraderie cap is **35 stacks**; All for One is marks 4→8.
+- Brands: no Shock Resistance / Health / Incoming Repairs / Swap Speed. Protection from Elites + Threat live on blue brands.
+- Habsburg / Lengmo stay **red** cores unless Ubisoft says cores changed (the PDF “Blue Core” grouping is not a core swap).
+- Brands absent from the live table (Alps, Providence, Yaahl, Uzina, Brazos, Shiny Monkey, Edelweiss) stay Y8S2.
+- Iron Will: Marksman Rifle (not “sniper”), Resolved 2s PvE / 3s PvP.
+- Loaded for Bear Afterburn is a **reload consume burst**, not standing WD.
+- Prototype Augment curves: Y8S1.3 Ubisoft for Quantum/Amalgam/Anomaly/Synesthesia; Echo unchanged. No official Y8S3 curves — do not invent.
+- Omit meme seasonal named items.
+
+`npm test` after edits. Append-only tests in `calc.test.ts`.
