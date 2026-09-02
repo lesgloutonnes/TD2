@@ -1429,6 +1429,12 @@ function testShdWatchParts() {
   assert(stats.values.chc === 0, "CHC line off");
   assert(stats.values.weaponDamage === 0, "WD line off");
   assert(stats.values.chd === 20, `CHD line still on, got ${stats.values.chd}`);
+
+  loadout.shdWatchParts = { chc: 4, hsd: 10 };
+  const scaled = computeStats(loadout);
+  assert(scaled.values.chc === 4, `CHC scaled, got ${scaled.values.chc}`);
+  assert(scaled.values.hsd === 10, `HSD scaled, got ${scaled.values.hsd}`);
+  assert(scaled.values.chd === 20, "CHD stays max when omitted");
 }
 
 function testSkillExpertiseLocal() {
@@ -1490,7 +1496,7 @@ function testShareNewFields() {
   const decoded = decodeLoadout(encodeLoadout(loadout));
   assert(decoded?.includeAssumed === false, "includeAssumed roundtrip");
   assert(decoded?.activeWeapon === "sidearm", "activeWeapon roundtrip");
-  assert(decoded?.shdWatchParts?.chc === false, "shd parts roundtrip");
+  assert(decoded?.shdWatchParts?.chc === 0, "shd parts roundtrip");
   assert(decoded?.weapons.primary?.talentId === "strained", "HE talent roundtrip");
   assert(decoded?.skills[0]?.expertise === 8, "skill expertise roundtrip");
 }

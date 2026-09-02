@@ -6,7 +6,6 @@ import type {
   EquippedWeapon,
   GearPiece,
   Loadout,
-  ShdWatchPartId,
   Slot,
   StatKey,
   WeaponMod,
@@ -26,7 +25,6 @@ import {
   itemDisplayColor,
   parseStatInput,
   PRIMARY_WEAPON_TYPES,
-  SHD_WATCH_PARTS,
   SLOT_LABELS,
   SLOTS,
   STAT_LABELS,
@@ -89,6 +87,7 @@ import { SkillPickerModal } from "@/components/builder/SkillPickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
 import { SeasonPanel } from "@/components/builder/SeasonPanel";
+import { ShdWatchPanel } from "@/components/builder/ShdWatchPanel";
 
 const emptySaved: SavedBuildListItem[] = [];
 
@@ -434,7 +433,7 @@ export function BuilderApp() {
           ))}
         </select>
       </label>
-      <label className="field checkbox">
+      <label className="field checkbox builder-model-field">
         <input
           type="checkbox"
           checked={loadout.includeAssumed}
@@ -443,49 +442,12 @@ export function BuilderApp() {
         <span>
           Include builder model
           <small className="hint">
-            Talent / 4pc / exotic averages. Hard rolls always apply. Not a DPS sim.
+            Adds averaged talent / 4pc / exotic / season-active bonuses to Analysis. Cores,
+            attributes, mods, brand and set 2–3pc always apply. Not a DPS sim.
           </small>
         </span>
       </label>
-      <label className="field checkbox">
-        <input
-          type="checkbox"
-          checked={loadout.shdWatch}
-          onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
-        />
-        <span>SHD Watch 1000</span>
-      </label>
-      {loadout.shdWatch ? (
-        <div className="shd-parts">
-          {SHD_WATCH_PARTS.map((part) => {
-            const on = loadout.shdWatchParts?.[part.id] !== false;
-            return (
-              <label key={part.id} className="field checkbox">
-                <input
-                  type="checkbox"
-                  checked={on}
-                  onChange={(event) =>
-                    setLoadout({
-                      ...loadout,
-                      shdWatchParts: {
-                        ...loadout.shdWatchParts,
-                        [part.id]: event.target.checked,
-                      } as Partial<Record<ShdWatchPartId, boolean>>,
-                    })
-                  }
-                />
-                <span>
-                  {part.label}
-                  <small className="hint">
-                    {part.bonus.value}
-                    {part.bonus.stat === "skillTier" ? "" : "%"}
-                  </small>
-                </span>
-              </label>
-            );
-          })}
-        </div>
-      ) : null}
+      <ShdWatchPanel loadout={loadout} onChange={setLoadout} />
       <SeasonPanel loadout={loadout} onChange={setLoadout} />
     </div>
   );

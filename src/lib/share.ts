@@ -2,7 +2,7 @@ import type { EquippedSkill, EquippedWeapon, Loadout, WeaponSlot } from "./types
 import { emptyLoadout } from "./calc";
 import { clampExpertise, resolveActiveWeaponSlot } from "./builder-model";
 import { createPiece } from "./piece";
-import { canBePrototype, canWeaponBePrototype, SLOTS } from "./data/attributes";
+import { canBePrototype, canWeaponBePrototype, sanitizeShdWatchParts, SLOTS } from "./data/attributes";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS } from "./data/gear-sets";
 import { WEAPONS } from "./data/weapons";
@@ -170,9 +170,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     };
   }
 
-  const shdWatchParts = parsed.shdWatchParts
-    ? { ...parsed.shdWatchParts }
-    : undefined;
+  const shdWatchParts = sanitizeShdWatchParts(parsed.shdWatchParts);
 
   return {
     name: parsed.name || base.name,

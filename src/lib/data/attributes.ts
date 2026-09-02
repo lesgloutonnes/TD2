@@ -416,12 +416,56 @@ export const SHD_WATCH_PARTS: ShdWatchPart[] = [
 
 export const SHD_WATCH: StatBonus[] = SHD_WATCH_PARTS.map((part) => part.bonus);
 
+export type ShdWatchPartValues = Partial<Record<ShdWatchPartId, number | boolean>>;
+
+export function shdWatchPartMax(id: ShdWatchPartId): number {
+  return SHD_WATCH_PARTS.find((part) => part.id === id)?.bonus.value ?? 0;
+}
+
+/** Applied value for one SHD line: 0–max. Legacy `false` = 0. Omitted / `true` = max. */
+export function shdWatchPartValue(
+  id: ShdWatchPartId,
+  parts?: ShdWatchPartValues,
+): number {
+  const max = shdWatchPartMax(id);
+  const raw = parts?.[id];
+  if (raw === false) return 0;
+  if (raw === true || raw === undefined) return max;
+  if (!Number.isFinite(Number(raw))) return max;
+  return Math.max(0, Math.min(max, Math.round(Number(raw))));
+}
+
+export function sanitizeShdWatchParts(
+  parts?: ShdWatchPartValues | null,
+): Partial<Record<ShdWatchPartId, number>> | undefined {
+  if (!parts) return undefined;
+  const next: Partial<Record<ShdWatchPartId, number>> = {};
+  let stored = 0;
+  for (const part of SHD_WATCH_PARTS) {
+    const value = shdWatchPartValue(part.id, parts);
+    if (value !== part.bonus.value) {
+      next[part.id] = value;
+      stored += 1;
+    }
+  }
+  return stored ? next : undefined;
+}
+
+export function shdWatchIsFull(parts?: ShdWatchPartValues): boolean {
+  return SHD_WATCH_PARTS.every((part) => shdWatchPartValue(part.id, parts) === part.bonus.value);
+}
+
 export function resolveShdWatchBonuses(
   shdWatch: boolean,
-  parts?: Partial<Record<ShdWatchPartId, boolean>>,
+  parts?: ShdWatchPartValues,
 ): StatBonus[] {
   if (!shdWatch) return [];
-  return SHD_WATCH_PARTS.filter((part) => parts?.[part.id] !== false).map((part) => part.bonus);
+  const bonuses: StatBonus[] = [];
+  for (const part of SHD_WATCH_PARTS) {
+    const value = shdWatchPartValue(part.id, parts);
+    if (value > 0) bonuses.push({ stat: part.bonus.stat, value });
+  }
+  return bonuses;
 }
 
 export const CHC_CAP = 60;
