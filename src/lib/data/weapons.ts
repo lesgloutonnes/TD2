@@ -344,7 +344,14 @@ export const WEAPONS: WeaponDef[] = [
     mag: 8,
     talent: "Dragon's Breath",
     talentDesc:
-      "Each shot has a 40% chance to apply Burn. Weapon damage is amplified by 50% of your Status Effects bonus. Mods: +15% Critical Hit Chance, +5 magazine size, +10% weapon handling.",
+      "This weapon fires Dragon's Breath shells. Each shot has a 40% chance of applying Burn. Weapon damage is amplified by 50% of your Status Effects bonus. Burn application is still affected by Status Effect diminishing returns.",
+    extraStats: [
+      { stat: "chc", value: 15 },
+      { stat: "magazineSize", value: 5 },
+      { stat: "weaponHandling", value: 10 },
+    ],
+    assumedNote:
+      "Dragon's Breath amp scales with Status Effects (50% of your SE bonus); 40% Burn chance before diminishing returns. Locked mods are extraStats (+15% CHC / +5 mag / +10% handling).",
   },
   {
     id: "teapot",
@@ -355,7 +362,10 @@ export const WEAPONS: WeaponDef[] = [
     mag: 20,
     talent: "Perfect Boiling Point",
     talentDesc:
-      "The first 48% of the magazine: -100% Critical Hit Chance. The rest: 100% Critical Hit Chance.",
+      "The first 48% of your magazine will have -100% Critical Hit Chance. The rest will have 100%.",
+    assumed: [{ stat: "chc", value: 100 }],
+    assumedNote:
+      "Max Perfect Boiling Point: remaining magazine at 100% Critical Hit Chance (first 48% is -100% CHC).",
   },
   {
     id: "steamer",
@@ -366,7 +376,10 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Perfect Boiling Point",
     talentDesc:
-      "The first 48% of the magazine: -100% Critical Hit Chance. The rest: 100% Critical Hit Chance.",
+      "The first 48% of your magazine will have -100% Critical Hit Chance. The rest will have 100%.",
+    assumed: [{ stat: "chc", value: 100 }],
+    assumedNote:
+      "Max Perfect Boiling Point: remaining magazine at 100% Critical Hit Chance (first 48% is -100% CHC).",
   },
   {
     id: "caduceus",
@@ -1288,7 +1301,10 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 275,
     mag: 20,
     talent: "Perfectly Determined",
-    talentDesc: "Headshot kill: the next shot is a guaranteed critical headshot.",
+    talentDesc:
+      "Killing an enemy with a headshot guarantees that the next shot will be a critical headshot. A kill from that converted shot does not trigger another guaranteed headshot.",
+    assumedNote:
+      "Y8S3: Perfect Determined and Determined share this no-chain rule. Body-to-headshot chaining is Iron Will (exotic chest), not this talent.",
   },
   {
     id: "scalpel",
@@ -1338,7 +1354,10 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 6,
     talent: "Perfectly Determined",
-    talentDesc: "Headshot kill: the next shot is a guaranteed critical headshot.",
+    talentDesc:
+      "Killing an enemy with a headshot guarantees that the next shot will be a critical headshot. A kill from that converted shot does not trigger another guaranteed headshot.",
+    assumedNote:
+      "Y8S3: Perfect Determined and Determined share this no-chain rule. Body-to-headshot chaining is Iron Will (exotic chest), not this talent.",
   },
   {
     id: "sharpshooters-93r",
@@ -1469,8 +1488,29 @@ export const WEAPONS: WeaponDef[] = [
     talent: "Gangland Hit",
     talentDesc:
       "Hits mark a target (+20% amplified damage). Extra marks on the same target add +5% each (4 max in a group). One mark at a time; shooting another enemy transfers it. Year 8 Season 2 Into the Dark Climax.",
+    extraStats: [{ stat: "chc", value: 15 }],
     assumed: [{ stat: "weaponDamage", value: 20 }],
-    assumedNote: "Gangland Hit assumed on a marked target.",
+    assumedNote: "Gangland Hit assumed on a marked target. Locked optic +15% Critical Hit Chance is extraStats.",
+  },
+  {
+    id: "steel-and-sons",
+    name: "Steel & Sons ACR",
+    type: "rifle",
+    quality: "exotic",
+    rpm: 320,
+    mag: 30,
+    talent: "Confirm & Execute",
+    talentDesc:
+      "Body shots add 1 stack to the enemy for 10s. Max stacks: 4. Hitting a different enemy removes all stacks. This weapon deals +4% Amplified Damage per stack. Your next headshot on an enemy with stacks consumes all stacks, dealing +11% Amplified Damage per stack. Destroying an enemy's weakpoint causes them to take +30% Amplified Damage from you for 5s. Broken Rain incursion (ACR SS).",
+    extraStats: [
+      { stat: "chc", value: 15 },
+      { stat: "magazineSize", value: 10 },
+      { stat: "weaponHandling", value: 10 },
+      { stat: "reloadSpeed", value: 10 },
+    ],
+    assumed: [{ stat: "weaponDamage", value: 16 }],
+    assumedNote:
+      "Max Confirm & Execute body-shot stacks: 4 × 4% amplified damage (Y8S3). Headshot consume is +11% amp per stack (44% at 4). Weak-point break: +30% amp for 5s. Locked mods are extraStats. Base stability was increased in Y8S3 (no published amount).",
   },
   {
     id: "lullaby",
@@ -1696,10 +1736,6 @@ const EXOTIC_WEAPON_MODELS: Record<string, { assumed: StatBonus[]; assumedNote: 
   mosquito: {
     assumed: [{ stat: "damageToArmor", value: 12 }, { stat: "threat", value: 10 }],
     assumedNote: "Mosquito Song armor amp + aggro.",
-  },
-  fafnir: {
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Fafnir exotic talent averaged.",
   },
 };
 
