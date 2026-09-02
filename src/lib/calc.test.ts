@@ -11,6 +11,7 @@ import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, i
 import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import {
+  SKILLS,
   sanitizeSpecPerks,
   setSpecPerkFlags,
   specPerkEnabled,
@@ -1842,6 +1843,60 @@ function testExoticAssumedCatalog() {
   assert(pest?.assumed?.length, "Pestilence has maxed bonuses");
 }
 
+function testY8S3LiveSkillCatalog() {
+  const byId = new Map(SKILLS.map((skill) => [skill.id, skill]));
+  assert(byId.has("banshee-pulse"), "Banshee Pulse (Gunner) is live");
+  assert(byId.get("banshee-pulse")?.name === "Banshee Pulse", "Banshee English name");
+  assert(byId.has("achilles-pulse"), "Achilles Pulse is live");
+  assert(byId.has("shrapnel-trap"), "Shrapnel Trap is live");
+  assert(byId.has("precision-smart-cover"), "Precision Smart Cover (Brooklyn) is live");
+  assert(byId.has("fortified-smart-cover"), "Fortified Smart Cover (Brooklyn) is live");
+  assert(!byId.has("sticky-flash"), "Flashbang Sticky is Division 1 only");
+  assert(byId.get("repair-chem")?.name === "Reinforcer Chem Launcher", "Reinforcer in-game name");
+  assert(SKILLS.filter((skill) => skill.category === "Sticky Bomb").length === 3, "three sticky variants");
+  assert(SKILLS.filter((skill) => skill.category === "Pulse").length === 5, "five pulse variants");
+  assert(SKILLS.filter((skill) => skill.category === "Trap").length === 3, "three trap variants");
+  assert(SKILLS.filter((skill) => skill.category === "Smart Cover").length === 2, "two smart cover variants");
+
+  const banshee = skillModSlotsFor("banshee-pulse", "gunner");
+  assert(
+    banshee.some((slot) => slot.options.some((option) => option.id === "coil-cone")),
+    "Banshee coil cone size",
+  );
+  assert(
+    banshee.some((slot) => slot.options.some((option) => option.id === "gunner-directional-transmitter")),
+    "Gunner unique on Banshee",
+  );
+
+  const shrapnel = skillModSlotsFor("shrapnel-trap");
+  assert(shrapnel.length === 2, `shrapnel trap 2 slots, got ${shrapnel.length}`);
+  assert(shrapnel[0]?.label === "Charge", "trap charge slot");
+  assert(shrapnel[1]?.label === "Electronic", "trap electronic slot");
+
+  const precision = skillModSlotsFor("precision-smart-cover");
+  assert(precision.length === 2, `precision smart cover 2 slots, got ${precision.length}`);
+  assert(precision[0]?.label === "Smart Launcher", "smart launcher slot");
+  assert(precision[1]?.label === "Smart Projectile", "smart projectile slot");
+  assert(
+    precision[1]?.options.some((option) => option.id === "smart-projectile-handling"),
+    "precision projectile handling",
+  );
+  assert(
+    !precision[1]?.options.some((option) => option.id === "smart-projectile-bonus-armor"),
+    "precision does not roll fortified bonus armor",
+  );
+
+  const fortified = skillModSlotsFor("fortified-smart-cover");
+  assert(
+    fortified[1]?.options.some((option) => option.id === "smart-projectile-bonus-armor"),
+    "fortified projectile bonus armor",
+  );
+  assert(
+    !fortified[1]?.options.some((option) => option.id === "smart-projectile-handling"),
+    "fortified does not roll precision handling",
+  );
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -1920,6 +1975,7 @@ const tests = [
   testShareNewFields,
   testSeasonModifier,
   testExoticAssumedCatalog,
+  testY8S3LiveSkillCatalog,
 ];
 
 let failed = 0;
