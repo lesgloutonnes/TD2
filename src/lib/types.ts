@@ -103,7 +103,7 @@ export type GearSetDef = {
   four: string;
   twoStats: StatBonus[];
   threeStats: StatBonus[];
-  /** Assumed average 4pc talent contribution for the analyzer. */
+  /** Max 4pc talent contribution (stacks / procs / conditionals at cap). */
   fourStats?: StatBonus[];
   fourAssumedNote?: string;
   backpackTalent: { name: string; description: string };
@@ -116,9 +116,11 @@ export type GearTalent = {
   slot: "chest" | "backpack";
   description: string;
   perfect?: boolean;
-  /** Assumed uptime bonuses for the analyzer (combat procs averaged). */
+  /** Max bonuses for stacks / procs / conditionals. Always-on passives use `passive`. */
   assumed?: StatBonus[];
   assumedNote?: string;
+  /** Always-on while the talent is equipped (not gated by Include maxed bonuses). */
+  passive?: boolean;
 };
 
 export type CatalogItem = {
@@ -169,9 +171,11 @@ export type WeaponDef = {
   talentDesc: string;
   /** Locked named / exotic attributes shown on the tooltip. */
   extraStats?: StatBonus[];
-  /** Soft analyzer bonuses when this weapon is the primary. */
+  /** Max stack / proc / conditional bonuses when Include maxed bonuses is on. */
   assumed?: StatBonus[];
   assumedNote?: string;
+  /** Always-on while this weapon is active (not gated by Include maxed bonuses). */
+  assumedPassive?: boolean;
 };
 
 export type SkillDef = {
@@ -284,7 +288,7 @@ export type Loadout = {
    */
   shdWatchParts?: Partial<Record<ShdWatchPartId, number | boolean>>;
   /**
-   * Include the builder's combat model (talent / 4pc / exotic / weapon averages).
+   * When true, add max stacks / procs / conditional bonuses to Analysis.
    * Hard rolls (cores, attributes, mods, brand 1–3pc, set 2–3pc) always apply.
    */
   includeAssumed: boolean;

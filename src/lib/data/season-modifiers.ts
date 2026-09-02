@@ -20,7 +20,7 @@ export type SeasonActiveDef = {
   name: string;
   secondary: string;
   description: string;
-  /** Sheet stats while the active is assumed on (builder model). */
+  /** Sheet stats while the active is assumed on (maxed bonuses). */
   assumed: StatBonus[];
   assumedNote: string;
 };
@@ -423,10 +423,10 @@ export function applySeasonModifiers(
       active: true,
       color: SEASON_COLOR,
     });
-    notes.push(`${active.name} (builder model): ${active.assumedNote}`);
+    notes.push(`${active.name} (maxed bonuses): ${active.assumedNote}`);
   } else {
     notes.push(
-      `${active.name} selected — burst stats are off while the builder model is off.`,
+      `${active.name} selected — burst stats are off while maxed bonuses are off.`,
     );
   }
 }

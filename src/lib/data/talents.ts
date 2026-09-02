@@ -50,10 +50,10 @@ export const CHEST_TALENTS: GearTalent[] = [
     description:
       "Repairing an ally increases their total weapon and skill damage by 3–15% for 20s (1–7% if self). Effectiveness scales with Skill Tier.",
     assumed: [
-      { stat: "weaponDamage", value: 8 },
-      { stat: "skillDamage", value: 8 },
+      { stat: "weaponDamage", value: 15 },
+      { stat: "skillDamage", value: 15 },
     ],
-    assumedNote: "Empathic Resolve mid-tier ally buff.",
+    assumedNote: "Max Empathic Resolve ally buff at Skill Tier 6.",
   },
   {
     id: "perfect-empathic-resolve",
@@ -63,10 +63,10 @@ export const CHEST_TALENTS: GearTalent[] = [
       "Repairing an ally increases their total weapon and skill damage by 3–20% for 20s (1–15% if self). Effectiveness scales with Skill Tier.",
     perfect: true,
     assumed: [
-      { stat: "weaponDamage", value: 12 },
-      { stat: "skillDamage", value: 12 },
+      { stat: "weaponDamage", value: 20 },
+      { stat: "skillDamage", value: 20 },
     ],
-    assumedNote: "Perfect Empathic Resolve mid-tier ally buff.",
+    assumedNote: "Max Perfect Empathic Resolve ally buff at Skill Tier 6.",
   },
   {
     id: "entrench",
@@ -112,8 +112,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description:
       "Increases total weapon damage by 5% every second you are aiming while scoped 8× or higher, up to 50%.",
-    assumed: [{ stat: "weaponDamage", value: 25 }],
-    assumedNote: "Assumes mid Focus stacks while aiming an 8×+ scope.",
+    assumed: [{ stat: "weaponDamage", value: 50 }],
+    assumedNote: "Max Focus stacks while aiming an 8×+ scope (+50% Weapon Damage).",
   },
   {
     id: "perfect-focus",
@@ -122,8 +122,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     description:
       "Increases total weapon damage by 6% every second you are aiming while scoped 8× or higher, up to 60%.",
     perfect: true,
-    assumed: [{ stat: "weaponDamage", value: 30 }],
-    assumedNote: "Assumes mid Perfect Focus stacks while aiming an 8×+ scope.",
+    assumed: [{ stat: "weaponDamage", value: 60 }],
+    assumedNote: "Max Perfect Focus stacks while aiming an 8×+ scope (+60% Weapon Damage).",
   },
   {
     id: "glass-cannon",
@@ -131,7 +131,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "All damage you deal is amplified by 25%. All damage you take is amplified by 50%.",
     assumed: [{ stat: "weaponDamage", value: 25 }, { stat: "skillDamage", value: 25 }],
-    assumedNote: "Assumes Glass Cannon active (+25% all damage dealt).",
+    assumedNote: "Glass Cannon is always on (+25% all damage dealt).",
+    passive: true,
   },
   {
     id: "perfect-glass-cannon",
@@ -140,7 +141,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     description: "All damage you deal is amplified by 30%. All damage you take is amplified by 60%.",
     perfect: true,
     assumed: [{ stat: "weaponDamage", value: 30 }, { stat: "skillDamage", value: 30 }],
-    assumedNote: "Assumes Perfect Glass Cannon active.",
+    assumedNote: "Perfect Glass Cannon is always on.",
+    passive: true,
   },
   {
     id: "gunslinger",
@@ -201,8 +203,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description:
       "While in combat, each skill generates stacks while it is active or not on cooldown. Each stack increases total skill damage by 1.5% and total skill repair by 2%, up to 15 stacks per skill. Stacks are lost when that skill goes on cooldown.",
-    assumed: [{ stat: "skillDamage", value: 20 }, { stat: "skillRepair", value: 20 }],
-    assumedNote: "Assumes mid Kinetic Momentum stacks on both skills.",
+    assumed: [{ stat: "skillDamage", value: 45 }, { stat: "skillRepair", value: 60 }],
+    assumedNote: "Max Kinetic Momentum: 15 stacks on both skills.",
   },
   {
     id: "perfect-kinetic-momentum",
@@ -211,8 +213,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     description:
       "While in combat, each skill generates stacks while it is active or not on cooldown. Each stack increases total skill damage by 1.5% and total skill repair by 2%, up to 18 stacks per skill. Stacks are lost when that skill goes on cooldown.",
     perfect: true,
-    assumed: [{ stat: "skillDamage", value: 20 }, { stat: "skillRepair", value: 20 }],
-    assumedNote: "Assumes mid Perfect Kinetic Momentum stacks on both skills.",
+    assumed: [{ stat: "skillDamage", value: 54 }, { stat: "skillRepair", value: 72 }],
+    assumedNote: "Max Perfect Kinetic Momentum: 18 stacks on both skills.",
   },
   {
     id: "mad-bomber",
@@ -238,8 +240,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Obliterate",
     slot: "chest",
     description: "Critical hits increase total weapon damage by 1% for 10s. Stacks up to 20 times.",
-    assumed: [{ stat: "weaponDamage", value: 15 }],
-    assumedNote: "Assumes ~15 Obliterate stacks.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Max Obliterate: 20 stacks.",
   },
   {
     id: "perfect-obliterate",
@@ -247,8 +249,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     slot: "chest",
     description: "Critical hits increase total weapon damage by 1% for 10s. Stacks up to 24 times.",
     perfect: true,
-    assumed: [{ stat: "weaponDamage", value: 18 }],
-    assumedNote: "Assumes ~18 Perfect Obliterate stacks.",
+    assumed: [{ stat: "weaponDamage", value: 24 }],
+    assumedNote: "Max Perfect Obliterate: 24 stacks.",
   },
   {
     id: "overwatch",
@@ -425,8 +427,8 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Berserk",
     slot: "chest",
     description: "Gain 2% total weapon damage for every 10% of missing armor, up to 20%.",
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Assumes ~60% missing armor (mid Berserk).",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Max Berserk: +20% Weapon Damage at 100% missing armor.",
   },
 ];
 
@@ -437,8 +439,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description:
       "When you are within 10m of an enemy, gain 20% bonus armor for 5s. Stacks up to 3 times. Cooldown: 5s.",
-    assumed: [{ stat: "armorPercent", value: 12 }],
-    assumedNote: "Adrenaline Rush at ~2 stacks averaged as +12% Total Armor.",
+    assumed: [{ stat: "armorPercent", value: 60 }],
+    assumedNote: "Max Adrenaline Rush: 3 stacks × 20% bonus armor.",
   },
   {
     id: "perfect-adrenaline-rush",
@@ -447,8 +449,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     description:
       "When you are within 10m of an enemy, gain 23% bonus armor for 5s. Stacks up to 3 times. Cooldown: 5s.",
     perfect: true,
-    assumed: [{ stat: "armorPercent", value: 14 }],
-    assumedNote: "Perfect Adrenaline Rush at ~2 stacks averaged as +14% Total Armor.",
+    assumed: [{ stat: "armorPercent", value: 69 }],
+    assumedNote: "Max Perfect Adrenaline Rush: 3 stacks × 23% bonus armor.",
   },
   {
     id: "bloodsucker",
@@ -456,8 +458,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description:
       "Killing an enemy adds and refreshes a stack of +10% bonus armor for 10s. Max stack is 10.",
-    assumed: [{ stat: "armorPercent", value: 20 }],
-    assumedNote: "Bloodsucker at ~2 stacks averaged as +20% Total Armor.",
+    assumed: [{ stat: "armorPercent", value: 100 }],
+    assumedNote: "Max Bloodsucker: 10 stacks × 10% bonus armor.",
   },
   {
     id: "perfect-bloodsucker",
@@ -466,8 +468,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     description:
       "Killing an enemy adds and refreshes a stack of +12% bonus armor for 10s. Max stack is 10.",
     perfect: true,
-    assumed: [{ stat: "armorPercent", value: 24 }],
-    assumedNote: "Perfect Bloodsucker at ~2 stacks averaged as +24% Total Armor.",
+    assumed: [{ stat: "armorPercent", value: 120 }],
+    assumedNote: "Max Perfect Bloodsucker: 10 stacks × 12% bonus armor.",
   },
   {
     id: "calculated",
@@ -791,8 +793,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     name: "Unstoppable Force",
     slot: "backpack",
     description: "Killing an enemy increases total weapon damage by 5% for 15s. Stacks up to 5 times.",
-    assumed: [{ stat: "weaponDamage", value: 15 }],
-    assumedNote: "Assumes ~3 Unstoppable Force stacks.",
+    assumed: [{ stat: "weaponDamage", value: 25 }],
+    assumedNote: "Max Unstoppable Force: 5 stacks × 5%.",
   },
   {
     id: "perfect-unstoppable-force",
@@ -801,8 +803,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     description:
       "Killing an enemy increases total weapon damage by 7% for 15s. Stacks up to 5 times. Grenade kills add 2 stacks.",
     perfect: true,
-    assumed: [{ stat: "weaponDamage", value: 21 }],
-    assumedNote: "Assumes ~3 Perfectly Unstoppable Force stacks.",
+    assumed: [{ stat: "weaponDamage", value: 35 }],
+    assumedNote: "Max Perfectly Unstoppable Force: 5 stacks × 7%.",
   },
   {
     id: "versatile",
@@ -810,8 +812,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     slot: "backpack",
     description:
       "Amplifies total weapon damage for 10s when swapping between primary and secondary weapons of different types. 35% within 15m (Shotgun/SMG), 35% beyond 25m (Rifle/Marksman Rifle), 10% between 15–25m (LMG/Assault Rifle). At most once per 5s per weapon type.",
-    assumed: [{ stat: "weaponDamage", value: 20 }],
-    assumedNote: "Assumes mid Versatile weapon-swap uptime.",
+    assumed: [{ stat: "weaponDamage", value: 35 }],
+    assumedNote: "Max Versatile CQC bracket after a weapon swap (+35% within 15m).",
   },
   {
     id: "perfect-versatile",
@@ -820,8 +822,8 @@ export const BACKPACK_TALENTS: GearTalent[] = [
     description:
       "Amplifies total weapon damage for 10s when swapping between primary and secondary weapons of different types. 45% within 15m (Shotgun/SMG), 40% beyond 25m (Rifle/Marksman Rifle), 20% between 15–25m (LMG/Assault Rifle). At most once per 5s per weapon type.",
     perfect: true,
-    assumed: [{ stat: "weaponDamage", value: 25 }],
-    assumedNote: "Assumes mid Perfect Versatile weapon-swap uptime.",
+    assumed: [{ stat: "weaponDamage", value: 45 }],
+    assumedNote: "Max Perfect Versatile CQC bracket after a weapon swap (+45% within 15m).",
   },
   {
     id: "vigilance",

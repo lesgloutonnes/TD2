@@ -46,6 +46,7 @@ export type ResolvedWeaponTalent = {
   locked: boolean;
   assumed?: StatBonus[];
   assumedNote?: string;
+  passive?: boolean;
 };
 
 export function resolveWeaponTalent(
@@ -60,6 +61,7 @@ export function resolveWeaponTalent(
       locked: true,
       assumed: def.assumed ?? lib?.assumed,
       assumedNote: def.assumedNote ?? lib?.assumedNote,
+      passive: def.assumedPassive ?? lib?.passive,
     };
   }
   const override = weaponTalentById(equipped?.talentId);
@@ -73,6 +75,7 @@ export function resolveWeaponTalent(
     locked: false,
     assumed: fallback?.assumed ?? def.assumed,
     assumedNote: fallback?.assumedNote ?? def.assumedNote,
+    passive: fallback?.passive ?? def.assumedPassive,
   };
 }
 
@@ -105,16 +108,20 @@ export function skillLocalStats(
 }
 
 /**
- * Core Strength 4pc: each core grants 40% of the other two cores' bonuses.
- * Applied as the builder combat model (toggleable with includeAssumed).
+ * Core Strength 4pc: each core grants a fraction of the other two cores' bonuses.
+ * Rate is 40%, or 75% with the Inner Core chest talent.
+ * Applied when Include maxed bonuses is on.
  */
-export function coreStrengthConversion(cores: Record<CoreType, number>): StatBonus[] {
+export function coreStrengthConversion(
+  cores: Record<CoreType, number>,
+  rate = 0.4,
+): StatBonus[] {
   const red = cores.red;
   const blue = cores.blue;
   const yellow = cores.yellow;
-  const wdFromOthers = (blue + yellow) * CORE_VALUES.red.value * 0.4;
-  const armorFromOthers = (red + yellow) * CORE_VALUES.blue.value * 0.4;
-  const tierFromOthers = (red + blue) * CORE_VALUES.yellow.value * 0.4;
+  const wdFromOthers = (blue + yellow) * CORE_VALUES.red.value * rate;
+  const armorFromOthers = (red + yellow) * CORE_VALUES.blue.value * rate;
+  const tierFromOthers = (red + blue) * CORE_VALUES.yellow.value * rate;
   const bonuses: StatBonus[] = [];
   if (wdFromOthers) bonuses.push({ stat: "weaponDamage", value: Math.round(wdFromOthers * 10) / 10 });
   if (armorFromOthers) bonuses.push({ stat: "armor", value: Math.round(armorFromOthers) });

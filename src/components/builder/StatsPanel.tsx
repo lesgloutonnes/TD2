@@ -92,8 +92,8 @@ export function StatsPanel({
         Relative stack compare for planning only — not DPS. Farm the gear in-game, then verify at the
         shooting range.
         {stats.includeAssumed
-          ? " Builder model is ON: talent / 4pc / exotic combat averages are included (not max stacks)."
-          : " Builder model is OFF: hard rolls only (cores, attributes, mods, brand 1–3pc, set 2–3pc)."}
+          ? " Maxed bonuses are ON: stacks, procs, and conditionals at maximum."
+          : " Maxed bonuses are OFF: hard rolls only (cores, attributes, mods, brand 1–3pc, set 2–3pc). Always-on talents still apply."}
       </small>
 
       <div className="chc-meter">
