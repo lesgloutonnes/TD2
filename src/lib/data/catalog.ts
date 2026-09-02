@@ -407,9 +407,13 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "richter",
     slots: ["chest"],
-    uniqueTalent: talentByName("Tag Team"),
+    uniqueTalent: {
+      name: "Tag Team",
+      description:
+        "The last enemy you have damaged with a skill is marked. Dealing weapon damage to that enemy consumes the mark to reduce active skill cooldowns by 12s. Cooldown: 4s.",
+    },
     talentSlot: "chest",
-    note: "Richter chest (Y8S3). Tag Team only — no extra core.",
+    note: "Richter chest (Y8S3). Named Tag Team is 12s (HE chest Tag Team remains 6s). No extra core.",
   },
   {
     id: "forge",
@@ -904,7 +908,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Resolved",
       description:
-        "The next body shot counts as a headshot. Cooldown 2s (PvE) / 3s (PvP). Requires a sniper rifle, rifle, or pistol.",
+        "Your next body shot will be considered a headshot. Cooldown: 2s (PvE) / 3s (PvP). Requires a Marksman Rifle, Rifle, or Pistol.",
     },
     assumed: [{ stat: "hsd", value: 12 }],
     assumedNote: "Resolved body-to-headshot modeled as extra Headshot Damage on MMR/rifle/pistol.",
@@ -949,10 +953,11 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Afterburn",
       description:
-        "Weapon hits apply stacks (20 max per target). Reloading consumes the stacks: +2% weapon damage per stack.",
+        "Hitting enemies applies stacks to them (20 max per target). Reloading consumes all stacks to deal 2% Weapon Damage per stack to that enemy.",
     },
     assumed: [{ stat: "weaponDamage", value: 15 }],
-    assumedNote: "Afterburn reload consume at ~7–8 stacks.",
+    assumedNote:
+      "Afterburn is burst damage on reload (2%/stack, 20 max), not a standing WD buff; modeled as +15% Weapon Damage.",
   },
   {
     id: "btsu-datagloves",

@@ -306,6 +306,19 @@ function testY8s3Brands() {
   grupo.gear.kneepads = createPiece("kneepads", "brand:grupo");
   const grupoStats = computeStats(grupo);
   assert(grupoStats.values.hsd === 39, `Grupo 3pc 39% HSD, got ${grupoStats.values.hsd}`);
+
+  const airaldi = emptyLoadout();
+  airaldi.shdWatch = false;
+  airaldi.gear.mask = createPiece("mask", "brand:airaldi");
+  airaldi.gear.gloves = createPiece("gloves", "brand:airaldi");
+  const airaldiStats = computeStats(airaldi);
+  assert(airaldiStats.values.mmrDamage === 12, `Airaldi 1pc MMR, got ${airaldiStats.values.mmrDamage}`);
+  assert(airaldiStats.values.hsd === 26, `Airaldi 2pc 26% HSD (live, not PTS 13%), got ${airaldiStats.values.hsd}`);
+
+  const murakami = BRANDS.find((brand) => brand.id === "murakami");
+  assert(murakami?.bonuses[0][0]?.stat === "skillDuration" && murakami.bonuses[0][0].value === 15, "Murakami 1pc duration");
+  assert(murakami?.bonuses[1][0]?.stat === "skillRepair" && murakami.bonuses[1][0].value === 35, "Murakami 2pc 35% repair (live, not PTS 52%)");
+  assert(murakami?.bonuses[2][0]?.stat === "skillDamage" && murakami.bonuses[2][0].value === 18, "Murakami 3pc 18% skill damage (live, not PTS 13%)");
 }
 
 function testCeskaY8s3() {
@@ -746,6 +759,13 @@ function testLiveTalentLibrary() {
     if (item.kind !== "named" || !item.uniqueTalent) continue;
     const lib = ALL_TALENTS.find((talent) => talent.name === item.uniqueTalent!.name);
     if (!lib) continue;
+    if (item.id === "rushdown") {
+      assert(
+        item.uniqueTalent.description.includes("12s") && item.uniqueTalent.name === "Tag Team",
+        "Rushdown named Tag Team is 12s (live Y8S3), not HE 6s",
+      );
+      continue;
+    }
     assert(
       item.uniqueTalent.description === lib.description,
       `${item.name} unique talent text must match ${lib.name}`,
@@ -1880,6 +1900,101 @@ function testExoticAssumedCatalog() {
   assert(pest?.assumed?.length, "Pestilence has maxed bonuses");
 }
 
+/** Live Y8S3 (TU 2.34) gear-table lock: Ubisoft Red Horizon Gear Updates PDF. */
+function testY8s3LiveGearTables() {
+  const truePatriot = GEAR_SETS.find((set) => set.id === "true-patriot");
+  assert(truePatriot?.twoStats.some((b) => b.stat === "weaponHandling" && b.value === 15), "TP 2pc 15% handling");
+  assert(truePatriot?.four.includes("every 2s"), `TP 4pc base 2s, got ${truePatriot?.four}`);
+  assert(truePatriot?.chestTalent.description.includes("1s"), "TP chest Waving the Flag 1s");
+  assert(truePatriot?.four.includes("15%"), "TP red 15%");
+  assert(truePatriot?.four.includes("10%"), "TP blue 10%");
+
+  const aces = GEAR_SETS.find((set) => set.id === "aces");
+  assert(aces?.four.includes("75%"), "Aces Dead Man's Hand 75%");
+  assert(aces?.chestTalent.description.includes("100%"), "Aces No Limit 100%");
+  assert(aces?.four.includes("Rifle"), "Aces 4pc Rifle or MMR");
+
+  const hotshot = GEAR_SETS.find((set) => set.id === "hotshot");
+  assert(hotshot?.four.includes("80%"), "Hotshot Headache 80%");
+
+  const od = GEAR_SETS.find((set) => set.id === "ongoing-directive");
+  assert(od?.four.includes("40%"), "OD Hollow-Point 40%");
+  assert(od?.chestTalent.description.includes("60%"), "OD Parabellum 60%");
+
+  const scales = GEAR_SETS.find((set) => set.id === "tipping-scales");
+  assert(scales?.four.includes("+5%"), "Tipping Scales 5% CHD/stack");
+  assert(scales?.backpackTalent.description.includes("8%"), "Snowball 8%");
+
+  const bp = GEAR_SETS.find((set) => set.id === "breaking-point");
+  assert(bp?.four.includes("20s"), "On Point 20s");
+  assert(bp?.chestTalent.name === "Point of No Return", "Point of No Return spelling");
+  assert(bp?.chestTalent.description.includes("40s"), "Point of No Return 40s");
+
+  const company = GEAR_SETS.find((set) => set.id === "concentrated-company");
+  assert(company?.four.includes("35"), "Camaraderie max 35 stacks");
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.includeAssumed = true;
+  for (const slot of ["mask", "gloves", "holster", "kneepads"] as const) {
+    const piece = createPiece(slot, "set:concentrated-company");
+    piece.attributes = [];
+    loadout.gear[slot] = piece;
+  }
+  const stats = computeStats(loadout);
+  // 4 red cores = 60 WD + 2pc 10 + 4pc max 35×3% = 105 → 175
+  assert(stats.values.weaponDamage === 175, `Camaraderie max 35 stacks WD, got ${stats.values.weaponDamage}`);
+  assert(stats.values.chd === 105, `Camaraderie max 35×3% CHD, got ${stats.values.chd}`);
+
+  const pack = createPiece("backpack", "set:concentrated-company");
+  pack.attributes = [];
+  loadout.gear.backpack = pack;
+  loadout.gear.kneepads = null;
+  const withPack = computeStats(loadout);
+  // still 4 red cores + 2pc 10 + 35×6% = 210 → 280
+  assert(withPack.values.weaponDamage === 280, `Camaraderie backpack 6%/stack, got ${withPack.values.weaponDamage}`);
+
+  const spear = emptyLoadout();
+  spear.shdWatch = false;
+  spear.gear.mask = createPiece("mask", "set:tip-of-the-spear");
+  spear.gear.gloves = createPiece("gloves", "set:tip-of-the-spear");
+  const spearStats = computeStats(spear);
+  assert(spearStats.values.signatureWeaponDamage === 20, `ToTS 2pc sig WD, got ${spearStats.values.signatureWeaponDamage}`);
+
+  const sc = emptyLoadout();
+  sc.shdWatch = false;
+  sc.gear.mask = createPiece("mask", "set:system-corruption");
+  sc.gear.gloves = createPiece("gloves", "set:system-corruption");
+  sc.gear.holster = createPiece("holster", "set:system-corruption");
+  const scStats = computeStats(sc);
+  assert(scStats.values.pulseResistance === 40, "SC 3pc pulse");
+  assert(scStats.values.disruptResistance === 40, `SC 3pc disrupt, got ${scStats.values.disruptResistance}`);
+
+  const foundry = emptyLoadout();
+  foundry.shdWatch = false;
+  foundry.gear.mask = createPiece("mask", "set:foundry");
+  foundry.gear.gloves = createPiece("gloves", "set:foundry");
+  foundry.gear.holster = createPiece("holster", "set:foundry");
+  const foundryStats = computeStats(foundry);
+  assert(foundryStats.values.shieldHealth === 50, `Foundry 3pc shield health, got ${foundryStats.values.shieldHealth}`);
+
+  const rushdown = catalogById("rushdown");
+  assert(rushdown?.uniqueTalent?.description.includes("12s"), "Rushdown Tag Team 12s");
+  assert(!rushdown?.uniqueTalent?.description.includes("6s"), "Rushdown is not HE 6s Tag Team");
+
+  const ironWill = catalogById("iron-will");
+  assert(ironWill?.uniqueTalent?.description.includes("Marksman Rifle"), "Iron Will MMR wording");
+  assert(ironWill?.uniqueTalent?.description.includes("2s"), "Iron Will PvE 2s");
+
+  const bear = catalogById("loaded-for-bear");
+  assert(bear?.uniqueTalent?.description.includes("2% Weapon Damage per stack"), "Afterburn consume burst");
+
+  const ember = GEAR_SETS.find((set) => set.id === "ember-engine");
+  assert(ember?.core === "yellow", "Ember Engine yellow core");
+  assert(ember?.four.includes("40%"), "Spontaneous Combustion 40%");
+  assert(ember?.chestTalent.description.includes("60%"), "Flashpoint 60%");
+  assert(ember?.fourAssumedNote?.includes("not burn DPS"), "Ember 4pc note is honest");
+}
+
 function testY8S3LiveSkillCatalog() {
   const byId = new Map(SKILLS.map((skill) => [skill.id, skill]));
   assert(byId.has("banshee-pulse"), "Banshee Pulse (Gunner) is live");
@@ -2054,6 +2169,7 @@ const tests = [
   testSeasonModifier,
   testSeasonLiveY8s3Copy,
   testExoticAssumedCatalog,
+  testY8s3LiveGearTables,
   testY8S3LiveSkillCatalog,
   testY8s3LiveWeaponCatalog,
 ];
