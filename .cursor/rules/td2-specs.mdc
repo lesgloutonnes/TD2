@@ -10,6 +10,7 @@ Sheet perks default ON. Exclusive tree forks default OFF (player picks one or ne
 
 Do not regress:
 
+- Technician sheet node **Amped** (`technician-tier`): +1 Skill Tier, default ON.
 - Technician exclusive fork: Overclocked CPU +10% Skill Damage vs Enhanced Diagnostics +10% Skill Repair (`technician-skill-focus`).
 - Sharpshooter 15% HSD + 10% MMR; filter the generated weapon-type MMR +5% so it does not double.
 - Demolitionist 15% Explosive + 10% LMG; filter the generated weapon-type LMG +5%.
