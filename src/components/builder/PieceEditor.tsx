@@ -9,6 +9,9 @@ import {
   clampStat,
   CORE_COLORS,
   CORE_OPTION_LABELS,
+  CORE_VALUES,
+  coreMax,
+  coreStep,
   defaultMods,
   defaultPieceAttributes,
   EXPERTISE_MAX,
@@ -16,11 +19,13 @@ import {
   gearModCount,
   MOD_GROUPS,
   parseStatInput,
+  resolveCoreValue,
   SLOT_LABELS,
   STAT_LABELS,
   STAT_MAX,
   statMax,
   statStep,
+  storedCoreValue,
 } from "@/lib/data/attributes";
 import { GEAR_SETS } from "@/lib/data/gear-sets";
 import {
@@ -166,6 +171,7 @@ export function PieceEditor({
                 onChange({
                   ...piece,
                   core,
+                  coreValue: undefined,
                   attributes: defaultPieceAttributes(core, source),
                   mods: defaultMods(gearModCount(slot, source), core),
                 });
@@ -180,6 +186,49 @@ export function PieceEditor({
             <small className="hint">{coreLockHint(slot, source)}</small>
           </label>
 
+          <label className="field">
+            <span>
+              Core roll
+              <em>
+                {formatStat(
+                  CORE_VALUES[piece.core].stat,
+                  resolveCoreValue(piece.core, piece.coreValue, isPrototype),
+                )}
+                {` · max ${formatStat(CORE_VALUES[piece.core].stat, coreMax(piece.core, isPrototype))}`}
+                {isPrototype ? " · Prototype" : ""}
+              </em>
+            </span>
+            <input
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={coreMax(piece.core, isPrototype)}
+              step={coreStep(piece.core)}
+              value={resolveCoreValue(piece.core, piece.coreValue, isPrototype)}
+              disabled={piece.core === "yellow"}
+              title={
+                piece.core === "yellow"
+                  ? "Skill Tier is +1 High-End, +1.5 Prototype."
+                  : `Live cap: ${formatStat(CORE_VALUES[piece.core].stat, coreMax(piece.core, isPrototype))}`
+              }
+              onChange={(event) =>
+                onChange({
+                  ...piece,
+                  coreValue: storedCoreValue(
+                    piece.core,
+                    parseStatInput(event.target.value),
+                    isPrototype,
+                  ),
+                })
+              }
+            />
+            <small className="hint">
+              {piece.core === "yellow"
+                ? "Skill Tier cores are +1, or +1.5 on Prototype. Not a ranged roll."
+                : "Rolled core value. Defaults to max; lower it to match the piece you have."}
+            </small>
+          </label>
+
           {piece.extraCores?.length ? (
             <div className="locked-extras">
               <p className="eyebrow">Bonus cores (locked)</p>
@@ -191,7 +240,11 @@ export function PieceEditor({
                       style={{ background: CORE_COLORS[core] }}
                       title={CORE_OPTION_LABELS[core]}
                     />
-                    {CORE_OPTION_LABELS[core]}
+                    {CORE_OPTION_LABELS[core]}{" "}
+                    {formatStat(
+                      CORE_VALUES[core].stat,
+                      resolveCoreValue(core, undefined, isPrototype),
+                    )}
                   </li>
                 ))}
               </ul>

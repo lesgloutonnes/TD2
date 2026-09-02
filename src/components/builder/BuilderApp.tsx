@@ -19,12 +19,14 @@ import {
   CORE_COLORS,
   CORE_OPTION_LABELS,
   CORE_SHORT_LABELS,
+  CORE_VALUES,
   EMPTY_SLOT_COLOR,
   EXPERTISE_MAX,
   formatStat,
   itemDisplayColor,
   parseStatInput,
   PRIMARY_WEAPON_TYPES,
+  resolveCoreValue,
   SLOT_LABELS,
   SLOTS,
   STAT_LABELS,
@@ -397,7 +399,14 @@ export function BuilderApp() {
           <strong>{piece ? pieceLabel(piece) : "Empty"}</strong>
           <em>
             {piece
-              ? `${CORE_SHORT_LABELS[piece.core]}${
+              ? `${CORE_SHORT_LABELS[piece.core]} ${formatStat(
+                  CORE_VALUES[piece.core].stat,
+                  resolveCoreValue(
+                    piece.core,
+                    piece.coreValue,
+                    Boolean(piece.prototype) && source?.kind !== "exotic",
+                  ),
+                )}${
                   piece.prototype && source?.kind !== "exotic" ? " · Prototype" : ""
                 }${
                   piece.prototype && augmentById(piece.augmentId)

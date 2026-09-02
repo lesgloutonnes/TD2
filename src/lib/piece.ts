@@ -17,6 +17,7 @@ import {
   EXPERTISE_MAX,
   gearModCount,
   scaleAttributesForPrototype,
+  scaleCoreValueForPrototype,
   SLOTS,
 } from "./data/attributes";
 import { clampAugmentLevel, defaultAugmentId } from "./data/augments";
@@ -69,6 +70,7 @@ export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece
       ...rest,
       prototype: false,
       attributes: scaleAttributesForPrototype(piece.attributes, false),
+      coreValue: scaleCoreValueForPrototype(piece.core, piece.coreValue, true, false),
     };
   }
   return {
@@ -76,6 +78,7 @@ export function setPiecePrototype(piece: GearPiece, enabled: boolean): GearPiece
     prototype: true,
     expertise: EXPERTISE_MAX,
     attributes: scaleAttributesForPrototype(piece.attributes, true),
+    coreValue: scaleCoreValueForPrototype(piece.core, piece.coreValue, false, true),
     augmentId: piece.augmentId ?? defaultAugmentId(),
     augmentLevel: clampAugmentLevel(piece.augmentLevel ?? 1),
   };

@@ -2,7 +2,7 @@ import type { EquippedSkill, Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
 import { clampExpertise, resolveActiveWeaponSlot } from "./builder-model";
 import { createPiece } from "./piece";
-import { canBePrototype, canWeaponBePrototype, sanitizeShdWatchParts, SLOTS } from "./data/attributes";
+import { canBePrototype, canWeaponBePrototype, sanitizeShdWatchParts, SLOTS, storedCoreValue } from "./data/attributes";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS } from "./data/gear-sets";
 import { WEAPONS } from "./data/weapons";
@@ -94,6 +94,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     const source = catalogById(piece.sourceId);
     const prototype =
       Boolean(piece.prototype) && canBePrototype(source?.kind);
+    const core = created.core;
     const augmentId =
       prototype && augmentById(piece.augmentId) ? piece.augmentId : prototype ? defaultAugmentId() : undefined;
     gear[slot] = {
@@ -105,6 +106,11 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
       prototype,
       augmentId,
       augmentLevel: prototype ? clampAugmentLevel(piece.augmentLevel) : undefined,
+      coreValue: storedCoreValue(
+        piece.core ?? core,
+        typeof piece.coreValue === "number" ? piece.coreValue : undefined,
+        prototype,
+      ),
     };
   }
 

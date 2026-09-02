@@ -59,7 +59,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - Skills as tiles (phone-friendly picker)
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
-- Armor model: flat piece armor + blue cores + Total Armor %
+- Armor model: flat piece armor + blue cores (editable roll, default max) + Total Armor %
+- Main cores default to max but can be lowered; Prototype scales cores ×1.5 including Skill Tier (1 → 1.5)
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
