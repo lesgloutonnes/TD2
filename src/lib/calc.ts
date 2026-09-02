@@ -11,7 +11,7 @@ import type {
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, coreStrengthRate, resolveFourPieceMax } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
-import { SKILLS, specPerkEnabled, specializationById } from "./data/skills";
+import { SKILLS, activeSpecPerks, specializationById } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
 import {
   sanitizeWeaponMods,
@@ -666,7 +666,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   if (loadout.specialization) {
     const spec = specializationById(loadout.specialization);
     if (spec) {
-      const activePerks = spec.perks.filter((perk) => specPerkEnabled(perk, loadout.specPerks));
+      const activePerks = activeSpecPerks(spec, loadout.specPerks);
       for (const perk of activePerks) {
         addBonuses(values, perk.bonuses);
       }

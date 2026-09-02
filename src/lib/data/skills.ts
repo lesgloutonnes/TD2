@@ -321,6 +321,24 @@ function sheetPerk(
   };
 }
 
+/** Mutually exclusive tree fork. Both sides start off so the player picks one (or neither). */
+function choicePerk(
+  specId: string,
+  suffix: string,
+  name: string,
+  bonuses: StatBonus[],
+  exclusiveGroup: string,
+): SpecPerkDef {
+  return {
+    id: `${specId}-${suffix}`,
+    name,
+    bonuses,
+    group: "sheet",
+    defaultOn: false,
+    exclusiveGroup,
+  };
+}
+
 function weaponTypePerks(specId: string): SpecPerkDef[] {
   return WEAPON_TYPE_NODES.map((node) => ({
     id: `${specId}-${node.suffix}`,
@@ -350,6 +368,20 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     description: "Artificer Hive, EMP grenades. Skill meta.",
     perks: [
       sheetPerk("technician", "tier", "Skill Tier", [{ stat: "skillTier", value: 1 }]),
+      choicePerk(
+        "technician",
+        "overclock",
+        "Overclocked CPU",
+        [{ stat: "skillDamage", value: 10 }],
+        "technician-skill-focus",
+      ),
+      choicePerk(
+        "technician",
+        "diagnostics",
+        "Enhanced Diagnostics",
+        [{ stat: "skillRepair", value: 10 }],
+        "technician-skill-focus",
+      ),
       ...weaponTypePerks("technician"),
     ],
   },
@@ -416,6 +448,39 @@ export function specPerkEnabled(
   return perk.defaultOn;
 }
 
+export function exclusivePerkGroups(spec: SpecializationDef): SpecPerkDef[][] {
+  const groups = new Map<string, SpecPerkDef[]>();
+  for (const perk of spec.perks) {
+    if (!perk.exclusiveGroup) continue;
+    const list = groups.get(perk.exclusiveGroup) ?? [];
+    list.push(perk);
+    groups.set(perk.exclusiveGroup, list);
+  }
+  return [...groups.values()];
+}
+
+/** Enabled perks, with exclusive forks reduced to the first on node in tree order. */
+export function activeSpecPerks(
+  spec: SpecializationDef,
+  flags?: Partial<Record<string, boolean>>,
+): SpecPerkDef[] {
+  const seenGroups = new Set<string>();
+  const active: SpecPerkDef[] = [];
+  for (const perk of spec.perks) {
+    if (!specPerkEnabled(perk, flags)) continue;
+    if (perk.exclusiveGroup) {
+      if (seenGroups.has(perk.exclusiveGroup)) continue;
+      seenGroups.add(perk.exclusiveGroup);
+    }
+    active.push(perk);
+  }
+  return active;
+}
+
+function exclusivePerkLists(): SpecPerkDef[][] {
+  return SPECIALIZATIONS.flatMap((spec) => exclusivePerkGroups(spec));
+}
+
 export function sanitizeSpecPerks(
   raw: Partial<Record<string, boolean>> | undefined | null,
 ): Partial<Record<string, boolean>> | undefined {
@@ -424,6 +489,14 @@ export function sanitizeSpecPerks(
   for (const [id, value] of Object.entries(raw)) {
     if (!SPEC_PERK_IDS.has(id)) continue;
     next[id] = value === true;
+  }
+  for (const group of exclusivePerkLists()) {
+    const onIds = group.filter((perk) => next[perk.id] === true).map((perk) => perk.id);
+    if (onIds.length <= 1) continue;
+    const keep = onIds[0];
+    for (const perk of group) {
+      if (perk.id !== keep && next[perk.id] === true) next[perk.id] = false;
+    }
   }
   return Object.keys(next).length ? next : undefined;
 }

@@ -1025,6 +1025,24 @@ select:focus {
   letter-spacing: 0;
 }
 
+.spec-perk-choice {
+  margin: 0;
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(255, 107, 26, 0.28);
+  border-radius: 8px;
+  background: rgba(10, 13, 17, 0.35);
+}
+
+.spec-perk-choice legend {
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .shd-sliders {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

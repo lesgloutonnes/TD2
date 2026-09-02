@@ -430,7 +430,7 @@ export function BuilderApp() {
         </select>
         <small className="hint">
           Signature weapon and unique skill. Sheet perks below can be turned off if you skipped
-          those nodes.
+          those nodes. Technician skill damage / skill repair is a fork — pick one.
         </small>
       </label>
       <SpecPerksPanel loadout={loadout} onChange={setLoadout} />
