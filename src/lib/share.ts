@@ -16,6 +16,7 @@ import {
 import { SKILLS } from "./data/skills";
 import { catalogById } from "./data/catalog";
 import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
+import { sanitizeSeason } from "./data/season-modifiers";
 
 function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
   const def = WEAPONS.find((weapon) => weapon.id === weaponId);
@@ -183,6 +184,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     shdWatchParts,
     includeAssumed: parsed.includeAssumed !== false,
     activeWeapon: resolveActiveWeaponSlot(parsed.activeWeapon),
+    season: sanitizeSeason(parsed.season),
   };
 }
 

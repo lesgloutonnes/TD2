@@ -74,7 +74,8 @@ export type StatKey =
   | "protectionFromElites"
   | "scannerPulseHaste"
   | "meleeDamage"
-  | "shieldHealth";
+  | "shieldHealth"
+  | "signatureWeaponDamage";
 
 export type StatBonus = {
   stat: StatKey;
@@ -285,6 +286,46 @@ export type Loadout = {
   includeAssumed: boolean;
   /** Weapon whose expertise, mods, talent, and Prototype Augment feed Analysis. */
   activeWeapon: WeaponSlot;
+  /**
+   * Y8S3 Red Horizon Under Pressure. Omitted / `enabled: false` = play without the
+   * seasonal modifier. One active + up to three passives, plus assumed pressure.
+   */
+  season?: SeasonModifier;
+};
+
+export type SeasonActiveId =
+  | "fiery-aura"
+  | "vicarious-combustion"
+  | "signed-shield-delivered";
+
+export type SeasonPassiveId =
+  | "flow-regulator"
+  | "throttle-valve"
+  | "flux-stabilizer"
+  | "pressure-control"
+  | "quality-seals"
+  | "delayed-venting"
+  | "leaky-valve"
+  | "vacuum-seal"
+  | "reserve-tank"
+  | "all-or-nothing"
+  | "kickstart"
+  | "microwave-coils"
+  | "new-model"
+  | "afterburner"
+  | "flint-and-steel"
+  | "fire-with-fire"
+  | "firestarter"
+  | "new-formula-beta"
+  | "new-formula-gamma"
+  | "modular-plates";
+
+export type SeasonModifier = {
+  enabled: boolean;
+  activeId: SeasonActiveId;
+  passives: [SeasonPassiveId | null, SeasonPassiveId | null, SeasonPassiveId | null];
+  /** Assumed Pressure Gauge 0–100 for planning. */
+  pressure: number;
 };
 
 export type ActiveBonus = {

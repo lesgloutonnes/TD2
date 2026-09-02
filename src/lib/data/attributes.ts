@@ -157,6 +157,7 @@ export const STAT_LABELS: Record<StatKey, string> = {
   scannerPulseHaste: "Scanner Pulse Haste",
   meleeDamage: "Melee Damage",
   shieldHealth: "Shield Health",
+  signatureWeaponDamage: "Signature Weapon Damage",
 };
 
 export const STAT_MAX: Partial<Record<StatKey, number>> = {
