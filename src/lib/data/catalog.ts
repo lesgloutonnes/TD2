@@ -269,7 +269,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
   // --- Golan Gear ---
   {
     id: "hunter-killer",
-    name: "Hunter Killer",
+    name: "Hunter-Killer",
     kind: "named",
     brandId: "golan",
     slots: ["chest"],
@@ -667,7 +667,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
   },
   {
     id: "eagles-grasp",
-    name: "Eagles Grasp",
+    name: "Eagle's Grasp",
     kind: "named",
     brandId: "zwiadowka",
     slots: ["gloves"],
@@ -702,8 +702,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     kind: "named",
     brandId: "yaahl",
     slots: ["mask"],
-    extraStats: [{ stat: "damageToHealth", value: 14 }],
-    note: "Yaahl mask: +14% extra Damage to Health. Brand core: blue.",
+    extraStats: [{ stat: "damageToHealth", value: 10 }],
+    note: "Yaahl mask: +10% extra Damage to Health (unique named roll, TU9). Brand core: blue.",
   },
 
   // ========== Exotics — masks ==========
@@ -955,9 +955,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Hitting enemies applies stacks to them (20 max per target). Reloading consumes all stacks to deal 2% Weapon Damage per stack to that enemy.",
     },
-    assumed: [{ stat: "weaponDamage", value: 15 }],
-    assumedNote:
-      "Afterburn is burst damage on reload (2%/stack, 20 max), not a standing WD buff; modeled as +15% Weapon Damage.",
+    note: "Climax exotic (end of Y8S3). Afterburn is a reload consume burst (2%/stack, 20 max), not a standing Weapon Damage buff.",
   },
   {
     id: "btsu-datagloves",
