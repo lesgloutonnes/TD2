@@ -45,7 +45,7 @@ export function SeasonPanel({
   }
 
   return (
-    <>
+    <div className="meta-block">
       <label className="field checkbox">
         <input
           type="checkbox"
@@ -62,59 +62,63 @@ export function SeasonPanel({
       </label>
       {season.enabled ? (
         <div className="season-panel">
-          <label className="field">
-            <span>Active</span>
-            <select
-              value={season.activeId}
-              onChange={(event) =>
-                patch({
-                  activeId:
-                    seasonActiveById(event.target.value)?.id ?? SEASON_ACTIVES[0].id,
-                })
-              }
-            >
-              {SEASON_ACTIVES.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name} — {item.secondary}
-                </option>
-              ))}
-            </select>
-            <small className="hint">{active.description}</small>
-          </label>
-          {([0, 1, 2] as const).map((index) => {
-            const selected = season.passives[index];
-            const used = new Set(
-              season.passives.filter((id, slot) => id && slot !== index),
-            );
-            const selectedDef = seasonPassiveById(selected);
-            return (
-              <label key={index} className="field">
-                <span>Passive {index + 1}</span>
-                <select
-                  value={selected ?? ""}
-                  onChange={(event) => setPassive(index, event.target.value)}
-                >
-                  <option value="">None</option>
-                  {SEASON_PASSIVE_GROUPS.map((group) => (
-                    <optgroup key={group.id} label={group.label}>
-                      {SEASON_PASSIVES.filter((item) => item.category === group.id).map(
-                        (item) => (
-                          <option
-                            key={item.id}
-                            value={item.id}
-                            disabled={used.has(item.id)}
-                          >
-                            {item.name}
-                          </option>
-                        ),
-                      )}
-                    </optgroup>
-                  ))}
-                </select>
-                {selectedDef ? <small className="hint">{selectedDef.description}</small> : null}
-              </label>
-            );
-          })}
+          <div className="season-active">
+            <label className="field">
+              <span>Active</span>
+              <select
+                value={season.activeId}
+                onChange={(event) =>
+                  patch({
+                    activeId:
+                      seasonActiveById(event.target.value)?.id ?? SEASON_ACTIVES[0].id,
+                  })
+                }
+              >
+                {SEASON_ACTIVES.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name} — {item.secondary}
+                  </option>
+                ))}
+              </select>
+              <small className="hint">{active.description}</small>
+            </label>
+          </div>
+          <div className="season-passives">
+            {([0, 1, 2] as const).map((index) => {
+              const selected = season.passives[index];
+              const used = new Set(
+                season.passives.filter((id, slot) => id && slot !== index),
+              );
+              const selectedDef = seasonPassiveById(selected);
+              return (
+                <label key={index} className="field">
+                  <span>Passive {index + 1}</span>
+                  <select
+                    value={selected ?? ""}
+                    onChange={(event) => setPassive(index, event.target.value)}
+                  >
+                    <option value="">None</option>
+                    {SEASON_PASSIVE_GROUPS.map((group) => (
+                      <optgroup key={group.id} label={group.label}>
+                        {SEASON_PASSIVES.filter((item) => item.category === group.id).map(
+                          (item) => (
+                            <option
+                              key={item.id}
+                              value={item.id}
+                              disabled={used.has(item.id)}
+                            >
+                              {item.name}
+                            </option>
+                          ),
+                        )}
+                      </optgroup>
+                    ))}
+                  </select>
+                  {selectedDef ? <small className="hint">{selectedDef.description}</small> : null}
+                </label>
+              );
+            })}
+          </div>
           <label className="field expertise-field">
             <span>Assumed pressure ({season.pressure}%)</span>
             <input
@@ -132,6 +136,6 @@ export function SeasonPanel({
           </label>
         </div>
       ) : null}
-    </>
+    </div>
   );
 }

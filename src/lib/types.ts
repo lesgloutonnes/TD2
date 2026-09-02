@@ -277,8 +277,12 @@ export type Loadout = {
   specialization: string | null;
   /** Master SHD Watch toggle. When true, `shdWatchParts` can disable individual bonuses. */
   shdWatch: boolean;
-  /** Per-bonus SHD Watch. Omitted keys default to on when `shdWatch` is true. */
-  shdWatchParts?: Partial<Record<ShdWatchPartId, boolean>>;
+  /**
+   * Per-bonus SHD Watch value (0 to that line's SHD 1000 max).
+   * Omitted keys default to max when `shdWatch` is true.
+   * Legacy boolean `false` still means 0.
+   */
+  shdWatchParts?: Partial<Record<ShdWatchPartId, number | boolean>>;
   /**
    * Include the builder's combat model (talent / 4pc / exotic / weapon averages).
    * Hard rolls (cores, attributes, mods, brand 1–3pc, set 2–3pc) always apply.

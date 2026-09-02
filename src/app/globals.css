@@ -104,6 +104,12 @@ h1 {
   text-transform: uppercase;
 }
 
+.field .hint {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
 input,
 select {
   background: #0c1016;
@@ -272,10 +278,10 @@ select:focus {
 .agent-meta {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px 16px;
-  align-items: end;
-  padding-top: 4px;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items: stretch;
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -917,30 +923,103 @@ select:focus {
 
 .checkbox {
   grid-template-columns: auto 1fr;
-  align-items: center;
+  align-items: start;
+}
+
+.field.checkbox span {
+  display: grid;
+  gap: 2px;
 }
 
 .shd-parts {
-  grid-column: 1 / -1;
+  display: none;
+}
+
+.meta-block {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px;
-  padding-top: 4px;
+  gap: 10px;
+}
+
+.season-panel,
+.shd-panel {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
 }
 
 .season-panel {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px 16px;
-  padding: 12px;
   border: 1px solid rgba(226, 88, 34, 0.35);
-  border-radius: 8px;
   background: linear-gradient(180deg, rgba(226, 88, 34, 0.08), rgba(10, 13, 17, 0.4));
 }
 
+.shd-panel {
+  border: 1px solid rgba(255, 179, 71, 0.28);
+  background: linear-gradient(180deg, rgba(255, 179, 71, 0.08), rgba(10, 13, 17, 0.4));
+}
+
+.season-active {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.season-active .field {
+  width: min(460px, 100%);
+}
+
+.season-passives {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
 .season-panel .expertise-field {
+  width: 100%;
+}
+
+.shd-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shd-sliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px 14px;
+}
+
+.shd-slider {
+  grid-template-columns: 1fr 64px;
+  align-items: center;
+  column-gap: 8px;
+}
+
+.shd-slider span {
   grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.shd-slider span em {
+  float: none;
+  color: var(--amber);
+  font-style: normal;
+}
+
+.shd-slider input[type="range"] {
+  grid-column: 1;
+  padding: 0;
+  min-width: 0;
+}
+
+.shd-slider input[type="number"] {
+  grid-column: 2;
+  padding: 6px 8px;
+  text-align: right;
 }
 
 .compare-field {
@@ -1082,7 +1161,8 @@ select:focus {
   .field-split,
   .core-row,
   .index-card,
-  .picker-grid {
+  .picker-grid,
+  .season-passives {
     grid-template-columns: 1fr;
   }
 }
@@ -1232,6 +1312,10 @@ select:focus {
   grid-template-columns: 1fr;
   border-top: 0;
   padding-top: 0;
+}
+
+.is-phone .season-passives {
+  grid-template-columns: 1fr;
 }
 
 .is-phone .kit-grid {

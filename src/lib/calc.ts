@@ -39,6 +39,7 @@ import {
   totalArmorRegenPerSec,
   resolveHealthFlat,
   resolveShdWatchBonuses,
+  shdWatchIsFull,
 } from "./data/attributes";
 import { applySeasonModifiers } from "./data/season-modifiers";
 import {
@@ -531,11 +532,11 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const shdBonuses = resolveShdWatchBonuses(loadout.shdWatch, loadout.shdWatchParts);
   if (shdBonuses.length) {
     addBonuses(values, shdBonuses);
-    const allOn = shdBonuses.length === 12;
+    const allOn = shdWatchIsFull(loadout.shdWatchParts);
     notes.push(
       allOn
-        ? "SHD Watch 1000 active (all planner bonuses)."
-        : `SHD Watch partial (${shdBonuses.length}/12 bonuses).`,
+        ? "SHD Watch 1000 active (all planner bonuses at max)."
+        : `SHD Watch partial (${shdBonuses.length}/12 lines contributing).`,
     );
   }
 

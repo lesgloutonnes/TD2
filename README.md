@@ -64,7 +64,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
 - Builder model (toggle): talent / 4pc / exotic / weapon / skill averages for planning
-- SHD Watch 1000, with per-bonus lines
+- SHD Watch panel (toggle, then scale each line 0–max)
 - Y8S3 **Under Pressure** season modifier (toggle, 1 active + 3 passives, assumed pressure on the sheet)
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
