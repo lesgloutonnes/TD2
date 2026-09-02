@@ -111,7 +111,7 @@ export const SKILLS: SkillDef[] = [
     id: "booster-hive",
     name: "Booster Hive",
     category: "Hive",
-    description: "Speed, handling, and damage buff for allies.",
+    description: "Weapon handling, hazard protection, and melee damage buff for allies.",
   },
   {
     id: "artificer-hive",
@@ -139,7 +139,7 @@ export const SKILLS: SkillDef[] = [
   },
   {
     id: "repair-chem",
-    name: "Repair Chem Launcher",
+    name: "Reinforcer Chem Launcher",
     category: "Chem Launcher",
     description: "Armor repair cloud.",
   },
@@ -192,6 +192,18 @@ export const SKILLS: SkillDef[] = [
     description: "Disables enemy skills. Spark.",
   },
   {
+    id: "banshee-pulse",
+    name: "Banshee Pulse",
+    category: "Pulse",
+    description: "Forward arc that disorients targets through cover (Gunner).",
+  },
+  {
+    id: "achilles-pulse",
+    name: "Achilles Pulse",
+    category: "Pulse",
+    description: "Marks weak points on a target; those spots take headshot damage.",
+  },
+  {
     id: "blinder-firefly",
     name: "Blinder Firefly",
     category: "Firefly",
@@ -228,6 +240,24 @@ export const SKILLS: SkillDef[] = [
     description: "Armor repair zone.",
   },
   {
+    id: "shrapnel-trap",
+    name: "Shrapnel Trap",
+    category: "Trap",
+    description: "Proximity mines that explode and apply Bleed.",
+  },
+  {
+    id: "precision-smart-cover",
+    name: "Precision Smart Cover",
+    category: "Smart Cover",
+    description: "Reinforces cover: weapon handling, damage to targets out of cover, auto-reload on swap.",
+  },
+  {
+    id: "fortified-smart-cover",
+    name: "Fortified Smart Cover",
+    category: "Smart Cover",
+    description: "Reinforces cover: bonus armor, explosive resistance, stagger immunity.",
+  },
+  {
     id: "sticky-burn",
     name: "Burn Sticky Bomb",
     category: "Sticky Bomb",
@@ -238,12 +268,6 @@ export const SKILLS: SkillDef[] = [
     name: "EMP Sticky Bomb",
     category: "Sticky Bomb",
     description: "Disables skills and robots.",
-  },
-  {
-    id: "sticky-flash",
-    name: "Flashbang Sticky Bomb",
-    category: "Sticky Bomb",
-    description: "Blinds in a radius.",
   },
   {
     id: "sticky-explosive",
@@ -285,15 +309,19 @@ applySkillModel("deflector-shield", [{ stat: "armorPercent", value: 4 }], "Defle
 applySkillModel("scanner-pulse", [{ stat: "chc", value: 5 }], "Pulse/Spotter synergy averaged as Critical Hit Chance.");
 applySkillModel("remote-pulse", [{ stat: "chc", value: 5 }], "Pulse/Spotter synergy averaged as Critical Hit Chance.");
 applySkillModel("jammer-pulse", [{ stat: "statusEffects", value: 5 }], "Disrupt window averaged as Status Effects.");
+applySkillModel("banshee-pulse", [{ stat: "statusEffects", value: 8 }], "Disorient arc averaged as Status Effects.");
+applySkillModel("achilles-pulse", [{ stat: "hsd", value: 5 }], "Weak-point mark averaged as Headshot Damage.");
 applySkillModel("blinder-firefly", [{ stat: "statusEffects", value: 8 }], "Blind chain averaged as Status Effects.");
 applySkillModel("burster-firefly", [{ stat: "skillDamage", value: 5 }], "Weak-point burst averaged.");
 applySkillModel("demolisher-firefly", [{ stat: "damageToArmor", value: 6 }], "Cover/armor break averaged as Damage to Armor.");
 applySkillModel("decoy", [{ stat: "threat", value: 15 }], "Decoy aggro modeled as Threat.");
 applySkillModel("shock-trap", [{ stat: "statusEffects", value: 8 }], "Shock CC averaged as Status Effects.");
 applySkillModel("repair-trap", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
+applySkillModel("shrapnel-trap", [{ stat: "skillDamage", value: 5 }, { stat: "statusEffects", value: 5 }], "Bleed mines averaged.");
+applySkillModel("precision-smart-cover", [{ stat: "weaponHandling", value: 5 }], "Precision cover buff averaged as Weapon Handling.");
+applySkillModel("fortified-smart-cover", [{ stat: "armorPercent", value: 4 }, { stat: "explosiveResistance", value: 5 }], "Fortified cover averaged as mild armor + explosive resist.");
 applySkillModel("sticky-burn", [{ stat: "statusEffects", value: 8 }, { stat: "explosiveDamage", value: 5 }], "Burn sticky averaged.");
 applySkillModel("sticky-emp", [{ stat: "statusEffects", value: 6 }], "EMP disrupt averaged as Status Effects.");
-applySkillModel("sticky-flash", [{ stat: "statusEffects", value: 8 }], "Flashbang averaged as Status Effects.");
 applySkillModel("sticky-explosive", [{ stat: "explosiveDamage", value: 10 }, { stat: "skillDamage", value: 5 }], "Explosive sticky averaged.");
 
 const WEAPON_TYPE_NODES: { suffix: string; name: string; stat: StatKey }[] = [
