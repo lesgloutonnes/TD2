@@ -60,7 +60,17 @@ const GAUGE_GAMMA = [5, 15, 25, 40] as const;
  * Setting the carrier on fire permanently removes or reverses the effect.
  */
 export const SEASON_HOSTILE_NOTE =
-  "Hostile modifiers (Draining Presence, Achilles' Heal, Thousand Cuts) are enemy effects, not player picks. Burn the carrier to clear them.";
+  "Hostile modifiers are enemy effects, not player picks. Burn the carrier to clear them. Draining Presence: within 5 m, −10% magazine and −1% Pressure per second. Achilles' Heal: breaking a weak point or armor piece restores 50% Health to the enemy and allies within 10 m, and costs 5% Pressure. Thousand Cuts: each hit −1% Pressure and a stacking 0.5% Damage Reduction debuff for 15 s.";
+
+/**
+ * Combat Pressure rules that the sheet does not simulate. Live launch article lists
+ * the action types; 21 Aug 2026 developer notes add Group Kill +1% and state that
+ * some PTS fill amounts were buffed. Those per-action percentages were omitted from
+ * the live article — do not ship the PTS 2.5 / 2 / 3 / 3.5 / 5 table as live.
+ * Active durations and Quality Seals delay (seconds) are unpublished.
+ */
+export const SEASON_GAUGE_NOTE =
+  "Pressure Gauge fills from kills, headshots, multikills, grenade kills, Skill kills, Status Effect kills, fire kills, and group kills (+1% Pressure per teammate kill). Actions can stack. Cover and cover-to-cover pause decay. The gauge freezes while an Active Modifier runs and resets when it ends. Default Status Effects: +15 / +25 / +40 / +65% at 10 / 35 / 65 / 90%. Live per-action fill amounts were buffed after PTS and omitted from the launch article — unpublished.";
 
 export const SEASON_ACTIVES: SeasonActiveDef[] = [
   {
@@ -68,17 +78,17 @@ export const SEASON_ACTIVES: SeasonActiveDef[] = [
     name: "Fiery Aura",
     secondary: "Armor Regen",
     description:
-      "Damage Resistance and Armor Regen while active. Nearby enemies burn the first time they enter range (5–10 m). Level 5: 15% Bonus Armor per unique enemy burned.",
+      "Damage Resistance (+25% to +65%; 100% while sprinting at Level 5) and Armor Regen (0.5%–1.5%/s). Nearby enemies burn the first time they enter range (5–10 m). Level 5: 15% Bonus Armor per unique enemy burned.",
     assumed: [{ stat: "armorRegenPercent", value: 1.5 }],
     assumedNote:
-      "Assumes Level 5 active up: 1.5%/s Armor Regen. Combat-only: +65% Damage Resistance (100% while sprinting), 10 m Burn, 15% Bonus Armor per unique enemy burned. Not a DPS sim.",
+      "Assumes Level 5 active up: 1.5%/s Armor Regen (live band 0.5%–1.5%/s from Level 3). Combat-only: +65% Damage Resistance (100% while sprinting), 10 m Burn, 15% Bonus Armor per unique enemy burned. Not a DPS sim.",
   },
   {
     id: "vicarious-combustion",
     name: "Vicarious Combustion",
     secondary: "Headshot Damage",
     description:
-      "Headshots on burning enemies spread Burn (10–20 m). Level 5: headshots apply Burn directly.",
+      "Headshots on burning enemies spread Burn (10–20 m). Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Level 5: headshots apply Burn directly.",
     assumed: [{ stat: "hsd", value: 50 }],
     assumedNote:
       "Assumes Level 5 active up: +50% Headshot Damage. Combat-only: 20 m Burn spread. Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Not a DPS sim.",
@@ -396,8 +406,9 @@ export function applySeasonModifiers(
   const gauge = seasonGaugePreview(season);
 
   notes.push(
-    `${SEASON_MODIFIER_NAME} on (${SEASON_NAME}). Assumed Pressure ${season.pressure}%. Not a combat sim. ${SEASON_HOSTILE_NOTE}`,
+    `${SEASON_MODIFIER_NAME} on (${SEASON_NAME}). Assumed Pressure ${season.pressure}%. Not a combat sim. ${SEASON_GAUGE_NOTE}`,
   );
+  notes.push(SEASON_HOSTILE_NOTE);
 
   if (gauge.formulaCancelled) {
     notes.push("New Formula Beta + Gamma cancel each other — gauge stays Status Effects.");

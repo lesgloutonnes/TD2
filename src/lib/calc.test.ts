@@ -26,6 +26,8 @@ import { pieceInspect, weaponInspect } from "./tooltip";
 import { shouldOpenGearPicker } from "./gear-picker";
 import {
   SEASON_ACTIVES,
+  SEASON_GAUGE_NOTE,
+  SEASON_HOSTILE_NOTE,
   SEASON_PASSIVES,
   sanitizeSeason,
 } from "./data/season-modifiers";
@@ -2481,6 +2483,65 @@ function testY8S3SkillPveSheetGaps() {
   );
 }
 
+function testSeasonLiveGaugeAndHostileNotes() {
+  const kick80 = computeStats(
+    (() => {
+      const loadout = emptyLoadout();
+      loadout.shdWatch = false;
+      loadout.season = sanitizeSeason({
+        enabled: true,
+        pressure: 80,
+        passives: ["kickstart", null, null],
+      });
+      return loadout;
+    })(),
+  );
+  assert(kick80.values.statusEffects === 60, `Kickstart 80% inclusive, got ${kick80.values.statusEffects}`);
+
+  const aon80 = computeStats(
+    (() => {
+      const loadout = emptyLoadout();
+      loadout.shdWatch = false;
+      loadout.season = sanitizeSeason({
+        enabled: true,
+        pressure: 80,
+        passives: ["all-or-nothing", null, null],
+      });
+      return loadout;
+    })(),
+  );
+  assert(aon80.values.statusEffects === 50, `AoN 80%+, got ${aon80.values.statusEffects}`);
+
+  const fiery = SEASON_ACTIVES.find((item) => item.id === "fiery-aura");
+  assert(fiery?.description.includes("0.5%–1.5%/s") || fiery?.description.includes("0.5%-1.5%/s"), "Fiery Aura regen band");
+  assert(fiery?.description.includes("+25%") && fiery.description.includes("+65%"), "Fiery Aura DR band");
+  assert(fiery?.assumedNote.includes("0.5%–1.5%/s") || fiery?.assumedNote.includes("0.5%-1.5%/s"), "Fiery Aura assumed band");
+
+  const vicarious = SEASON_ACTIVES.find((item) => item.id === "vicarious-combustion");
+  assert(vicarious?.description.includes("50%–10%") || vicarious?.description.includes("50%-10%"), "Vicarious burn penalty in description");
+
+  assert(SEASON_HOSTILE_NOTE.includes("5 m"), "Draining Presence live 5 m");
+  assert(SEASON_HOSTILE_NOTE.includes("−10%") || SEASON_HOSTILE_NOTE.includes("-10%"), "Draining Presence mag drain");
+  assert(SEASON_HOSTILE_NOTE.includes("5% Pressure"), "Achilles' Heal live 5% Pressure");
+  assert(SEASON_HOSTILE_NOTE.includes("10 m"), "Achilles' Heal 10 m heal");
+  assert(SEASON_HOSTILE_NOTE.includes("0.5%"), "Thousand Cuts 0.5% DR");
+  assert(SEASON_HOSTILE_NOTE.includes("15 s"), "Thousand Cuts 15 s");
+
+  assert(SEASON_GAUGE_NOTE.includes("+1% Pressure"), "Group Kill +1%");
+  assert(SEASON_GAUGE_NOTE.includes("freezes"), "gauge freezes during Active");
+  assert(SEASON_GAUGE_NOTE.includes("+15 / +25 / +40 / +65%"), "default SE table");
+  assert(SEASON_GAUGE_NOTE.includes("unpublished"), "live fill amounts unpublished");
+  assert(!SEASON_GAUGE_NOTE.includes("2.5%"), "do not ship PTS kill fill as live");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.season = sanitizeSeason({ enabled: true, pressure: 90 });
+  const stats = computeStats(loadout);
+  assert(stats.notes.some((note) => note.includes("group kills")), "gauge note on sheet");
+  assert(stats.notes.some((note) => note.includes("Draining Presence") && note.includes("5 m")), "hostile numbers on sheet");
+  assert(stats.notes.some((note) => note.includes("Achilles") && note.includes("5%")), "Achilles 5% on sheet");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2568,6 +2629,7 @@ const tests = [
   testGearCatalogLiveHoles,
   testY8s3LiveHeTalentPicker,
   testY8S3SkillPveSheetGaps,
+  testSeasonLiveGaugeAndHostileNotes,
 ];
 
 let failed = 0;
