@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type {
   EquippedSkill,
   EquippedWeapon,
@@ -126,15 +126,14 @@ export function BuilderApp() {
     hoverLeaveTimer.current = window.setTimeout(() => setHover(null), 80);
   }
 
-  useEffect(() => {
-    if (hash === hashApplied) return;
+  if (hash !== hashApplied) {
     setHashApplied(hash);
     const decoded = decodeLoadout(hash.replace(/^#b=/, ""));
     if (decoded) {
       setLoadout(decoded);
       setSavedId(null);
     }
-  }, [hash, hashApplied]);
+  }
 
   const stats = useMemo(() => computeStats(loadout), [loadout]);
   const compareLoadout = useMemo(() => {
@@ -147,7 +146,7 @@ export function BuilderApp() {
       return loadBuild(compareKey.slice(6));
     }
     return null;
-  }, [compareKey, saved]);
+  }, [compareKey]);
   const compareStats = useMemo(
     () => (compareLoadout ? computeStats(compareLoadout) : null),
     [compareLoadout],

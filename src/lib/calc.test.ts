@@ -179,7 +179,7 @@ function testEmberEngine() {
   loadout.gear.gloves = createPiece("gloves", "set:ember-engine");
   const stats = computeStats(loadout);
   assert(stats.values.skillEfficiency === 8, `2pc efficiency, got ${stats.values.skillEfficiency}`);
-  assert(stats.values.statusEffects === 30, `3pc status, got ${stats.values.statusEffects}`);
+  assert(stats.values.statusEffects === 40, `3pc 30 + 4pc model 10, got ${stats.values.statusEffects}`);
   assert(
     stats.notes.some((note) => note.includes("Flashpoint")),
     "chest Flashpoint",
@@ -940,8 +940,8 @@ function testPerItemExpertise() {
     `gear expertise armor, got ${stats.values.armor}`,
   );
   assert(
-    stats.notes.some((note) => note.includes("Primary weapon expertise 15")),
-    "primary expertise note",
+    stats.notes.some((note) => note.includes("Active weapon expertise 15")),
+    "active expertise note",
   );
 }
 
