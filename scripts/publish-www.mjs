@@ -71,17 +71,15 @@ if (!index.includes('href="./_next/static')) {
   throw new Error("index.html n'a pas de CSS relatif ./_next/");
 }
 
-const runtime = walk(join(to, "_next")).find((file) =>
-  file.endsWith("3byuobrkyz9bj.js"),
+const runtimeFiles = walk(join(to, "_next")).filter((file) => file.endsWith(".js"));
+const prefixGuard = runtimeFiles.find((file) =>
+  readFileSync(file, "utf8").includes('indexOf("/_next/")'),
 );
-if (runtime) {
-  const js = readFileSync(runtime, "utf8");
-  if (!js.includes('indexOf("/_next/")')) {
-    throw new Error("getAssetPrefix a perdu le marqueur /_next/ (pathname)");
-  }
-  if (js.includes('indexOf("./_next/")')) {
-    throw new Error("getAssetPrefix ne doit pas chercher ./_next/ dans le pathname");
-  }
+if (!prefixGuard) {
+  throw new Error("getAssetPrefix a perdu le marqueur /_next/ (pathname)");
+}
+if (readFileSync(prefixGuard, "utf8").includes('indexOf("./_next/")')) {
+  throw new Error("getAssetPrefix ne doit pas chercher ./_next/ dans le pathname");
 }
 
 console.log(`Site copie vers www/ (${rewritten} fichiers en chemins relatifs)`);
