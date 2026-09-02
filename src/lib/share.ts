@@ -13,7 +13,7 @@ import {
   weaponTalentById,
   weaponTalentByName,
 } from "./data/weapon-talents";
-import { SKILLS } from "./data/skills";
+import { SKILLS, sanitizeSpecPerks } from "./data/skills";
 import { catalogById } from "./data/catalog";
 import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
 import { sanitizeSeason } from "./data/season-modifiers";
@@ -164,6 +164,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     weapons,
     skills: normalizeSkills(parsed.skills, parsed.specialization ?? null),
     specialization: parsed.specialization ?? null,
+    specPerks: sanitizeSpecPerks(parsed.specPerks),
     shdWatch: parsed.shdWatch ?? true,
     shdWatchParts,
     includeAssumed: parsed.includeAssumed === true,

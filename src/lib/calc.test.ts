@@ -10,6 +10,7 @@ import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { specPerkEnabled, specializationById } from "./data/skills";
 import { defaultWeaponMods } from "./data/weapon-mods";
 import { defaultWeaponTalentId, weaponTalentByName } from "./data/weapon-talents";
 import { clampExpertise } from "./builder-model";
@@ -185,6 +186,35 @@ function testSkillTierCap() {
   const stats = computeStats(loadout);
   assert(stats.values.skillTier === 7, `6 yellow + technician, got ${stats.values.skillTier}`);
   assert(stats.skillTierCapped === 6, "tier cap 6");
+}
+
+function testSpecPerks() {
+  const spec = specializationById("gunner");
+  assert(spec?.perks.some((perk) => perk.id === "gunner-aok" && perk.defaultOn), "gunner AoK default on");
+  assert(specPerkEnabled(spec!.perks.find((perk) => perk.id === "gunner-ar")!, undefined) === false, "AR node default off");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.specialization = "gunner";
+  const on = computeStats(loadout);
+  assert(on.values.armorOnKill === 10, `gunner default AoK, got ${on.values.armorOnKill}`);
+  assert(on.values.ammoCapacity === 25, `gunner default ammo, got ${on.values.ammoCapacity}`);
+  assert(on.values.arDamage === 0, "weapon-type nodes off by default");
+
+  loadout.specPerks = { "gunner-aok": false };
+  const off = computeStats(loadout);
+  assert(off.values.armorOnKill === 0, "AoK unchecked");
+  assert(off.values.ammoCapacity === 25, "ammo still default on");
+
+  loadout.specPerks = { "gunner-aok": false, "gunner-ar": true };
+  const ar = computeStats(loadout);
+  assert(ar.values.arDamage === 5, `optional AR node, got ${ar.values.arDamage}`);
+
+  const tech = emptyLoadout();
+  tech.shdWatch = false;
+  tech.specialization = "technician";
+  tech.specPerks = { "technician-tier": false };
+  assert(computeStats(tech).values.skillTier === 0, "technician tier can be skipped");
 }
 
 function testStrikerSampleChc() {
@@ -1576,8 +1606,12 @@ function testShareNewFields() {
   loadout.shdWatchParts = { chc: false };
   loadout.weapons.primary = { weaponId: "famas", expertise: 4, talentId: "strained", mods: [] };
   loadout.skills = [{ skillId: "striker-drone", mods: [], expertise: 8 }, null];
+  loadout.specialization = "firewall";
+  loadout.specPerks = { "firewall-armor": false, "firewall-smg": true };
   const decoded = decodeLoadout(encodeLoadout(loadout));
   assert(decoded?.includeAssumed === false, "includeAssumed roundtrip");
+  assert(decoded?.specPerks?.["firewall-armor"] === false, "spec perk off roundtrip");
+  assert(decoded?.specPerks?.["firewall-smg"] === true, "spec perk on roundtrip");
   assert(decoded?.activeWeapon === "sidearm", "activeWeapon roundtrip");
   assert(decoded?.shdWatchParts?.chc === 0, "shd parts roundtrip");
   assert(decoded?.weapons.primary?.talentId === "strained", "HE talent roundtrip");
@@ -1707,6 +1741,7 @@ const tests = [
   testChcCap,
   testShareRoundtrip,
   testSkillTierCap,
+  testSpecPerks,
   testStrikerSampleChc,
   testLoadoutBlurb,
   testY8s3Brands,

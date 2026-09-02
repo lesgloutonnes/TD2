@@ -985,6 +985,46 @@ select:focus {
   gap: 8px;
 }
 
+.spec-perks {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 26, 0.35);
+  background: linear-gradient(180deg, rgba(255, 107, 26, 0.08), rgba(10, 13, 17, 0.4));
+}
+
+.spec-perks-hint {
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.spec-perk-group {
+  display: grid;
+  gap: 8px;
+}
+
+.spec-perk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 6px 12px;
+}
+
+.spec-perk-grid-compact {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.spec-perk.checkbox {
+  margin: 0;
+}
+
+.spec-perk .hint {
+  display: block;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
 .shd-sliders {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
