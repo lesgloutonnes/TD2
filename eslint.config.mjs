@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static export served by lancer-builder.bat
+    "www/**",
   ]),
 ]);
 
