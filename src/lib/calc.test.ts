@@ -1126,7 +1126,8 @@ function testSkillModsContribute() {
     },
   ];
   const stats = computeStats(loadout);
-  assert(stats.values.skillDamage === 5, `drone assumed only, mods stay local, got ${stats.values.skillDamage}`);
+  assert(stats.values.skillDamage === 10, `drone + oxidizer assumed, mods stay local, got ${stats.values.skillDamage}`);
+  assert(stats.values.statusEffects === 5, `oxidizer assumed status, got ${stats.values.statusEffects}`);
   assert(stats.values.skillHealth === 0, `skill health mods are not character-wide, got ${stats.values.skillHealth}`);
   assert(
     stats.notes.some((note) => note.includes("Extra Ammo") && note.includes("+1 ammo")),
@@ -1359,6 +1360,130 @@ function testHazardGearMod() {
   assert(stats.values.hazardProtection === 10, `hazard still separate, got ${stats.values.hazardProtection}`);
 }
 
+function testIncludeAssumedToggle() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.chest = createPiece("chest", "brand:providence");
+  loadout.gear.chest.talentId = "glass-cannon";
+  loadout.includeAssumed = false;
+  const off = computeStats(loadout);
+  assert(off.values.weaponDamage === 15, `hard rolls only, got ${off.values.weaponDamage}`);
+  assert(!off.notes.some((note) => note.includes("Glass Cannon")), "GC model off");
+  loadout.includeAssumed = true;
+  const on = computeStats(loadout);
+  assert(on.values.weaponDamage === 40, `builder model on, got ${on.values.weaponDamage}`);
+}
+
+function testActiveWeaponSecondary() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.primary = { weaponId: "lexington", expertise: 10, mods: [] };
+  loadout.weapons.secondary = { weaponId: "st-elmo", expertise: 20, mods: [] };
+  loadout.activeWeapon = "secondary";
+  const stats = computeStats(loadout);
+  assert(stats.activeWeapon === "secondary", "active slot");
+  assert(stats.values.weaponDamage === 20, `secondary expertise only, got ${stats.values.weaponDamage}`);
+  assert(stats.notes.some((note) => note.includes("Primary") && note.includes("stored")), "primary stored");
+}
+
+function testHeWeaponTalentOverride() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.primary = {
+    weaponId: "famas",
+    expertise: 0,
+    talentId: "unhinged",
+    mods: [],
+  };
+  const stats = computeStats(loadout);
+  assert(stats.values.weaponDamage === 18, `Unhinged WD, got ${stats.values.weaponDamage}`);
+  assert(stats.values.weaponHandling === -20, `Unhinged handling, got ${stats.values.weaponHandling}`);
+  assert(formatBonusList([{ stat: "weaponHandling", value: -20 }]).includes("-20%"), "negative bonus format");
+}
+
+function testShdWatchParts() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = true;
+  loadout.shdWatchParts = { chc: false, weaponDamage: false };
+  const stats = computeStats(loadout);
+  assert(stats.values.chc === 0, "CHC line off");
+  assert(stats.values.weaponDamage === 0, "WD line off");
+  assert(stats.values.chd === 20, `CHD line still on, got ${stats.values.chd}`);
+}
+
+function testSkillExpertiseLocal() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.includeAssumed = false;
+  loadout.skills = [{ skillId: "striker-drone", mods: [], expertise: 12 }, null];
+  const stats = computeStats(loadout);
+  assert(stats.values.skillDamage === 0, `skill expertise is local, got ${stats.values.skillDamage}`);
+  const local = stats.skillLocal.find((item) => item.skillId === "striker-drone");
+  assert(local?.expertise === 12, "skill expertise stored");
+  assert(local?.bonuses.some((bonus) => bonus.stat === "skillDamage" && bonus.value === 12), "local skill damage");
+}
+
+function testCoreStrengthConversion() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  for (const slot of ["mask", "backpack", "chest", "gloves"] as const) {
+    loadout.gear[slot] = createPiece(slot, "set:core-strength", "red");
+  }
+  const stats = computeStats(loadout);
+  assert(stats.values.weaponDamage >= 60, `4 red cores, got ${stats.values.weaponDamage}`);
+  assert(
+    stats.notes.some((note) => note.includes("Core Strength 4pc conversion")),
+    "core strength conversion note",
+  );
+}
+
+function testHeWeaponCatalog() {
+  const he = WEAPONS.filter((weapon) => weapon.quality === "high-end");
+  assert(he.length >= 50, `at least 50 high-end weapons, got ${he.length}`);
+  assert(WEAPONS.some((weapon) => weapon.id === "ak-m"), "AK-M high-end");
+  assert(WEAPONS.some((weapon) => weapon.id === "p416"), "P416 high-end");
+}
+
+function testPerfectCompanionBackpack() {
+  const talent = ALL_TALENTS.find((item) => item.id === "perfect-companion");
+  assert(talent?.slot === "backpack", `Perfect Companion is a backpack talent, got ${talent?.slot}`);
+}
+
+function testNursesHazardModel() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.kneepads = createPiece("kneepads", "nurses-kneepads");
+  const on = computeStats(loadout);
+  assert(on.values.hazardProtection === 40, `Nurse's model +40% hazard, got ${on.values.hazardProtection}`);
+  loadout.includeAssumed = false;
+  const off = computeStats(loadout);
+  assert(off.values.hazardProtection === 0, "Nurse's hazard gated by builder model");
+}
+
+function testShareNewFields() {
+  const loadout = emptyLoadout("Fields");
+  loadout.includeAssumed = false;
+  loadout.activeWeapon = "sidearm";
+  loadout.shdWatchParts = { chc: false };
+  loadout.weapons.primary = { weaponId: "famas", expertise: 4, talentId: "strained", mods: [] };
+  loadout.skills = [{ skillId: "striker-drone", mods: [], expertise: 8 }, null];
+  const decoded = decodeLoadout(encodeLoadout(loadout));
+  assert(decoded?.includeAssumed === false, "includeAssumed roundtrip");
+  assert(decoded?.activeWeapon === "sidearm", "activeWeapon roundtrip");
+  assert(decoded?.shdWatchParts?.chc === false, "shd parts roundtrip");
+  assert(decoded?.weapons.primary?.talentId === "strained", "HE talent roundtrip");
+  assert(decoded?.skills[0]?.expertise === 8, "skill expertise roundtrip");
+}
+
+function testExoticAssumedCatalog() {
+  const vile = catalogById("vile");
+  assert(vile?.assumed?.length, "Vile has a builder model");
+  const waveform = catalogById("waveform");
+  assert(waveform?.assumed?.length, "Waveform has a builder model");
+  const pest = WEAPONS.find((weapon) => weapon.id === "pestilence");
+  assert(pest?.assumed?.length, "Pestilence has a builder model");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -1422,6 +1547,17 @@ const tests = [
   testAttributePoolNoAoK,
   testWeaponModsPrimary,
   testHazardGearMod,
+  testIncludeAssumedToggle,
+  testActiveWeaponSecondary,
+  testHeWeaponTalentOverride,
+  testShdWatchParts,
+  testSkillExpertiseLocal,
+  testCoreStrengthConversion,
+  testHeWeaponCatalog,
+  testPerfectCompanionBackpack,
+  testNursesHazardModel,
+  testShareNewFields,
+  testExoticAssumedCatalog,
 ];
 
 let failed = 0;

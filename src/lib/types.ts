@@ -229,13 +229,18 @@ export type EquippedWeapon = {
   mods?: WeaponMod[];
   /**
    * Prototype quality (Y8). High-end / named only — never exotics.
-   * Active (primary) weapon Augment stacks with gear Prototypes (7 max).
+   * Active weapon Augment stacks with gear Prototypes (7 max).
    */
   prototype?: boolean;
   /** Prototype Augment id (only when prototype). */
   augmentId?: string;
   /** Augment level 1–10 (only when prototype). */
   augmentLevel?: number;
+  /**
+   * High-end weapon talent override. Named / exotic talents stay locked
+   * to the catalog entry.
+   */
+  talentId?: string;
 };
 
 export type EquippedSkill = {
@@ -245,7 +250,23 @@ export type EquippedSkill = {
    * Per-variant pools with max rolls; they only affect that skill.
    */
   mods?: string[];
+  /** Per-skill expertise 0–30 (this skill only). */
+  expertise?: number;
 };
+
+export type ShdWatchPartId =
+  | "weaponDamage"
+  | "hsd"
+  | "chc"
+  | "chd"
+  | "armorPercent"
+  | "healthPercent"
+  | "hazardProtection"
+  | "explosiveResistance"
+  | "skillHaste"
+  | "skillDamage"
+  | "statusEffects"
+  | "skillRepair";
 
 export type Loadout = {
   name: string;
@@ -253,10 +274,21 @@ export type Loadout = {
   weapons: Record<WeaponSlot, EquippedWeapon | null>;
   skills: [EquippedSkill | null, EquippedSkill | null];
   specialization: string | null;
+  /** Master SHD Watch toggle. When true, `shdWatchParts` can disable individual bonuses. */
   shdWatch: boolean;
+  /** Per-bonus SHD Watch. Omitted keys default to on when `shdWatch` is true. */
+  shdWatchParts?: Partial<Record<ShdWatchPartId, boolean>>;
+  /**
+   * Include the builder's combat model (talent / 4pc / exotic / weapon averages).
+   * Hard rolls (cores, attributes, mods, brand 1–3pc, set 2–3pc) always apply.
+   */
+  includeAssumed: boolean;
+  /** Weapon whose expertise, mods, talent, and Prototype Augment feed Analysis. */
+  activeWeapon: WeaponSlot;
 };
 
 export type ActiveBonus = {
+  id: string;
   source: string;
   label: string;
   detail: string;
@@ -264,6 +296,15 @@ export type ActiveBonus = {
   required: number;
   active: boolean;
   color: string;
+};
+
+export type SkillLocalStats = {
+  skillId: string;
+  name: string;
+  expertise: number;
+  bonuses: StatBonus[];
+  extras: string[];
+  summary: string;
 };
 
 export type ComputedStats = {
@@ -282,6 +323,9 @@ export type ComputedStats = {
   chcOvercap: number;
   skillTierCapped: number;
   bonuses: ActiveBonus[];
+  skillLocal: SkillLocalStats[];
+  includeAssumed: boolean;
+  activeWeapon: WeaponSlot;
   offensiveIndex: number;
   notes: string[];
 };

@@ -870,6 +870,57 @@ select:focus {
   align-items: center;
 }
 
+.shd-parts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.compare-field {
+  grid-column: 1 / -1;
+}
+
+.delta {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.delta.up {
+  color: #6ad4a8;
+}
+
+.delta.down {
+  color: #e23d3d;
+}
+
+.delta.even {
+  color: var(--muted);
+}
+
+.rename-row {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rename-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.ghost-btn.is-current {
+  border-color: var(--amber);
+}
+
+.expertise-field input[type="range"]:disabled {
+  opacity: 0.55;
+}
+
 .prototype-switch span {
   display: grid;
   gap: 2px;

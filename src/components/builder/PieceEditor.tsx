@@ -218,11 +218,16 @@ export function PieceEditor({
               min={0}
               max={EXPERTISE_MAX}
               value={piece.expertise}
+              disabled={isPrototype}
               onChange={(event) =>
                 onChange({ ...piece, expertise: Number(event.target.value) })
               }
             />
-            <small className="hint">+1% Armor on this piece per level (0–30).</small>
+            <small className="hint">
+              {isPrototype
+                ? "Prototype locks Expertise at 30."
+                : "+1% Armor on this piece per level (0–30)."}
+            </small>
           </label>
 
           {piece.attributes.map((attribute, index) => (
