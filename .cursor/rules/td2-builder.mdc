@@ -1,0 +1,14 @@
+---
+description: TD2 Gear Builder product facts for every agent
+alwaysApply: true
+---
+
+This repo is a PvE sheet planner for The Division 2 (Y8S3 Red Horizon / TU 2.34), not a DPS simulator.
+
+- English in-game names. Keep existing item `id`s.
+- Live official tables > PTS. Unpublished numbers stay as-is (no guessed RPM/mag/caps).
+- Always-on stats: brand/set bonuses, `extraStats`, `passive`. Max stacks/procs: `assumed` + `assumedNote`.
+- PvP / Conflict skill and gear tables are out of scope.
+- After data edits: `npm test`. Append tests at the end of `src/lib/calc.test.ts` only.
+- Do not edit `www/` or `README.md` unless asked. Do not merge PRs unless asked.
+- Full playbook: `AGENTS.md`. Domain rules: `.cursor/rules/td2-*.mdc`.

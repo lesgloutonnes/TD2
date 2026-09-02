@@ -1,0 +1,20 @@
+---
+description: Live Y8S3 weapon catalog rules
+globs: src/lib/data/weapons.ts,src/lib/data/he-weapons.ts,src/lib/data/weapon-talents.ts,src/lib/data/weapon-mods.ts
+alwaysApply: false
+---
+
+Named/exotics: `weapons.ts`. High-end bases: `he-weapons.ts`. Pickable HE talents: `weapon-talents.ts`. Mod caps: `weapon-mods.ts`.
+
+Locked named/exotic mods belong in `extraStats`, not talent text and not fake `assumed` Weapon Damage.
+
+Y8S3 facts (do not regress):
+
+- **Determined** = Perfect Determined: true headshot kill guarantees the next crit headshot; a kill from that converted shot does **not** chain. Types: mmr / rifle / pistol only. Body-to-headshot chaining is **Iron Will** (gear catalog), not this talent. Relic / Prophet use the same no-chain wording.
+- **Boiling Point** is a pickable HE talent (first 53% mag −100% CHC, rest 100%). Perfect (Teapot, Steamer) is 48%.
+- **Steel & Sons ACR** is an exotic ACR SS rifle (`steel-and-sons`), talent Confirm & Execute, max stacks 4, weak-point +30% amp / 5s.
+- **Fafnir**: Dragon's Breath 40% Burn, WD amplified by 50% of Status Effects; locked +15% CHC / +5 mag / +10% handling as `extraStats`. No averaged +WD assumed. RPM/mag unpublished by Ubisoft — do not invent.
+- Do not add Prima Donna / Insult to Injury / Brain Break without an official talent table.
+- Do not add Perfect-only HE talents (Allegro, Streamline, …) unless they are on the live picker.
+
+Sources: Red Horizon article + live gear PDF. `npm test` after edits.
