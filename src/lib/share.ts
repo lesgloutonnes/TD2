@@ -3,6 +3,8 @@ import { emptyLoadout } from "./calc";
 import { clampExpertise, resolveActiveWeaponSlot } from "./builder-model";
 import { createPiece } from "./piece";
 import { canBePrototype, canWeaponBePrototype, SLOTS } from "./data/attributes";
+import { BRANDS } from "./data/brands";
+import { GEAR_SETS } from "./data/gear-sets";
 import { WEAPONS } from "./data/weapons";
 import { defaultWeaponMods, sanitizeWeaponMods } from "./data/weapon-mods";
 import { defaultSkillMods, sanitizeSkillMods } from "./data/skill-mods";
@@ -187,8 +189,52 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
 const STORAGE_KEY = "td2-builds";
 const SAVED_EVENT = "td2-saved";
 
+export type SavedBuildListItem = {
+  id: string;
+  name: string;
+  savedAt: number;
+  blurb: string;
+};
+
 let savedCacheRaw = "";
-let savedCache: { id: string; name: string; savedAt: number }[] = [];
+let savedCache: SavedBuildListItem[] = [];
+
+/** Short kit line for library cards (sets, brands, named/exotics — no Ninja +1). */
+export function loadoutBlurb(loadout: Loadout): string {
+  const setCounts = new Map<string, number>();
+  const brandCounts = new Map<string, number>();
+  const named: string[] = [];
+
+  for (const slot of SLOTS) {
+    const piece = loadout.gear[slot];
+    if (!piece) continue;
+    const source = catalogById(piece.sourceId);
+    if (!source) continue;
+    if (source.gearSetId) {
+      setCounts.set(source.gearSetId, (setCounts.get(source.gearSetId) ?? 0) + 1);
+      continue;
+    }
+    if (source.kind === "named" || source.kind === "exotic") {
+      named.push(source.name);
+      continue;
+    }
+    if (source.brandId) {
+      brandCounts.set(source.brandId, (brandCounts.get(source.brandId) ?? 0) + 1);
+    }
+  }
+
+  const parts: string[] = [];
+  for (const [id, count] of [...setCounts.entries()].sort((a, b) => b[1] - a[1])) {
+    const name = GEAR_SETS.find((item) => item.id === id)?.name ?? id;
+    parts.push(count > 1 ? `${count} ${name}` : name);
+  }
+  for (const [id, count] of [...brandCounts.entries()].sort((a, b) => b[1] - a[1])) {
+    const name = BRANDS.find((item) => item.id === id)?.name ?? id;
+    parts.push(count > 1 ? `${count} ${name}` : name);
+  }
+  parts.push(...named);
+  return parts.length ? parts.slice(0, 4).join(" · ") : "Empty loadout";
+}
 
 function notifySaved() {
   if (typeof window === "undefined") return;
@@ -204,7 +250,7 @@ export function subscribeSaved(onChange: () => void) {
   };
 }
 
-export function listSavedBuilds(): { id: string; name: string; savedAt: number }[] {
+export function listSavedBuilds(): SavedBuildListItem[] {
   if (typeof window === "undefined") return savedCache;
   try {
     const raw = localStorage.getItem(STORAGE_KEY) ?? "";
@@ -214,9 +260,17 @@ export function listSavedBuilds(): { id: string; name: string; savedAt: number }
       savedCache = [];
       return savedCache;
     }
-    const parsed = JSON.parse(raw) as Record<string, { name: string; savedAt: number }>;
+    const parsed = JSON.parse(raw) as Record<string, Loadout & { savedAt?: number }>;
     savedCache = Object.entries(parsed)
-      .map(([id, value]) => ({ id, name: value.name, savedAt: value.savedAt }))
+      .map(([id, value]) => {
+        const loadout = normalizeLoadout(value);
+        return {
+          id,
+          name: value.name || loadout.name,
+          savedAt: value.savedAt ?? 0,
+          blurb: loadoutBlurb(loadout),
+        };
+      })
       .sort((a, b) => b.savedAt - a.savedAt);
     return savedCache;
   } catch {
