@@ -333,7 +333,7 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 150,
     mag: 7,
     talent: "Salvage",
-    talentDesc: "Kill reloads 50% of the magazine.",
+    talentDesc: "Killing a target has a +70% chance to refill the magazine.",
   },
   {
     id: "fafnir",
@@ -420,7 +420,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 30,
     talent: "Perfectly Accurate",
-    talentDesc: "Perfect accuracy and stability. Former DZ exclusive.",
+    talentDesc: "+50% Accuracy. Former DZ exclusive.",
+    extraStats: [{ stat: "accuracy", value: 50 }],
   },
   {
     id: "kingbreaker",
@@ -440,7 +441,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perfect Frenzy",
-    talentDesc: "Kill: Perfect rate of fire and weapon handling bonus. FAMAS. Brooklyn Hunters drop.",
+    talentDesc:
+      "For every 8 bullets in the magazine capacity, gain +3% rate of fire and +3% weapon damage for 9s when reloading from empty. FAMAS. Brooklyn Hunters drop.",
   },
   {
     id: "archivist",
@@ -750,7 +752,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 55,
     mag: 7,
     talent: "Perfect First Blood",
-    talentDesc: "The first bullet in the magazine deals bonus damage. Former DZ exclusive.",
+    talentDesc:
+      "If scoped, your first two shots fired from out of combat or after fully reloading from empty deal headshot damage to any part of the body hit. Requires a Scope with 8x magnification or higher. Former DZ exclusive.",
   },
   {
     id: "whiplash",
@@ -931,7 +934,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 550,
     mag: 100,
     talent: "Perfectly Measured",
-    talentDesc: "First half of the magazine: +25% rate of fire, -30% damage. Second half: reversed.",
+    talentDesc:
+      "The top half of the magazine has 25% rate of fire and -30% weapon damage. The bottom half has -18% rate of fire and +38% total weapon damage.",
   },
   {
     id: "big-show",
