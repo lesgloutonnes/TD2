@@ -99,6 +99,7 @@ const STAT_KEYS: StatKey[] = [
   "explosiveDamage",
   "pulseResistance",
   "swapSpeed",
+  "movementSpeed",
   "optimalRange",
   "threat",
   "protectionFromElites",

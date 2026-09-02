@@ -109,6 +109,14 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     types: ["lmg", "ar"],
   },
   {
+    id: "head-scratcher",
+    name: "Head Scratcher",
+    description:
+      "Deal 30% Amplified Damage to confused enemies. After 4 kills, applies Confuse to the enemy you hit.",
+    assumedNote:
+      "Amp vs confused enemies is not a sheet Weapon Damage average. Perfect Head Scratcher (35% / 3 kills) is named-only.",
+  },
+  {
     id: "ignited",
     name: "Ignited",
     description: "+15% weapon damage against burning enemies.",
