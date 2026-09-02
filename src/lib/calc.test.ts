@@ -1833,6 +1833,43 @@ function testSeasonModifier() {
   assert(decoded?.season?.passives[1] === "new-formula-gamma", "passive roundtrip");
 }
 
+function testSeasonLiveY8s3Copy() {
+  const fiery = SEASON_ACTIVES.find((item) => item.id === "fiery-aura");
+  assert(fiery?.assumed.some((bonus) => bonus.stat === "armorRegenPercent" && bonus.value === 1.5), "Fiery Aura 1.5%/s");
+  assert(fiery?.assumedNote.includes("15% Bonus Armor"), "Fiery Aura L5 bonus armor");
+  assert(fiery?.assumedNote.includes("100% while sprinting"), "Fiery Aura sprint DR");
+  assert(fiery?.description.includes("15% Bonus Armor"), "Fiery Aura description L5");
+
+  const vicarious = SEASON_ACTIVES.find((item) => item.id === "vicarious-combustion");
+  assert(vicarious?.assumed.some((bonus) => bonus.stat === "hsd" && bonus.value === 50), "Vicarious 50% HSD");
+  assert(vicarious?.assumedNote.includes("20 m"), "Vicarious 20 m spread");
+  assert(vicarious?.assumedNote.includes("50%–10%") || vicarious?.assumedNote.includes("50%-10%"), "Vicarious burn penalty band");
+
+  const signed = SEASON_ACTIVES.find((item) => item.id === "signed-shield-delivered");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "skillEfficiency" && bonus.value === 25), "Signed 25% SE");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "shieldHealth" && bonus.value === 500), "Signed +500% shield");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "signatureWeaponDamage" && bonus.value === 50), "Signed +50% sig WD");
+  assert(signed?.assumedNote.includes("+150% Shield Active Regen"), "Signed shield active regen");
+  assert(signed?.description.includes("+2 s") && signed.description.includes("+1 s"), "Signed L5 duration extend");
+
+  const leaky = SEASON_PASSIVES.find((item) => item.id === "leaky-valve");
+  assert(leaky?.description.includes("95%"), "Leaky Valve 95%");
+  assert(/regardless of other effects/i.test(leaky?.description ?? ""), "Leaky Valve overrides Delayed Venting");
+
+  const reserve = SEASON_PASSIVES.find((item) => item.id === "reserve-tank");
+  assert(reserve?.description.includes("20%"), "Reserve Tank resets to 20%");
+
+  const flint = SEASON_PASSIVES.find((item) => item.id === "flint-and-steel");
+  assert(flint?.description.includes("15 seconds"), "Flint and Steel 15 s");
+
+  assert(SEASON_PASSIVES.length === 20, "still 20 player passives");
+  assert(SEASON_ACTIVES.length === 3, "still 3 actives");
+  assert(
+    !SEASON_PASSIVES.some((item) => /draining|achilles|thousand-cuts/.test(item.id)),
+    "hostile modifiers are not selectable passives",
+  );
+}
+
 function testExoticAssumedCatalog() {
   const vile = catalogById("vile");
   assert(vile?.assumed?.length, "Vile has maxed bonuses");
@@ -1919,6 +1956,7 @@ const tests = [
   testNursesHazardModel,
   testShareNewFields,
   testSeasonModifier,
+  testSeasonLiveY8s3Copy,
   testExoticAssumedCatalog,
 ];
 
