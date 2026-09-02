@@ -12,7 +12,7 @@ Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons
 
 The optional **build index** in Analysis is only a relative stack comparison (weapon damage × type × crit × headshot × DtA/DtH). It is not DPS and should not be treated as one.
 
-The **Include builder model** toggle (on by default) adds averaged talent / 4pc / exotic / skill contributions. Hard rolls — cores, attributes, mods, brand 1–3pc, set 2–3pc — always apply. Turn the model off to inspect the sheet of rolls only.
+The **Include builder model** toggle (on by default) adds averaged talent / 4pc / exotic / skill contributions — planning averages, not max stacks (Striker 4pc ≈ 62 stacks / +40% Weapon Damage, not 100 / +65%). Hard rolls — cores, attributes, mods, brand 1–3pc, set 2–3pc — always apply. Turn the model off to inspect the sheet of rolls only.
 
 ## Run without npm (Windows)
 
@@ -63,15 +63,14 @@ Open [http://localhost:3000](http://localhost:3000).
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
-- Builder model (toggle): talent / 4pc / exotic / weapon / skill averages for planning
+- Builder model (toggle): talent / 4pc / exotic / weapon / skill combat averages for planning (not max stacks)
 - SHD Watch panel (toggle, then scale each line 0–max)
 - Y8S3 **Under Pressure** season modifier (toggle, 1 active + 3 passives, assumed pressure on the sheet)
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
 - Build index (relative stack compare — **not DPS**)
-- Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
 - Local save (overwrite / save as / rename) and share link
-- Saved builds pinned at the top (starter presets remain until you save, and in Compare)
-- Compare two builds (preset or saved vs current) — deltas in Analysis
+- Saved builds pinned at the top
+- Compare a saved build vs current — deltas in Analysis
 
 Not affiliated with Ubisoft.

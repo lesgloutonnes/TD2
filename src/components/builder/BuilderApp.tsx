@@ -70,7 +70,6 @@ import {
   encodeLoadout,
   listSavedBuilds,
   loadBuild,
-  PRESETS,
   renameBuild,
   saveBuild,
   subscribeSaved,
@@ -138,10 +137,6 @@ export function BuilderApp() {
   const stats = useMemo(() => computeStats(loadout), [loadout]);
   const compareLoadout = useMemo(() => {
     if (!compareKey) return null;
-    if (compareKey.startsWith("preset:")) {
-      const preset = PRESETS.find((item) => item.id === compareKey.slice(7));
-      return preset ? preset.build() : null;
-    }
     if (compareKey.startsWith("saved:")) {
       return loadBuild(compareKey.slice(6));
     }
@@ -442,8 +437,9 @@ export function BuilderApp() {
         <span>
           Include builder model
           <small className="hint">
-            Adds averaged talent / 4pc / exotic / season-active bonuses to Analysis. Cores,
-            attributes, mods, brand and set 2–3pc always apply. Not a DPS sim.
+            Adds combat averages to Analysis — not max stacks. Example: Striker 4pc ≈ 62 stacks
+            (+40% Weapon Damage), not 100 stacks (+65%). Cores, attributes, mods, brand and set
+            2–3pc always apply. Not a DPS sim.
           </small>
         </span>
       </label>
@@ -497,22 +493,11 @@ export function BuilderApp() {
       <span>Compare with</span>
       <select value={compareKey} onChange={(event) => setCompareKey(event.target.value)}>
         <option value="">None</option>
-        <optgroup label="Presets">
-          {PRESETS.map((preset) => (
-            <option key={preset.id} value={`preset:${preset.id}`}>
-              {preset.name}
-            </option>
-          ))}
-        </optgroup>
-        {saved.length > 0 ? (
-          <optgroup label="Saved">
-            {saved.map((item) => (
-              <option key={item.id} value={`saved:${item.id}`}>
-                {item.name}
-              </option>
-            ))}
-          </optgroup>
-        ) : null}
+        {saved.map((item) => (
+          <option key={item.id} value={`saved:${item.id}`}>
+            {item.name}
+          </option>
+        ))}
       </select>
       <small className="hint">Deltas in Analysis are current minus the other build.</small>
     </label>
@@ -531,27 +516,10 @@ export function BuilderApp() {
       <p className="eyebrow">{saved.length > 0 ? "Saved builds" : "Library"}</p>
       <div className={isPhone ? "phone-presets" : "presets"}>
         {saved.length === 0 ? (
-          <>
-            <div className="preset-card presets-empty-card">
-              <strong>No saved builds</strong>
-              <span>Save a loadout to pin it here. Starters stay available below and in Compare.</span>
-            </div>
-            {PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                className="preset-card"
-                onClick={() => {
-                  setLoadout(preset.build());
-                  setSavedId(null);
-                  flash(`${preset.name} loaded.`);
-                }}
-              >
-                <strong>{preset.name}</strong>
-                <span>{preset.blurb}</span>
-              </button>
-            ))}
-          </>
+          <div className="preset-card presets-empty-card">
+            <strong>No saved builds</strong>
+            <span>Save a loadout to pin it here. Compare uses saved builds only.</span>
+          </div>
         ) : (
           saved.map((item) => (
             <div
