@@ -20,7 +20,7 @@ import {
   specializationById,
 } from "./data/skills";
 import { defaultWeaponMods } from "./data/weapon-mods";
-import { defaultWeaponTalentId, weaponTalentByName } from "./data/weapon-talents";
+import { defaultWeaponTalentId, weaponTalentByName, weaponTalentsForType } from "./data/weapon-talents";
 import { clampExpertise } from "./builder-model";
 import { pieceInspect, weaponInspect } from "./tooltip";
 import { shouldOpenGearPicker } from "./gear-picker";
@@ -1663,7 +1663,8 @@ function testHeWeaponTalentOverride() {
   };
   const stats = computeStats(loadout);
   assert(stats.values.weaponDamage === 18, `Unhinged WD, got ${stats.values.weaponDamage}`);
-  assert(stats.values.weaponHandling === -20, `Unhinged handling, got ${stats.values.weaponHandling}`);
+  assert(stats.values.stability === -25, `Unhinged stability, got ${stats.values.stability}`);
+  assert(stats.values.accuracy === -25, `Unhinged accuracy, got ${stats.values.accuracy}`);
   assert(formatBonusList([{ stat: "weaponHandling", value: -20 }]).includes("-20%"), "negative bonus format");
 }
 
@@ -2274,10 +2275,82 @@ function testQuickstep() {
   assert(prima?.talentDesc.includes("10 stacks"), "Prima Donna 10 PvE stacks");
   assert(!prima?.assumed?.length, "Prima Donna stacks are not fake WD");
 
+  const scratchQs = weaponTalentByName("Head Scratcher");
+  assert(scratchQs?.description.includes("30%"), "Head Scratcher live 30%");
+  assert(scratchQs?.description.includes("4 kills"), "Head Scratcher 4 kills");
+  assert(!scratchQs?.assumed?.length, "Head Scratcher is not a sheet WD average");
+}
+
+function testY8s3LiveHeTalentPicker() {
+  const killer = weaponTalentByName("Killer");
+  assert(killer?.description.includes("+70%"), "Killer live 70% CHD");
+  assert(killer?.assumed?.some((stat) => stat.stat === "chd" && stat.value === 70), "Killer assumed 70 CHD");
+
+  const optimist = weaponTalentByName("Optimist");
+  assert(optimist?.description.includes("+3.5%"), "Optimist live 3.5%");
+  assert(optimist?.assumed?.some((stat) => stat.stat === "weaponDamage" && stat.value === 35), "Optimist empty mag 35%");
+
+  const strained = weaponTalentByName("Strained");
+  assert(strained?.description.includes("0.5s"), "Strained live fire-time stacks");
+  assert(strained?.assumed?.some((stat) => stat.stat === "chd" && stat.value === 50), "Strained 5×10% CHD");
+
+  const fastHands = weaponTalentByName("Fast Hands");
+  assert(fastHands?.description.includes("Max stack is 40"), "Fast Hands 40 stacks");
+
+  const breadbasket = weaponTalentByName("Breadbasket");
+  assert(breadbasket?.description.includes("+55%"), "Breadbasket live 55% HSD");
+
+  const rifleman = weaponTalentByName("Rifleman");
+  assert(rifleman?.description.includes("+10%"), "Rifleman 10% per headshot");
+  assert(rifleman?.types?.includes("rifle") && !rifleman.types.includes("mmr"), "Rifleman is rifle-only");
+
+  const firstBlood = weaponTalentByName("First Blood");
+  assert(firstBlood?.description.includes("8x"), "First Blood requires 8x scope");
+  assert(!firstBlood?.assumed?.length, "First Blood is not a sheet HSD bonus");
+
+  const unhinged = weaponTalentByName("Unhinged");
+  assert(unhinged?.description.includes("-25% Stability"), "Unhinged live -25% stability/accuracy");
+  assert(unhinged?.types?.includes("lmg") && unhinged.types.length === 1, "Unhinged is LMG-only");
+
+  const frenzy = weaponTalentByName("Frenzy");
+  assert(frenzy?.description.includes("reloading from empty"), "Frenzy empty-reload scaling");
+  assert(frenzy?.types?.includes("lmg") && !frenzy.types.includes("ar"), "Frenzy is LMG-only");
+
+  const streamline = weaponTalentByName("Streamline");
+  assert(streamline?.description.includes("42%"), "Streamline live 42%");
+  const onEmpty = weaponTalentByName("On Empty");
+  assert(onEmpty?.description.includes("+60%"), "On Empty live 60% handling");
+  assert(onEmpty?.types?.includes("ar"), "On Empty is AR-only");
+
+  const stabilize = weaponTalentByName("Stabilize");
+  assert(stabilize?.description.includes("+60%"), "Stabilize live 60% cap");
+  const pressure = weaponTalentByName("Pressure Point");
+  assert(pressure?.description.includes("15%"), "Pressure Point live 15%");
+  const future = weaponTalentByName("Future Perfect");
+  assert(future?.description.includes("+1 skill tier"), "Future Perfect skill tier stacks");
+
   const scratch = weaponTalentByName("Head Scratcher");
   assert(scratch?.description.includes("30%"), "Head Scratcher live 30%");
   assert(scratch?.description.includes("4 kills"), "Head Scratcher 4 kills");
   assert(!scratch?.assumed?.length, "Head Scratcher is not a sheet WD average");
+
+  assert(!weaponTalentByName("Accurate"), "Accurate is Perfect-only — off the HE picker");
+  assert(!weaponTalentByName("Esagerato"), "Esagerato is not a live picker talent");
+  assert(!weaponTalentByName("Swift"), "Swift is named-only (The Stinger), not On Empty");
+
+  const arIds = weaponTalentsForType("ar").map((talent) => talent.id);
+  assert(arIds.includes("on-empty") && arIds.includes("near-sighted"), "AR picker has On Empty / Near Sighted");
+  assert(!arIds.includes("unhinged") && !arIds.includes("rifleman"), "AR picker hides LMG/rifle-only talents");
+  const lmgIds = weaponTalentsForType("lmg").map((talent) => talent.id);
+  assert(lmgIds.includes("unhinged") && lmgIds.includes("frenzy") && lmgIds.includes("overwhelm"), "LMG picker");
+  const pistolIds = weaponTalentsForType("pistol").map((talent) => talent.id);
+  assert(pistolIds.includes("finisher") && pistolIds.includes("salvage"), "pistol picker");
+  assert(!pistolIds.includes("boiling-point"), "Boiling Point is AR/SMG/LMG");
+
+  const pinprick = WEAPONS.find((weapon) => weapon.id === "pinprick");
+  assert(pinprick?.talentDesc.includes("8x"), "Pinprick Perfect First Blood live wording");
+  const railsplitter = WEAPONS.find((weapon) => weapon.id === "railsplitter");
+  assert(railsplitter?.extraStats?.some((stat) => stat.stat === "accuracy" && stat.value === 50), "Railsplitter Perfectly Accurate +50%");
 }
 
 /** Named extras vs live names: Hollow Man TU9 10% DtH; Afterburn is not standing WD. */
@@ -2406,6 +2479,7 @@ const tests = [
   testSpecPerksLiveY8s3,
   testQuickstep,
   testGearCatalogLiveHoles,
+  testY8s3LiveHeTalentPicker,
 ];
 
 let failed = 0;
