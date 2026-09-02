@@ -1608,6 +1608,31 @@ export const WEAPONS: WeaponDef[] = [
     talentDesc:
       "+35% damage against bleeding targets. Survivalist specialization sidearm (specialization must be active to equip).",
   },
+  {
+    id: "quickstep",
+    name: "Quickstep",
+    type: "pistol",
+    quality: "named",
+    rpm: 160,
+    mag: 7,
+    talent: "Sport Mode",
+    talentDesc:
+      "+20% Movement Speed while the pistol is unholstered. This bonus does not stack with other movement speed bonuses. Named Tactical M1911 (Y7S2.2 Halloween 2025 / Houndsman).",
+    extraStats: [{ stat: "movementSpeed", value: 20 }],
+  },
+  {
+    id: "prima-donna",
+    name: "Prima Donna",
+    type: "mmr",
+    quality: "exotic",
+    rpm: 55,
+    mag: 7,
+    talent: "You can look... but you can't touch",
+    talentDesc:
+      "When out of combat, receive 10 stacks. This weapon deals +12.5% Amplified Damage per stack. 1 stack is automatically consumed to fully repair one instance of damage you receive. 1 stack replenishes every 3s. Paradise Lost incursion (Mk20 SSR variant).",
+    assumedNote:
+      "Out-of-combat stacks (10 × 12.5% amp) and the on-hit repair consume are not averaged as Weapon Damage. PvE values only.",
+  },
   ...HE_WEAPONS,
 ];
 

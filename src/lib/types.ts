@@ -69,6 +69,7 @@ export type StatKey =
   | "explosiveDamage"
   | "pulseResistance"
   | "swapSpeed"
+  | "movementSpeed"
   | "optimalRange"
   | "threat"
   | "protectionFromElites"

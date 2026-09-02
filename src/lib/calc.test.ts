@@ -807,6 +807,8 @@ function testWeaponCatalog() {
     "ruthless",
     "first-sight",
     "survivalist-d50",
+    "quickstep",
+    "prima-donna",
   ]) {
     assert(
       WEAPONS.some((weapon) => weapon.id === required),
@@ -2225,6 +2227,59 @@ function testSpecPerksLiveY8s3() {
   assert(stats.values.armorPercent === 10 && stats.values.statusEffects === 10, "firewall sheet defaults");
 }
 
+function testQuickstep() {
+  const family = WEAPONS.find((weapon) => weapon.id === "tactical-m1911");
+  const quickstep = WEAPONS.find((weapon) => weapon.id === "quickstep");
+  assert(quickstep?.name === "Quickstep", "Quickstep name");
+  assert(quickstep?.type === "pistol" && quickstep.quality === "named", "Quickstep named pistol");
+  assert(quickstep?.talent === "Sport Mode", "Sport Mode");
+  assert(quickstep?.talentDesc.includes("+20% Movement Speed"), "Sport Mode +20%");
+  assert(quickstep?.talentDesc.includes("unholstered"), "Sport Mode unholstered");
+  assert(quickstep?.talentDesc.includes("does not stack"), "Sport Mode no stack");
+  assert(quickstep?.rpm === 160 && quickstep.mag === 7, "Quickstep inherits Tactical M1911 160/7");
+  assert(family?.type === "pistol" && family.rpm === 160 && family.mag === 7, "HE Tactical M1911 family");
+  assert(
+    quickstep?.extraStats?.some((stat) => stat.stat === "movementSpeed" && stat.value === 20),
+    "Sport Mode +20 Movement Speed extraStats",
+  );
+  assert(!quickstep?.assumed?.length, "Sport Mode is not fake Weapon Damage");
+  assert(!ATTRIBUTE_OPTIONS.includes("movementSpeed"), "movementSpeed is not a gear attribute roll");
+  assert(!MOD_OPTIONS.includes("movementSpeed"), "movementSpeed is not a gear mod");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.sidearm = { weaponId: "quickstep", expertise: 0, mods: [] };
+  loadout.activeWeapon = "sidearm";
+  const unholstered = computeStats(loadout);
+  assert(
+    unholstered.values.movementSpeed === 20,
+    `Quickstep unholstered +20% Movement Speed, got ${unholstered.values.movementSpeed}`,
+  );
+  assert(unholstered.values.weaponDamage === 0, "Sport Mode is not Weapon Damage");
+  assert(
+    unholstered.notes.some((note) => note.includes("Movement Speed")),
+    "innate Movement Speed note",
+  );
+
+  loadout.activeWeapon = "primary";
+  const holstered = computeStats(loadout);
+  assert(holstered.values.movementSpeed === 0, "Sport Mode only while the pistol is active");
+
+  const prima = WEAPONS.find((weapon) => weapon.id === "prima-donna");
+  assert(prima?.name === "Prima Donna", "Prima Donna name");
+  assert(prima?.type === "mmr" && prima.quality === "exotic", "Prima Donna exotic MMR");
+  assert(prima?.rpm === 55 && prima.mag === 7, "Prima Donna official 55 RPM / mag 7");
+  assert(prima?.talent.includes("You can look"), "You can look talent");
+  assert(prima?.talentDesc.includes("12.5%"), "Prima Donna 12.5% amp per stack");
+  assert(prima?.talentDesc.includes("10 stacks"), "Prima Donna 10 PvE stacks");
+  assert(!prima?.assumed?.length, "Prima Donna stacks are not fake WD");
+
+  const scratch = weaponTalentByName("Head Scratcher");
+  assert(scratch?.description.includes("30%"), "Head Scratcher live 30%");
+  assert(scratch?.description.includes("4 kills"), "Head Scratcher 4 kills");
+  assert(!scratch?.assumed?.length, "Head Scratcher is not a sheet WD average");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2308,6 +2363,7 @@ const tests = [
   testY8S3LiveSkillCatalog,
   testY8s3LiveWeaponCatalog,
   testSpecPerksLiveY8s3,
+  testQuickstep,
 ];
 
 let failed = 0;
