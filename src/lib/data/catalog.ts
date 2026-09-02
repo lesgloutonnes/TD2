@@ -712,13 +712,10 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Pack Instincts",
       description:
-        "Depending on distance: Critical Hit Damage (close), Critical Hit Chance (mid), or Headshot Damage (far). Builder average: +8% Critical Hit Chance and +8% Critical Hit Damage.",
+        "Depending on distance: Critical Hit Damage (close), Critical Hit Chance (mid), or Headshot Damage (far).",
     },
-    assumed: [
-      { stat: "chc", value: 8 },
-      { stat: "chd", value: 8 },
-    ],
-    assumedNote: "Pack Instincts averaged across close / mid / far range — not extra cores.",
+    assumed: [{ stat: "chd", value: 25 }],
+    assumedNote: "Max Pack Instincts at close range (+25% Critical Hit Damage).",
   },
   {
     id: "vile",

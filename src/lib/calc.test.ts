@@ -248,6 +248,7 @@ function testCeskaY8s3() {
 function testEmberEngine() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   loadout.gear.mask = createPiece("mask", "set:ember-engine");
   loadout.gear.backpack = createPiece("backpack", "set:ember-engine");
   loadout.gear.chest = createPiece("chest", "set:ember-engine");
@@ -407,7 +408,7 @@ function testNamedCoresAndExtras() {
 
   const coyote = catalogById("coyotes-mask");
   assert(!coyote?.extraStats?.length, "Coyote CHC/CHD is talent assumed, not extra stats");
-  assert(coyote?.assumed?.some((stat) => stat.stat === "chc"), "Coyote assumed CHC");
+  assert(coyote?.assumed?.some((stat) => stat.stat === "chd"), "Coyote assumed CHD (close-range max)");
 
   const btsu = catalogById("btsu-datagloves");
   assert(!btsu?.extraStats?.length, "BTSU skill haste is a regular secondary, not extra");
@@ -1138,6 +1139,7 @@ function testTalentAssumed() {
   loadout.shdWatch = false;
   loadout.gear.chest = createPiece("chest", "brand:providence");
   loadout.gear.chest.talentId = "glass-cannon";
+  loadout.includeAssumed = true;
   const stats = computeStats(loadout);
   assert(stats.values.weaponDamage === 40, `15 core + 25 GC, got ${stats.values.weaponDamage}`);
   assert(stats.bonuses.some((b) => b.source.includes("Glass Cannon")), "GC bonus row");
@@ -1146,12 +1148,19 @@ function testTalentAssumed() {
 function testStrikerFourAssumed() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   for (const slot of ["mask", "backpack", "chest", "gloves"] as const) {
     loadout.gear[slot] = createPiece(slot, "set:striker");
   }
   const stats = computeStats(loadout);
-  // 4 red cores = 60 WD + 40 assumed striker stacks = 100 (no attrs WD)
-  assert(stats.values.weaponDamage === 100, `striker 4pc assumed WD, got ${stats.values.weaponDamage}`);
+  // 4 red cores = 60 WD + max 200 stacks × 1% (chest + backpack) = 260
+  assert(stats.values.weaponDamage === 260, `striker 4pc max WD, got ${stats.values.weaponDamage}`);
+
+  loadout.gear.chest = null;
+  loadout.gear.holster = createPiece("holster", "set:striker");
+  const noChest = computeStats(loadout);
+  // 4pc with backpack, no chest: 100 stacks × 1% = 100. 4 red cores = 60.
+  assert(noChest.values.weaponDamage === 160, `striker 4pc no chest, got ${noChest.values.weaponDamage}`);
 }
 
 function testAugmentStacks() {
@@ -1205,6 +1214,7 @@ function testWeaponListSorting() {
 function testSkillModsContribute() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   loadout.skills = [
     {
       skillId: "striker-drone",
@@ -1369,6 +1379,7 @@ function testInvestorSlotted() {
 function testMementoAssumed() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   loadout.gear.backpack = createPiece("backpack", "memento");
   const stats = computeStats(loadout);
   assert(stats.values.weaponDamage === 30, `15 core + 15 memento, got ${stats.values.weaponDamage}`);
@@ -1454,14 +1465,14 @@ function testIncludeAssumedToggle() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
   loadout.gear.chest = createPiece("chest", "brand:providence");
-  loadout.gear.chest.talentId = "glass-cannon";
+  loadout.gear.chest.talentId = "obliterate";
   loadout.includeAssumed = false;
   const off = computeStats(loadout);
   assert(off.values.weaponDamage === 15, `hard rolls only, got ${off.values.weaponDamage}`);
-  assert(!off.notes.some((note) => note.includes("Glass Cannon")), "GC model off");
+  assert(!off.notes.some((note) => note.includes("Obliterate")), "Obliterate maxed bonuses off");
   loadout.includeAssumed = true;
   const on = computeStats(loadout);
-  assert(on.values.weaponDamage === 40, `builder model on, got ${on.values.weaponDamage}`);
+  assert(on.values.weaponDamage === 35, `maxed Obliterate 20 stacks, got ${on.values.weaponDamage}`);
 }
 
 function testActiveWeaponSecondary() {
@@ -1522,6 +1533,7 @@ function testSkillExpertiseLocal() {
 function testCoreStrengthConversion() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   for (const slot of ["mask", "backpack", "chest", "gloves"] as const) {
     loadout.gear[slot] = createPiece(slot, "set:core-strength", "red");
   }
@@ -1548,12 +1560,13 @@ function testPerfectCompanionBackpack() {
 function testNursesHazardModel() {
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
+  loadout.includeAssumed = true;
   loadout.gear.kneepads = createPiece("kneepads", "nurses-kneepads");
   const on = computeStats(loadout);
   assert(on.values.hazardProtection === 40, `Nurse's model +40% hazard, got ${on.values.hazardProtection}`);
   loadout.includeAssumed = false;
   const off = computeStats(loadout);
-  assert(off.values.hazardProtection === 0, "Nurse's hazard gated by builder model");
+  assert(off.values.hazardProtection === 0, "Nurse's hazard gated by maxed bonuses");
 }
 
 function testShareNewFields() {
@@ -1642,7 +1655,7 @@ function testSeasonModifier() {
   const fiery = computeStats(withSeason({ pressure: 90 }, true));
   assert(fiery.values.armorRegenPercent === 1.5, `Fiery Aura regen, got ${fiery.values.armorRegenPercent}`);
   const fieryHard = computeStats(withSeason({ pressure: 90 }, false));
-  assert(fieryHard.values.armorRegenPercent === 0, "active burst gated by builder model");
+  assert(fieryHard.values.armorRegenPercent === 0, "active burst gated by maxed bonuses");
 
   const vicarious = computeStats(
     withSeason({ pressure: 90, activeId: "vicarious-combustion" }, true),
@@ -1678,11 +1691,11 @@ function testSeasonModifier() {
 
 function testExoticAssumedCatalog() {
   const vile = catalogById("vile");
-  assert(vile?.assumed?.length, "Vile has a builder model");
+  assert(vile?.assumed?.length, "Vile has maxed bonuses");
   const waveform = catalogById("waveform");
-  assert(waveform?.assumed?.length, "Waveform has a builder model");
+  assert(waveform?.assumed?.length, "Waveform has maxed bonuses");
   const pest = WEAPONS.find((weapon) => weapon.id === "pestilence");
-  assert(pest?.assumed?.length, "Pestilence has a builder model");
+  assert(pest?.assumed?.length, "Pestilence has maxed bonuses");
 }
 
 const tests = [

@@ -166,7 +166,7 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     specialization: parsed.specialization ?? null,
     shdWatch: parsed.shdWatch ?? true,
     shdWatchParts,
-    includeAssumed: parsed.includeAssumed !== false,
+    includeAssumed: parsed.includeAssumed === true,
     activeWeapon: resolveActiveWeaponSlot(parsed.activeWeapon),
     season: sanitizeSeason(parsed.season),
   };

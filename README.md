@@ -12,7 +12,7 @@ Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons
 
 The optional **build index** in Analysis is only a relative stack comparison (weapon damage × type × crit × headshot × DtA/DtH). It is not DPS and should not be treated as one.
 
-The **Include builder model** toggle (on by default) adds averaged talent / 4pc / exotic / skill contributions — planning averages, not max stacks (Striker 4pc ≈ 62 stacks / +40% Weapon Damage, not 100 / +65%). Hard rolls — cores, attributes, mods, brand 1–3pc, set 2–3pc — always apply. Turn the model off to inspect the sheet of rolls only.
+The **Include maxed bonuses** toggle (off by default) adds stacks, procs, and conditional bonuses at their **maximum** so you can compare the flat sheet vs the fully stacked/procced sheet. Example: Striker 4pc at 100 stacks / +65% Weapon Damage (200 stacks with the chest talent, 1%/stack with the backpack). Hard rolls — cores, attributes, mods, brand 1–3pc, set 2–3pc, and always-on talents like Glass Cannon — always apply.
 
 ## Run without npm (Windows)
 
@@ -63,7 +63,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
-- Builder model (toggle): talent / 4pc / exotic / weapon / skill combat averages for planning (not max stacks)
+- Include maxed bonuses (toggle, off by default): stacks / procs / conditionals at maximum for comparison
 - SHD Watch panel (toggle, then scale each line 0–max)
 - Y8S3 **Under Pressure** season modifier (toggle, 1 active + 3 passives, assumed pressure on the sheet)
 - Caps: CHC 60%, Skill Tier 6

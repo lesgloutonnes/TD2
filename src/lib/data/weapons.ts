@@ -11,8 +11,6 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Optimized",
     talentDesc: "Weapon mods are 30% more effective.",
-    assumed: [{ stat: "weaponHandling", value: 5 }],
-    assumedNote: "Optimized mods approximated as mild handling.",
   },
   {
     id: "st-elmo",
@@ -112,8 +110,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 40,
     talent: "Capacitance",
     talentDesc: "Firing builds stacks of skill damage. Skill DPS build.",
-    assumed: [{ stat: "skillDamage", value: 20 }],
-    assumedNote: "Capacitor skill damage stacks assumed mid fight.",
+    assumed: [{ stat: "skillDamage", value: 40 }],
+    assumedNote: "Max Capacitance stacks (+40% Skill Damage).",
   },
   {
     id: "pestilence",
@@ -1459,6 +1457,7 @@ export const WEAPONS: WeaponDef[] = [
     extraStats: [{ stat: "accuracy", value: 100 }],
     assumed: [{ stat: "weaponDamage", value: 35 }],
     assumedNote: "Autentico is a permanent passive (+35% WD, +100% accuracy, no drop-off).",
+    assumedPassive: true,
   },
   {
     id: "underboss",

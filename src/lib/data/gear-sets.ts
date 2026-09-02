@@ -1,4 +1,4 @@
-import type { CoreType, GearSetDef, Slot } from "../types";
+import type { CoreType, GearSetDef, Slot, StatBonus } from "../types";
 
 export const GEAR_SETS: GearSetDef[] = [
   {
@@ -11,8 +11,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Striker's Gamble — every hit increases total weapon damage by 0.65% (100 stacks). Stacks decay out of combat.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "rateOfFire", value: 15 }],
-    fourStats: [{ stat: "weaponDamage", value: 40 }],
-    fourAssumedNote: "Assumes ~62 Striker stacks (0.65% × 62 ≈ 40% Weapon Damage).",
+    fourStats: [{ stat: "weaponDamage", value: 65 }],
+    fourAssumedNote: "Max 100 stacks × 0.65% = +65% Weapon Damage. Chest 200 stacks. Backpack 1%/stack.",
     backpackTalent: {
       name: "Risk Management",
       description: "Damage per Striker's Gamble stack: 0.65% → 1%.",
@@ -35,8 +35,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "lmgDamage", value: 15 },
     ],
     threeStats: [{ stat: "weaponHandling", value: 15 }],
-    fourStats: [{ stat: "weaponDamage", value: 25 }],
-    fourAssumedNote: "Assumes ~25 Heartstopper stacks (+25% Weapon Damage).",
+    fourStats: [{ stat: "weaponDamage", value: 50 }],
+    fourAssumedNote: "Max 50 Heartstopper stacks (+50% Weapon Damage). Chest Max BPM: 100 stacks.",
     backpackTalent: {
       name: "Cold",
       description: "Bonus armor per stack: 1% → 2%.",
@@ -56,8 +56,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "From the Shadows / Into the Light — gain stacks while in cover (Critical Hit Damage + Rate of Fire) and out of cover (Armor Regeneration).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
-    fourStats: [{ stat: "chd", value: 20 }, { stat: "rateOfFire", value: 10 }],
-    fourAssumedNote: "Assumes mid stacks From the Shadows out of cover mix.",
+    fourStats: [{ stat: "chd", value: 50 }, { stat: "rateOfFire", value: 15 }],
+    fourAssumedNote: "Max From the Shadows (in cover): 50 stacks modeled as +50% CHD / +15% RoF. Chest doubles the cap.",
     backpackTalent: {
       name: "Into the Light",
       description: "Max Into the Light stacks: 50 → 100, gain and consumption doubled.",
@@ -80,8 +80,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "smgDamage", value: 15 },
     ],
     threeStats: [{ stat: "armorOnKill", value: 20 }],
-    fourStats: [{ stat: "weaponDamage", value: 30 }],
-    fourAssumedNote: "Assumes CQC (+20% WD) plus ~2 Apex stacks.",
+    fourStats: [{ stat: "weaponDamage", value: 45 }],
+    fourAssumedNote: "Max Apex Predator: +20% Weapon Damage in CQC plus 5 stacks × 5%.",
     backpackTalent: {
       name: "Overwhelming Force",
       description: "Disorient radius: 5m → 10m.",
@@ -101,8 +101,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Crowd Control — critical hits mark enemies (max 3, 20s). Critical hits deal 60% of their damage to other marked targets. Killing a marked target grants +10% Critical Hit Damage (10 stacks).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "chd", value: 20 }],
-    fourStats: [{ stat: "chd", value: 30 }],
-    fourAssumedNote: "Assumes marked targets + ~3 kill stacks of CHD.",
+    fourStats: [{ stat: "chd", value: 100 }],
+    fourAssumedNote: "Max Crowd Control kill stacks: 10 × +10% Critical Hit Damage.",
     backpackTalent: {
       name: "Critical Measures",
       description: "Damage dealt to other marked targets: 60% → 100%.",
@@ -125,8 +125,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
-    fourStats: [{ stat: "weaponDamage", value: 20 }],
-    fourAssumedNote: "Headache cycle mid-string: +20% Weapon Damage.",
+    fourStats: [{ stat: "weaponDamage", value: 80 }],
+    fourAssumedNote: "Max Headache amplified Marksman shot: +80% Weapon Damage.",
     backpackTalent: {
       name: "Blessed",
       description: "A missed headshot no longer resets the cycle.",
@@ -146,8 +146,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Tend and Befriend — interacting with a deployed skill grants it +25% damage for 10s.",
     twoStats: [{ stat: "skillHaste", value: 15 }],
     threeStats: [{ stat: "skillDuration", value: 15 }],
-    fourStats: [{ stat: "skillDamage", value: 15 }],
-    fourAssumedNote: "Tend and Befriend mid uptime: +15% Skill Damage.",
+    fourStats: [{ stat: "skillDamage", value: 25 }],
+    fourAssumedNote: "Max Tend and Befriend: +25% Skill Damage. Chest Best Buds: +50%.",
     backpackTalent: {
       name: "Complete Uptime",
       description: "Canceling a skill resets its cooldown.",
@@ -198,7 +198,7 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "weaponDamage", value: 15 },
       { stat: "skillDamage", value: 15 },
     ],
-    fourAssumedNote: "Ground Control at full armor: +15% weapon and skill damage.",
+    fourAssumedNote: "Max Ground Control at full armor: +15% weapon and skill damage. Chest: +25%.",
     backpackTalent: {
       name: "Strategic Combat Support",
       description: "Proximity repair: 60% → 120%.",
@@ -219,7 +219,7 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "armorPercent", value: 10 }],
     threeStats: [{ stat: "armorRegenPercent", value: 1 }],
     fourStats: [{ stat: "armorPercent", value: 5 }],
-    fourAssumedNote: "Makeshift Repairs approximated as +5% Total Armor effective.",
+    fourAssumedNote: "Max Makeshift Repairs modeled as +5% Total Armor equivalent.",
     backpackTalent: {
       name: "Process Refinery",
       description: "Repair duration: 10s → 5s.",
@@ -246,7 +246,7 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillDamage", value: 10 },
       { stat: "skillRepair", value: 10 },
     ],
-    fourAssumedNote: "Feedback Loop buff uptime: +10% Skill Damage and Repair Skills.",
+    fourAssumedNote: "Max Feedback Loop buff: +10% Skill Damage and Repair Skills. Chest: +25%.",
     backpackTalent: {
       name: "Short Circuit",
       description: "Feedback Loop cooldown: 20s → 10s.",
@@ -266,8 +266,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Rules of Engagement — killing a marked enemy grants Hollow-Point rounds (+40% damage, causes bleed).",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
-    fourStats: [{ stat: "weaponDamage", value: 20 }],
-    fourAssumedNote: "Hollow-Point rounds mid uptime: +20% Weapon Damage.",
+    fourStats: [{ stat: "weaponDamage", value: 40 }],
+    fourAssumedNote: "Max Hollow-Point rounds: +40% Weapon Damage. Chest Parabellum: +60%.",
     backpackTalent: {
       name: "Trauma Specialist",
       description: "+50% bleed duration, +100% bleed damage.",
@@ -288,7 +288,7 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "magazineSize", value: 30 }],
     fourStats: [{ stat: "armorRegenPercent", value: 2 }],
-    fourAssumedNote: "White stripe self-repair modeled as +2% Armor Regeneration.",
+    fourAssumedNote: "Max white-stripe self-repair: +2% Armor Regeneration. Backpack Patriotic Boost: +5%.",
     backpackTalent: {
       name: "Patriotic Boost",
       description: "Debuffs: 15/2/10 → 30/5/20.",
@@ -314,8 +314,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
-    fourStats: [{ stat: "weaponDamage", value: 15 }],
-    fourAssumedNote: "Dead Man's Hand amplified shots averaged as +15% Weapon Damage.",
+    fourStats: [{ stat: "weaponDamage", value: 75 }],
+    fourAssumedNote: "Max Dead Man's Hand amplified shot: +75% Weapon Damage. Chest No Limit: +100%.",
     backpackTalent: {
       name: "Ace in the Sleeve",
       description: "One additional amplified shot.",
@@ -335,8 +335,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Aggressive Recon — a signature weapon kill grants +15% signature weapon damage for 10s and +25% reload speed. Regenerates signature weapon ammo every 60s.",
     twoStats: [],
     threeStats: [{ stat: "weaponDamage", value: 10 }],
-    fourStats: [{ stat: "weaponDamage", value: 10 }],
-    fourAssumedNote: "Signature weapon damage uptime approximated as +10% Weapon Damage.",
+    fourStats: [{ stat: "weaponDamage", value: 15 }],
+    fourAssumedNote: "Max Aggressive Recon: +15% Weapon Damage after a signature kill. Chest: +30%. Backpack: +50% after emptying the signature weapon.",
     backpackTalent: {
       name: "Signature Moves",
       description: "+50% weapon damage for 15s after emptying your signature weapon. Signature weapon ammo capacity doubled.",
@@ -364,8 +364,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Hackstep Protocol — replaces your skills with an infinite-use ability (20s): grants 20% armor, 50% bonus armor, and hides your nameplate for 5s.",
     twoStats: [{ stat: "armorOnKill", value: 15 }],
     threeStats: [{ stat: "pulseResistance", value: 40 }],
-    fourStats: [{ stat: "armorPercent", value: 10 }],
-    fourAssumedNote: "Hackstep Protocol window averaged as +10% Total Armor.",
+    fourStats: [{ stat: "armorPercent", value: 20 }],
+    fourAssumedNote: "Max Hackstep Protocol window: +20% Total Armor.",
     backpackTalent: {
       name: "Multithreaded Execution",
       description: "Hackstep bonus armor: 50% → 100%.",
@@ -385,8 +385,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Charging — while out of cover, reduce incoming skill damage by 5%/s (up to 50%). Once fully Charged, share the protection with allies.",
     twoStats: [{ stat: "hazardProtection", value: 30 }],
     threeStats: [{ stat: "skillRepair", value: 40 }],
-    fourStats: [{ stat: "hazardProtection", value: 15 }],
-    fourAssumedNote: "Charging protection modeled as +15% Hazard Protection.",
+    fourStats: [{ stat: "hazardProtection", value: 50 }],
+    fourAssumedNote: "Max Charging protection: +50% (modeled as Hazard Protection). Chest Overcharging: +70%.",
     backpackTalent: {
       name: "Safe Charging",
       description: "Charging grants 10% protection per second.",
@@ -428,7 +428,7 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "healthPercent", value: 70 }],
     threeStats: [{ stat: "armorPercent", value: 15 }],
     fourStats: [{ stat: "armorPercent", value: 8 }],
-    fourAssumedNote: "Stoic resist averaged as +8% Total Armor equivalent.",
+    fourAssumedNote: "Max Stoic resist modeled as +8% Total Armor equivalent.",
     backpackTalent: {
       name: "Polyethylene Plating",
       description: "Stoic bonus: 3% → 4%.",
@@ -455,10 +455,10 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "weaponHandling", value: 30 },
     ],
     fourStats: [
-      { stat: "weaponDamage", value: 20 },
-      { stat: "weaponHandling", value: 10 },
+      { stat: "weaponDamage", value: 40 },
+      { stat: "weaponHandling", value: 20 },
     ],
-    fourAssumedNote: "On Point after reload at ~5 stacks: +20% Weapon Damage, +10% Handling.",
+    fourAssumedNote: "Max On Point modeled at 10 stacks: +40% Weapon Damage, +20% Handling. Backpack 9%/stack.",
     backpackTalent: {
       name: "Point of Honor",
       description: "On Point damage bonus: 4% → 9%.",
@@ -481,8 +481,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "magazineSize", value: 15 },
     ],
     threeStats: [{ stat: "weaponDamage", value: 15 }],
-    fourStats: [{ stat: "weaponDamage", value: 12 }],
-    fourAssumedNote: "Symphony mixed-range stacks averaged as +12% Weapon Damage.",
+    fourStats: [{ stat: "weaponDamage", value: 24 }],
+    fourAssumedNote: "Max Symphony at 4 stacks × 1.5. Chest Fortissimo doubles weapon-damage bonuses.",
     backpackTalent: {
       name: "Accelerando",
       description: "Symphony stacks: 4 → 3.",
@@ -537,8 +537,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillRepair", value: 60 },
       { stat: "explosiveResistance", value: 40 },
     ],
-    fourStats: [{ stat: "skillTier", value: 1 }],
-    fourAssumedNote: "Huddle with one nearby ally: +1 Skill Tier.",
+    fourStats: [{ stat: "skillTier", value: 3 }],
+    fourAssumedNote: "Max Huddle: +1 Skill Tier per nearby ally (3 allies).",
     backpackTalent: {
       name: "Smart Cooperation",
       description: "Mortar destruction cooldown: 10s → 1s.",
@@ -559,10 +559,10 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "magazineSize", value: 30 }],
     threeStats: [{ stat: "lmgDamage", value: 30 }],
     fourStats: [
-      { stat: "weaponHandling", value: 8 },
-      { stat: "chd", value: 40 },
+      { stat: "weaponHandling", value: 25 },
+      { stat: "chd", value: 250 },
     ],
-    fourAssumedNote: "Throttle Control at ~15 stacks: +8% Handling, +40% Critical Hit Damage.",
+    fourAssumedNote: "Max Throttle Control: 50 stacks × 0.5% Handling and 5% CHD. Chest 75 stacks. Backpack 8% CHD/stack.",
     backpackTalent: {
       name: "Snowball",
       description: "Critical Hit Damage per stack: 5% → 8%.",
@@ -583,10 +583,10 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "weaponDamage", value: 10 }],
     threeStats: [{ stat: "weaponHandling", value: 30 }],
     fourStats: [
-      { stat: "weaponDamage", value: 6 },
-      { stat: "chd", value: 6 },
+      { stat: "weaponDamage", value: 12 },
+      { stat: "chd", value: 12 },
     ],
-    fourAssumedNote: "Camaraderie at 2 stacks: +6% Weapon Damage and Critical Hit Damage.",
+    fourAssumedNote: "Max Camaraderie at 4 stacks: +12% Weapon Damage and CHD. Chest 8 stacks. Backpack 6% WD/stack.",
     backpackTalent: {
       name: "One for All",
       description: "Weapon damage per stack: 3% → 6%.",
@@ -680,3 +680,173 @@ export function gearSetCores(set: GearSetDef): Record<Slot, CoreType> {
     kneepads: gearSetCore(set, "kneepads"),
   };
 }
+
+function wd(value: number): StatBonus[] {
+  return [{ stat: "weaponDamage", value }];
+}
+
+/**
+ * 4pc talent at maximum stacks / procs, including chest and backpack talent caps.
+ * Core Strength is handled separately (core conversion).
+ */
+export function resolveFourPieceMax(
+  set: GearSetDef,
+  chestIsSet: boolean,
+  backpackIsSet: boolean,
+): { stats: StatBonus[]; note: string } | null {
+  if (set.id === "core-strength") return null;
+
+  switch (set.id) {
+    case "striker": {
+      const perStack = backpackIsSet ? 1 : 0.65;
+      const stacks = chestIsSet ? 200 : 100;
+      const value = Math.round(perStack * stacks * 10) / 10;
+      return {
+        stats: wd(value),
+        note: `Max ${stacks} stacks × ${perStack}% = +${value}% Weapon Damage.`,
+      };
+    }
+    case "heartbreaker": {
+      const stacks = chestIsSet ? 100 : 50;
+      const stats: StatBonus[] = [{ stat: "weaponDamage", value: stacks }];
+      if (backpackIsSet) stats.push({ stat: "armorPercent", value: stacks * 2 });
+      return {
+        stats,
+        note: backpackIsSet
+          ? `Max ${stacks} Heartstopper stacks: +${stacks}% Weapon Damage and +${stacks * 2}% bonus armor (Cold).`
+          : `Max ${stacks} Heartstopper stacks: +${stacks}% Weapon Damage.`,
+      };
+    }
+    case "umbra": {
+      const stacks = chestIsSet ? 100 : 50;
+      return {
+        stats: [
+          { stat: "chd", value: stacks },
+          { stat: "rateOfFire", value: Math.round(stacks * 0.3 * 10) / 10 },
+        ],
+        note: `Max From the Shadows (${stacks} stacks in cover): +${stacks}% CHD / +${Math.round(stacks * 0.3 * 10) / 10}% RoF.`,
+      };
+    }
+    case "rigger": {
+      const value = chestIsSet ? 50 : 25;
+      return {
+        stats: [{ stat: "skillDamage", value }],
+        note: `Max Tend and Befriend: +${value}% Skill Damage.`,
+      };
+    }
+    case "future-initiative": {
+      const value = chestIsSet ? 25 : 15;
+      return {
+        stats: [
+          { stat: "weaponDamage", value },
+          { stat: "skillDamage", value },
+        ],
+        note: `Max Ground Control at full armor: +${value}% weapon and skill damage.`,
+      };
+    }
+    case "hard-wired": {
+      const value = chestIsSet ? 25 : 10;
+      return {
+        stats: [
+          { stat: "skillDamage", value },
+          { stat: "skillRepair", value },
+        ],
+        note: `Max Feedback Loop: +${value}% Skill Damage and Repair Skills.`,
+      };
+    }
+    case "ongoing-directive": {
+      const value = chestIsSet ? 60 : 40;
+      return {
+        stats: wd(value),
+        note: `Max Hollow-Point rounds: +${value}% Weapon Damage.`,
+      };
+    }
+    case "true-patriot": {
+      const value = backpackIsSet ? 5 : 2;
+      return {
+        stats: [{ stat: "armorRegenPercent", value }],
+        note: `Max white-stripe repair: +${value}% Armor Regeneration.`,
+      };
+    }
+    case "aces": {
+      const value = chestIsSet ? 100 : 75;
+      return {
+        stats: wd(value),
+        note: `Max Dead Man's Hand amplified shot: +${value}% Weapon Damage.`,
+      };
+    }
+    case "tip-of-the-spear": {
+      const value = backpackIsSet ? 50 : chestIsSet ? 30 : 15;
+      return {
+        stats: wd(value),
+        note: backpackIsSet
+          ? "Max Signature Moves after emptying the signature weapon: +50% Weapon Damage."
+          : `Max Aggressive Recon: +${value}% Weapon Damage.`,
+      };
+    }
+    case "cavalier": {
+      const value = chestIsSet ? 70 : 50;
+      return {
+        stats: [{ stat: "hazardProtection", value }],
+        note: `Max Charging protection: +${value}% (modeled as Hazard Protection).`,
+      };
+    }
+    case "breaking-point": {
+      const perStack = backpackIsSet ? 9 : 4;
+      const stacks = 10;
+      return {
+        stats: [
+          { stat: "weaponDamage", value: perStack * stacks },
+          { stat: "weaponHandling", value: 2 * stacks },
+        ],
+        note: `Max On Point modeled at ${stacks} stacks: +${perStack * stacks}% Weapon Damage, +${2 * stacks}% Handling.`,
+      };
+    }
+    case "virtuoso": {
+      const value = chestIsSet ? 48 : 24;
+      return {
+        stats: wd(value),
+        note: chestIsSet
+          ? "Max Symphony with Fortissimo: weapon-damage bonuses doubled."
+          : "Max Symphony at 4 stacks × 1.5.",
+      };
+    }
+    case "tipping-scales": {
+      const stacks = chestIsSet ? 75 : 50;
+      const chdEach = backpackIsSet ? 8 : 5;
+      const handling = Math.round(stacks * 0.5 * 10) / 10;
+      const chd = stacks * chdEach;
+      return {
+        stats: [
+          { stat: "weaponHandling", value: handling },
+          { stat: "chd", value: chd },
+        ],
+        note: `Max Throttle Control: ${stacks} stacks × 0.5% Handling and ${chdEach}% CHD.`,
+      };
+    }
+    case "concentrated-company": {
+      const stacks = chestIsSet ? 8 : 4;
+      const wdEach = backpackIsSet ? 6 : 3;
+      return {
+        stats: [
+          { stat: "weaponDamage", value: wdEach * stacks },
+          { stat: "chd", value: 3 * stacks },
+        ],
+        note: `Max Camaraderie: ${stacks} stacks × ${wdEach}% Weapon Damage and 3% CHD.`,
+      };
+    }
+    default: {
+      if (!set.fourStats?.length) return null;
+      return {
+        stats: set.fourStats,
+        note: set.fourAssumedNote ?? `Max ${set.name} 4pc talent.`,
+      };
+    }
+  }
+}
+
+/** Inner Core chest talent: 40% → 75% conversion from the other cores. */
+export function coreStrengthRate(chestIsSet: boolean): number {
+  return chestIsSet ? 0.75 : 0.4;
+}
+

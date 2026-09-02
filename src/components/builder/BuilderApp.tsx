@@ -435,11 +435,12 @@ export function BuilderApp() {
           onChange={(event) => setLoadout({ ...loadout, includeAssumed: event.target.checked })}
         />
         <span>
-          Include builder model
+          Include maxed bonuses
           <small className="hint">
-            Adds combat averages to Analysis — not max stacks. Example: Striker 4pc ≈ 62 stacks
-            (+40% Weapon Damage), not 100 stacks (+65%). Cores, attributes, mods, brand and set
-            2–3pc always apply. Not a DPS sim.
+            Adds stacks, procs, and conditional bonuses at their maximum for comparison.
+            Example: Striker 4pc at 100 stacks (+65% Weapon Damage), or 200 stacks with the
+            chest talent. Cores, attributes, mods, brand and set 2–3pc always apply. Not a DPS
+            sim.
           </small>
         </span>
       </label>

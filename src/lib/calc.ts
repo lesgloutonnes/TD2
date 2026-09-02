@@ -9,7 +9,7 @@ import type {
   StatKey,
 } from "./types";
 import { BRANDS } from "./data/brands";
-import { GEAR_SETS } from "./data/gear-sets";
+import { GEAR_SETS, coreStrengthRate, resolveFourPieceMax } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
 import { SPECIALIZATIONS, SKILLS } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
@@ -195,7 +195,7 @@ export function emptyLoadout(name = "New build"): Loadout {
     skills: [null, null],
     specialization: null,
     shdWatch: true,
-    includeAssumed: true,
+    includeAssumed: false,
     activeWeapon: "primary",
   };
 }
@@ -244,7 +244,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const cores: Record<CoreType, number> = { red: 0, blue: 0, yellow: 0 };
   const notes: string[] = [];
   const bonuses: ActiveBonus[] = [];
-  const includeAssumed = loadout.includeAssumed !== false;
+  const includeAssumed = loadout.includeAssumed === true;
   const activeWeaponSlot = resolveActiveWeaponSlot(loadout.activeWeapon);
 
   const { brandCounts, setCounts, ninja } = gearCounts(loadout);
@@ -294,7 +294,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
         color: "#c41e3a",
       });
       notes.push(
-        `${source.name} builder model: ${formatBonusList(source.assumed)}${
+        `${source.name} maxed bonuses: ${formatBonusList(source.assumed)}${
           source.assumedNote ? ` — ${source.assumedNote}` : ""
         }.`,
       );
@@ -455,20 +455,20 @@ export function computeStats(loadout: Loadout): ComputedStats {
     if (pieces >= 2) addBonuses(values, set.twoStats);
     if (pieces >= 3) addBonuses(values, set.threeStats);
     if (includeAssumed && fourPiece && set.id === "core-strength") {
-      const converted = coreStrengthConversion(cores);
+      const rate = coreStrengthRate(Boolean(chestIsSet));
+      const converted = coreStrengthConversion(cores, rate);
       if (converted.length) {
         addBonuses(values, converted);
         notes.push(
-          `Core Strength 4pc conversion: ${formatBonusList(converted)} (40% of the other cores).`,
+          `Core Strength 4pc conversion: ${formatBonusList(converted)} (${Math.round(rate * 100)}% of the other cores).`,
         );
       }
-    } else if (includeAssumed && fourPiece && set.fourStats?.length) {
-      addBonuses(values, set.fourStats);
-      notes.push(
-        `${set.name} 4pc builder model: ${formatBonusList(set.fourStats)}${
-          set.fourAssumedNote ? ` (${set.fourAssumedNote})` : ""
-        }.`,
-      );
+    } else if (includeAssumed && fourPiece) {
+      const fourMax = resolveFourPieceMax(set, Boolean(chestIsSet), Boolean(backpackIsSet));
+      if (fourMax?.stats.length) {
+        addBonuses(values, fourMax.stats);
+        notes.push(`${set.name} 4pc maxed bonuses: ${formatBonusList(fourMax.stats)} (${fourMax.note}).`);
+      }
     }
 
     pushBonus(bonuses, {
@@ -478,7 +478,11 @@ export function computeStats(loadout: Loadout): ComputedStats {
         pieces >= 2 ? `2pc: ${set.two}` : `2pc locked (${pieces}/2)`,
         pieces >= 3 ? `3pc: ${set.three}` : `3pc locked (${pieces}/3)`,
         fourPiece ? `4pc: ${set.four}` : `4pc locked (${pieces}/4)`,
-        fourPiece && includeAssumed && set.fourAssumedNote ? `Model: ${set.fourAssumedNote}` : null,
+        fourPiece && includeAssumed && set.id === "core-strength"
+          ? `Maxed: core conversion ${Math.round(coreStrengthRate(Boolean(chestIsSet)) * 100)}%`
+          : fourPiece && includeAssumed
+            ? `Maxed: ${resolveFourPieceMax(set, Boolean(chestIsSet), Boolean(backpackIsSet))?.note ?? set.fourAssumedNote ?? "4pc talent"}`
+            : null,
         fourPiece && backpackIsSet ? `Backpack: ${set.backpackTalent.name}` : null,
         fourPiece && chestIsSet ? `Chest: ${set.chestTalent.name}` : null,
       ]
@@ -504,29 +508,28 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
-  // Chest / backpack talent builder-model bonuses.
-  if (includeAssumed) {
-    for (const slot of ["chest", "backpack"] as const) {
-      const piece = loadout.gear[slot];
-      if (!piece?.talentId) continue;
-      const talent = ALL_TALENTS.find((item) => item.id === piece.talentId);
-      if (!talent?.assumed?.length) continue;
-      addBonuses(values, talent.assumed);
-      pushBonus(bonuses, {
-        source: `Talent · ${talent.name}`,
-        label: formatBonusList(talent.assumed),
-        detail: talent.assumedNote ?? talent.description,
-        pieces: 1,
-        required: 1,
-        active: true,
-        color: "#c9a227",
-      });
-      notes.push(
-        `Talent ${talent.name} (builder model): ${formatBonusList(talent.assumed)}${
-          talent.assumedNote ? ` — ${talent.assumedNote}` : ""
-        }.`,
-      );
-    }
+  // Chest / backpack talent bonuses (always-on passives, plus maxed procs when toggled).
+  for (const slot of ["chest", "backpack"] as const) {
+    const piece = loadout.gear[slot];
+    if (!piece?.talentId) continue;
+    const talent = ALL_TALENTS.find((item) => item.id === piece.talentId);
+    if (!talent?.assumed?.length) continue;
+    if (!talent.passive && !includeAssumed) continue;
+    addBonuses(values, talent.assumed);
+    pushBonus(bonuses, {
+      source: `Talent · ${talent.name}`,
+      label: formatBonusList(talent.assumed),
+      detail: talent.assumedNote ?? talent.description,
+      pieces: 1,
+      required: 1,
+      active: true,
+      color: "#c9a227",
+    });
+    notes.push(
+      `Talent ${talent.name}${talent.passive ? "" : " (maxed bonuses)"}: ${formatBonusList(talent.assumed)}${
+        talent.assumedNote ? ` — ${talent.assumedNote}` : ""
+      }.`,
+    );
   }
 
   const shdBonuses = resolveShdWatchBonuses(loadout.shdWatch, loadout.shdWatchParts);
@@ -568,7 +571,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const resolvedTalent = activeWeapon
     ? resolveWeaponTalent(activeWeapon, activeEquipped)
     : null;
-  if (includeAssumed && resolvedTalent?.assumed?.length) {
+  if (resolvedTalent?.assumed?.length && (resolvedTalent.passive || includeAssumed)) {
     addBonuses(values, resolvedTalent.assumed);
     pushBonus(bonuses, {
       source: `Weapon · ${activeWeapon!.name}`,
@@ -580,7 +583,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
       color: "#d4af37",
     });
     notes.push(
-      `Active ${activeWeapon!.name} talent model: ${formatBonusList(resolvedTalent.assumed)}.`,
+      `Active ${activeWeapon!.name} talent${resolvedTalent.passive ? "" : " (maxed)"}: ${formatBonusList(resolvedTalent.assumed)}.`,
     );
   }
 
@@ -633,7 +636,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     });
     if (includeAssumed && skill.assumed?.length) {
       addBonuses(values, skill.assumed);
-      notes.push(`Skill ${skill.name} builder model: ${formatBonusList(skill.assumed)}.`);
+      notes.push(`Skill ${skill.name} maxed bonuses: ${formatBonusList(skill.assumed)}.`);
     } else {
       notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
     }

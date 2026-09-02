@@ -6,6 +6,8 @@ export type WeaponTalentDef = {
   description: string;
   assumed?: StatBonus[];
   assumedNote?: string;
+  /** Always-on while this talent is selected. */
+  passive?: boolean;
   /** Omit = every weapon type. */
   types?: readonly WeaponType[];
 };
@@ -17,6 +19,7 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     description: "Accuracy is increased by 30%.",
     assumed: [{ stat: "accuracy", value: 30 }],
     assumedNote: "Accurate is a permanent passive.",
+    passive: true,
   },
   {
     id: "boomerang",
@@ -31,15 +34,15 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     name: "Breadbasket",
     description:
       "Landing body shots adds a stack of +8% Headshot Damage, up to 3 stacks. Headshot consumes the stacks.",
-    assumed: [{ stat: "hsd", value: 16 }],
-    assumedNote: "Breadbasket at ~2 stacks.",
+    assumed: [{ stat: "hsd", value: 24 }],
+    assumedNote: "Max Breadbasket: 3 stacks × 8% Headshot Damage.",
   },
   {
     id: "close-personal",
     name: "Close & Personal",
     description: "Killing an enemy within 7m grants +30% weapon damage for 10s.",
-    assumed: [{ stat: "weaponDamage", value: 18 }],
-    assumedNote: "Close & Personal mid-uptime in CQC.",
+    assumed: [{ stat: "weaponDamage", value: 30 }],
+    assumedNote: "Max Close & Personal after a CQC kill.",
   },
   {
     id: "determined",
@@ -54,13 +57,14 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     description: "Weapon handling is increased by 25%.",
     assumed: [{ stat: "weaponHandling", value: 25 }],
     assumedNote: "Esagerato is a permanent passive.",
+    passive: true,
   },
   {
     id: "eyeless",
     name: "Eyeless",
     description: "+20% weapon damage to pulsed enemies. After 3 kills, the next shot pulses the target.",
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Eyeless vs pulsed targets, mid uptime.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Max Eyeless vs pulsed targets.",
   },
   {
     id: "fast-hands",
@@ -82,23 +86,23 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     id: "flatline",
     name: "Flatline",
     description: "Pulsed enemies take +15% weapon damage from this weapon.",
-    assumed: [{ stat: "weaponDamage", value: 10 }],
-    assumedNote: "Flatline vs pulsed targets.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Max Flatline vs pulsed targets.",
   },
   {
     id: "frenzy",
     name: "Frenzy",
     description: "For every 10 rounds fired, rate of fire is increased by 4% for 5s. Stacks up to 10 times.",
-    assumed: [{ stat: "rateOfFire", value: 20 }],
-    assumedNote: "Frenzy at ~5 stacks.",
+    assumed: [{ stat: "rateOfFire", value: 40 }],
+    assumedNote: "Max Frenzy: 10 stacks × 4% Rate of Fire.",
     types: ["lmg", "ar"],
   },
   {
     id: "ignited",
     name: "Ignited",
     description: "+15% weapon damage against burning enemies.",
-    assumed: [{ stat: "weaponDamage", value: 10 }],
-    assumedNote: "Ignited vs burning targets, mid uptime.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Max Ignited vs burning targets.",
   },
   {
     id: "in-sync",
@@ -106,56 +110,53 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     description:
       "Hitting an enemy with this weapon grants +15% skill damage for 5s. Hitting with a skill grants +15% weapon damage for 5s.",
     assumed: [
-      { stat: "weaponDamage", value: 10 },
-      { stat: "skillDamage", value: 10 },
+      { stat: "weaponDamage", value: 15 },
+      { stat: "skillDamage", value: 15 },
     ],
-    assumedNote: "In Sync mid weapon/skill ping-pong.",
+    assumedNote: "Max In Sync: both weapon and skill ping-pong buffs up.",
   },
   {
     id: "killer",
     name: "Killer",
     description: "Killing an enemy with a critical hit grants +30% Critical Hit Damage for 10s.",
-    assumed: [{ stat: "chd", value: 18 }],
-    assumedNote: "Killer mid uptime after crit kills.",
+    assumed: [{ stat: "chd", value: 30 }],
+    assumedNote: "Max Killer after a critical-hit kill.",
   },
   {
     id: "lucky-shot",
     name: "Lucky Shot",
     description: "Magazine capacity is increased by 20%. Missed shots have a chance to return to the magazine.",
     assumed: [{ stat: "magazineSize", value: 20 }],
-    assumedNote: "Lucky Shot magazine bonus (permanent) plus return chance.",
+    assumedNote: "Lucky Shot magazine bonus is a permanent passive.",
+    passive: true,
   },
   {
     id: "measured",
     name: "Measured",
     description:
       "The top half of the magazine deals +15% weapon damage. The bottom half grants +20% Optimal Range and +20% Rate of Fire.",
-    assumed: [
-      { stat: "weaponDamage", value: 8 },
-      { stat: "rateOfFire", value: 10 },
-    ],
-    assumedNote: "Measured averaged across a full magazine.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Max Measured: top half of the magazine (+15% Weapon Damage).",
   },
   {
     id: "naked",
     name: "Naked",
     description: "When this weapon has no attachments, it deals +40% weapon damage.",
-    assumed: [{ stat: "weaponDamage", value: 20 }],
-    assumedNote: "Naked at half value — builder still allows mods.",
+    assumed: [{ stat: "weaponDamage", value: 40 }],
+    assumedNote: "Max Naked: +40% Weapon Damage with no attachments.",
   },
   {
     id: "optimist",
     name: "Optimist",
     description: "Weapon damage is increased by 3% for every 10% magazine missing.",
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Optimist at ~40% magazine remaining.",
+    assumed: [{ stat: "weaponDamage", value: 30 }],
+    assumedNote: "Max Optimist: empty magazine (+3% per 10% missing).",
   },
   {
     id: "optimized",
     name: "Optimized",
     description: "Weapon mods are 30% more effective.",
-    assumed: [{ stat: "weaponHandling", value: 5 }],
-    assumedNote: "Optimized mods already scale ×1.3 in Analysis; handling is a small extra.",
+    assumedNote: "Optimized already scales weapon mods ×1.3 in Analysis.",
   },
   {
     id: "overflowing",
@@ -175,8 +176,8 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     id: "ranger",
     name: "Ranger",
     description: "Weapon damage increases with distance to the target.",
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Ranger at mid-long range.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Ranger at long range (no published cap — planning max).",
   },
   {
     id: "reformation",
@@ -190,16 +191,16 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     name: "Rifleman",
     description:
       "Landing 3 consecutive shots grants +20% weapon damage for 4s. Missing resets the count.",
-    assumed: [{ stat: "weaponDamage", value: 12 }],
-    assumedNote: "Rifleman mid consecutive-shot uptime.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Max Rifleman after 3 consecutive shots.",
     types: ["rifle", "mmr"],
   },
   {
     id: "sadist",
     name: "Sadist",
     description: "+15% weapon damage to bleeding enemies. After 3 kills, the next shot bleeds.",
-    assumed: [{ stat: "weaponDamage", value: 10 }],
-    assumedNote: "Sadist vs bleeding targets, mid uptime.",
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Max Sadist vs bleeding targets.",
   },
   {
     id: "salvage",
@@ -212,29 +213,29 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     id: "spike",
     name: "Spike",
     description: "Headshots grant +20% skill damage for 10s.",
-    assumed: [{ stat: "skillDamage", value: 15 }],
-    assumedNote: "Spike after a headshot, mid uptime.",
+    assumed: [{ stat: "skillDamage", value: 20 }],
+    assumedNote: "Max Spike after a headshot.",
   },
   {
     id: "steady-handed",
     name: "Steady Hands",
     description: "Kills grant a stack of 8% weapon handling, up to 5 stacks. Missing a shot removes a stack.",
-    assumed: [{ stat: "weaponHandling", value: 24 }],
-    assumedNote: "Steady Hands at ~3 stacks.",
+    assumed: [{ stat: "weaponHandling", value: 40 }],
+    assumedNote: "Max Steady Hands: 5 stacks × 8% Weapon Handling.",
   },
   {
     id: "strained",
     name: "Strained",
     description: "Gain 8% Critical Hit Damage for every 10% magazine missing.",
-    assumed: [{ stat: "chd", value: 24 }],
-    assumedNote: "Strained at ~30% magazine remaining.",
+    assumed: [{ stat: "chd", value: 80 }],
+    assumedNote: "Max Strained: empty magazine (+8% CHD per 10% missing).",
   },
   {
     id: "swift",
     name: "Swift",
     description: "Reloading from empty grants +20% weapon handling for 10s.",
-    assumed: [{ stat: "weaponHandling", value: 12 }],
-    assumedNote: "Swift after empty reloads, mid uptime.",
+    assumed: [{ stat: "weaponHandling", value: 20 }],
+    assumedNote: "Max Swift after an empty reload.",
   },
   {
     id: "unhinged",
@@ -245,13 +246,14 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
       { stat: "weaponHandling", value: -20 },
     ],
     assumedNote: "Unhinged is a permanent trade-off.",
+    passive: true,
   },
   {
     id: "vindictive",
     name: "Vindictive",
     description: "Killing an enemy with a status effect applied grants +15% Critical Hit Chance for 10s.",
-    assumed: [{ stat: "chc", value: 10 }],
-    assumedNote: "Vindictive after status kills, mid uptime.",
+    assumed: [{ stat: "chc", value: 15 }],
+    assumedNote: "Max Vindictive after a status-effect kill.",
   },
 ];
 
