@@ -2280,6 +2280,47 @@ function testQuickstep() {
   assert(!scratch?.assumed?.length, "Head Scratcher is not a sheet WD average");
 }
 
+/** Named extras vs live names: Hollow Man TU9 10% DtH; Afterburn is not standing WD. */
+function testGearCatalogLiveHoles() {
+  const hollow = catalogById("the-hollow-man");
+  assert(hollow?.name === "The Hollow Man", "Hollow Man English name");
+  assert(
+    hollow?.extraStats?.some((stat) => stat.stat === "damageToHealth" && stat.value === 10),
+    `Hollow Man unique DtH 10% (TU9 / Namu lvl 40), got ${JSON.stringify(hollow?.extraStats)}`,
+  );
+
+  const hollowLoadout = emptyLoadout();
+  hollowLoadout.shdWatch = false;
+  hollowLoadout.gear.mask = createPiece("mask", "the-hollow-man");
+  hollowLoadout.gear.mask.attributes = [];
+  const hollowStats = computeStats(hollowLoadout);
+  assert(hollowStats.values.damageToHealth === 10, `Hollow Man sheet DtH, got ${hollowStats.values.damageToHealth}`);
+
+  const bear = catalogById("loaded-for-bear");
+  assert(bear?.uniqueTalent?.name === "Afterburn", "Afterburn talent");
+  assert(
+    !bear?.assumed?.some((stat) => stat.stat === "weaponDamage"),
+    "Afterburn must not invent standing Weapon Damage",
+  );
+  assert(bear?.note?.includes("Climax"), "Loaded for Bear is the Y8S3 Climax exotic");
+
+  const bearLoadout = emptyLoadout();
+  bearLoadout.shdWatch = false;
+  bearLoadout.includeAssumed = true;
+  bearLoadout.gear.gloves = createPiece("gloves", "loaded-for-bear");
+  bearLoadout.gear.gloves.attributes = [];
+  const bearStats = computeStats(bearLoadout);
+  assert(bearStats.values.weaponDamage === 15, `red core only, no Afterburn WD fudge, got ${bearStats.values.weaponDamage}`);
+
+  assert(catalogById("hunter-killer")?.name === "Hunter-Killer", "Hunter-Killer hyphen");
+  assert(catalogById("eagles-grasp")?.name === "Eagle's Grasp", "Eagle's Grasp apostrophe");
+
+  const airaldi = BRANDS.find((brand) => brand.id === "airaldi");
+  assert(airaldi?.bonuses[1]?.some((b) => b.stat === "hsd" && b.value === 26), "Airaldi 2pc 26% HSD live");
+  const grupo = BRANDS.find((brand) => brand.id === "grupo");
+  assert(grupo?.bonuses[2]?.some((b) => b.stat === "hsd" && b.value === 39), "Grupo 3pc 39% HSD live");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2364,6 +2405,7 @@ const tests = [
   testY8s3LiveWeaponCatalog,
   testSpecPerksLiveY8s3,
   testQuickstep,
+  testGearCatalogLiveHoles,
 ];
 
 let failed = 0;
