@@ -1,7 +1,7 @@
 import { computeStats, emptyLoadout, formatBonusList, slotColor } from "./calc";
 import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPiecePrototype, setWeaponPrototype } from "./piece";
 import { decodeLoadout, encodeLoadout, loadoutBlurb, PRESETS } from "./share";
-import type { Loadout } from "./types";
+import type { Loadout, SeasonModifier } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { ALL_TALENTS, talentByName, talentsForSlot } from "./data/talents";
 import { WEAPONS } from "./data/weapons";
@@ -12,6 +12,11 @@ import { AUGMENTS } from "./data/augments";
 import { skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import { pieceInspect, weaponInspect } from "./tooltip";
 import { shouldOpenGearPicker } from "./gear-picker";
+import {
+  SEASON_ACTIVES,
+  SEASON_PASSIVES,
+  sanitizeSeason,
+} from "./data/season-modifiers";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -1490,6 +1495,111 @@ function testShareNewFields() {
   assert(decoded?.skills[0]?.expertise === 8, "skill expertise roundtrip");
 }
 
+function testSeasonModifier() {
+  assert(SEASON_ACTIVES.length === 3, "3 actives");
+  assert(SEASON_PASSIVES.length === 20, "20 passives");
+
+  const off = emptyLoadout();
+  off.shdWatch = false;
+  assert(computeStats(off).values.statusEffects === 0, "season off has no gauge SE");
+
+  function withSeason(patch: Partial<SeasonModifier>, assumed = false): Loadout {
+    const loadout = emptyLoadout();
+    loadout.shdWatch = false;
+    loadout.includeAssumed = assumed;
+    loadout.season = sanitizeSeason({ enabled: true, ...patch });
+    return loadout;
+  }
+
+  const high = computeStats(withSeason({ pressure: 90 }));
+  assert(high.values.statusEffects === 65, `90% SE, got ${high.values.statusEffects}`);
+  assert(high.values.signatureWeaponDamage === 0, "no sig WD without Beta");
+  assert(
+    high.bonuses.some((bonus) => bonus.source.includes("Under Pressure") && bonus.source.includes("Gauge")),
+    "gauge bonus card",
+  );
+
+  assert(computeStats(withSeason({ pressure: 0 })).values.statusEffects === 0, "0% no payout");
+  assert(computeStats(withSeason({ pressure: 10 })).values.statusEffects === 15, "10% tier 0");
+  assert(computeStats(withSeason({ pressure: 35 })).values.statusEffects === 25, "35% tier 1");
+  assert(computeStats(withSeason({ pressure: 65 })).values.statusEffects === 40, "65% tier 2");
+
+  const delayed = computeStats(
+    withSeason({ pressure: 0, passives: ["delayed-venting", null, null] }),
+  );
+  assert(delayed.values.statusEffects === 15, `Delayed Venting at 0%, got ${delayed.values.statusEffects}`);
+  const delayedMid = computeStats(
+    withSeason({ pressure: 50, passives: ["delayed-venting", null, null] }),
+  );
+  assert(delayedMid.values.statusEffects === 40, `Delayed Venting at 50%, got ${delayedMid.values.statusEffects}`);
+
+  const beta = computeStats(withSeason({ pressure: 90, passives: ["new-formula-beta", null, null] }));
+  assert(beta.values.statusEffects === 0, "Beta removes SE");
+  assert(beta.values.signatureWeaponDamage === 50, `Beta 90% sig, got ${beta.values.signatureWeaponDamage}`);
+
+  const gamma = computeStats(withSeason({ pressure: 90, passives: ["new-formula-gamma", null, null] }));
+  assert(gamma.values.hazardProtection === 40, `Gamma 90% haz, got ${gamma.values.hazardProtection}`);
+  assert(gamma.values.statusEffects === 0, "Gamma removes SE");
+
+  const bothFormulas = computeStats(
+    withSeason({ pressure: 90, passives: ["new-formula-beta", "new-formula-gamma", null] }),
+  );
+  assert(bothFormulas.values.statusEffects === 65, "Beta+Gamma cancel to SE");
+  assert(bothFormulas.values.signatureWeaponDamage === 0, "Beta cancelled");
+  assert(bothFormulas.values.hazardProtection === 0, "Gamma cancelled");
+
+  const aon = computeStats(withSeason({ pressure: 90, passives: ["all-or-nothing", null, null] }));
+  assert(aon.values.statusEffects === 81.3, `AoN 90%, got ${aon.values.statusEffects}`);
+  const aonLow = computeStats(withSeason({ pressure: 65, passives: ["all-or-nothing", null, null] }));
+  assert(aonLow.values.statusEffects === 0, "AoN below 80% is 0");
+
+  const kick = computeStats(withSeason({ pressure: 90, passives: ["kickstart", null, null] }));
+  assert(kick.values.statusEffects === 0, "Kickstart above 80% is 0");
+  const kickLow = computeStats(withSeason({ pressure: 65, passives: ["kickstart", null, null] }));
+  assert(kickLow.values.statusEffects === 60, `Kickstart 65%, got ${kickLow.values.statusEffects}`);
+
+  const bothBrackets = computeStats(
+    withSeason({ pressure: 90, passives: ["all-or-nothing", "kickstart", null] }),
+  );
+  assert(bothBrackets.values.statusEffects === 65, "AoN+Kickstart cancel");
+
+  const fiery = computeStats(withSeason({ pressure: 90 }, true));
+  assert(fiery.values.armorRegenPercent === 1.5, `Fiery Aura regen, got ${fiery.values.armorRegenPercent}`);
+  const fieryHard = computeStats(withSeason({ pressure: 90 }, false));
+  assert(fieryHard.values.armorRegenPercent === 0, "active burst gated by builder model");
+
+  const vicarious = computeStats(
+    withSeason({ pressure: 90, activeId: "vicarious-combustion" }, true),
+  );
+  assert(vicarious.values.hsd === 50, `Vicarious HSD, got ${vicarious.values.hsd}`);
+
+  const shield = computeStats(
+    withSeason({ pressure: 90, activeId: "signed-shield-delivered" }, true),
+  );
+  assert(shield.values.skillEfficiency === 25, "Signed Shield efficiency");
+  assert(shield.values.shieldHealth === 500, "Signed Shield health");
+  assert(shield.values.signatureWeaponDamage === 50, "Signed Shield sig WD");
+
+  const dup = sanitizeSeason({
+    enabled: true,
+    passives: ["flow-regulator", "flow-regulator", "throttle-valve"],
+  });
+  assert(dup.passives[0] === "flow-regulator", "keep first duplicate");
+  assert(dup.passives[1] === null, "drop duplicate passive");
+  assert(dup.passives[2] === "throttle-valve", "keep unique third");
+
+  const shared = withSeason({
+    pressure: 65,
+    activeId: "vicarious-combustion",
+    passives: ["vacuum-seal", "new-formula-gamma", "modular-plates"],
+  });
+  const decoded = decodeLoadout(encodeLoadout(shared));
+  assert(decoded?.season?.enabled === true, "season enabled roundtrip");
+  assert(decoded?.season?.activeId === "vicarious-combustion", "active roundtrip");
+  assert(decoded?.season?.pressure === 65, "pressure roundtrip");
+  assert(decoded?.season?.passives[1] === "new-formula-gamma", "passive roundtrip");
+}
+
 function testExoticAssumedCatalog() {
   const vile = catalogById("vile");
   assert(vile?.assumed?.length, "Vile has a builder model");
@@ -1573,6 +1683,7 @@ const tests = [
   testPerfectCompanionBackpack,
   testNursesHazardModel,
   testShareNewFields,
+  testSeasonModifier,
   testExoticAssumedCatalog,
 ];
 
