@@ -377,23 +377,35 @@ function weaponTypePerks(specId: string): SpecPerkDef[] {
   }));
 }
 
+/** Max of the 4-rank Signature Weapon Damage node (10/20/30/40%). Default on like other identity sheet perks. */
+function signatureWeaponPerk(specId: string): SpecPerkDef {
+  return sheetPerk(specId, "sig-wd", "Signature Weapon Damage", [
+    { stat: "signatureWeaponDamage", value: 40 },
+  ]);
+}
+
 /**
  * Live Y8S3 PvE (TU 2.34) specialization sheet perks.
  * Red Horizon notes + live gear PDF (ubi.li/4Yvr2) do not retune spec trees.
- * In-game English node names: Amped, Overclocked CPU, Enhanced Diagnostics
- * (Division Dispatch 1 Aug 2026; gem-con / Namu trees). Exclusive sheet fork is
- * Technician only. Combat procs, signature ammo, skill unlocks, armor-kit
- * extras, and 3-rank weapon-type stacks beyond the +5% toggle stay unmodeled.
+ * The 2021 Intelligence Annex revamp never shipped — trees stay the Gear 2.0 layout.
+ * In-game English node names: Amped, Overclocked CPU, Enhanced Diagnostics,
+ * Vital Protection (Technician pulse), Breath Control, Incombustible, Elite Defense
+ * (Division Dispatch 1 Aug 2026; Namu trees last modified 2025-04-08).
+ * Exclusive sheet fork is Technician only. Combat procs, signature ammo, skill
+ * unlocks, armor-kit extras, Conflict crit-reduction Vital Protection, and 3-rank
+ * weapon-type stacks beyond the +5% toggle stay unmodeled.
  */
 export const SPECIALIZATIONS: SpecializationDef[] = [
   {
     id: "gunner",
     name: "Gunner",
     signature: "M134 Minigun",
-    description: "Minigun, Banshee Pulse, Riot Foam. Red DPS meta.",
+    description:
+      "M134 Minigun, Banshee Pulse, Riot Foam Chem Launcher, P320 XCompact. Combat-only: Supply Line ammo regen, Barrage RoF on kill, Emplacement handling while stationary, Hardened Armor Kits.",
     perks: [
       sheetPerk("gunner", "aok", "Armor on Kill", [{ stat: "armorOnKill", value: 10 }]),
       sheetPerk("gunner", "ammo", "Ammo Capacity", [{ stat: "ammoCapacity", value: 25 }]),
+      signatureWeaponPerk("gunner"),
       ...weaponTypePerks("gunner"),
     ],
   },
@@ -401,9 +413,11 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     id: "technician",
     name: "Technician",
     signature: "P-017 Missile Launcher",
-    description: "Artificer Hive, EMP grenades. Skill meta.",
+    description:
+      "P-017 Missile Launcher, Artificer Hive, EMP grenades, Maxim-9, Linked Laser Pointer. Combat-only: Faraday Field, Technomancy bonus armor while aiming a skill, Emergency Patch, Dismantling vs drones/robots.",
     perks: [
       sheetPerk("technician", "tier", "Amped", [{ stat: "skillTier", value: 1 }]),
+      sheetPerk("technician", "pulse", "Vital Protection", [{ stat: "pulseResistance", value: 50 }]),
       choicePerk(
         "technician",
         "overclock",
@@ -418,6 +432,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
         [{ stat: "skillRepair", value: 10 }],
         "technician-skill-focus",
       ),
+      signatureWeaponPerk("technician"),
       ...weaponTypePerks("technician"),
     ],
   },
@@ -425,10 +440,13 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     id: "sharpshooter",
     name: "Sharpshooter",
     signature: "TAC-50",
-    description: "Armor-piercing TAC-50, Tactician Drone.",
+    description:
+      "TAC-50, Tactician Drone, Flashbang grenades, Sharpshooter 93R. Combat-only: My Home Is My Castle (armor in cover), armor-kit cleanse, signature ammo on headshot kills.",
     perks: [
       sheetPerk("sharpshooter", "hsd", "Headshot Damage", [{ stat: "hsd", value: 15 }]),
       sheetPerk("sharpshooter", "mmr", "Marksman Rifle damage", [{ stat: "mmrDamage", value: 10 }]),
+      sheetPerk("sharpshooter", "breath", "Breath Control", [{ stat: "stability", value: 15 }]),
+      signatureWeaponPerk("sharpshooter"),
       ...weaponTypePerks("sharpshooter").filter((perk) => perk.id !== "sharpshooter-mmr"),
     ],
   },
@@ -436,10 +454,13 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     id: "survivalist",
     name: "Survivalist",
     signature: "Explosive Crossbow",
-    description: "Support, group heals, status effects, incendiary grenades.",
+    description:
+      "Explosive Crossbow, Mender Seeker Mine, Incendiary grenades, Survivalist D50. Combat-only: Repair Distribution armor kits, Crunch Time haste in cover, Scavenger ammo while moving cover-to-cover.",
     perks: [
       sheetPerk("survivalist", "repairs", "Incoming Repairs", [{ stat: "incomingRepairs", value: 10 }]),
       sheetPerk("survivalist", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      sheetPerk("survivalist", "elite", "Elite Defense", [{ stat: "protectionFromElites", value: 10 }]),
+      signatureWeaponPerk("survivalist"),
       ...weaponTypePerks("survivalist"),
     ],
   },
@@ -447,10 +468,13 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     id: "demolitionist",
     name: "Demolitionist",
     signature: "M32A1 Grenade Launcher",
-    description: "Explosives, improved armor kits, LMGs.",
+    description:
+      "M32A1 Grenade Launcher, Artillery Turret, Fragmentation grenades, Diceros Special. Combat-only: armor-kit handling buff, Braced for Impact, Crisis Response mag refill.",
     perks: [
       sheetPerk("demolitionist", "explosive", "Explosive Damage", [{ stat: "explosiveDamage", value: 15 }]),
       sheetPerk("demolitionist", "lmg", "LMG damage", [{ stat: "lmgDamage", value: 10 }]),
+      sheetPerk("demolitionist", "incombustible", "Incombustible", [{ stat: "burnResistance", value: 20 }]),
+      signatureWeaponPerk("demolitionist"),
       ...weaponTypePerks("demolitionist").filter((perk) => perk.id !== "demolitionist-lmg"),
     ],
   },
@@ -458,10 +482,12 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     id: "firewall",
     name: "Firewall",
     signature: "K8-JetStream Flamethrower",
-    description: "CQC, burns, Striker Shield, flamethrower.",
+    description:
+      "K8-JetStream Flamethrower, Striker Shield, Cluster grenades, Firestarter sawed-off. Combat-only: burn duration ranks, ignition on armor break, Forced Breakthrough bonus armor while moving cover-to-cover.",
     perks: [
       sheetPerk("firewall", "armor", "Total Armor", [{ stat: "armorPercent", value: 10 }]),
       sheetPerk("firewall", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      signatureWeaponPerk("firewall"),
       ...weaponTypePerks("firewall"),
     ],
   },
