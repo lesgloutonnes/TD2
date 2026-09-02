@@ -1,0 +1,22 @@
+---
+description: Y8S3 Under Pressure season modifier sheet rules
+globs: src/lib/data/season-modifiers.ts,src/components/builder/SeasonPanel.tsx
+alwaysApply: false
+---
+
+Optional loadout field: one active + up to 3 passives + assumed pressure 0–100. `SeasonPanel.tsx` already maps `SEASON_ACTIVES` / `SEASON_PASSIVES` — only touch it if you add a **new id**.
+
+Hostile modifiers (Draining Presence, Achilles' Heal, Thousand Cuts) are **enemy effects**. Never add them as selectable passives. `SEASON_HOSTILE_NOTE` is enough.
+
+Do not regress live sheet numbers:
+
+- Gauge Status 15/25/40/65, Beta 10/20/30/50, Gamma 5/15/25/40 at 10/35/65/90%. Delayed Venting moves payouts to 0/20/50/80%.
+- L5 assumed: Fiery Aura +1.5%/s armor regen; Vicarious +50% HSD; Signed +25% Skill Efficiency / +500% Shield Health / +50% Signature Weapon Damage.
+- Fiery Aura L5: 15% Bonus Armor per unique burn; 10 m; sprint DR 100%.
+- Vicarious: 10–20 m spread; Burn damage penalty 50%–10% (10% at L5).
+- Signed L5: +2 s Signature / +1 s shield duration; +150% Shield Active Regen in notes only.
+- 20 player passives. Leaky Valve actives need **95% regardless of other effects**. Kickstart is **80% inclusive**. All or Nothing vs Kickstart cancel.
+- New Formula Beta → Signature Weapon Damage; Gamma → Hazard Protection.
+- Active durations and Quality Seals delay in seconds are unpublished — omit.
+
+Only the season specialist may edit `SeasonActiveId` / `SeasonPassiveId` / `SeasonModifier` in `types.ts`. `npm test` after edits.

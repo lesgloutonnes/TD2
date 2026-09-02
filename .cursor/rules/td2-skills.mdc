@@ -1,0 +1,22 @@
+---
+description: Live Y8S3 skills, Gear 2.0 attachments, and specialization perks
+globs: src/lib/data/skills.ts,src/lib/data/skill-mods.ts
+alwaysApply: false
+---
+
+Skills are tiles (`id`, name, category, description). Soft `assumed` only as a sheet hint while equipped. Mods are **skill-local**, never character-wide.
+
+Official Y8S3 “skill base values and Skill Tier scaling” notes are **Conflict / PvP Dark Zone only**. Do not apply them to this PvE sheet.
+
+Do not regress:
+
+- Live variants that must exist: Banshee Pulse, Achilles Pulse, Shrapnel Trap, Precision Smart Cover, Fortified Smart Cover.
+- Chem heal variant name is **Reinforcer Chem Launcher** (keep id `repair-chem`).
+- TD2 sticky pool is Burn / EMP / Explosive — **no Flashbang Sticky** (Division 1 leftover).
+- Booster Hive: weapon handling, hazard protection, melee (not “speed and damage”).
+- Banshee Coil: Cone Size +7.5%. Gunner Directional Transmitter also on Banshee.
+- Smart Cover slots: Smart Launcher + Smart Projectile. Namu lists lines but not max % — use family-typical Gear 2.0 caps (7.5% duration/haste/radius, 5% unique lines) and say so.
+- Other Gear 2.0 max rolls: Namu level 40 tables.
+- Specs: sheet perks default ON; weapon-type +5% default OFF; Technician exclusive fork Skill Damage vs Skill Repair.
+
+Do not add character-wide burn stats for Firewall season synergy. `npm test` after edits.
