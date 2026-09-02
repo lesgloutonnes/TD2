@@ -18,9 +18,11 @@ const HIGHLIGHT: StatKey[] = [
   "armorRegen",
   "armorRegenPercent",
   "armorOnKill",
+  "incomingRepairs",
   "health",
   "healthPercent",
   "hazardProtection",
+  "pulseResistance",
   "bleedResistance",
   "burnResistance",
   "shockResistance",
@@ -47,8 +49,10 @@ const HIGHLIGHT: StatKey[] = [
   "skillHealth",
   "reloadSpeed",
   "magazineSize",
+  "ammoCapacity",
   "rateOfFire",
   "weaponHandling",
+  "stability",
 ];
 
 export function StatsPanel({

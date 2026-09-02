@@ -2108,17 +2108,24 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "gunner-aok", name: "Armor on Kill", stat: "armorOnKill", value: 10 },
         { id: "gunner-ammo", name: "Ammo Capacity", stat: "ammoCapacity", value: 25 },
+        { id: "gunner-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
     technician: {
       signature: "P-017 Missile Launcher",
-      sheet: [{ id: "technician-tier", name: "Amped", stat: "skillTier", value: 1 }],
+      sheet: [
+        { id: "technician-tier", name: "Amped", stat: "skillTier", value: 1 },
+        { id: "technician-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
+        { id: "technician-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
+      ],
     },
     sharpshooter: {
       signature: "TAC-50",
       sheet: [
         { id: "sharpshooter-hsd", name: "Headshot Damage", stat: "hsd", value: 15 },
         { id: "sharpshooter-mmr", name: "Marksman Rifle damage", stat: "mmrDamage", value: 10 },
+        { id: "sharpshooter-breath", name: "Breath Control", stat: "stability", value: 15 },
+        { id: "sharpshooter-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
     survivalist: {
@@ -2126,6 +2133,8 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "survivalist-repairs", name: "Incoming Repairs", stat: "incomingRepairs", value: 10 },
         { id: "survivalist-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+        { id: "survivalist-elite", name: "Elite Defense", stat: "protectionFromElites", value: 10 },
+        { id: "survivalist-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
     demolitionist: {
@@ -2133,6 +2142,8 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "demolitionist-explosive", name: "Explosive Damage", stat: "explosiveDamage", value: 15 },
         { id: "demolitionist-lmg", name: "LMG damage", stat: "lmgDamage", value: 10 },
+        { id: "demolitionist-incombustible", name: "Incombustible", stat: "burnResistance", value: 20 },
+        { id: "demolitionist-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
     firewall: {
@@ -2140,6 +2151,7 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "firewall-armor", name: "Total Armor", stat: "armorPercent", value: 10 },
         { id: "firewall-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+        { id: "firewall-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
   };
@@ -2205,25 +2217,30 @@ function testSpecPerksLiveY8s3() {
   loadout.specialization = "gunner";
   let stats = computeStats(loadout);
   assert(stats.values.armorOnKill === 10 && stats.values.ammoCapacity === 25, "gunner sheet defaults");
+  assert(stats.values.signatureWeaponDamage === 40, "gunner signature WD default on");
   assert(stats.values.arDamage === 0, "gunner weapon-type off");
 
   loadout.specialization = "technician";
   loadout.specPerks = undefined;
   stats = computeStats(loadout);
   assert(stats.values.skillTier === 1, "Amped default on");
+  assert(stats.values.pulseResistance === 50, "Technician Vital Protection pulse");
   assert(stats.values.skillDamage === 0 && stats.values.skillRepair === 0, "technician fork default off");
 
   loadout.specialization = "sharpshooter";
   stats = computeStats(loadout);
   assert(stats.values.hsd === 15 && stats.values.mmrDamage === 10, "sharpshooter sheet defaults");
+  assert(stats.values.stability === 15, "Breath Control default on");
 
   loadout.specialization = "survivalist";
   stats = computeStats(loadout);
   assert(stats.values.incomingRepairs === 10 && stats.values.statusEffects === 10, "survivalist sheet defaults");
+  assert(stats.values.protectionFromElites === 10, "Elite Defense default on");
 
   loadout.specialization = "demolitionist";
   stats = computeStats(loadout);
   assert(stats.values.explosiveDamage === 15 && stats.values.lmgDamage === 10, "demolitionist sheet defaults");
+  assert(stats.values.burnResistance === 20, "Incombustible default on");
 
   loadout.specialization = "firewall";
   stats = computeStats(loadout);
@@ -2542,6 +2559,41 @@ function testSeasonLiveGaugeAndHostileNotes() {
   assert(stats.notes.some((note) => note.includes("Achilles") && note.includes("5%")), "Achilles 5% on sheet");
 }
 
+/** Extra live sheet nodes filled from Namu trees (Ubisoft Y8S3 PDF does not retune specs). */
+function testSpecPerksSheetGapsY8s3() {
+  for (const spec of SPECIALIZATIONS) {
+    const sig = spec.perks.find((perk) => perk.id === `${spec.id}-sig-wd`);
+    assert(sig?.name === "Signature Weapon Damage", `${spec.id} Signature Weapon Damage name`);
+    assert(sig?.defaultOn === true && sig.bonuses[0]?.stat === "signatureWeaponDamage" && sig.bonuses[0]?.value === 40, `${spec.id} sig WD +40%`);
+  }
+
+  const tech = specializationById("technician")!;
+  assert(
+    tech.perks.some((perk) => perk.id === "technician-pulse" && perk.name === "Vital Protection"),
+    "Technician Vital Protection id",
+  );
+  assert(
+    !SPECIALIZATIONS.filter((spec) => spec.id !== "technician").some((spec) =>
+      spec.perks.some((perk) => perk.name === "Vital Protection"),
+    ),
+    "Conflict crit-reduction Vital Protection stays unmodeled on other specs",
+  );
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.specialization = "technician";
+  loadout.specPerks = { "technician-pulse": false, "technician-sig-wd": false };
+  const skipped = computeStats(loadout);
+  assert(skipped.values.skillTier === 1, "Amped still on when optional sheet nodes skipped");
+  assert(skipped.values.pulseResistance === 0, "Vital Protection can be skipped");
+  assert(skipped.values.signatureWeaponDamage === 0, "sig WD can be skipped");
+
+  loadout.specialization = "gunner";
+  loadout.specPerks = { "gunner-sig-wd": false };
+  assert(computeStats(loadout).values.armorOnKill === 10, "Gunner identity perks stay on");
+  assert(computeStats(loadout).values.weaponDamage === 0, "no invented Weapon Damage from spec tree");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2630,6 +2682,7 @@ const tests = [
   testY8s3LiveHeTalentPicker,
   testY8S3SkillPveSheetGaps,
   testSeasonLiveGaugeAndHostileNotes,
+  testSpecPerksSheetGapsY8s3,
 ];
 
 let failed = 0;
