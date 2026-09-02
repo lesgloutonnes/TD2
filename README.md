@@ -18,7 +18,7 @@ The **Include builder model** toggle (on by default) adds averaged talent / 4pc 
 
 Double-click **`lancer-builder.bat`**.
 
-That opens http://localhost:3000 in the browser. No Node/npm install: Windows PowerShell serves the site already built in `www/`. Leave the black window open while you use the builder, then close it to stop.
+That opens http://localhost:3000 in the browser. No Node/npm install: Windows PowerShell serves the **already-built snapshot** in `www/`. Source changes in `src/` only show up here after `npm run build` (that command refreshes `www/`). Leave the black window open while you use the builder, then close it to stop.
 
 If the browser shows an **HTTP 500**, update `lancer-builder.ps1` (the first server crashed while sending files). Rerun the `.bat` and look for `ERREUR` lines in the black window.
 
