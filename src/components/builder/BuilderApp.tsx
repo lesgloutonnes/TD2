@@ -87,6 +87,7 @@ import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
 import { SeasonPanel } from "@/components/builder/SeasonPanel";
 import { ShdWatchPanel } from "@/components/builder/ShdWatchPanel";
+import { SpecPerksPanel } from "@/components/builder/SpecPerksPanel";
 
 const emptySaved: SavedBuildListItem[] = [];
 
@@ -427,7 +428,12 @@ export function BuilderApp() {
             </option>
           ))}
         </select>
+        <small className="hint">
+          Signature weapon and unique skill. Sheet perks below can be turned off if you skipped
+          those nodes.
+        </small>
       </label>
+      <SpecPerksPanel loadout={loadout} onChange={setLoadout} />
       <label className="field checkbox builder-model-field">
         <input
           type="checkbox"

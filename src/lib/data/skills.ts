@@ -1,4 +1,4 @@
-import type { SkillDef, SpecializationDef } from "../types";
+import type { SkillDef, SpecializationDef, SpecPerkDef, StatBonus, StatKey } from "../types";
 
 export const SKILLS: SkillDef[] = [
   {
@@ -296,62 +296,151 @@ applySkillModel("sticky-emp", [{ stat: "statusEffects", value: 6 }], "EMP disrup
 applySkillModel("sticky-flash", [{ stat: "statusEffects", value: 8 }], "Flashbang averaged as Status Effects.");
 applySkillModel("sticky-explosive", [{ stat: "explosiveDamage", value: 10 }, { stat: "skillDamage", value: 5 }], "Explosive sticky averaged.");
 
+const WEAPON_TYPE_NODES: { suffix: string; name: string; stat: StatKey }[] = [
+  { suffix: "ar", name: "Assault Rifle", stat: "arDamage" },
+  { suffix: "lmg", name: "LMG", stat: "lmgDamage" },
+  { suffix: "smg", name: "SMG", stat: "smgDamage" },
+  { suffix: "shotgun", name: "Shotgun", stat: "shotgunDamage" },
+  { suffix: "mmr", name: "Marksman Rifle", stat: "mmrDamage" },
+  { suffix: "rifle", name: "Rifle", stat: "rifleDamage" },
+  { suffix: "pistol", name: "Pistol", stat: "pistolDamage" },
+];
+
+function sheetPerk(
+  specId: string,
+  suffix: string,
+  name: string,
+  bonuses: StatBonus[],
+): SpecPerkDef {
+  return {
+    id: `${specId}-${suffix}`,
+    name,
+    bonuses,
+    group: "sheet",
+    defaultOn: true,
+  };
+}
+
+function weaponTypePerks(specId: string): SpecPerkDef[] {
+  return WEAPON_TYPE_NODES.map((node) => ({
+    id: `${specId}-${node.suffix}`,
+    name: `${node.name} damage`,
+    bonuses: [{ stat: node.stat, value: 5 }],
+    group: "weapon-type" as const,
+    defaultOn: false,
+  }));
+}
+
 export const SPECIALIZATIONS: SpecializationDef[] = [
   {
     id: "gunner",
     name: "Gunner",
     signature: "M134 Minigun",
-    bonuses: [
-      { stat: "armorOnKill", value: 10 },
-      { stat: "ammoCapacity", value: 25 },
+    description: "Minigun, Banshee Pulse, Riot Foam. Red DPS meta.",
+    perks: [
+      sheetPerk("gunner", "aok", "Armor on Kill", [{ stat: "armorOnKill", value: 10 }]),
+      sheetPerk("gunner", "ammo", "Ammo Capacity", [{ stat: "ammoCapacity", value: 25 }]),
+      ...weaponTypePerks("gunner"),
     ],
-    description: "+10% Armor on Kill, bonus ammo, minigun. Red DPS meta.",
   },
   {
     id: "technician",
     name: "Technician",
     signature: "P-017 Missile Launcher",
-    bonuses: [{ stat: "skillTier", value: 1 }],
-    description: "+1 Skill Tier, Artificer Hive. Skill meta.",
+    description: "Artificer Hive, EMP grenades. Skill meta.",
+    perks: [
+      sheetPerk("technician", "tier", "Skill Tier", [{ stat: "skillTier", value: 1 }]),
+      ...weaponTypePerks("technician"),
+    ],
   },
   {
     id: "sharpshooter",
     name: "Sharpshooter",
     signature: "TAC-50",
-    bonuses: [
-      { stat: "hsd", value: 15 },
-      { stat: "mmrDamage", value: 10 },
+    description: "Armor-piercing TAC-50, Tactician Drone.",
+    perks: [
+      sheetPerk("sharpshooter", "hsd", "Headshot Damage", [{ stat: "hsd", value: 15 }]),
+      sheetPerk("sharpshooter", "mmr", "Marksman Rifle damage", [{ stat: "mmrDamage", value: 10 }]),
+      ...weaponTypePerks("sharpshooter").filter((perk) => perk.id !== "sharpshooter-mmr"),
     ],
-    description: "Headshots, armor-piercing TAC-50, Tactician Drone.",
   },
   {
     id: "survivalist",
     name: "Survivalist",
     signature: "Explosive Crossbow",
-    bonuses: [
-      { stat: "incomingRepairs", value: 10 },
-      { stat: "statusEffects", value: 10 },
-    ],
     description: "Support, group heals, status effects, incendiary grenades.",
+    perks: [
+      sheetPerk("survivalist", "repairs", "Incoming Repairs", [{ stat: "incomingRepairs", value: 10 }]),
+      sheetPerk("survivalist", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      ...weaponTypePerks("survivalist"),
+    ],
   },
   {
     id: "demolitionist",
     name: "Demolitionist",
     signature: "M32A1 Grenade Launcher",
-    bonuses: [
-      { stat: "explosiveDamage", value: 15 },
-      { stat: "lmgDamage", value: 10 },
-    ],
     description: "Explosives, improved armor kits, LMGs.",
+    perks: [
+      sheetPerk("demolitionist", "explosive", "Explosive Damage", [{ stat: "explosiveDamage", value: 15 }]),
+      sheetPerk("demolitionist", "lmg", "LMG damage", [{ stat: "lmgDamage", value: 10 }]),
+      ...weaponTypePerks("demolitionist").filter((perk) => perk.id !== "demolitionist-lmg"),
+    ],
   },
   {
     id: "firewall",
     name: "Firewall",
     signature: "K8-JetStream Flamethrower",
-    bonuses: [
-      { stat: "armorPercent", value: 10 },
-      { stat: "statusEffects", value: 10 },
-    ],
     description: "CQC, burns, Striker Shield, flamethrower.",
+    perks: [
+      sheetPerk("firewall", "armor", "Total Armor", [{ stat: "armorPercent", value: 10 }]),
+      sheetPerk("firewall", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      ...weaponTypePerks("firewall"),
+    ],
   },
 ];
+
+export function specializationById(id: string | null | undefined): SpecializationDef | undefined {
+  if (!id) return undefined;
+  return SPECIALIZATIONS.find((item) => item.id === id);
+}
+
+const SPEC_PERK_IDS = new Set(SPECIALIZATIONS.flatMap((spec) => spec.perks.map((perk) => perk.id)));
+
+export function specPerkEnabled(
+  perk: SpecPerkDef,
+  flags?: Partial<Record<string, boolean>>,
+): boolean {
+  if (flags && Object.prototype.hasOwnProperty.call(flags, perk.id)) {
+    return flags[perk.id] === true;
+  }
+  return perk.defaultOn;
+}
+
+export function sanitizeSpecPerks(
+  raw: Partial<Record<string, boolean>> | undefined | null,
+): Partial<Record<string, boolean>> | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const next: Partial<Record<string, boolean>> = {};
+  for (const [id, value] of Object.entries(raw)) {
+    if (!SPEC_PERK_IDS.has(id)) continue;
+    next[id] = value === true;
+  }
+  return Object.keys(next).length ? next : undefined;
+}
+
+export function setSpecPerkFlags(
+  current: Partial<Record<string, boolean>> | undefined,
+  spec: SpecializationDef,
+  updater: (perk: SpecPerkDef) => boolean | undefined,
+): Partial<Record<string, boolean>> | undefined {
+  const next: Partial<Record<string, boolean>> = { ...(current ?? {}) };
+  for (const perk of spec.perks) {
+    const value = updater(perk);
+    if (value === undefined) {
+      delete next[perk.id];
+    } else {
+      next[perk.id] = value;
+    }
+  }
+  return sanitizeSpecPerks(next);
+}

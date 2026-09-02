@@ -66,7 +66,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Include maxed bonuses (toggle, off by default): stacks / procs / conditionals at maximum for comparison
 - SHD Watch panel (toggle, then scale each line 0–max)
 - Y8S3 **Under Pressure** season modifier (toggle, 1 active + 3 passives, assumed pressure on the sheet)
-- Caps: CHC 60%, Skill Tier 6
+- Specialization perks (sheet stats on by default; optional weapon-type +5% nodes off until checked)
 - NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
 - Build index (relative stack compare — **not DPS**)
 - Local save (overwrite / save as / rename) and share link

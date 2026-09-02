@@ -11,7 +11,7 @@ import type {
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, coreStrengthRate, resolveFourPieceMax } from "./data/gear-sets";
 import { catalogById } from "./data/catalog";
-import { SPECIALIZATIONS, SKILLS } from "./data/skills";
+import { SKILLS, specPerkEnabled, specializationById } from "./data/skills";
 import { WEAPONS } from "./data/weapons";
 import {
   sanitizeWeaponMods,
@@ -664,18 +664,33 @@ export function computeStats(loadout: Loadout): ComputedStats {
   applySeasonModifiers(loadout, values, bonuses, notes, includeAssumed);
 
   if (loadout.specialization) {
-    const spec = SPECIALIZATIONS.find((item) => item.id === loadout.specialization);
+    const spec = specializationById(loadout.specialization);
     if (spec) {
-      addBonuses(values, spec.bonuses);
+      const activePerks = spec.perks.filter((perk) => specPerkEnabled(perk, loadout.specPerks));
+      for (const perk of activePerks) {
+        addBonuses(values, perk.bonuses);
+      }
+      const perkLabels = activePerks.map((perk) => perk.name);
       pushBonus(bonuses, {
         source: spec.name,
         label: spec.signature,
-        detail: spec.description,
+        detail: perkLabels.length
+          ? `${spec.description} · Perks: ${perkLabels.join(", ")}.`
+          : `${spec.description} · No spec perks selected.`,
         pieces: 1,
         required: 1,
         active: true,
         color: "#ff6b1a",
       });
+      if (perkLabels.length) {
+        notes.push(
+          `${spec.name} perks: ${activePerks
+            .map((perk) => `${perk.name} (${formatBonusList(perk.bonuses)})`)
+            .join("; ")}.`,
+        );
+      } else {
+        notes.push(`${spec.name} selected — signature / unique skill only (no sheet perks).`);
+      }
     }
   }
 

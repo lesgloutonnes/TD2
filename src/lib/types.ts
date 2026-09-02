@@ -188,11 +188,22 @@ export type SkillDef = {
   assumedNote?: string;
 };
 
+export type SpecPerkGroup = "sheet" | "weapon-type";
+
+export type SpecPerkDef = {
+  id: string;
+  name: string;
+  bonuses: StatBonus[];
+  group: SpecPerkGroup;
+  /** Omitted loadout flags use this. Sheet perks default on; weapon-type nodes default off. */
+  defaultOn: boolean;
+};
+
 export type SpecializationDef = {
   id: string;
   name: string;
   signature: string;
-  bonuses: StatBonus[];
+  perks: SpecPerkDef[];
   description: string;
 };
 
@@ -279,6 +290,12 @@ export type Loadout = {
   weapons: Record<WeaponSlot, EquippedWeapon | null>;
   skills: [EquippedSkill | null, EquippedSkill | null];
   specialization: string | null;
+  /**
+   * Per-perk flags for the selected specialization. Omitted keys use each perk's
+   * `defaultOn`. Sheet perks default on (same as the old bundled spec bonuses);
+   * optional weapon-type nodes default off.
+   */
+  specPerks?: Partial<Record<string, boolean>>;
   /** Master SHD Watch toggle. When true, `shdWatchParts` can disable individual bonuses. */
   shdWatch: boolean;
   /**
