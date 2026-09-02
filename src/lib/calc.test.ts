@@ -7,7 +7,7 @@ import { ALL_TALENTS, talentByName, talentsForSlot } from "./data/talents";
 import { WEAPONS } from "./data/weapons";
 import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
-import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
+import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS, storedCoreValue } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import {
@@ -1143,6 +1143,15 @@ function testPrototypeSwitch() {
   assert(withEcho.values.armorPercent === 0 || true, "armor percent tracked");
   assert(withEcho.values.armor >= GEAR_BASE_ARMOR * 1.5, "prototype base armor");
 
+  const yellow = setPiecePrototype(createPiece("gloves", "brand:alps"), true);
+  const yellowLoadout = emptyLoadout();
+  yellowLoadout.shdWatch = false;
+  yellowLoadout.gear.gloves = yellow;
+  assert(
+    computeStats(yellowLoadout).values.skillTier === 1.5,
+    `yellow Prototype core is 1.5, got ${computeStats(yellowLoadout).values.skillTier}`,
+  );
+
   const exotic = setPiecePrototype(createPiece("mask", "catharsis"), true);
   assert(exotic.prototype === false, "exotics cannot be prototype");
 
@@ -1150,6 +1159,58 @@ function testPrototypeSwitch() {
   assert(off.prototype === false, "prototype off");
   assert(off.augmentId === undefined, "augment cleared");
   assert(off.attributes[0]?.value === 6, `CHC back to HE max, got ${off.attributes[0]?.value}`);
+}
+
+function testCoreRolls() {
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.gear.mask = createPiece("mask", "brand:providence");
+  assert(computeStats(loadout).values.weaponDamage === 15, "default red core max");
+
+  loadout.gear.mask.coreValue = 10;
+  assert(computeStats(loadout).values.weaponDamage === 10, "red core roll 10");
+
+  loadout.gear.mask.coreValue = 99;
+  assert(computeStats(loadout).values.weaponDamage === 15, "red core clamped to max");
+
+  const scaled = setPiecePrototype(
+    { ...createPiece("mask", "brand:providence"), coreValue: 10 },
+    true,
+  );
+  assert(scaled.coreValue === 15, `10% HE scales to 15% Prototype, got ${scaled.coreValue}`);
+  const scaledLoadout = emptyLoadout();
+  scaledLoadout.shdWatch = false;
+  scaledLoadout.gear.mask = { ...scaled, augmentId: undefined, augmentLevel: undefined };
+  assert(computeStats(scaledLoadout).values.weaponDamage === 15, "scaled Prototype red roll");
+
+  const back = setPiecePrototype(scaled, false);
+  assert(back.coreValue === 10, `Prototype off restores 10% HE, got ${back.coreValue}`);
+
+  const yellow = createPiece("mask", "brand:alps");
+  yellow.coreValue = 0.2;
+  const yellowLoadout = emptyLoadout();
+  yellowLoadout.shdWatch = false;
+  yellowLoadout.gear.mask = yellow;
+  assert(computeStats(yellowLoadout).values.skillTier === 1, "yellow High-End is always 1");
+
+  const blue = createPiece("holster", "brand:belstone");
+  const blueLoadout = emptyLoadout();
+  blueLoadout.shdWatch = false;
+  blueLoadout.gear.holster = blue;
+  const maxArmor = computeStats(blueLoadout).values.armor;
+  blue.coreValue = 100_000;
+  const lowArmor = computeStats(blueLoadout).values.armor;
+  assert(lowArmor < maxArmor, "lower blue core lowers armor");
+  assert(lowArmor === GEAR_BASE_ARMOR + 100_000, `base + blue roll, got ${lowArmor}`);
+
+  const share = emptyLoadout("Core roll");
+  share.gear.mask = { ...createPiece("mask", "brand:providence"), coreValue: 11 };
+  const decoded = decodeLoadout(encodeLoadout(share));
+  assert(decoded?.gear.mask?.coreValue === 11, "coreValue share roundtrip");
+  share.gear.mask.coreValue = 15;
+  const decodedMax = decodeLoadout(encodeLoadout(share));
+  assert(decodedMax?.gear.mask?.coreValue === undefined, "max core omitted from share");
+  assert(storedCoreValue("yellow", 1.5, true) === undefined, "yellow core is not stored");
 }
 
 function testWeaponPrototype() {
@@ -1827,6 +1888,7 @@ const tests = [
   testPerItemExpertise,
   testPistolSlotSanitize,
   testPrototypeSwitch,
+  testCoreRolls,
   testWeaponPrototype,
   testArmorFlatAndPercent,
   testTalentAssumed,

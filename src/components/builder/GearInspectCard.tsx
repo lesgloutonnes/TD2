@@ -49,7 +49,7 @@ export function GearInspectCard({
       {inspect.extraCores.map((extra, index) => (
         <div key={`${extra.core}-${index}`} className="tt-core extra">
           <span className="tt-core-pip" style={{ background: extra.color }} />
-          <span>Bonus core · {extra.label}</span>
+          <span>Bonus core · {extra.label} {extra.value}</span>
         </div>
       ))}
 

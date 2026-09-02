@@ -14,7 +14,7 @@ import {
   WEAPON_SLOT_LABELS,
   formatStat,
   itemDisplayColor,
-  prototypeCoreMult,
+  resolveCoreValue,
   weaponDisplayColor,
 } from "./data/attributes";
 import { WEAPON_TYPE_LABELS, weaponById } from "./data/weapons";
@@ -55,7 +55,7 @@ export type PieceInspect =
       coreLabel: string;
       coreColor: string;
       coreValue: string;
-      extraCores: { core: CoreType; label: string; color: string }[];
+      extraCores: { core: CoreType; label: string; color: string; value: string }[];
       stats: InspectStat[];
       talent: { name: string; description: string; locked: boolean } | null;
       affiliation: {
@@ -76,12 +76,14 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
   const source = catalogById(piece.sourceId);
   if (!source) return { empty: true, slot, slotLabel };
 
+  const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
   const { brandCounts, setCounts, ninja } = gearCounts(loadout);
 
   const extraCores = (piece.extraCores ?? source.extraCores ?? []).map((core) => ({
     core,
     label: CORE_OPTION_LABELS[core],
     color: CORE_COLORS[core],
+    value: formatStat(CORE_VALUES[core].stat, resolveCoreValue(core, undefined, isPrototype)),
   }));
 
   const stats: InspectStat[] = [];
@@ -203,7 +205,6 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     }
   }
 
-  const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
   const augmentDef = isPrototype ? augmentById(piece.augmentId) : undefined;
   const augmentLevel = clampAugmentLevel(piece.augmentLevel);
   const augment = augmentDef
@@ -231,7 +232,7 @@ export function pieceInspect(slot: Slot, loadout: Loadout): PieceInspect {
     coreColor: CORE_COLORS[piece.core],
     coreValue: formatStat(
       CORE_VALUES[piece.core].stat,
-      CORE_VALUES[piece.core].value * (isPrototype ? prototypeCoreMult(piece.core) : 1),
+      resolveCoreValue(piece.core, piece.coreValue, isPrototype),
     ),
     extraCores,
     stats,

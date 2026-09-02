@@ -213,6 +213,12 @@ export type GearPiece = {
   slot: Slot;
   sourceId: string;
   core: CoreType;
+  /**
+   * Main core roll. Omitted = max for the current quality (15% WD / 170k armor / +1 ST).
+   * Prototype uses the same field at the Prototype cap (×1.5, including Skill Tier 1.5).
+   * Extra/bonus cores stay at max.
+   */
+  coreValue?: number;
   extraCores?: CoreType[];
   attributes: StatBonus[];
   talentId?: string;
@@ -222,7 +228,7 @@ export type GearPiece = {
   expertise: number;
   /**
    * Prototype quality (Y8). Brand / named / gear-set only — never exotics.
-   * Raises attribute caps (~1.5×) and red/blue core values; Skill Tier unchanged.
+   * Raises attribute caps and core rolls (~1.5×), including Skill Tier (1 → 1.5).
    */
   prototype?: boolean;
   /** Prototype Augment id (only when prototype). */

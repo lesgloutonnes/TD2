@@ -48,6 +48,7 @@ export const CORE_OPTION_LABELS: Record<CoreType, string> = {
   yellow: "Yellow — Skill Tier",
 };
 
+/** High-End max core rolls. Prototype max is × `PROTOTYPE_ATTR_MULT`. */
 export const CORE_VALUES: Record<CoreType, StatBonus> = {
   red: { stat: "weaponDamage", value: 15 },
   blue: { stat: "armor", value: 170000 },
@@ -338,9 +339,67 @@ export function scaleAttributesForPrototype(
   }));
 }
 
-/** Core value multiplier for Prototype (Skill Tier cores stay 1× in live game). */
-export function prototypeCoreMult(core: CoreType): number {
-  return core === "yellow" ? 1 : PROTOTYPE_ATTR_MULT;
+/** Core value multiplier for Prototype (Weapon Damage, Armor, and Skill Tier). */
+export function prototypeCoreMult(_core?: CoreType): number {
+  return PROTOTYPE_ATTR_MULT;
+}
+
+export function roundCoreValue(core: CoreType, value: number): number {
+  if (core === "blue") return Math.round(value);
+  return Math.round(value * 10) / 10;
+}
+
+export function coreMax(core: CoreType, prototype = false): number {
+  const base = CORE_VALUES[core].value;
+  if (!prototype) return base;
+  return roundCoreValue(core, base * PROTOTYPE_ATTR_MULT);
+}
+
+export function coreStep(core: CoreType): number {
+  return core === "blue" ? 25 : 0.1;
+}
+
+export function clampCoreValue(core: CoreType, value: number, prototype = false): number {
+  if (!Number.isFinite(value) || value < 0) return 0;
+  return roundCoreValue(core, Math.min(value, coreMax(core, prototype)));
+}
+
+/** Resolved main-core amount. Yellow is always the quality max (1 or 1.5). Omitted = max. */
+export function resolveCoreValue(
+  core: CoreType,
+  stored: number | undefined,
+  prototype = false,
+): number {
+  if (core === "yellow") return coreMax(core, prototype);
+  if (stored == null || !Number.isFinite(stored)) return coreMax(core, prototype);
+  return clampCoreValue(core, stored, prototype);
+}
+
+/** Persist only rolls below max so legacy shares stay compact. Yellow is never stored. */
+export function storedCoreValue(
+  core: CoreType,
+  value: number | undefined,
+  prototype = false,
+): number | undefined {
+  if (core === "yellow") return undefined;
+  const resolved = resolveCoreValue(core, value, prototype);
+  return resolved === coreMax(core, prototype) ? undefined : resolved;
+}
+
+/** Keep the roll ratio when toggling Prototype (max stays max; 10% HE → 15% Prototype). */
+export function scaleCoreValueForPrototype(
+  core: CoreType,
+  stored: number | undefined,
+  fromPrototype: boolean,
+  toPrototype: boolean,
+): number | undefined {
+  const current = resolveCoreValue(core, stored, fromPrototype);
+  if (core === "yellow") return undefined;
+  if (fromPrototype === toPrototype) return storedCoreValue(core, current, toPrototype);
+  const fromMax = coreMax(core, fromPrototype);
+  const toMax = coreMax(core, toPrototype);
+  const ratio = fromMax > 0 ? current / fromMax : 1;
+  return storedCoreValue(core, ratio * toMax, toPrototype);
 }
 
 export const PERCENT_STATS = new Set<StatKey>([

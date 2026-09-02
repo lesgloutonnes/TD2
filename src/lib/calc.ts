@@ -30,7 +30,7 @@ import {
   hasGearMod,
   OFFENSIVE_ATTRS,
   PROTOTYPE_ATTR_MULT,
-  prototypeCoreMult,
+  resolveCoreValue,
   SKILL_ATTRS,
   SKILL_TIER_CAP,
   SLOTS,
@@ -126,13 +126,14 @@ function addCore(
   cores: Record<CoreType, number>,
   core: CoreType,
   prototype = false,
+  storedValue?: number,
 ) {
   cores[core] += 1;
   // Flat armor from blue cores is applied in resolveFlatArmor (with piece base).
   if (core === "blue") return;
-  const base = CORE_VALUES[core];
-  const mult = prototype ? prototypeCoreMult(core) : 1;
-  addBonuses(values, [{ stat: base.stat, value: base.value * mult }]);
+  addBonuses(values, [
+    { stat: CORE_VALUES[core].stat, value: resolveCoreValue(core, storedValue, prototype) },
+  ]);
 }
 
 /** Flat armor from equipped pieces: base + blue cores, expertise, then Total Armor %. */
@@ -152,11 +153,13 @@ function resolveFlatArmor(
     const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
     const protoMult = isPrototype ? PROTOTYPE_ATTR_MULT : 1;
     let pieceFlat = GEAR_BASE_ARMOR * protoMult;
-    const blueCores =
-      (piece.core === "blue" ? 1 : 0) +
+    const extraBlue =
       (piece.extraCores ?? source.extraCores ?? []).filter((core) => core === "blue").length;
-    if (blueCores > 0) {
-      pieceFlat += CORE_VALUES.blue.value * protoMult * blueCores;
+    if (piece.core === "blue") {
+      pieceFlat += resolveCoreValue("blue", piece.coreValue, isPrototype);
+    }
+    if (extraBlue > 0) {
+      pieceFlat += resolveCoreValue("blue", undefined, isPrototype) * extraBlue;
     }
     if (piece.expertise > 0) {
       pieceFlat *= 1 + piece.expertise / 100;
@@ -259,7 +262,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     if (!source) continue;
 
     const isPrototype = Boolean(piece.prototype) && source.kind !== "exotic";
-    addCore(values, cores, piece.core, isPrototype);
+    addCore(values, cores, piece.core, isPrototype, piece.coreValue);
     for (const extra of piece.extraCores ?? source.extraCores ?? []) {
       addCore(values, cores, extra, isPrototype);
     }
@@ -331,7 +334,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
     if (isPrototype) {
       notes.push(
-        `${source.name}: Prototype — attribute caps ×${PROTOTYPE_ATTR_MULT}, red/blue cores ×${PROTOTYPE_ATTR_MULT} (Skill Tier unchanged).`,
+        `${source.name}: Prototype — attribute caps ×${PROTOTYPE_ATTR_MULT}, cores ×${PROTOTYPE_ATTR_MULT} (Skill Tier 1 → 1.5).`,
       );
       const augment = augmentById(piece.augmentId);
       if (augment) {
