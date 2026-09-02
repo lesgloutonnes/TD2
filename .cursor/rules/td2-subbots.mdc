@@ -1,9 +1,9 @@
 ---
-description: Dispatch parallel catalog sub-bots for weapons, gear, skills, and season data
+description: Dispatch parallel catalog sub-bots for weapons, gear, skills, specs, and season data
 alwaysApply: false
 ---
 
-When updating live game data, run **four specialists in parallel** with exclusive files (see `AGENTS.md` ownership table). Put the file list and official source URLs in each brief so the child does not re-discover the playbook from scratch.
+When updating live game data, run specialists in parallel with exclusive files (see `AGENTS.md` ownership table). Do not dispatch Skills and Specialization together — they share `skills.ts`. Put the file list and official source URLs in each brief so the child does not re-discover the playbook from scratch.
 
 Brief each child with:
 
@@ -13,6 +13,6 @@ Brief each child with:
 4. Push a branch; draft PR vs `main` (French). If `ManagePullRequest` is unavailable, return the compare URL — `gh` cannot create PRs.
 5. Do not merge. Do not touch `www/` or `README.md`.
 
-Parent then opens any missing PRs and lands them **serially** (all four append `calc.test.ts`).
+Parent then opens any missing PRs and lands them **serially** (all specialists append `calc.test.ts`).
 
 Cloud VM slot limits: if a fourth cloud subagent fails to start, run that specialist locally on `cursor/<topic>-b39a` branched from `origin/main`, or wait for a slot. Never commit on `main`.

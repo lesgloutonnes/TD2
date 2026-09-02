@@ -14,6 +14,7 @@ Y8S3 facts (do not regress):
 - **Boiling Point** is a pickable HE talent (first 53% mag −100% CHC, rest 100%). Perfect (Teapot, Steamer) is 48%.
 - **Steel & Sons ACR** is an exotic ACR SS rifle (`steel-and-sons`), talent Confirm & Execute, max stacks 4, weak-point +30% amp / 5s.
 - **Fafnir**: Dragon's Breath 40% Burn, WD amplified by 50% of Status Effects; locked +15% CHC / +5 mag / +10% handling as `extraStats`. No averaged +WD assumed. RPM/mag unpublished by Ubisoft — do not invent.
+- **Quickstep** is a named Tactical M1911 pistol (`quickstep`), talent Sport Mode: +20% movement speed while unholstered, does not stack with other MS bonuses. Not a meme seasonal — keep it. Do not model MS as fake Weapon Damage.
 - Do not add Prima Donna / Insult to Injury / Brain Break without an official talent table.
 - Do not add Perfect-only HE talents (Allegro, Streamline, …) unless they are on the live picker.
 
