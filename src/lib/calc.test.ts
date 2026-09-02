@@ -1842,6 +1842,47 @@ function testExoticAssumedCatalog() {
   assert(pest?.assumed?.length, "Pestilence has maxed bonuses");
 }
 
+function testY8s3LiveWeaponCatalog() {
+  const determined = weaponTalentByName("Determined");
+  assert(determined?.description.includes("converted shot"), "Y8S3 Determined no-chain text");
+  assert(determined?.types?.includes("mmr") && determined.types.includes("rifle") && determined.types.includes("pistol"), "Determined MMR/rifle/pistol");
+  assert(!determined?.assumed?.length, "Determined is not a reload-speed sheet stat");
+  assert(determined?.assumedNote?.includes("Iron Will"), "Determined points chaining to Iron Will");
+
+  const boiling = weaponTalentByName("Boiling Point");
+  assert(boiling?.description.includes("53%"), "Boiling Point live 53%");
+  assert(boiling?.assumed?.some((stat) => stat.stat === "chc" && stat.value === 100), "Boiling Point remaining mag 100% CHC");
+
+  const fafnir = WEAPONS.find((weapon) => weapon.id === "fafnir");
+  assert(fafnir?.talent === "Dragon's Breath", "Fafnir talent");
+  assert(fafnir?.talentDesc.includes("40%"), "Fafnir 40% Burn");
+  assert(fafnir?.talentDesc.includes("50%"), "Fafnir 50% SE amp");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "chc" && stat.value === 15), "Fafnir locked +15% CHC");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "magazineSize" && stat.value === 5), "Fafnir locked +5 mag");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "weaponHandling" && stat.value === 10), "Fafnir locked +10% handling");
+  assert(!fafnir?.assumed?.length, "Fafnir SE amp is not a fake WD average");
+
+  const acr = WEAPONS.find((weapon) => weapon.id === "steel-and-sons");
+  assert(acr?.name === "Steel & Sons ACR", "Steel & Sons ACR id");
+  assert(acr?.type === "rifle" && acr.quality === "exotic", "Steel & Sons is exotic ACR SS rifle");
+  assert(acr?.rpm === 320 && acr.mag === 30, "Steel & Sons ACR SS rpm/mag");
+  assert(acr?.talent === "Confirm & Execute", "Confirm & Execute");
+  assert(acr?.talentDesc.includes("Max stacks: 4"), "Y8S3 max stacks 4");
+  assert(acr?.talentDesc.includes("+30% Amplified Damage"), "Y8S3 weak-point +30%");
+  assert(acr?.extraStats?.some((stat) => stat.stat === "chc" && stat.value === 15), "Steel & Sons locked optic");
+  assert(acr?.assumed?.some((stat) => stat.stat === "weaponDamage" && stat.value === 16), "4 stacks × 4% amp");
+
+  const teapot = WEAPONS.find((weapon) => weapon.id === "teapot");
+  const steamer = WEAPONS.find((weapon) => weapon.id === "steamer");
+  assert(teapot?.talent === "Perfect Boiling Point" && teapot.talentDesc.includes("48%"), "Teapot Perfect Boiling Point");
+  assert(steamer?.talent === "Perfect Boiling Point" && steamer.type === "ar", "Steamer named AR");
+
+  const relic = WEAPONS.find((weapon) => weapon.id === "relic");
+  const prophet = WEAPONS.find((weapon) => weapon.id === "prophet");
+  assert(relic?.talentDesc.includes("converted shot"), "Relic Perfectly Determined no-chain");
+  assert(prophet?.talentDesc.includes("converted shot"), "Prophet Perfectly Determined no-chain");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -1920,6 +1961,7 @@ const tests = [
   testShareNewFields,
   testSeasonModifier,
   testExoticAssumedCatalog,
+  testY8s3LiveWeaponCatalog,
 ];
 
 let failed = 0;
