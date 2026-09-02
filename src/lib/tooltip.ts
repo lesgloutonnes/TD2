@@ -20,6 +20,7 @@ import {
 import { WEAPON_TYPE_LABELS, weaponById } from "./data/weapons";
 import { WEAPON_MOD_KIND_LABELS } from "./data/weapon-mods";
 import { formatBonusList, gearCounts } from "./calc";
+import { resolveWeaponTalent } from "./builder-model";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 
 export type TooltipTier = {
@@ -273,6 +274,7 @@ export function weaponInspect(slot: WeaponSlot, equipped: EquippedWeapon | null)
   if (!def) return { empty: true, slot, slotLabel };
 
   const isPrototype = Boolean(equipped.prototype) && def.quality !== "exotic";
+  const resolved = resolveWeaponTalent(def, equipped);
   const extraStats: InspectStat[] = (def.extraStats ?? []).map((stat) => ({
     label: STAT_LABELS[stat.stat],
     value: formatStat(stat.stat, stat.value),
@@ -310,7 +312,7 @@ export function weaponInspect(slot: WeaponSlot, equipped: EquippedWeapon | null)
     augment,
     extraStats,
     mods,
-    talent: { name: def.talent, description: def.talentDesc },
-    assumedNote: def.assumedNote,
+    talent: { name: resolved.name, description: resolved.description },
+    assumedNote: resolved.assumedNote ?? def.assumedNote,
   };
 }

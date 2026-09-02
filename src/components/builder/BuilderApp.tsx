@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type {
   EquippedSkill,
   EquippedWeapon,
   GearPiece,
   Loadout,
+  ShdWatchPartId,
   Slot,
   StatKey,
   WeaponMod,
@@ -25,15 +26,22 @@ import {
   itemDisplayColor,
   parseStatInput,
   PRIMARY_WEAPON_TYPES,
+  SHD_WATCH_PARTS,
   SLOT_LABELS,
   SLOTS,
   STAT_LABELS,
   WEAPON_QUALITY_LABELS,
+  WEAPON_SLOT_LABELS,
   canWeaponBePrototype,
   weaponDisplayColor,
 } from "@/lib/data/attributes";
 import { SKILLS, SPECIALIZATIONS } from "@/lib/data/skills";
 import { WEAPON_TYPE_LABELS, weaponById } from "@/lib/data/weapons";
+import {
+  defaultWeaponTalentId,
+  weaponTalentsForType,
+} from "@/lib/data/weapon-talents";
+import { resolveWeaponTalent } from "@/lib/builder-model";
 import {
   clampWeaponMod,
   defaultWeaponMods,
@@ -65,6 +73,7 @@ import {
   listSavedBuilds,
   loadBuild,
   PRESETS,
+  renameBuild,
   saveBuild,
   subscribeSaved,
 } from "@/lib/share";
@@ -75,6 +84,7 @@ import { PhoneDock, type PhoneTab } from "@/components/builder/PhoneDock";
 import { WeaponTooltip } from "@/components/builder/WeaponTooltip";
 import { PickerModal } from "@/components/builder/PickerModal";
 import { WeaponPickerModal } from "@/components/builder/WeaponPickerModal";
+import { SkillPickerModal } from "@/components/builder/SkillPickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
 
@@ -92,6 +102,10 @@ export function BuilderApp() {
   const saved = useSyncExternalStore(subscribeSaved, listSavedBuilds, () => emptySaved);
   const [loadout, setLoadout] = useState<Loadout>(() => emptyLoadout());
   const [hashApplied, setHashApplied] = useState("");
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [compareKey, setCompareKey] = useState("");
+  const [renameId, setRenameId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
   const [activeSlot, setActiveSlot] = useState<Slot>("mask");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -111,13 +125,32 @@ export function BuilderApp() {
     hoverLeaveTimer.current = window.setTimeout(() => setHover(null), 80);
   }
 
-  if (hash !== hashApplied) {
+  useEffect(() => {
+    if (hash === hashApplied) return;
     setHashApplied(hash);
     const decoded = decodeLoadout(hash.replace(/^#b=/, ""));
-    if (decoded) setLoadout(decoded);
-  }
+    if (decoded) {
+      setLoadout(decoded);
+      setSavedId(null);
+    }
+  }, [hash, hashApplied]);
 
   const stats = useMemo(() => computeStats(loadout), [loadout]);
+  const compareLoadout = useMemo(() => {
+    if (!compareKey) return null;
+    if (compareKey.startsWith("preset:")) {
+      const preset = PRESETS.find((item) => item.id === compareKey.slice(7));
+      return preset ? preset.build() : null;
+    }
+    if (compareKey.startsWith("saved:")) {
+      return loadBuild(compareKey.slice(6));
+    }
+    return null;
+  }, [compareKey, saved]);
+  const compareStats = useMemo(
+    () => (compareLoadout ? computeStats(compareLoadout) : null),
+    [compareLoadout],
+  );
   const slotColors = useMemo(
     () =>
       Object.fromEntries(SLOTS.map((slot) => [slot, slotColor(slot, loadout)])) as Record<
@@ -158,6 +191,12 @@ export function BuilderApp() {
         weaponId,
         expertise: prev?.expertise ?? 0,
         mods: keepMods,
+        talentId:
+          def.quality === "high-end"
+            ? prev?.talentId && prev.weaponId === weaponId
+              ? prev.talentId
+              : (defaultWeaponTalentId(def.type))
+            : undefined,
       };
       // Preserve Prototype only when swapping between non-exotic weapons.
       if (prev?.prototype && canWeaponBePrototype(def.quality)) {
@@ -240,6 +279,7 @@ export function BuilderApp() {
             prev?.skillId === skillId && prev.mods?.length
               ? sanitizeSkillMods(skillId, prev.mods, current.specialization)
               : defaultSkillMods(skillId, current.specialization),
+          expertise: prev?.skillId === skillId ? prev.expertise : 0,
         };
       }
       return { ...current, skills };
@@ -273,9 +313,23 @@ export function BuilderApp() {
     flash("Build link copied.");
   }
 
-  function persist() {
-    saveBuild(loadout);
-    flash("Build saved in this browser.");
+  function setSkillExpertise(index: 0 | 1, expertise: number) {
+    setLoadout((current) => {
+      const equipped = current.skills[index];
+      if (!equipped) return current;
+      const skills: [EquippedSkill | null, EquippedSkill | null] = [
+        current.skills[0],
+        current.skills[1],
+      ];
+      skills[index] = { ...equipped, expertise };
+      return { ...current, skills };
+    });
+  }
+
+  function persist(overwrite: boolean) {
+    const id = saveBuild(loadout, overwrite && savedId ? savedId : undefined);
+    setSavedId(id);
+    flash(overwrite && savedId ? "Build updated." : "Build saved in this browser.");
   }
 
   function selectGearSlot(slot: Slot) {
@@ -382,49 +436,76 @@ export function BuilderApp() {
       <label className="field checkbox">
         <input
           type="checkbox"
+          checked={loadout.includeAssumed}
+          onChange={(event) => setLoadout({ ...loadout, includeAssumed: event.target.checked })}
+        />
+        <span>
+          Include builder model
+          <small className="hint">
+            Talent / 4pc / exotic averages. Hard rolls always apply. Not a DPS sim.
+          </small>
+        </span>
+      </label>
+      <label className="field checkbox">
+        <input
+          type="checkbox"
           checked={loadout.shdWatch}
           onChange={(event) => setLoadout({ ...loadout, shdWatch: event.target.checked })}
         />
         <span>SHD Watch 1000</span>
       </label>
+      {loadout.shdWatch ? (
+        <div className="shd-parts">
+          {SHD_WATCH_PARTS.map((part) => {
+            const on = loadout.shdWatchParts?.[part.id] !== false;
+            return (
+              <label key={part.id} className="field checkbox">
+                <input
+                  type="checkbox"
+                  checked={on}
+                  onChange={(event) =>
+                    setLoadout({
+                      ...loadout,
+                      shdWatchParts: {
+                        ...loadout.shdWatchParts,
+                        [part.id]: event.target.checked,
+                      } as Partial<Record<ShdWatchPartId, boolean>>,
+                    })
+                  }
+                />
+                <span>
+                  {part.label}
+                  <small className="hint">
+                    {part.bonus.value}
+                    {part.bonus.stat === "skillTier" ? "" : "%"}
+                  </small>
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 
   const kitGrid = (
     <section className="kit-grid">
-      <WeaponSelect
-        label="Primary weapon"
-        slot="primary"
-        equipped={loadout.weapons.primary}
-        types={[...PRIMARY_WEAPON_TYPES]}
-        allowHover={!isPhone}
-        onChange={setWeapon}
-        onExpertiseChange={setWeaponExpertise}
-        onModChange={setWeaponMod}
-        onUpdate={updateWeapon}
-      />
-      <WeaponSelect
-        label="Secondary weapon"
-        slot="secondary"
-        equipped={loadout.weapons.secondary}
-        types={[...PRIMARY_WEAPON_TYPES]}
-        allowHover={!isPhone}
-        onChange={setWeapon}
-        onExpertiseChange={setWeaponExpertise}
-        onModChange={setWeaponMod}
-        onUpdate={updateWeapon}
-      />
-      <WeaponSelect
-        label="Sidearm"
-        slot="sidearm"
-        equipped={loadout.weapons.sidearm}
-        types={["pistol"]}
-        allowHover={!isPhone}
-        onChange={setWeapon}
-        onExpertiseChange={setWeaponExpertise}
-        onModChange={setWeaponMod}
-        onUpdate={updateWeapon}
-      />
+      {(["primary", "secondary", "sidearm"] as const).map((slot) => (
+        <WeaponSelect
+          key={slot}
+          label={WEAPON_SLOT_LABELS[slot]}
+          slot={slot}
+          equipped={loadout.weapons[slot]}
+          types={slot === "sidearm" ? ["pistol"] : [...PRIMARY_WEAPON_TYPES]}
+          allowHover={!isPhone}
+          active={loadout.activeWeapon === slot}
+          onActivate={() => setLoadout({ ...loadout, activeWeapon: slot })}
+          onChange={setWeapon}
+          onExpertiseChange={setWeaponExpertise}
+          onModChange={setWeaponMod}
+          onUpdate={updateWeapon}
+        />
+      ))}
       <div className="kit-spacer" aria-hidden="true" />
       <SkillSelect
         label="Skill 1"
@@ -433,6 +514,7 @@ export function BuilderApp() {
         specialization={loadout.specialization}
         onChange={setSkill}
         onModChange={setSkillMod}
+        onExpertiseChange={setSkillExpertise}
       />
       <SkillSelect
         label="Skill 2"
@@ -441,8 +523,35 @@ export function BuilderApp() {
         specialization={loadout.specialization}
         onChange={setSkill}
         onModChange={setSkillMod}
+        onExpertiseChange={setSkillExpertise}
       />
     </section>
+  );
+
+  const compareBar = (
+    <label className="field compare-field">
+      <span>Compare with</span>
+      <select value={compareKey} onChange={(event) => setCompareKey(event.target.value)}>
+        <option value="">None</option>
+        <optgroup label="Presets">
+          {PRESETS.map((preset) => (
+            <option key={preset.id} value={`preset:${preset.id}`}>
+              {preset.name}
+            </option>
+          ))}
+        </optgroup>
+        {saved.length > 0 ? (
+          <optgroup label="Saved">
+            {saved.map((item) => (
+              <option key={item.id} value={`saved:${item.id}`}>
+                {item.name}
+              </option>
+            ))}
+          </optgroup>
+        ) : null}
+      </select>
+      <small className="hint">Deltas in Analysis are current minus the other build.</small>
+    </label>
   );
 
   const savedList =
@@ -452,25 +561,69 @@ export function BuilderApp() {
         <ul>
           {saved.map((item) => (
             <li key={item.id}>
-              <button
-                type="button"
-                className="ghost-btn"
-                onClick={() => {
-                  const next = loadBuild(item.id);
-                  if (next) setLoadout(next);
-                }}
-              >
-                {item.name}
-              </button>
-              <button
-                type="button"
-                className="ghost-btn danger"
-                onClick={() => {
-                  deleteBuild(item.id);
-                }}
-              >
-                Delete
-              </button>
+              {renameId === item.id ? (
+                <form
+                  className="rename-row"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    if (renameBuild(item.id, renameValue)) {
+                      if (savedId === item.id) {
+                        setLoadout({ ...loadout, name: renameValue.trim() || loadout.name });
+                      }
+                      setRenameId(null);
+                    }
+                  }}
+                >
+                  <input
+                    value={renameValue}
+                    onChange={(event) => setRenameValue(event.target.value)}
+                    autoFocus
+                  />
+                  <button type="submit" className="ghost-btn">
+                    OK
+                  </button>
+                  <button type="button" className="ghost-btn" onClick={() => setRenameId(null)}>
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className={savedId === item.id ? "ghost-btn is-current" : "ghost-btn"}
+                    onClick={() => {
+                      const next = loadBuild(item.id);
+                      if (next) {
+                        setLoadout(next);
+                        setSavedId(item.id);
+                      }
+                    }}
+                  >
+                    {item.name}
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-btn"
+                    onClick={() => {
+                      setRenameId(item.id);
+                      setRenameValue(item.name);
+                    }}
+                  >
+                    Rename
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-btn danger"
+                    onClick={() => {
+                      deleteBuild(item.id);
+                      if (savedId === item.id) setSavedId(null);
+                      if (compareKey === `saved:${item.id}`) setCompareKey("");
+                    }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>
@@ -501,12 +654,24 @@ export function BuilderApp() {
                 <h1>Builder</h1>
               </div>
               <div className="phone-top-actions">
-                <button type="button" className="ghost-btn" onClick={() => setLoadout(emptyLoadout())}>
+                <button
+                  type="button"
+                  className="ghost-btn"
+                  onClick={() => {
+                    setLoadout(emptyLoadout());
+                    setSavedId(null);
+                  }}
+                >
                   Reset
                 </button>
-                <button type="button" className="ghost-btn" onClick={persist}>
-                  Save
+                <button type="button" className="ghost-btn" onClick={() => persist(Boolean(savedId))}>
+                  {savedId ? "Save" : "Save"}
                 </button>
+                {savedId ? (
+                  <button type="button" className="ghost-btn" onClick={() => persist(false)}>
+                    Save as
+                  </button>
+                ) : null}
                 <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
                   Share
                 </button>
@@ -532,6 +697,7 @@ export function BuilderApp() {
                       className="preset-card"
                       onClick={() => {
                         setLoadout(preset.build());
+                        setSavedId(null);
                         flash(`${preset.name} loaded.`);
                       }}
                     >
@@ -572,12 +738,18 @@ export function BuilderApp() {
                   </div>
                 </section>
                 {specAndWatch}
+                {compareBar}
                 {savedList}
               </>
             ) : null}
             {phoneTab === "edit" ? pieceEditor : null}
             {phoneTab === "kit" ? kitGrid : null}
-            {phoneTab === "stats" ? <StatsPanel stats={stats} /> : null}
+            {phoneTab === "stats" ? (
+              <>
+                {compareBar}
+                <StatsPanel stats={stats} compare={compareStats} />
+              </>
+            ) : null}
           </div>
 
           <PhoneDock tab={phoneTab} onTab={setPhoneTab} />
@@ -601,12 +773,24 @@ export function BuilderApp() {
               />
             </label>
             <div className="top-actions">
-              <button type="button" className="ghost-btn" onClick={() => setLoadout(emptyLoadout())}>
+              <button
+                type="button"
+                className="ghost-btn"
+                onClick={() => {
+                  setLoadout(emptyLoadout());
+                  setSavedId(null);
+                }}
+              >
                 Reset
               </button>
-              <button type="button" className="ghost-btn" onClick={persist}>
-                Save
+              <button type="button" className="ghost-btn" onClick={() => persist(Boolean(savedId))}>
+                {savedId ? "Save" : "Save"}
               </button>
+              {savedId ? (
+                <button type="button" className="ghost-btn" onClick={() => persist(false)}>
+                  Save as
+                </button>
+              ) : null}
               <button type="button" className="primary-btn" onClick={() => void copyShareLink()}>
                 Share
               </button>
@@ -620,8 +804,9 @@ export function BuilderApp() {
                 type="button"
                 className="preset-card"
                 onClick={() => {
-                  setLoadout(preset.build());
-                  flash(`${preset.name} loaded.`);
+                setLoadout(preset.build());
+                setSavedId(null);
+                flash(`${preset.name} loaded.`);
                 }}
               >
                 <strong>{preset.name}</strong>
@@ -645,12 +830,13 @@ export function BuilderApp() {
                 />
                 <div className="slot-grid">{slotButtons}</div>
                 {specAndWatch}
+                {compareBar}
               </div>
               {pieceEditor}
               {kitGrid}
               {savedList}
             </div>
-            <StatsPanel stats={stats} />
+            <StatsPanel stats={stats} compare={compareStats} />
           </div>
         </>
       )}
@@ -700,6 +886,8 @@ function WeaponSelect({
   onUpdate,
   types,
   allowHover = true,
+  active = false,
+  onActivate,
 }: {
   label: string;
   slot: WeaponSlot;
@@ -710,6 +898,8 @@ function WeaponSelect({
   onUpdate: (slot: WeaponSlot, next: EquippedWeapon) => void;
   types: readonly WeaponType[];
   allowHover?: boolean;
+  active?: boolean;
+  onActivate?: () => void;
 }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [hoverRect, setHoverRect] = useState<DOMRect | null>(null);
@@ -718,6 +908,8 @@ function WeaponSelect({
   const expertise = equipped?.expertise ?? 0;
   const mods = equipped?.mods ?? [];
   const selected = value ? weaponById(value) : undefined;
+  const resolvedTalent = selected ? resolveWeaponTalent(selected, equipped) : null;
+  const heTalents = selected?.quality === "high-end" ? weaponTalentsForType(selected.type) : [];
   const prototypeAllowed = canWeaponBePrototype(selected?.quality);
   const isPrototype = Boolean(equipped?.prototype) && prototypeAllowed;
   const qualityColor = selected
@@ -737,6 +929,12 @@ function WeaponSelect({
 
   return (
     <div className={isPrototype ? "field weapon-field is-prototype" : "field weapon-field"}>
+      {onActivate ? (
+        <label className="field checkbox">
+          <input type="radio" name="active-weapon" checked={active} onChange={onActivate} />
+          <span>Active in Analysis</span>
+        </label>
+      ) : null}
       <button
         type="button"
         className={hoverRect && !pickerOpen ? "slot-card weapon-slot-card hovered" : "slot-card weapon-slot-card"}
@@ -782,8 +980,28 @@ function WeaponSelect({
       {selected && equipped ? (
         <>
           <small className="hint">
-            {selected.talent} · {selected.talentDesc}
+            {resolvedTalent?.name ?? selected.talent} · {resolvedTalent?.description ?? selected.talentDesc}
           </small>
+          {heTalents.length > 0 ? (
+            <label className="field">
+              <span>Weapon talent</span>
+              <select
+                value={equipped.talentId ?? defaultWeaponTalentId(selected.type)}
+                onChange={(event) =>
+                  onUpdate(slot, { ...equipped, talentId: event.target.value })
+                }
+              >
+                {heTalents.map((talent) => (
+                  <option key={talent.id} value={talent.id}>
+                    {talent.name}
+                  </option>
+                ))}
+              </select>
+              {resolvedTalent?.assumedNote ? (
+                <small className="hint">{resolvedTalent.assumedNote}</small>
+              ) : null}
+            </label>
+          ) : null}
           {prototypeAllowed ? (
             <label className="field checkbox prototype-switch">
               <input
@@ -860,8 +1078,12 @@ function WeaponSelect({
               min={0}
               max={EXPERTISE_MAX}
               value={expertise}
+              disabled={isPrototype}
               onChange={(event) => onExpertiseChange(slot, Number(event.target.value))}
             />
+            {isPrototype ? (
+              <small className="hint">Prototype locks Expertise at 30.</small>
+            ) : null}
           </label>
           <div className="weapon-mods">
             <p className="eyebrow">Weapon mods</p>
@@ -945,6 +1167,7 @@ function SkillSelect({
   specialization,
   onChange,
   onModChange,
+  onExpertiseChange,
 }: {
   label: string;
   index: 0 | 1;
@@ -952,35 +1175,46 @@ function SkillSelect({
   specialization: string | null;
   onChange: (index: 0 | 1, skillId: string) => void;
   onModChange: (index: 0 | 1, modIndex: number, modId: string) => void;
+  onExpertiseChange: (index: 0 | 1, expertise: number) => void;
 }) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const selected = SKILLS.find((skill) => skill.id === value?.skillId);
   const slots = selected ? skillModSlotsFor(selected.id, specialization) : [];
   const mods =
     selected && value ? sanitizeSkillMods(selected.id, value.mods, specialization) : [];
-  const categories = [...new Set(SKILLS.map((skill) => skill.category))];
+  const expertise = value?.expertise ?? 0;
   return (
     <div className="field weapon-field">
-      <label className="field">
-        <span>{label}</span>
-        <select
-          value={value?.skillId ?? ""}
-          onChange={(event) => onChange(index, event.target.value)}
-        >
-          <option value="">None</option>
-          {categories.map((category) => (
-            <optgroup key={category} label={category}>
-              {SKILLS.filter((skill) => skill.category === category).map((skill) => (
-                <option key={skill.id} value={skill.id}>
-                  {skill.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
-      </label>
-      {selected ? (
+      <button
+        type="button"
+        className="slot-card weapon-slot-card"
+        onClick={() => setPickerOpen(true)}
+      >
+        <span className="swatch-col">
+          <span className="swatch" style={{ background: selected ? "#7ec8e8" : EMPTY_SLOT_COLOR }} />
+        </span>
+        <span>
+          <small>{label}</small>
+          <strong>{selected ? selected.name : "Empty"}</strong>
+          <em>{selected ? selected.category : "Tap to equip"}</em>
+        </span>
+      </button>
+      {selected && value ? (
         <>
           <small className="hint">{selected.description}</small>
+          <label className="field expertise-field">
+            <span>Skill expertise ({expertise})</span>
+            <input
+              type="range"
+              min={0}
+              max={EXPERTISE_MAX}
+              value={expertise}
+              onChange={(event) => onExpertiseChange(index, Number(event.target.value))}
+            />
+            <small className="hint">
+              +1% Skill Damage / Repair / Health on this skill only (0–30).
+            </small>
+          </label>
           <div className="weapon-mods skill-mod-grid">
             <p className="eyebrow">Skill mods</p>
             <small className="hint">
@@ -1019,6 +1253,17 @@ function SkillSelect({
             })}
           </div>
         </>
+      ) : null}
+      {pickerOpen ? (
+        <SkillPickerModal
+          title={label}
+          selectedId={value?.skillId ?? ""}
+          onClose={() => setPickerOpen(false)}
+          onPick={(skillId) => {
+            onChange(index, skillId);
+            setPickerOpen(false);
+          }}
+        />
       ) : null}
     </div>
   );

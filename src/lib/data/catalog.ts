@@ -731,6 +731,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Applying a status effect or dealing skill damage applies a DoT. Its strength scales with Status Effects and Skill Damage.",
     },
+    assumed: [{ stat: "statusEffects", value: 10 }, { stat: "skillDamage", value: 8 }],
+    assumedNote: "Toxic Delivery DoT averaged as Status Effects + Skill Damage while applying statuses.",
   },
   {
     id: "catharsis",
@@ -743,6 +745,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Taking damage builds a buff. At low armor: a burst of repair and applies a status effect to nearby enemies.",
     },
+    assumed: [{ stat: "incomingRepairs", value: 10 }, { stat: "armorOnKill", value: 8 }],
+    assumedNote: "Vicious Cycle repair burst averaged as Incoming Repairs + Armor on Kill.",
   },
   {
     id: "catalyst",
@@ -755,6 +759,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Brooklyn mask. Skill damage and weapon damage boost each other. Drops from: Army Terminal / Charlie elites.",
     },
+    assumed: [{ stat: "weaponDamage", value: 10 }, { stat: "skillDamage", value: 10 }],
+    assumedNote: "Chain Reaction mid-fight weapon/skill loop.",
   },
   {
     id: "tinkerer",
@@ -767,6 +773,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Allows unusual skill combinations and boosts equipped skill mods.",
     },
+    assumed: [{ stat: "skillEfficiency", value: 10 }, { stat: "skillHaste", value: 8 }],
+    assumedNote: "Jury Rigged unusual combos modeled as Skill Efficiency + Haste.",
   },
   {
     id: "investor",
@@ -831,6 +839,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "One Step Ahead",
       description: "Bonus grenades and kits. Using a grenade: damage/armor buff.",
     },
+    assumed: [{ stat: "explosiveDamage", value: 15 }, { stat: "armorPercent", value: 5 }],
+    assumedNote: "Grenade/kit window averaged as Explosive Damage + bonus armor.",
   },
   {
     id: "harrier-pride",
@@ -843,6 +853,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Brooklyn backpack. Deployed skills boost nearby weapon damage, and vice versa.",
     },
+    assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "skillDamage", value: 8 }],
+    assumedNote: "Close Air Support near a deployed skill.",
   },
   {
     id: "birdies-quick-fix",
@@ -855,6 +867,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Using a kit or a healing skill: a burst of repair for the group and Skill Haste.",
     },
+    assumed: [{ stat: "skillHaste", value: 10 }, { stat: "skillRepair", value: 15 }],
+    assumedNote: "Field Medic kit/heal window averaged.",
   },
 
   // ========== Exotics — chest pieces ==========
@@ -868,6 +882,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Bleeding Heart",
       description: "Weapon damage applies bleed. Heals based on bleeding targets.",
     },
+    assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "incomingRepairs", value: 10 }],
+    assumedNote: "Bleeding Heart mid-uptime vs bleeding targets.",
   },
   {
     id: "tardigrade",
@@ -879,6 +895,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Ablative Nanoplating",
       description: "When armor breaks: deploys an armor hive for you and nearby allies.",
     },
+    assumed: [{ stat: "armorPercent", value: 10 }],
+    assumedNote: "Ablative hive window averaged as +10% Total Armor.",
   },
   {
     id: "iron-will",
@@ -891,6 +909,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "The next body shot counts as a headshot. Cooldown 2s (PvE) / 3s (PvP). Requires a sniper rifle, rifle, or pistol.",
     },
+    assumed: [{ stat: "hsd", value: 12 }],
+    assumedNote: "Resolved body-to-headshot modeled as extra Headshot Damage on MMR/rifle/pistol.",
   },
   {
     id: "collector",
@@ -903,6 +923,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "+3 grenade capacity, +50% grenade radius, +35% grenade damage, and +25% grenade damage per extra enemy in the blast. Regenerates grenades every 30s while you have fewer than 2.",
     },
+    assumed: [{ stat: "explosiveDamage", value: 25 }],
+    assumedNote: "Hoarder grenade package averaged as Explosive Damage.",
     note: "Exotic chest. Weapon Damage core is locked. Talent is grenade-focused (not extra cores).",
   },
   {
@@ -916,6 +938,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Increases threat and converts a portion of damage taken into bonus armor for the group.",
     },
+    assumed: [{ stat: "armorPercent", value: 8 }, { stat: "threat", value: 10 }],
+    assumedNote: "Instigator group bonus armor + threat averaged.",
   },
 
   // ========== Exotics — gloves ==========
@@ -930,6 +954,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Weapon hits apply stacks (20 max per target). Reloading consumes the stacks: +2% weapon damage per stack.",
     },
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Afterburn reload consume at ~7–8 stacks.",
   },
   {
     id: "btsu-datagloves",
@@ -942,6 +968,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Deploying a hive: overcharge for you and nearby allies. Skill kills reduce the hive's cooldown.",
     },
+    assumed: [{ stat: "skillHaste", value: 15 }, { stat: "skillDamage", value: 10 }],
+    assumedNote: "Hive overcharge window averaged as Skill Haste + Skill Damage.",
   },
   {
     id: "bloody-knuckles",
@@ -954,6 +982,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Melee attacks apply bleed. Bonus weapon damage against bleeding targets.",
     },
+    assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "meleeDamage", value: 10 }],
+    assumedNote: "Bloodsport vs bleeding targets, CQC uptime.",
   },
   {
     id: "overdogs",
@@ -966,6 +996,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Amplifies weapon damage by 30% against the lowest-ranking enemy currently in combat (tier hierarchy).",
     },
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Weakest Link 30% vs the lowest-rank target, averaged across a mixed group.",
     note: "Exotic gloves. Weapon Damage core is locked. CHC/CHD secondaries — no extra Armor on Kill core/stat.",
   },
 
@@ -981,6 +1013,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Shock stun on you is reduced by 50%. A shield grants +100% melee damage. Combined with St. Elmo's Engine: extra +100% melee and the next melee applies Shock (5m radius with all three). Cooldown 15s.",
     },
+    assumed: [{ stat: "meleeDamage", value: 50 }, { stat: "hazardProtection", value: 5 }],
+    assumedNote: "Defibrillator melee with a shield equipped; Elmo combo is extra.",
     note: "Exotic holster (not gloves). Armor core is locked. Secondaries are Explosive Resistance / Hazard Protection — not extra cores.",
   },
   {
@@ -993,6 +1027,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Capacitance",
       description: "Skill damage builds a weapon damage bonus, and vice versa.",
     },
+    assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "skillDamage", value: 12 }],
+    assumedNote: "Capacitance mid-fight weapon/skill loop.",
   },
   {
     id: "imperial-dynasty",
@@ -1004,6 +1040,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Dragon's Negation",
       description: "Nearby enemies: burn. CQC crowd control.",
     },
+    assumed: [{ stat: "statusEffects", value: 12 }],
+    assumedNote: "Proximity burn modeled as Status Effects.",
   },
   {
     id: "dodge-city",
@@ -1015,6 +1053,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       name: "Quick Draw",
       description: "Swapping to the pistol: massive pistol headshot damage. Regulus / Liberty.",
     },
+    assumed: [{ stat: "pistolDamage", value: 20 }, { stat: "hsd", value: 15 }],
+    assumedNote: "Quick Draw after swapping to the sidearm.",
   },
   {
     id: "centurions-scabbard",
@@ -1027,6 +1067,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Killing with the pistol: bonus armor. Swapping to the pistol: rate of fire and pistol damage.",
     },
+    assumed: [{ stat: "pistolDamage", value: 12 }, { stat: "armorPercent", value: 8 }],
+    assumedNote: "Gladius pistol swap / kill window averaged.",
   },
 
   // ========== Exotics — kneepads ==========
@@ -1041,6 +1083,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Cannot be staggered by explosions. Gain a stack every second you are not moving, each granting +3% total weapon damage (10 stacks max). Stop gaining stacks when moving; all stacks are lost 10s after moving.",
     },
+    assumed: [{ stat: "weaponDamage", value: 18 }],
+    assumedNote: "Stand Your Ground at ~6 stacks while planted.",
     note: "Exotic kneepads (Odessa Sawyer) — not a Gila Guard named piece. Armor core is locked.",
   },
   {
@@ -1054,6 +1098,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "You and allies within 10m: +40% hazard protection. Core piece for support / Toxic DZ builds.",
     },
+    assumed: [{ stat: "hazardProtection", value: 40 }],
+    assumedNote: "First Aid Associate is always on within 10m — +40% Hazard Protection.",
     note: "Exotic kneepads. Skill Tier core is locked. The +40% hazard is the talent, not an extra core/stat on the piece.",
   },
   {
@@ -1067,6 +1113,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Vaulting, staying still for 5s, or being affected by a status effect: movement speed bonus (max 20%). −50% status effect mobility penalty.",
     },
+    assumed: [{ stat: "hazardProtection", value: 5 }],
+    assumedNote: "Escape Plan mobility/status penalty modeled as mild Hazard Protection.",
   },
   {
     id: "blacklisters",
@@ -1079,6 +1127,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
       description:
         "Marks an enemy: you take 600% amplified damage from them, and deal +20% amplified damage to others. One mark at a time.",
     },
+    assumed: [{ stat: "weaponDamage", value: 10 }],
+    assumedNote: "Ostracize +20% vs unmarked targets, averaged (the marked enemy is a tank check).",
   },
 ];
 

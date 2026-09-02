@@ -1,4 +1,5 @@
-import type { WeaponDef } from "../types";
+import type { StatBonus, WeaponDef } from "../types";
+import { HE_WEAPONS } from "./he-weapons";
 
 export const WEAPONS: WeaponDef[] = [
   {
@@ -86,6 +87,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Big Game Hunter",
     talentDesc: "While in cover: switches to a semi-auto mode with very high damage. Iron Horse raid.",
+    assumed: [{ stat: "weaponDamage", value: 20 }],
+    assumedNote: "Big Game Hunter while planted in cover.",
   },
   {
     id: "chameleon",
@@ -121,6 +124,8 @@ export const WEAPONS: WeaponDef[] = [
     mag: 75,
     talent: "Plague of the Outcasts",
     talentDesc: "Hits apply a DoT. On death, the DoT spreads.",
+    assumed: [{ stat: "statusEffects", value: 12 }, { stat: "weaponDamage", value: 8 }],
+    assumedNote: "Plague of the Outcasts DoT spread averaged.",
   },
   {
     id: "m60",
@@ -1564,7 +1569,147 @@ export const WEAPONS: WeaponDef[] = [
     talentDesc:
       "+35% damage against bleeding targets. Survivalist specialization sidearm (specialization must be active to equip).",
   },
+  ...HE_WEAPONS,
 ];
+
+/** Unique exotic talent averages. Named/HE talents resolve via `weapon-talents.ts`. */
+const EXOTIC_WEAPON_MODELS: Record<string, { assumed: StatBonus[]; assumedNote: string }> = {
+  "bullet-king": {
+    assumed: [{ stat: "reloadSpeed", value: 25 }, { stat: "rateOfFire", value: 8 }],
+    assumedNote: "Bullet Hell no-reload, overheat averaged as extra uptime.",
+  },
+  chatterbox: {
+    assumed: [{ stat: "rateOfFire", value: 15 }, { stat: "reloadSpeed", value: 20 }, { stat: "weaponDamage", value: 10 }],
+    assumedNote: "In Sync + close-range stacks, CQC uptime.",
+  },
+  backfire: {
+    assumed: [{ stat: "chc", value: 12 }, { stat: "chd", value: 18 }],
+    assumedNote: "Adaptive Instincts while self-bleeding.",
+  },
+  scorpio: {
+    assumed: [{ stat: "statusEffects", value: 15 }, { stat: "weaponDamage", value: 8 }],
+    assumedNote: "Sandman rotating statuses + Disrupt burst.",
+  },
+  nemesis: {
+    assumed: [{ stat: "weaponDamage", value: 25 }, { stat: "hsd", value: 15 }],
+    assumedNote: "Magnetic Scope fully charged shot.",
+  },
+  diamondback: {
+    assumed: [{ stat: "weaponDamage", value: 18 }],
+    assumedNote: "Agonizing Bite after marking/killing the marked target.",
+  },
+  liberty: {
+    assumed: [{ stat: "pistolDamage", value: 12 }, { stat: "armorOnKill", value: 8 }],
+    assumedNote: "Liberty or Death armor-ignore shot at 5 stacks.",
+  },
+  regulus: {
+    assumed: [{ stat: "pistolDamage", value: 20 }, { stat: "hsd", value: 25 }],
+    assumedNote: "Regicide headshot package.",
+  },
+  caduceus: {
+    assumed: [{ stat: "skillRepair", value: 12 }, { stat: "incomingRepairs", value: 8 }],
+    assumedNote: "Caduceus repair talent averaged.",
+  },
+  ouroboros: {
+    assumed: [{ stat: "weaponDamage", value: 18 }, { stat: "chc", value: 8 }],
+    assumedNote: "Ouroboros exotic talent mid-fight.",
+  },
+  "lady-death": {
+    assumed: [{ stat: "weaponDamage", value: 20 }, { stat: "weaponHandling", value: 10 }],
+    assumedNote: "Lady Death sprint stacks averaged in CQC.",
+  },
+  oxpecker: {
+    assumed: [{ stat: "skillDamage", value: 12 }],
+    assumedNote: "Oxpecker skill synergy averaged.",
+  },
+  "big-alejandro": {
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "lmgDamage", value: 8 }],
+    assumedNote: "Big Alejandro exotic talent mid-mag.",
+  },
+  bluescreen: {
+    assumed: [{ stat: "statusEffects", value: 12 }, { stat: "weaponDamage", value: 8 }],
+    assumedNote: "Bluescreen pulse/disrupt package.",
+  },
+  pakhan: {
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "magazineSize", value: 15 }],
+    assumedNote: "Pakhan exotic talent averaged.",
+  },
+  merciless: {
+    assumed: [{ stat: "explosiveDamage", value: 20 }, { stat: "weaponDamage", value: 10 }],
+    assumedNote: "Merciless binary/explosive shots averaged.",
+  },
+  ravenous: {
+    assumed: [{ stat: "weaponDamage", value: 18 }, { stat: "statusEffects", value: 8 }],
+    assumedNote: "Ravenous raid shotgun mid-pattern.",
+  },
+  "doctor-home": {
+    assumed: [{ stat: "incomingRepairs", value: 10 }, { stat: "skillRepair", value: 10 }],
+    assumedNote: "Doctor Home support talent averaged.",
+  },
+  vindicator: {
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "chd", value: 10 }],
+    assumedNote: "Vindicator exotic talent mid-fight.",
+  },
+  "sweet-dreams": {
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "meleeDamage", value: 20 }],
+    assumedNote: "Sweet Dreams melee/sleep package, CQC.",
+  },
+  mantis: {
+    assumed: [{ stat: "hsd", value: 20 }, { stat: "weaponDamage", value: 12 }],
+    assumedNote: "Mantis charged headshot window.",
+  },
+  "busy-little-bee": {
+    assumed: [{ stat: "skillHaste", value: 10 }, { stat: "skillDamage", value: 8 }],
+    assumedNote: "Busy Little Bee skill synergy.",
+  },
+  tempest: {
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "statusEffects", value: 10 }],
+    assumedNote: "Tempest exotic talent averaged.",
+  },
+  agitator: {
+    assumed: [{ stat: "statusEffects", value: 12 }, { stat: "weaponDamage", value: 8 }],
+    assumedNote: "Agitator exotic talent averaged.",
+  },
+  bittersweet: {
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "chd", value: 10 }],
+    assumedNote: "Bittersweet exotic talent averaged.",
+  },
+  shroud: {
+    assumed: [{ stat: "weaponDamage", value: 10 }, { stat: "hsd", value: 12 }],
+    assumedNote: "Shroud exotic talent averaged.",
+  },
+  "sacrum-imperium": {
+    assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "hsd", value: 10 }],
+    assumedNote: "Sacrum Imperium exotic talent averaged.",
+  },
+  overlord: {
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "chd", value: 12 }],
+    assumedNote: "Overlord exotic talent averaged.",
+  },
+  lullaby: {
+    assumed: [{ stat: "weaponDamage", value: 12 }, { stat: "meleeDamage", value: 15 }],
+    assumedNote: "Lullaby sleep/melee package.",
+  },
+  ruthless: {
+    assumed: [{ stat: "weaponDamage", value: 15 }],
+    assumedNote: "Ruthless exotic talent averaged.",
+  },
+  mosquito: {
+    assumed: [{ stat: "damageToArmor", value: 12 }, { stat: "threat", value: 10 }],
+    assumedNote: "Mosquito Song armor amp + aggro.",
+  },
+  fafnir: {
+    assumed: [{ stat: "weaponDamage", value: 12 }],
+    assumedNote: "Fafnir exotic talent averaged.",
+  },
+};
+
+for (const weapon of WEAPONS) {
+  const model = EXOTIC_WEAPON_MODELS[weapon.id];
+  if (!model || weapon.assumed?.length) continue;
+  weapon.assumed = model.assumed;
+  weapon.assumedNote = model.assumedNote;
+}
 
 export const WEAPON_TYPE_LABELS: Record<WeaponDef["type"], string> = {
   ar: "Assault Rifle",

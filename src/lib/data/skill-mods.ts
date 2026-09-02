@@ -578,8 +578,53 @@ export function sanitizeSkillMods(
 
 /**
  * Skill attachments never raise character-wide Skill Damage / Haste / Health.
- * Kept so older call sites compile; analyzer uses notes instead.
+ * They are collected as this-skill-only bonuses for Analysis.
  */
+export function skillModLocalBreakdown(
+  skillId: string,
+  mods: string[] | undefined,
+  spec?: string | null,
+): { bonuses: StatBonus[]; extras: string[] } {
+  const defined = skillModSlotsFor(skillId, spec);
+  const selected = sanitizeSkillMods(skillId, mods, spec);
+  const bonuses: StatBonus[] = [];
+  const extras: string[] = [];
+  for (const [index, slot] of defined.entries()) {
+    const option = slot.options.find((item) => item.id === selected[index]);
+    if (!option || option.id === "none") continue;
+    const parsed = parseSkillModEffect(option.effect);
+    if (parsed.bonus) bonuses.push(parsed.bonus);
+    if (parsed.extra) extras.push(`${slot.label}: ${option.name} ${parsed.extra}`);
+  }
+  return { bonuses, extras };
+}
+
+function parseSkillModEffect(effect: string): { bonus?: StatBonus; extra?: string } {
+  const pct = effect.match(/\+([\d.]+)%\s+(.+)/i);
+  if (pct) {
+    const value = Number(pct[1]);
+    const rest = pct[2];
+    const stat = skillEffectStat(rest);
+    if (stat) return { bonus: { stat, value } };
+    return { extra: effect };
+  }
+  return { extra: effect };
+}
+
+function skillEffectStat(rest: string): StatBonus["stat"] | null {
+  const text = rest.toLowerCase();
+  if (text.includes("skill haste")) return "skillHaste";
+  if (text.includes("skill health")) return "skillHealth";
+  if (text.includes("stim efficiency") || text.includes("efficiency")) return "skillEfficiency";
+  if (text.includes("repair")) return "skillRepair";
+  if (text.includes("duration")) return "skillDuration";
+  if (text.includes("burn") || text.startsWith("damage") || text.includes("damage (")) {
+    return "skillDamage";
+  }
+  return null;
+}
+
+/** Kept so older call sites compile. Character-wide contribution is always empty. */
 export function skillModAssumedBonuses(
   _skillId: string,
   _mods: string[] | undefined,

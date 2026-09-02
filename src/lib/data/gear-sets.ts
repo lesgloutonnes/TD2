@@ -125,6 +125,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
+    fourStats: [{ stat: "weaponDamage", value: 20 }],
+    fourAssumedNote: "Headache cycle mid-string: +20% Weapon Damage.",
     backpackTalent: {
       name: "Blessed",
       description: "A missed headshot no longer resets the cycle.",
@@ -144,6 +146,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Tend and Befriend — interacting with a deployed skill grants it +25% damage for 10s.",
     twoStats: [{ stat: "skillHaste", value: 15 }],
     threeStats: [{ stat: "skillDuration", value: 15 }],
+    fourStats: [{ stat: "skillDamage", value: 15 }],
+    fourAssumedNote: "Tend and Befriend mid uptime: +15% Skill Damage.",
     backpackTalent: {
       name: "Complete Uptime",
       description: "Canceling a skill resets its cooldown.",
@@ -166,6 +170,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillHaste", value: 15 },
       { stat: "hazardProtection", value: 30 },
     ],
+    fourStats: [{ stat: "statusEffects", value: 10 }],
+    fourAssumedNote: "Indirect Transmission extra status uptime: +10% Status Effects.",
     backpackTalent: {
       name: "Symptom Aggravator",
       description: "Amplifies all damage against targets affected by a status effect by 30%.",
@@ -236,6 +242,11 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillDamage", value: 15 },
       { stat: "skillRepair", value: 30 },
     ],
+    fourStats: [
+      { stat: "skillDamage", value: 10 },
+      { stat: "skillRepair", value: 10 },
+    ],
+    fourAssumedNote: "Feedback Loop buff uptime: +10% Skill Damage and Repair Skills.",
     backpackTalent: {
       name: "Short Circuit",
       description: "Feedback Loop cooldown: 20s → 10s.",
@@ -255,6 +266,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Rules of Engagement — killing a marked enemy grants Hollow-Point rounds (+40% damage, causes bleed).",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
+    fourStats: [{ stat: "weaponDamage", value: 20 }],
+    fourAssumedNote: "Hollow-Point rounds mid uptime: +20% Weapon Damage.",
     backpackTalent: {
       name: "Trauma Specialist",
       description: "+50% bleed duration, +100% bleed damage.",
@@ -274,6 +287,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Red, White and Blue — cycling debuffs: +15% incoming damage, 2% repair/s, -10% outgoing damage. Ends with a Full Flag explosion.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "magazineSize", value: 30 }],
+    fourStats: [{ stat: "armorRegenPercent", value: 2 }],
+    fourAssumedNote: "White stripe self-repair modeled as +2% Armor Regeneration.",
     backpackTalent: {
       name: "Patriotic Boost",
       description: "Debuffs: 15/2/10 → 30/5/20.",
@@ -299,6 +314,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
+    fourStats: [{ stat: "weaponDamage", value: 15 }],
+    fourAssumedNote: "Dead Man's Hand amplified shots averaged as +15% Weapon Damage.",
     backpackTalent: {
       name: "Ace in the Sleeve",
       description: "One additional amplified shot.",
@@ -347,6 +364,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Hackstep Protocol — replaces your skills with an infinite-use ability (20s): grants 20% armor, 50% bonus armor, and hides your nameplate for 5s.",
     twoStats: [{ stat: "armorOnKill", value: 15 }],
     threeStats: [{ stat: "pulseResistance", value: 40 }],
+    fourStats: [{ stat: "armorPercent", value: 10 }],
+    fourAssumedNote: "Hackstep Protocol window averaged as +10% Total Armor.",
     backpackTalent: {
       name: "Multithreaded Execution",
       description: "Hackstep bonus armor: 50% → 100%.",
@@ -366,6 +385,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Charging — while out of cover, reduce incoming skill damage by 5%/s (up to 50%). Once fully Charged, share the protection with allies.",
     twoStats: [{ stat: "hazardProtection", value: 30 }],
     threeStats: [{ stat: "skillRepair", value: 40 }],
+    fourStats: [{ stat: "hazardProtection", value: 15 }],
+    fourAssumedNote: "Charging protection modeled as +15% Hazard Protection.",
     backpackTalent: {
       name: "Safe Charging",
       description: "Charging grants 10% protection per second.",
@@ -406,6 +427,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Stoic — gain +3% damage resistance for each enemy targeting you (multiplied by group size).",
     twoStats: [{ stat: "healthPercent", value: 70 }],
     threeStats: [{ stat: "armorPercent", value: 15 }],
+    fourStats: [{ stat: "armorPercent", value: 8 }],
+    fourAssumedNote: "Stoic resist averaged as +8% Total Armor equivalent.",
     backpackTalent: {
       name: "Polyethylene Plating",
       description: "Stoic bonus: 3% → 4%.",
@@ -431,6 +454,11 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "hsd", value: 30 },
       { stat: "weaponHandling", value: 30 },
     ],
+    fourStats: [
+      { stat: "weaponDamage", value: 20 },
+      { stat: "weaponHandling", value: 10 },
+    ],
+    fourAssumedNote: "On Point after reload at ~5 stacks: +20% Weapon Damage, +10% Handling.",
     backpackTalent: {
       name: "Point of Honor",
       description: "On Point damage bonus: 4% → 9%.",
@@ -453,6 +481,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "magazineSize", value: 15 },
     ],
     threeStats: [{ stat: "weaponDamage", value: 15 }],
+    fourStats: [{ stat: "weaponDamage", value: 12 }],
+    fourAssumedNote: "Symphony mixed-range stacks averaged as +12% Weapon Damage.",
     backpackTalent: {
       name: "Accelerando",
       description: "Symphony stacks: 4 → 3.",
@@ -480,6 +510,11 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Return to Sender — you are repaired for 10% of skill damage dealt, allies for 20%.",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "skillDamage", value: 25 }],
+    fourStats: [
+      { stat: "skillRepair", value: 10 },
+      { stat: "incomingRepairs", value: 5 },
+    ],
+    fourAssumedNote: "Return to Sender conversion: +10% Repair Skills, +5% Incoming Repairs.",
     backpackTalent: {
       name: "Over-engineered",
       description: "At full armor, repair effects are converted into bonus armor (up to 80%).",
@@ -502,6 +537,8 @@ export const GEAR_SETS: GearSetDef[] = [
       { stat: "skillRepair", value: 60 },
       { stat: "explosiveResistance", value: 40 },
     ],
+    fourStats: [{ stat: "skillTier", value: 1 }],
+    fourAssumedNote: "Huddle with one nearby ally: +1 Skill Tier.",
     backpackTalent: {
       name: "Smart Cooperation",
       description: "Mortar destruction cooldown: 10s → 1s.",
@@ -521,6 +558,11 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Throttle Control — firing builds stacks (max 50): +0.5% Weapon Handling and +5% Critical Hit Damage per stack.",
     twoStats: [{ stat: "magazineSize", value: 30 }],
     threeStats: [{ stat: "lmgDamage", value: 30 }],
+    fourStats: [
+      { stat: "weaponHandling", value: 8 },
+      { stat: "chd", value: 40 },
+    ],
+    fourAssumedNote: "Throttle Control at ~15 stacks: +8% Handling, +40% Critical Hit Damage.",
     backpackTalent: {
       name: "Snowball",
       description: "Critical Hit Damage per stack: 5% → 8%.",
@@ -540,6 +582,11 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Camaraderie — killing a marked target (10s) grants stacks (3% Weapon Damage + 3% Critical Hit Damage) based on nearby allies and active skills.",
     twoStats: [{ stat: "weaponDamage", value: 10 }],
     threeStats: [{ stat: "weaponHandling", value: 30 }],
+    fourStats: [
+      { stat: "weaponDamage", value: 6 },
+      { stat: "chd", value: 6 },
+    ],
+    fourAssumedNote: "Camaraderie at 2 stacks: +6% Weapon Damage and Critical Hit Damage.",
     backpackTalent: {
       name: "One for All",
       description: "Weapon damage per stack: 3% → 6%.",
@@ -582,6 +629,11 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Rapid Application Nanite — heal duration/range reduced by 90%, efficiency increased by 150%. Healing an ally grants +30% Hazard Protection.",
     twoStats: [{ stat: "skillEfficiency", value: 8 }],
     threeStats: [{ stat: "skillRepair", value: 60 }],
+    fourStats: [
+      { stat: "skillRepair", value: 20 },
+      { stat: "hazardProtection", value: 15 },
+    ],
+    fourAssumedNote: "Nanite efficiency + ally-heal hazard: +20% Repair Skills, +15% Hazard Protection.",
     backpackTalent: {
       name: "Improved Dampeners",
       description: "Duration/range reduction: 90% → 25%.",
@@ -601,6 +653,8 @@ export const GEAR_SETS: GearSetDef[] = [
     four: "Spontaneous Combustion — every status effect has a 40% chance to also apply Burn. If Burn was already applied: +25% burn damage.",
     twoStats: [{ stat: "skillEfficiency", value: 8 }],
     threeStats: [{ stat: "statusEffects", value: 30 }],
+    fourStats: [{ stat: "statusEffects", value: 10 }],
+    fourAssumedNote: "Spontaneous Combustion extra burn chance: +10% Status Effects.",
     backpackTalent: {
       name: "White Hot",
       description: "Burn damage debuff duration: +50%.",

@@ -1,25 +1,36 @@
 import type { EquippedSkill, EquippedWeapon, Loadout, WeaponSlot } from "./types";
 import { emptyLoadout } from "./calc";
+import { clampExpertise, resolveActiveWeaponSlot } from "./builder-model";
 import { createPiece } from "./piece";
-import { EXPERTISE_MAX, canBePrototype, canWeaponBePrototype, SLOTS } from "./data/attributes";
+import { canBePrototype, canWeaponBePrototype, SLOTS } from "./data/attributes";
 import { WEAPONS } from "./data/weapons";
 import { defaultWeaponMods, sanitizeWeaponMods } from "./data/weapon-mods";
 import { defaultSkillMods, sanitizeSkillMods } from "./data/skill-mods";
+import {
+  defaultWeaponTalentId,
+  weaponTalentById,
+  weaponTalentByName,
+} from "./data/weapon-talents";
 import { SKILLS } from "./data/skills";
 import { catalogById } from "./data/catalog";
 import { augmentById, clampAugmentLevel, defaultAugmentId } from "./data/augments";
 
 function withWeapon(weaponId: string, expertise: number): EquippedWeapon {
   const def = WEAPONS.find((weapon) => weapon.id === weaponId);
+  const talentId =
+    def?.quality === "high-end"
+      ? (weaponTalentByName(def.talent)?.id ?? defaultWeaponTalentId(def.type))
+      : undefined;
   return {
     weaponId,
     expertise,
     mods: def ? defaultWeaponMods(def.type) : [],
+    talentId,
   };
 }
 
-function withSkill(skillId: string, spec?: string | null): EquippedSkill {
-  return { skillId, mods: defaultSkillMods(skillId, spec) };
+function withSkill(skillId: string, spec?: string | null, expertise = 0): EquippedSkill {
+  return { skillId, mods: defaultSkillMods(skillId, spec), expertise };
 }
 
 /** Accept legacy string skill ids and current EquippedSkill objects. */
@@ -42,6 +53,7 @@ function normalizeSkills(
       slots[i] = {
         skillId: entry.skillId,
         mods: sanitizeSkillMods(entry.skillId, entry.mods, spec),
+        expertise: clampExpertise(entry.expertise),
       };
     }
   }
@@ -136,6 +148,12 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
         : prototype
           ? defaultAugmentId()
           : undefined;
+    const talentId =
+      def.quality === "high-end"
+        ? (weaponTalentById(equipped.talentId)?.id ??
+          weaponTalentByName(def.talent)?.id ??
+          defaultWeaponTalentId(def.type))
+        : undefined;
     weapons[slot] = {
       weaponId: equipped.weaponId,
       expertise: clampExpertise(
@@ -145,8 +163,13 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
       prototype,
       augmentId,
       augmentLevel: prototype ? clampAugmentLevel(equipped.augmentLevel) : undefined,
+      talentId,
     };
   }
+
+  const shdWatchParts = parsed.shdWatchParts
+    ? { ...parsed.shdWatchParts }
+    : undefined;
 
   return {
     name: parsed.name || base.name,
@@ -155,12 +178,10 @@ export function normalizeLoadout(parsed: Loadout & { expertise?: number }): Load
     skills: normalizeSkills(parsed.skills, parsed.specialization ?? null),
     specialization: parsed.specialization ?? null,
     shdWatch: parsed.shdWatch ?? true,
+    shdWatchParts,
+    includeAssumed: parsed.includeAssumed !== false,
+    activeWeapon: resolveActiveWeaponSlot(parsed.activeWeapon),
   };
-}
-
-function clampExpertise(value: number): number {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.min(EXPERTISE_MAX, Math.round(value)));
 }
 
 const STORAGE_KEY = "td2-builds";
@@ -204,15 +225,28 @@ export function listSavedBuilds(): { id: string; name: string; savedAt: number }
   }
 }
 
-export function saveBuild(loadout: Loadout): string {
-  const id = crypto.randomUUID();
+export function saveBuild(loadout: Loadout, id?: string): string {
+  const key = id || crypto.randomUUID();
   const raw = localStorage.getItem(STORAGE_KEY);
   const all = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
-  all[id] = { ...loadout, savedAt: Date.now() };
+  all[key] = { ...loadout, savedAt: Date.now() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
   savedCacheRaw = "";
   notifySaved();
-  return id;
+  return key;
+}
+
+export function renameBuild(id: string, name: string): boolean {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return false;
+  const all = JSON.parse(raw) as Record<string, Loadout & { savedAt?: number }>;
+  const item = all[id];
+  if (!item) return false;
+  all[id] = { ...item, name: name.trim() || item.name, savedAt: Date.now() };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  savedCacheRaw = "";
+  notifySaved();
+  return true;
 }
 
 export function loadBuild(id: string): Loadout | null {
@@ -243,6 +277,9 @@ function applyLibraryExpertise(loadout: Loadout, level = 12): Loadout {
   for (const slot of ["primary", "secondary", "sidearm"] as WeaponSlot[]) {
     const weapon = loadout.weapons[slot];
     if (weapon) weapon.expertise = expertise;
+  }
+  for (const skill of loadout.skills) {
+    if (skill) skill.expertise = expertise;
   }
   return loadout;
 }

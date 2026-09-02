@@ -3,6 +3,7 @@ import type {
   ComputedStats,
   CoreType,
   Loadout,
+  SkillLocalStats,
   Slot,
   StatBonus,
   StatKey,
@@ -16,7 +17,6 @@ import {
   sanitizeWeaponMods,
   weaponModMultiplier,
 } from "./data/weapon-mods";
-import { formatSkillModSummary } from "./data/skill-mods";
 import { ALL_TALENTS } from "./data/talents";
 import { augmentById, clampAugmentLevel } from "./data/augments";
 import {
@@ -31,7 +31,6 @@ import {
   OFFENSIVE_ATTRS,
   PROTOTYPE_ATTR_MULT,
   prototypeCoreMult,
-  SHD_WATCH,
   SKILL_ATTRS,
   SKILL_TIER_CAP,
   SLOTS,
@@ -39,7 +38,16 @@ import {
   armorOnKillFlat,
   totalArmorRegenPerSec,
   resolveHealthFlat,
+  resolveShdWatchBonuses,
 } from "./data/attributes";
+import {
+  clampExpertise,
+  coreStrengthConversion,
+  pushBonus,
+  resolveActiveWeaponSlot,
+  resolveWeaponTalent,
+  skillLocalStats,
+} from "./builder-model";
 
 const STAT_KEYS: StatKey[] = [
   "weaponDamage",
@@ -184,6 +192,8 @@ export function emptyLoadout(name = "New build"): Loadout {
     skills: [null, null],
     specialization: null,
     shdWatch: true,
+    includeAssumed: true,
+    activeWeapon: "primary",
   };
 }
 
@@ -231,6 +241,8 @@ export function computeStats(loadout: Loadout): ComputedStats {
   const cores: Record<CoreType, number> = { red: 0, blue: 0, yellow: 0 };
   const notes: string[] = [];
   const bonuses: ActiveBonus[] = [];
+  const includeAssumed = loadout.includeAssumed !== false;
+  const activeWeaponSlot = resolveActiveWeaponSlot(loadout.activeWeapon);
 
   const { brandCounts, setCounts, ninja } = gearCounts(loadout);
   let equippedSlots = 0;
@@ -267,9 +279,9 @@ export function computeStats(loadout: Loadout): ComputedStats {
     if (source.uniqueTalent) {
       notes.push(`${source.name} : ${source.uniqueTalent.name}. ${source.uniqueTalent.description}`);
     }
-    if (source.assumed?.length) {
+    if (includeAssumed && source.assumed?.length) {
       addBonuses(values, source.assumed);
-      bonuses.push({
+      pushBonus(bonuses, {
         source: `${source.name}`,
         label: formatBonusList(source.assumed),
         detail: source.assumedNote ?? source.uniqueTalent?.description ?? source.name,
@@ -279,7 +291,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
         color: "#c41e3a",
       });
       notes.push(
-        `${source.name} assumed: ${formatBonusList(source.assumed)}${
+        `${source.name} builder model: ${formatBonusList(source.assumed)}${
           source.assumedNote ? ` — ${source.assumedNote}` : ""
         }.`,
       );
@@ -300,7 +312,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
       if (yellow > 0) investorBonuses.push({ stat: "skillEfficiency", value: 5 * yellow });
       if (investorBonuses.length) {
         addBonuses(values, investorBonuses);
-        bonuses.push({
+        pushBonus(bonuses, {
           source: "Investor · Slotted",
           label: formatBonusList(investorBonuses),
           detail: `From attributes: ${red} red, ${blue} blue, ${yellow} yellow.`,
@@ -331,15 +343,15 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
-  // Active (primary) weapon Prototype Augment stacks with gear (in-game max 7 = 6 gear + weapon).
+  // Active weapon Prototype Augment stacks with gear (in-game max 7 = 6 gear + weapon).
   {
-    const equipped = loadout.weapons.primary;
+    const equipped = loadout.weapons[activeWeaponSlot];
     const weapon = equipped
       ? WEAPONS.find((item) => item.id === equipped.weaponId)
       : undefined;
     if (equipped?.prototype && weapon && weapon.quality !== "exotic") {
       notes.push(
-        `Primary ${weapon.name}: Prototype — Augment stacks with gear Prototypes.`,
+        `Active ${weapon.name}: Prototype — Augment stacks with gear Prototypes.`,
       );
       const augment = augmentById(equipped.augmentId);
       if (augment) {
@@ -352,12 +364,13 @@ export function computeStats(loadout: Loadout): ComputedStats {
         augmentStacks.set(augment.id, stack);
       }
     }
-    for (const slot of ["secondary", "sidearm"] as const) {
+    for (const slot of ["primary", "secondary", "sidearm"] as const) {
+      if (slot === activeWeaponSlot) continue;
       const other = loadout.weapons[slot];
       const def = other ? WEAPONS.find((item) => item.id === other.weaponId) : undefined;
       if (other?.prototype && def && def.quality !== "exotic") {
         notes.push(
-          `${slot === "secondary" ? "Secondary" : "Sidearm"} ${def.name}: Prototype stored (Augment applies when that weapon is active).`,
+          `${slotLabel(slot)} ${def.name}: Prototype stored (Augment applies when that weapon is active).`,
         );
       }
     }
@@ -366,7 +379,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
   for (const [augmentId, stack] of augmentStacks) {
     const augment = augmentById(augmentId);
     if (!augment) continue;
-    bonuses.push({
+    pushBonus(bonuses, {
       source: `Augment · ${augment.name}`,
       label: `${stack.count}× · ${stack.total}% ${augment.effectLabel}`,
       detail: `${augment.description} Levels: ${stack.levels.join(", ")}.`,
@@ -412,7 +425,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     for (let i = 0; i < tiers; i += 1) {
       addBonuses(values, brand.bonuses[i]);
     }
-    bonuses.push({
+    pushBonus(bonuses, {
       source: brand.name,
       label: `${tiers} piece${tiers > 1 ? "s" : ""}`,
       detail: brand.bonuses
@@ -438,23 +451,31 @@ export function computeStats(loadout: Loadout): ComputedStats {
 
     if (pieces >= 2) addBonuses(values, set.twoStats);
     if (pieces >= 3) addBonuses(values, set.threeStats);
-    if (fourPiece && set.fourStats?.length) {
+    if (includeAssumed && fourPiece && set.id === "core-strength") {
+      const converted = coreStrengthConversion(cores);
+      if (converted.length) {
+        addBonuses(values, converted);
+        notes.push(
+          `Core Strength 4pc conversion: ${formatBonusList(converted)} (40% of the other cores).`,
+        );
+      }
+    } else if (includeAssumed && fourPiece && set.fourStats?.length) {
       addBonuses(values, set.fourStats);
       notes.push(
-        `${set.name} 4pc assumed: ${formatBonusList(set.fourStats)}${
+        `${set.name} 4pc builder model: ${formatBonusList(set.fourStats)}${
           set.fourAssumedNote ? ` (${set.fourAssumedNote})` : ""
         }.`,
       );
     }
 
-    bonuses.push({
+    pushBonus(bonuses, {
       source: set.name,
       label: `${Math.min(pieces, 4)} piece${pieces > 1 ? "s" : ""}`,
       detail: [
         pieces >= 2 ? `2pc: ${set.two}` : `2pc locked (${pieces}/2)`,
         pieces >= 3 ? `3pc: ${set.three}` : `3pc locked (${pieces}/3)`,
         fourPiece ? `4pc: ${set.four}` : `4pc locked (${pieces}/4)`,
-        fourPiece && set.fourAssumedNote ? `Assumed: ${set.fourAssumedNote}` : null,
+        fourPiece && includeAssumed && set.fourAssumedNote ? `Model: ${set.fourAssumedNote}` : null,
         fourPiece && backpackIsSet ? `Backpack: ${set.backpackTalent.name}` : null,
         fourPiece && chestIsSet ? `Chest: ${set.chestTalent.name}` : null,
       ]
@@ -480,87 +501,96 @@ export function computeStats(loadout: Loadout): ComputedStats {
     }
   }
 
-  // Chest / backpack talent assumed uptime bonuses.
-  for (const slot of ["chest", "backpack"] as const) {
-    const piece = loadout.gear[slot];
-    if (!piece?.talentId) continue;
-    const talent = ALL_TALENTS.find((item) => item.id === piece.talentId);
-    if (!talent?.assumed?.length) continue;
-    addBonuses(values, talent.assumed);
-    bonuses.push({
-      source: `Talent · ${talent.name}`,
-      label: formatBonusList(talent.assumed),
-      detail: talent.assumedNote ?? talent.description,
-      pieces: 1,
-      required: 1,
-      active: true,
-      color: "#c9a227",
-    });
-    notes.push(
-      `Talent ${talent.name} (assumed): ${formatBonusList(talent.assumed)}${
-        talent.assumedNote ? ` — ${talent.assumedNote}` : ""
-      }.`,
-    );
-  }
-
-  if (loadout.shdWatch) {
-    addBonuses(values, SHD_WATCH);
-    notes.push("SHD Watch 1000 active (offensive, defensive, and utility bonuses).");
-  }
-
-  // Per-weapon expertise: primary feeds the offensive index (active weapon).
-  const primaryExpertise = loadout.weapons.primary?.expertise ?? 0;
-  if (primaryExpertise > 0) {
-    values.weaponDamage += primaryExpertise;
-    notes.push(`Primary weapon expertise ${primaryExpertise}: +${primaryExpertise}% Weapon Damage.`);
-  }
-  for (const slot of ["secondary", "sidearm"] as const) {
-    const exp = loadout.weapons[slot]?.expertise ?? 0;
-    if (exp > 0) {
+  // Chest / backpack talent builder-model bonuses.
+  if (includeAssumed) {
+    for (const slot of ["chest", "backpack"] as const) {
+      const piece = loadout.gear[slot];
+      if (!piece?.talentId) continue;
+      const talent = ALL_TALENTS.find((item) => item.id === piece.talentId);
+      if (!talent?.assumed?.length) continue;
+      addBonuses(values, talent.assumed);
+      pushBonus(bonuses, {
+        source: `Talent · ${talent.name}`,
+        label: formatBonusList(talent.assumed),
+        detail: talent.assumedNote ?? talent.description,
+        pieces: 1,
+        required: 1,
+        active: true,
+        color: "#c9a227",
+      });
       notes.push(
-        `${slot === "secondary" ? "Secondary" : "Sidearm"} expertise ${exp} stored (applies when that weapon is used).`,
+        `Talent ${talent.name} (builder model): ${formatBonusList(talent.assumed)}${
+          talent.assumedNote ? ` — ${talent.assumedNote}` : ""
+        }.`,
       );
     }
   }
 
-  // Primary weapon talent assumed bonuses.
-  const primaryEquipped = loadout.weapons.primary;
-  const primaryWeapon = primaryEquipped
-    ? WEAPONS.find((weapon) => weapon.id === primaryEquipped.weaponId)
-    : undefined;
-  if (primaryWeapon?.extraStats?.length) {
-    addBonuses(values, primaryWeapon.extraStats);
+  const shdBonuses = resolveShdWatchBonuses(loadout.shdWatch, loadout.shdWatchParts);
+  if (shdBonuses.length) {
+    addBonuses(values, shdBonuses);
+    const allOn = shdBonuses.length === 12;
     notes.push(
-      `Primary ${primaryWeapon.name} innate: ${formatBonusList(primaryWeapon.extraStats)}.`,
+      allOn
+        ? "SHD Watch 1000 active (all planner bonuses)."
+        : `SHD Watch partial (${shdBonuses.length}/12 bonuses).`,
     );
   }
-  if (primaryWeapon?.assumed?.length) {
-    addBonuses(values, primaryWeapon.assumed);
-    bonuses.push({
-      source: `Weapon · ${primaryWeapon.name}`,
-      label: formatBonusList(primaryWeapon.assumed),
-      detail: primaryWeapon.assumedNote ?? `${primaryWeapon.talent}: ${primaryWeapon.talentDesc}`,
+
+  const activeEquipped = loadout.weapons[activeWeaponSlot];
+  const activeWeapon = activeEquipped
+    ? WEAPONS.find((weapon) => weapon.id === activeEquipped.weaponId)
+    : undefined;
+  const activeExpertise = clampExpertise(activeEquipped?.expertise);
+  if (activeExpertise > 0) {
+    values.weaponDamage += activeExpertise;
+    notes.push(
+      `Active weapon expertise ${activeExpertise}: +${activeExpertise}% Weapon Damage.`,
+    );
+  }
+  for (const slot of ["primary", "secondary", "sidearm"] as const) {
+    if (slot === activeWeaponSlot) continue;
+    const exp = clampExpertise(loadout.weapons[slot]?.expertise);
+    if (exp > 0) {
+      notes.push(`${slotLabel(slot)} expertise ${exp} stored (applies when that weapon is active).`);
+    }
+  }
+
+  if (activeWeapon?.extraStats?.length) {
+    addBonuses(values, activeWeapon.extraStats);
+    notes.push(
+      `Active ${activeWeapon.name} innate: ${formatBonusList(activeWeapon.extraStats)}.`,
+    );
+  }
+  const resolvedTalent = activeWeapon
+    ? resolveWeaponTalent(activeWeapon, activeEquipped)
+    : null;
+  if (includeAssumed && resolvedTalent?.assumed?.length) {
+    addBonuses(values, resolvedTalent.assumed);
+    pushBonus(bonuses, {
+      source: `Weapon · ${activeWeapon!.name}`,
+      label: formatBonusList(resolvedTalent.assumed),
+      detail: resolvedTalent.assumedNote ?? `${resolvedTalent.name}: ${resolvedTalent.description}`,
       pieces: 1,
       required: 1,
       active: true,
       color: "#d4af37",
     });
     notes.push(
-      `Primary ${primaryWeapon.name} talent assumed: ${formatBonusList(primaryWeapon.assumed)}.`,
+      `Active ${activeWeapon!.name} talent model: ${formatBonusList(resolvedTalent.assumed)}.`,
     );
   }
 
-  // Primary weapon mods (optic / mag / muzzle / underbarrel).
-  if (primaryEquipped && primaryWeapon && primaryEquipped.mods?.length) {
-    const mods = sanitizeWeaponMods(primaryWeapon.type, primaryEquipped.mods);
-    const mult = weaponModMultiplier(primaryWeapon.talent);
+  if (activeEquipped && activeWeapon && activeEquipped.mods?.length) {
+    const mods = sanitizeWeaponMods(activeWeapon.type, activeEquipped.mods);
+    const mult = weaponModMultiplier(resolvedTalent?.name ?? activeWeapon.talent);
     const scaled = mods.map((mod) => ({
       stat: mod.stat,
       value: Math.round(mod.value * mult * 10) / 10,
     }));
     addBonuses(values, scaled);
-    bonuses.push({
-      source: `Weapon mods · ${primaryWeapon.name}`,
+    pushBonus(bonuses, {
+      source: `Weapon mods · ${activeWeapon.name}`,
       label: formatBonusList(scaled),
       detail:
         mult > 1
@@ -572,23 +602,24 @@ export function computeStats(loadout: Loadout): ComputedStats {
       color: "#8a7a4a",
     });
     notes.push(
-      `Primary weapon mods${mult > 1 ? ` (Optimized ×${mult})` : ""}: ${formatBonusList(scaled)}.`,
+      `Active weapon mods${mult > 1 ? ` (Optimized ×${mult})` : ""}: ${formatBonusList(scaled)}.`,
     );
   }
-  for (const slot of ["secondary", "sidearm"] as const) {
+  for (const slot of ["primary", "secondary", "sidearm"] as const) {
+    if (slot === activeWeaponSlot) continue;
     const equipped = loadout.weapons[slot];
     if (!equipped?.mods?.length) continue;
-    notes.push(
-      `${slot === "secondary" ? "Secondary" : "Sidearm"} weapon mods stored (apply when that weapon is used).`,
-    );
+    notes.push(`${slotLabel(slot)} weapon mods stored (apply when that weapon is active).`);
   }
 
-  // Equipped skills: analysis entries + skill attachments + optional soft bonuses.
+  const skillLocal: SkillLocalStats[] = [];
   for (const equipped of loadout.skills) {
     if (!equipped?.skillId) continue;
     const skill = SKILLS.find((item) => item.id === equipped.skillId);
     if (!skill) continue;
-    bonuses.push({
+    const local = skillLocalStats(equipped, loadout.specialization);
+    if (local) skillLocal.push(local);
+    pushBonus(bonuses, {
       source: `Skill · ${skill.name}`,
       label: skill.category,
       detail: skill.assumedNote ?? skill.description,
@@ -597,23 +628,25 @@ export function computeStats(loadout: Loadout): ComputedStats {
       active: true,
       color: "#7ec8e8",
     });
-    if (skill.assumed?.length) {
+    if (includeAssumed && skill.assumed?.length) {
       addBonuses(values, skill.assumed);
-      notes.push(`Skill ${skill.name} assumed: ${formatBonusList(skill.assumed)}.`);
+      notes.push(`Skill ${skill.name} builder model: ${formatBonusList(skill.assumed)}.`);
     } else {
       notes.push(`Skill equipped: ${skill.category} — ${skill.name}.`);
     }
-    const modSummary = formatSkillModSummary(
-      skill.id,
-      equipped.mods,
-      loadout.specialization,
-    );
-    if (modSummary) {
-      notes.push(`Skill mods on ${skill.name}: ${modSummary}.`);
-      bonuses.push({
+    if (local && (local.bonuses.length || local.extras.length || local.expertise)) {
+      const localLabel = [
+        local.bonuses.length ? formatBonusList(local.bonuses) : null,
+        local.extras.length ? local.extras.join(" · ") : null,
+        local.expertise ? `Expertise ${local.expertise}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      notes.push(`Skill-local on ${skill.name}: ${localLabel || local.summary}.`);
+      pushBonus(bonuses, {
         source: `Skill mods · ${skill.name}`,
         label: skill.category,
-        detail: modSummary,
+        detail: localLabel || local.summary,
         pieces: 1,
         required: 1,
         active: true,
@@ -626,7 +659,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     const spec = SPECIALIZATIONS.find((item) => item.id === loadout.specialization);
     if (spec) {
       addBonuses(values, spec.bonuses);
-      bonuses.push({
+      pushBonus(bonuses, {
         source: spec.name,
         label: spec.signature,
         detail: spec.description,
@@ -688,8 +721,7 @@ export function computeStats(loadout: Loadout): ComputedStats {
     notes.push(`CHC over cap: ${values.chc.toFixed(1)}% → 60%. ${chcOvercap.toFixed(1)}% wasted.`);
   }
 
-  const primary = primaryWeapon;
-  const typeDamage = primary ? weaponTypeStat(primary.type, values) : 0;
+  const typeDamage = activeWeapon ? weaponTypeStat(activeWeapon.type, values) : 0;
 
   const critFactor = 1 + (chcCapped / 100) * (values.chd / 100);
   const hsFactor = 1 + 0.45 * (values.hsd / 100);
@@ -716,9 +748,18 @@ export function computeStats(loadout: Loadout): ComputedStats {
     chcOvercap,
     skillTierCapped,
     bonuses,
+    skillLocal,
+    includeAssumed,
+    activeWeapon: activeWeaponSlot,
     offensiveIndex,
     notes,
   };
+}
+
+function slotLabel(slot: "primary" | "secondary" | "sidearm"): string {
+  if (slot === "primary") return "Primary";
+  if (slot === "secondary") return "Secondary";
+  return "Sidearm";
 }
 
 function weaponTypeStat(
@@ -748,11 +789,12 @@ function weaponTypeStat(
 export function formatBonusList(bonuses: StatBonus[]): string {
   return bonuses
     .map((bonus) => {
-      if (bonus.stat === "skillTier") return `+${bonus.value} Skill Tier`;
+      const sign = bonus.value > 0 ? "+" : "";
+      if (bonus.stat === "skillTier") return `${sign}${bonus.value} Skill Tier`;
       if (bonus.stat === "armor") {
-        return `+${Math.round(bonus.value).toLocaleString("en-US")} ${STAT_LABELS[bonus.stat]}`;
+        return `${sign}${Math.round(bonus.value).toLocaleString("en-US")} ${STAT_LABELS[bonus.stat]}`;
       }
-      return `+${bonus.value}% ${STAT_LABELS[bonus.stat]}`;
+      return `${sign}${bonus.value}% ${STAT_LABELS[bonus.stat]}`;
     })
     .join(", ");
 }

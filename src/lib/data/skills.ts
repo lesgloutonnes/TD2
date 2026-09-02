@@ -253,6 +253,49 @@ export const SKILLS: SkillDef[] = [
   },
 ];
 
+function applySkillModel(
+  id: string,
+  assumed: SkillDef["assumed"],
+  assumedNote: string,
+) {
+  const skill = SKILLS.find((item) => item.id === id);
+  if (!skill || skill.assumed?.length) return;
+  skill.assumed = assumed;
+  skill.assumedNote = assumedNote;
+}
+
+applySkillModel("assault-turret", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("incinerator-turret", [{ stat: "statusEffects", value: 5 }, { stat: "skillDamage", value: 5 }], "Flame cone averaged as Status + Skill Damage.");
+applySkillModel("sniper-turret", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("defender-drone", [{ stat: "armorPercent", value: 4 }], "Projectile intercept approximated as mild Total Armor.");
+applySkillModel("bombardier-drone", [{ stat: "skillDamage", value: 5 }, { stat: "explosiveDamage", value: 5 }], "Bombardier salvo averaged.");
+applySkillModel("tactician-drone", [{ stat: "chc", value: 5 }], "Pulse/mark synergy averaged as Critical Hit Chance.");
+applySkillModel("fixer-drone", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
+applySkillModel("explosive-seeker", [{ stat: "skillDamage", value: 5 }, { stat: "explosiveDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("airburst-seeker", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("mender-seeker", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
+applySkillModel("stinger-hive", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("booster-hive", [{ stat: "weaponHandling", value: 5 }, { stat: "weaponDamage", value: 4 }], "Booster Hive group buff averaged.");
+applySkillModel("artificer-hive", [{ stat: "skillDamage", value: 8 }, { stat: "skillRepair", value: 8 }], "Artificer overcharge averaged.");
+applySkillModel("oxidizer", [{ stat: "skillDamage", value: 5 }, { stat: "statusEffects", value: 5 }], "Acid DoT averaged.");
+applySkillModel("firestarter", [{ stat: "statusEffects", value: 8 }], "Burn cloud averaged as Status Effects.");
+applySkillModel("riot-foam", [{ stat: "statusEffects", value: 8 }], "Crowd-control foam averaged as Status Effects.");
+applySkillModel("repair-chem", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
+applySkillModel("deflector-shield", [{ stat: "armorPercent", value: 4 }], "Deflector coverage approximated as mild Total Armor.");
+applySkillModel("scanner-pulse", [{ stat: "chc", value: 5 }], "Pulse/Spotter synergy averaged as Critical Hit Chance.");
+applySkillModel("remote-pulse", [{ stat: "chc", value: 5 }], "Pulse/Spotter synergy averaged as Critical Hit Chance.");
+applySkillModel("jammer-pulse", [{ stat: "statusEffects", value: 5 }], "Disrupt window averaged as Status Effects.");
+applySkillModel("blinder-firefly", [{ stat: "statusEffects", value: 8 }], "Blind chain averaged as Status Effects.");
+applySkillModel("burster-firefly", [{ stat: "skillDamage", value: 5 }], "Weak-point burst averaged.");
+applySkillModel("demolisher-firefly", [{ stat: "damageToArmor", value: 6 }], "Cover/armor break averaged as Damage to Armor.");
+applySkillModel("decoy", [{ stat: "threat", value: 15 }], "Decoy aggro modeled as Threat.");
+applySkillModel("shock-trap", [{ stat: "statusEffects", value: 8 }], "Shock CC averaged as Status Effects.");
+applySkillModel("repair-trap", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
+applySkillModel("sticky-burn", [{ stat: "statusEffects", value: 8 }, { stat: "explosiveDamage", value: 5 }], "Burn sticky averaged.");
+applySkillModel("sticky-emp", [{ stat: "statusEffects", value: 6 }], "EMP disrupt averaged as Status Effects.");
+applySkillModel("sticky-flash", [{ stat: "statusEffects", value: 8 }], "Flashbang averaged as Status Effects.");
+applySkillModel("sticky-explosive", [{ stat: "explosiveDamage", value: 10 }, { stat: "skillDamage", value: 5 }], "Explosive sticky averaged.");
+
 export const SPECIALIZATIONS: SpecializationDef[] = [
   {
     id: "gunner",

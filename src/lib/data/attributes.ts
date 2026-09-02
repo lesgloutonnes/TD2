@@ -1,4 +1,4 @@
-import type { CoreType, ItemKind, Slot, StatBonus, StatKey, WeaponSlot } from "../types";
+import type { CoreType, ItemKind, Slot, StatBonus, StatKey, WeaponSlot, ShdWatchPartId } from "../types";
 
 export const SLOTS: Slot[] = [
   "mask",
@@ -391,20 +391,37 @@ export const PERCENT_STATS = new Set<StatKey>([
   "protectionFromElites",
 ]);
 
-export const SHD_WATCH: StatBonus[] = [
-  { stat: "weaponDamage", value: 10 },
-  { stat: "hsd", value: 20 },
-  { stat: "chc", value: 10 },
-  { stat: "chd", value: 20 },
-  { stat: "armorPercent", value: 10 },
-  { stat: "healthPercent", value: 10 },
-  { stat: "hazardProtection", value: 10 },
-  { stat: "explosiveResistance", value: 10 },
-  { stat: "skillHaste", value: 10 },
-  { stat: "skillDamage", value: 10 },
-  { stat: "statusEffects", value: 10 },
-  { stat: "skillRepair", value: 20 },
+export type ShdWatchPart = {
+  id: ShdWatchPartId;
+  label: string;
+  bonus: StatBonus;
+};
+
+/** SHD Watch 1000 bonuses, split so the planner can toggle each line. */
+export const SHD_WATCH_PARTS: ShdWatchPart[] = [
+  { id: "weaponDamage", label: "Weapon Damage", bonus: { stat: "weaponDamage", value: 10 } },
+  { id: "hsd", label: "Headshot Damage", bonus: { stat: "hsd", value: 20 } },
+  { id: "chc", label: "Critical Hit Chance", bonus: { stat: "chc", value: 10 } },
+  { id: "chd", label: "Critical Hit Damage", bonus: { stat: "chd", value: 20 } },
+  { id: "armorPercent", label: "Total Armor", bonus: { stat: "armorPercent", value: 10 } },
+  { id: "healthPercent", label: "Bonus Health", bonus: { stat: "healthPercent", value: 10 } },
+  { id: "hazardProtection", label: "Hazard Protection", bonus: { stat: "hazardProtection", value: 10 } },
+  { id: "explosiveResistance", label: "Explosive Resistance", bonus: { stat: "explosiveResistance", value: 10 } },
+  { id: "skillHaste", label: "Skill Haste", bonus: { stat: "skillHaste", value: 10 } },
+  { id: "skillDamage", label: "Skill Damage", bonus: { stat: "skillDamage", value: 10 } },
+  { id: "statusEffects", label: "Status Effects", bonus: { stat: "statusEffects", value: 10 } },
+  { id: "skillRepair", label: "Repair Skills", bonus: { stat: "skillRepair", value: 20 } },
 ];
+
+export const SHD_WATCH: StatBonus[] = SHD_WATCH_PARTS.map((part) => part.bonus);
+
+export function resolveShdWatchBonuses(
+  shdWatch: boolean,
+  parts?: Partial<Record<ShdWatchPartId, boolean>>,
+): StatBonus[] {
+  if (!shdWatch) return [];
+  return SHD_WATCH_PARTS.filter((part) => parts?.[part.id] !== false).map((part) => part.bonus);
+}
 
 export const CHC_CAP = 60;
 export const SKILL_TIER_CAP = 6;

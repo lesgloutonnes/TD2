@@ -12,6 +12,8 @@ Fan-made, 100% in the browser: brands, gear sets, named pieces, exotics, weapons
 
 The optional **build index** in Analysis is only a relative stack comparison (weapon damage × type × crit × headshot × DtA/DtH). It is not DPS and should not be treated as one.
 
+The **Include builder model** toggle (on by default) adds averaged talent / 4pc / exotic / skill contributions. Hard rolls — cores, attributes, mods, brand 1–3pc, set 2–3pc — always apply. Turn the model off to inspect the sheet of rolls only.
+
 ## Run without npm (Windows)
 
 Double-click **`lancer-builder.bat`**.
@@ -44,24 +46,30 @@ Open [http://localhost:3000](http://localhost:3000).
 - Prototype quality switch (non-exotic) + 9 Augments with levels and stacking
 - Prototype purple tint on gear/weapons (reverts to gold / set green when off)
 - Prototype + Augment on non-exotic weapons (primary Augment stacks with gear)
-- Per-piece / per-weapon expertise
+- Per-piece / per-weapon expertise (Prototype locks Expertise at 30)
+- Per-skill expertise (this skill only)
 - Gear mod slots on mask / chest / backpack (Chill Out: 2 mods + 1 random secondary attribute); gloves / holster / kneepads have none
 - Weapon mods: optic / magazine / muzzle / underbarrel (pistols: optic + muzzle); Optimized ×1.3
-- Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…)
+- High-end weapons with a talent picker (named / exotic talents stay locked)
+- Analysis uses the **active weapon** (primary / secondary / sidearm): expertise, mods, talent, Prototype Augment
+- Skill attachment mods per skill family (Extra Ammo / Payload, Skill Health, Damage…) — skill-local, never character-wide
 - Brand / named / gear-set cores recalibratable (Chill Out native blue, unlocked); most exotic cores locked (Investor flexible; Memento 3-core package locked; Sawyer's Kneepads blue locked)
 - Named unique talents and special attributes stay locked; bonus cores shown as locked extras
-- Weapons as tooltip-style tiles (named & exotic first): hover tooltip with talent, RPM, mag, mods
+- Weapons as tooltip-style tiles (named & exotic first; High-End filter): hover tooltip with talent, RPM, mag, mods
+- Skills as tiles (phone-friendly picker)
 - Gear mod pool includes Bleed / Burn / Shock / Disrupt / Blind / Ensnare resistances
 - Augment curves: Quantum / Amalgam / Anomaly / Synesthesia from Ubisoft Y8S1.3 notes; others community approx.
 - Armor model: flat piece armor + blue cores + Total Armor %
 - Armor Regeneration: flat HP/s on gear attributes (max 4,925) + brand/set % of total armor
 - Health: flat on gear attributes (max 18,935) + Bonus Health % (SHD / sets)
 - Armor on Kill / Incoming Repairs: gear **mods** and brand/set bonuses (not secondary attribute rolls)
-- Soft assumed notes for common talents / 4pc (planning aid only)
+- Builder model (toggle): talent / 4pc / exotic / weapon / skill averages for planning
+- SHD Watch 1000, with per-bonus lines
 - Caps: CHC 60%, Skill Tier 6
 - NinjaBike: 3 locked cores (red + blue + yellow) and +1 piece for each brand/set already equipped
 - Build index (relative stack compare — **not DPS**)
 - Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
-- Local save and share link
+- Local save (overwrite / save as / rename) and share link
+- Compare two builds (preset or saved vs current) — deltas in Analysis
 
 Not affiliated with Ubisoft.
