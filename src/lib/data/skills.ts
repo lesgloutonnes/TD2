@@ -11,7 +11,7 @@ export const SKILLS: SkillDef[] = [
     id: "artillery-turret",
     name: "Artillery Turret",
     category: "Turret",
-    description: "Guided mortar. Strong skill DPS.",
+    description: "Guided mortar. Explosion plus Bleed. Strong skill DPS.",
     assumed: [{ stat: "skillDamage", value: 5 }],
     assumedNote: "Deployed offensive skill soft contribution.",
   },
@@ -71,13 +71,13 @@ export const SKILLS: SkillDef[] = [
     id: "explosive-seeker",
     name: "Explosive Seeker Mine",
     category: "Seeker Mine",
-    description: "Single large explosion.",
+    description: "Single large explosion plus Bleed.",
   },
   {
     id: "airburst-seeker",
     name: "Airburst Seeker Mine",
     category: "Seeker Mine",
-    description: "Detonates above targets for area damage.",
+    description: "Detonates above targets: explosion plus Burn.",
   },
   {
     id: "mender-seeker",
@@ -111,13 +111,13 @@ export const SKILLS: SkillDef[] = [
     id: "booster-hive",
     name: "Booster Hive",
     category: "Hive",
-    description: "Weapon handling, hazard protection, and melee damage buff for allies.",
+    description: "Weapon handling, hazard protection, and melee damage buff for allies (not weapon damage).",
   },
   {
     id: "artificer-hive",
     name: "Artificer Hive",
     category: "Hive",
-    description: "Overcharges allied skills (Technician).",
+    description: "Overcharges allied skills: +10% buff amount and +10% Skill Repair, plus duration refresh (Technician).",
   },
   {
     id: "oxidizer",
@@ -189,7 +189,7 @@ export const SKILLS: SkillDef[] = [
     id: "jammer-pulse",
     name: "Jammer Pulse",
     category: "Pulse",
-    description: "Disables enemy skills. Spark.",
+    description: "Omnidirectional EMP that disables enemy skills. Spark.",
   },
   {
     id: "banshee-pulse",
@@ -201,7 +201,7 @@ export const SKILLS: SkillDef[] = [
     id: "achilles-pulse",
     name: "Achilles Pulse",
     category: "Pulse",
-    description: "Marks weak points on a target; those spots take headshot damage.",
+    description: "Marks weak-point zones on a target; those spots take headshot damage. Zone count scales with Skill Tier (1 at T0, 3 at T6).",
   },
   {
     id: "blinder-firefly",
@@ -249,13 +249,13 @@ export const SKILLS: SkillDef[] = [
     id: "precision-smart-cover",
     name: "Precision Smart Cover",
     category: "Smart Cover",
-    description: "Reinforces cover: weapon handling, damage to targets out of cover, auto-reload on swap.",
+    description: "Reinforces cover: weapon handling, damage to targets out of cover, auto-reload on swap. PvE T0 while in cover: +15% Weapon Handling / +10% damage to targets out of cover (scales with Skill Tier).",
   },
   {
     id: "fortified-smart-cover",
     name: "Fortified Smart Cover",
     category: "Smart Cover",
-    description: "Reinforces cover: bonus armor, explosive resistance, stagger immunity.",
+    description: "Reinforces cover: bonus armor, explosive resistance, pulse resistance, stagger immunity. PvE T0 while in cover: +50% Bonus Armor.",
   },
   {
     id: "sticky-burn",
@@ -296,11 +296,11 @@ applySkillModel("bombardier-drone", [{ stat: "skillDamage", value: 5 }, { stat: 
 applySkillModel("tactician-drone", [{ stat: "chc", value: 5 }], "Pulse/mark synergy averaged as Critical Hit Chance.");
 applySkillModel("fixer-drone", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
 applySkillModel("explosive-seeker", [{ stat: "skillDamage", value: 5 }, { stat: "explosiveDamage", value: 5 }], "Deployed offensive skill soft contribution.");
-applySkillModel("airburst-seeker", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
+applySkillModel("airburst-seeker", [{ stat: "skillDamage", value: 5 }, { stat: "statusEffects", value: 5 }], "Airburst explosion + Burn averaged.");
 applySkillModel("mender-seeker", [{ stat: "skillRepair", value: 5 }], "Healing skill soft contribution.");
 applySkillModel("stinger-hive", [{ stat: "skillDamage", value: 5 }], "Deployed offensive skill soft contribution.");
-applySkillModel("booster-hive", [{ stat: "weaponHandling", value: 5 }, { stat: "weaponDamage", value: 4 }], "Booster Hive group buff averaged.");
-applySkillModel("artificer-hive", [{ stat: "skillDamage", value: 8 }, { stat: "skillRepair", value: 8 }], "Artificer overcharge averaged.");
+applySkillModel("booster-hive", [{ stat: "weaponHandling", value: 5 }, { stat: "hazardProtection", value: 5 }, { stat: "meleeDamage", value: 5 }], "Booster Hive group buff (handling / hazard / melee — no weapon damage).");
+applySkillModel("artificer-hive", [{ stat: "skillDamage", value: 10 }, { stat: "skillRepair", value: 10 }], "Artificer PvE base buff amount + Skill Repair (does not scale with Skill Tier).");
 applySkillModel("oxidizer", [{ stat: "skillDamage", value: 5 }, { stat: "statusEffects", value: 5 }], "Acid DoT averaged.");
 applySkillModel("firestarter", [{ stat: "statusEffects", value: 8 }], "Burn cloud averaged as Status Effects.");
 applySkillModel("riot-foam", [{ stat: "statusEffects", value: 8 }], "Crowd-control foam averaged as Status Effects.");
