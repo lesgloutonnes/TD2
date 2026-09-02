@@ -1,7 +1,7 @@
 import { computeStats, emptyLoadout, formatBonusList, slotColor } from "./calc";
 import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPiecePrototype, setWeaponPrototype } from "./piece";
-import { decodeLoadout, encodeLoadout, loadoutBlurb, PRESETS } from "./share";
-import type { Loadout, SeasonModifier } from "./types";
+import { decodeLoadout, encodeLoadout, loadoutBlurb } from "./share";
+import type { EquippedSkill, EquippedWeapon, Loadout, SeasonModifier, WeaponSlot } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { ALL_TALENTS, talentByName, talentsForSlot } from "./data/talents";
 import { WEAPONS } from "./data/weapons";
@@ -9,7 +9,10 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
-import { skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
+import { defaultWeaponMods } from "./data/weapon-mods";
+import { defaultWeaponTalentId, weaponTalentByName } from "./data/weapon-talents";
+import { clampExpertise } from "./builder-model";
 import { pieceInspect, weaponInspect } from "./tooltip";
 import { shouldOpenGearPicker } from "./gear-picker";
 import {
@@ -22,6 +25,73 @@ function assert(condition: unknown, message: string) {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+function testWeapon(weaponId: string, expertise: number): EquippedWeapon {
+  const def = WEAPONS.find((weapon) => weapon.id === weaponId);
+  const talentId =
+    def?.quality === "high-end"
+      ? (weaponTalentByName(def.talent)?.id ?? defaultWeaponTalentId(def.type))
+      : undefined;
+  return {
+    weaponId,
+    expertise,
+    mods: def ? defaultWeaponMods(def.type) : [],
+    talentId,
+  };
+}
+
+function testSkill(skillId: string, spec?: string | null, expertise = 0): EquippedSkill {
+  return { skillId, mods: defaultSkillMods(skillId, spec), expertise };
+}
+
+function applyTestExpertise(loadout: Loadout, level = 12): Loadout {
+  const expertise = clampExpertise(level);
+  for (const slot of SLOTS) {
+    const piece = loadout.gear[slot];
+    if (piece) piece.expertise = expertise;
+  }
+  for (const slot of ["primary", "secondary", "sidearm"] as WeaponSlot[]) {
+    const weapon = loadout.weapons[slot];
+    if (weapon) weapon.expertise = expertise;
+  }
+  for (const skill of loadout.skills) {
+    if (skill) skill.expertise = expertise;
+  }
+  return loadout;
+}
+
+/** Fixture only — not a user-facing starter kit. */
+function strikerSampleLoadout(): Loadout {
+  const loadout = emptyLoadout("Striker");
+  loadout.gear.mask = createPiece("mask", "set:striker");
+  loadout.gear.backpack = createPiece("backpack", "set:striker");
+  loadout.gear.chest = createPiece("chest", "set:striker");
+  loadout.gear.gloves = createPiece("gloves", "set:striker");
+  loadout.gear.holster = createPiece("holster", "brand:ceska");
+  loadout.gear.kneepads = createPiece("kneepads", "brand:grupo");
+  loadout.weapons.primary = testWeapon("st-elmo", 12);
+  loadout.weapons.secondary = testWeapon("lexington", 12);
+  loadout.weapons.sidearm = testWeapon("liberty", 12);
+  loadout.skills = [testSkill("reviver-hive"), testSkill("crusader-shield")];
+  loadout.specialization = "gunner";
+  return applyTestExpertise(loadout);
+}
+
+function allRedSampleLoadout(): Loadout {
+  const loadout = emptyLoadout("All Red Glass Cannon");
+  loadout.gear.mask = createPiece("mask", "coyotes-mask");
+  loadout.gear.backpack = createPiece("backpack", "the-gift");
+  loadout.gear.chest = createPiece("chest", "the-sacrifice");
+  loadout.gear.gloves = createPiece("gloves", "contractors-gloves");
+  loadout.gear.holster = createPiece("holster", "brand:grupo");
+  loadout.gear.kneepads = createPiece("kneepads", "foxs-prayer");
+  loadout.weapons.primary = testWeapon("lexington", 12);
+  loadout.weapons.secondary = testWeapon("famas", 12);
+  loadout.weapons.sidearm = testWeapon("d50", 12);
+  loadout.skills = [testSkill("reviver-hive"), testSkill("striker-drone")];
+  loadout.specialization = "gunner";
+  return applyTestExpertise(loadout);
 }
 
 function testEmpty() {
@@ -117,22 +187,22 @@ function testSkillTierCap() {
   assert(stats.skillTierCapped === 6, "tier cap 6");
 }
 
-function testStrikerPresetChc() {
-  const loadout = PRESETS[0].build();
+function testStrikerSampleChc() {
+  const loadout = strikerSampleLoadout();
   const stats = computeStats(loadout);
-  assert(stats.chcCapped === 56, `striker preset CHC with weapon optic, got ${stats.chcCapped}`);
-  assert(stats.chcOvercap === 0, `striker preset no overcap, got ${stats.chcOvercap}`);
+  assert(stats.chcCapped === 56, `striker sample CHC with weapon optic, got ${stats.chcCapped}`);
+  assert(stats.chcOvercap === 0, `striker sample no overcap, got ${stats.chcOvercap}`);
 }
 
 function testLoadoutBlurb() {
-  const striker = PRESETS[0].build();
+  const striker = strikerSampleLoadout();
   const strikerBlurb = loadoutBlurb(striker);
   assert(strikerBlurb.includes("4 "), `striker count, got ${strikerBlurb}`);
   assert(strikerBlurb.includes("Striker"), `striker set name, got ${strikerBlurb}`);
   assert(strikerBlurb.includes("Česká") || strikerBlurb.includes("Ceska"), `ceska, got ${strikerBlurb}`);
   assert(strikerBlurb.includes("Grupo"), `grupo, got ${strikerBlurb}`);
 
-  const allRed = PRESETS[1].build();
+  const allRed = allRedSampleLoadout();
   const redBlurb = loadoutBlurb(allRed);
   assert(redBlurb.includes("Coyote") || redBlurb.includes("Gift"), `named/exotic, got ${redBlurb}`);
 
@@ -1624,7 +1694,7 @@ const tests = [
   testChcCap,
   testShareRoundtrip,
   testSkillTierCap,
-  testStrikerPresetChc,
+  testStrikerSampleChc,
   testLoadoutBlurb,
   testY8s3Brands,
   testCeskaY8s3,
