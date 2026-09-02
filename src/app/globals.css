@@ -165,8 +165,18 @@ select:focus {
 }
 
 .presets {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   margin: 18px 0 8px;
+}
+
+.saved-strip {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 8px;
+}
+
+.saved-strip .presets {
+  margin: 0;
 }
 
 .preset-card,
@@ -187,6 +197,46 @@ select:focus {
   gap: 6px;
   text-align: left;
   padding: 12px;
+}
+
+.preset-card-load {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.preset-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preset-card-actions .ghost-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preset-card.is-current {
+  border-color: var(--amber);
+  background: rgba(255, 179, 71, 0.1);
+}
+
+.presets-empty-card {
+  cursor: default;
+  grid-column: 1 / -1;
+}
+
+.preset-card.presets-empty-card:hover {
+  background: linear-gradient(180deg, rgba(22, 29, 38, 0.92), rgba(10, 13, 17, 0.92));
+  border-color: var(--line);
 }
 
 .preset-card span,
@@ -1098,6 +1148,11 @@ select:focus {
   padding-top: 12px;
 }
 
+.phone-presets-wrap {
+  display: grid;
+  gap: 8px;
+}
+
 .phone-presets {
   display: flex;
   gap: 8px;
@@ -1113,6 +1168,10 @@ select:focus {
   scroll-snap-align: start;
   min-height: 64px;
   text-align: left;
+}
+
+.phone-presets .presets-empty-card {
+  width: min(260px, 82vw);
 }
 
 .phone-agent-card {

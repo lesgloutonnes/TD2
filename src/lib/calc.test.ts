@@ -1,6 +1,6 @@
 import { computeStats, emptyLoadout, formatBonusList, slotColor } from "./calc";
 import { applyGearSet, catalogItemLabel, createPiece, pieceLabel, setPiecePrototype, setWeaponPrototype } from "./piece";
-import { decodeLoadout, encodeLoadout, PRESETS } from "./share";
+import { decodeLoadout, encodeLoadout, loadoutBlurb, PRESETS } from "./share";
 import type { Loadout } from "./types";
 import { NAMED_AND_EXOTICS, catalogById, catalogForSlot } from "./data/catalog";
 import { ALL_TALENTS, talentByName, talentsForSlot } from "./data/talents";
@@ -117,6 +117,21 @@ function testStrikerPresetChc() {
   const stats = computeStats(loadout);
   assert(stats.chcCapped === 56, `striker preset CHC with weapon optic, got ${stats.chcCapped}`);
   assert(stats.chcOvercap === 0, `striker preset no overcap, got ${stats.chcOvercap}`);
+}
+
+function testLoadoutBlurb() {
+  const striker = PRESETS[0].build();
+  const strikerBlurb = loadoutBlurb(striker);
+  assert(strikerBlurb.includes("4 "), `striker count, got ${strikerBlurb}`);
+  assert(strikerBlurb.includes("Striker"), `striker set name, got ${strikerBlurb}`);
+  assert(strikerBlurb.includes("Česká") || strikerBlurb.includes("Ceska"), `ceska, got ${strikerBlurb}`);
+  assert(strikerBlurb.includes("Grupo"), `grupo, got ${strikerBlurb}`);
+
+  const allRed = PRESETS[1].build();
+  const redBlurb = loadoutBlurb(allRed);
+  assert(redBlurb.includes("Coyote") || redBlurb.includes("Gift"), `named/exotic, got ${redBlurb}`);
+
+  assert(loadoutBlurb(emptyLoadout()) === "Empty loadout", "empty blurb");
 }
 
 function testY8s3Brands() {
@@ -1494,6 +1509,7 @@ const tests = [
   testShareRoundtrip,
   testSkillTierCap,
   testStrikerPresetChc,
+  testLoadoutBlurb,
   testY8s3Brands,
   testCeskaY8s3,
   testEmberEngine,

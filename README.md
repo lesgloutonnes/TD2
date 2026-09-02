@@ -70,6 +70,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - Build index (relative stack compare — **not DPS**)
 - Presets: Striker, All Red, Heartbreaker, Skill build, Foundry, Hunter's Fury
 - Local save (overwrite / save as / rename) and share link
+- Saved builds pinned at the top (starter presets remain until you save, and in Compare)
 - Compare two builds (preset or saved vs current) — deltas in Analysis
 
 Not affiliated with Ubisoft.

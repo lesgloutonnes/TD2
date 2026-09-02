@@ -76,6 +76,7 @@ import {
   renameBuild,
   saveBuild,
   subscribeSaved,
+  type SavedBuildListItem,
 } from "@/lib/share";
 import { AgentSilhouette } from "@/components/builder/AgentSilhouette";
 import { GearInspectCard } from "@/components/builder/GearInspectCard";
@@ -88,7 +89,7 @@ import { SkillPickerModal } from "@/components/builder/SkillPickerModal";
 import { PieceEditor } from "@/components/builder/PieceEditor";
 import { StatsPanel } from "@/components/builder/StatsPanel";
 
-const emptySaved: { id: string; name: string; savedAt: number }[] = [];
+const emptySaved: SavedBuildListItem[] = [];
 
 export function BuilderApp() {
   const hash = useSyncExternalStore(
@@ -554,13 +555,46 @@ export function BuilderApp() {
     </label>
   );
 
-  const savedList =
-    saved.length > 0 ? (
-      <section className="saved">
-        <h3>Saved builds</h3>
-        <ul>
-          {saved.map((item) => (
-            <li key={item.id}>
+  function loadSaved(id: string) {
+    const next = loadBuild(id);
+    if (!next) return;
+    setLoadout(next);
+    setSavedId(id);
+    flash(`${next.name} loaded.`);
+  }
+
+  const savedStrip = (
+    <section className={isPhone ? "phone-presets-wrap" : "saved-strip"} aria-label="Saved builds">
+      <p className="eyebrow">{saved.length > 0 ? "Saved builds" : "Library"}</p>
+      <div className={isPhone ? "phone-presets" : "presets"}>
+        {saved.length === 0 ? (
+          <>
+            <div className="preset-card presets-empty-card">
+              <strong>No saved builds</strong>
+              <span>Save a loadout to pin it here. Starters stay available below and in Compare.</span>
+            </div>
+            {PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="preset-card"
+                onClick={() => {
+                  setLoadout(preset.build());
+                  setSavedId(null);
+                  flash(`${preset.name} loaded.`);
+                }}
+              >
+                <strong>{preset.name}</strong>
+                <span>{preset.blurb}</span>
+              </button>
+            ))}
+          </>
+        ) : (
+          saved.map((item) => (
+            <div
+              key={item.id}
+              className={savedId === item.id ? "preset-card is-current" : "preset-card"}
+            >
               {renameId === item.id ? (
                 <form
                   className="rename-row"
@@ -588,47 +622,41 @@ export function BuilderApp() {
                 </form>
               ) : (
                 <>
-                  <button
-                    type="button"
-                    className={savedId === item.id ? "ghost-btn is-current" : "ghost-btn"}
-                    onClick={() => {
-                      const next = loadBuild(item.id);
-                      if (next) {
-                        setLoadout(next);
-                        setSavedId(item.id);
-                      }
-                    }}
-                  >
-                    {item.name}
+                  <button type="button" className="preset-card-load" onClick={() => loadSaved(item.id)}>
+                    <strong>{item.name}</strong>
+                    <span>{item.blurb}</span>
                   </button>
-                  <button
-                    type="button"
-                    className="ghost-btn"
-                    onClick={() => {
-                      setRenameId(item.id);
-                      setRenameValue(item.name);
-                    }}
-                  >
-                    Rename
-                  </button>
-                  <button
-                    type="button"
-                    className="ghost-btn danger"
-                    onClick={() => {
-                      deleteBuild(item.id);
-                      if (savedId === item.id) setSavedId(null);
-                      if (compareKey === `saved:${item.id}`) setCompareKey("");
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div className="preset-card-actions">
+                    <button
+                      type="button"
+                      className="ghost-btn"
+                      onClick={() => {
+                        setRenameId(item.id);
+                        setRenameValue(item.name);
+                      }}
+                    >
+                      Rename
+                    </button>
+                    <button
+                      type="button"
+                      className="ghost-btn danger"
+                      onClick={() => {
+                        deleteBuild(item.id);
+                        if (savedId === item.id) setSavedId(null);
+                        if (compareKey === `saved:${item.id}`) setCompareKey("");
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </>
               )}
-            </li>
-          ))}
-        </ul>
-      </section>
-    ) : null;
+            </div>
+          ))
+        )}
+      </div>
+    </section>
+  );
 
   const pieceEditor = (
     <PieceEditor
@@ -689,23 +717,7 @@ export function BuilderApp() {
           <div className="phone-pane">
             {phoneTab === "loadout" ? (
               <>
-                <section className="phone-presets" aria-label="Presets">
-                  {PRESETS.map((preset) => (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      className="preset-card"
-                      onClick={() => {
-                        setLoadout(preset.build());
-                        setSavedId(null);
-                        flash(`${preset.name} loaded.`);
-                      }}
-                    >
-                      <strong>{preset.name}</strong>
-                      <span>{preset.blurb}</span>
-                    </button>
-                  ))}
-                </section>
+                {savedStrip}
                 <div className="phone-agent-card">
                   <AgentSilhouette
                     activeSlot={activeSlot}
@@ -739,7 +751,6 @@ export function BuilderApp() {
                 </section>
                 {specAndWatch}
                 {compareBar}
-                {savedList}
               </>
             ) : null}
             {phoneTab === "edit" ? pieceEditor : null}
@@ -797,23 +808,7 @@ export function BuilderApp() {
             </div>
           </header>
 
-          <section className="presets">
-            {PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                type="button"
-                className="preset-card"
-                onClick={() => {
-                setLoadout(preset.build());
-                setSavedId(null);
-                flash(`${preset.name} loaded.`);
-                }}
-              >
-                <strong>{preset.name}</strong>
-                <span>{preset.blurb}</span>
-              </button>
-            ))}
-          </section>
+          {savedStrip}
 
           <div className="workspace">
             <div className="loadout-column">
@@ -834,7 +829,6 @@ export function BuilderApp() {
               </div>
               {pieceEditor}
               {kitGrid}
-              {savedList}
             </div>
             <StatsPanel stats={stats} compare={compareStats} />
           </div>
