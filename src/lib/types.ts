@@ -197,6 +197,8 @@ export type SpecPerkDef = {
   group: SpecPerkGroup;
   /** Omitted loadout flags use this. Sheet perks default on; weapon-type nodes default off. */
   defaultOn: boolean;
+  /** Tree fork: at most one perk in this group can be on. */
+  exclusiveGroup?: string;
 };
 
 export type SpecializationDef = {

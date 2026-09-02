@@ -10,7 +10,12 @@ import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
-import { specPerkEnabled, specializationById } from "./data/skills";
+import {
+  sanitizeSpecPerks,
+  setSpecPerkFlags,
+  specPerkEnabled,
+  specializationById,
+} from "./data/skills";
 import { defaultWeaponMods } from "./data/weapon-mods";
 import { defaultWeaponTalentId, weaponTalentByName } from "./data/weapon-talents";
 import { clampExpertise } from "./builder-model";
@@ -215,6 +220,50 @@ function testSpecPerks() {
   tech.specialization = "technician";
   tech.specPerks = { "technician-tier": false };
   assert(computeStats(tech).values.skillTier === 0, "technician tier can be skipped");
+  assert(computeStats(tech).values.skillDamage === 0, "technician skill-focus default off");
+  assert(computeStats(tech).values.skillRepair === 0, "technician repair fork default off");
+
+  const overclock = specializationById("technician")?.perks.find(
+    (perk) => perk.id === "technician-overclock",
+  );
+  const diagnostics = specializationById("technician")?.perks.find(
+    (perk) => perk.id === "technician-diagnostics",
+  );
+  assert(overclock?.exclusiveGroup === "technician-skill-focus", "overclock exclusive group");
+  assert(diagnostics?.exclusiveGroup === overclock?.exclusiveGroup, "diagnostics same fork");
+
+  tech.specPerks = { "technician-overclock": true };
+  const damagePick = computeStats(tech);
+  assert(damagePick.values.skillDamage === 10, `overclock skill damage, got ${damagePick.values.skillDamage}`);
+  assert(damagePick.values.skillRepair === 0, "overclock does not grant repair");
+
+  tech.specPerks = { "technician-diagnostics": true };
+  const repairPick = computeStats(tech);
+  assert(repairPick.values.skillRepair === 10, `diagnostics skill repair, got ${repairPick.values.skillRepair}`);
+  assert(repairPick.values.skillDamage === 0, "diagnostics does not grant skill damage");
+
+  const both = sanitizeSpecPerks({
+    "technician-overclock": true,
+    "technician-diagnostics": true,
+  });
+  assert(both?.["technician-overclock"] === true, "sanitize keeps overclock");
+  assert(both?.["technician-diagnostics"] === false, "sanitize drops the other fork");
+  tech.specPerks = { "technician-overclock": true, "technician-diagnostics": true };
+  const collapsed = computeStats(tech);
+  assert(collapsed.values.skillDamage === 10, "calc keeps first exclusive perk");
+  assert(collapsed.values.skillRepair === 0, "calc ignores second exclusive perk");
+
+  const techSpec = specializationById("technician")!;
+  const allOn = setSpecPerkFlags(undefined, techSpec, () => true);
+  assert(allOn?.["technician-overclock"] === true, "All on picks skill damage");
+  assert(allOn?.["technician-diagnostics"] === false, "All on does not pick both forks");
+
+  const repairShare = emptyLoadout();
+  repairShare.specialization = "technician";
+  repairShare.specPerks = { "technician-diagnostics": true };
+  const decodedRepair = decodeLoadout(encodeLoadout(repairShare));
+  assert(decodedRepair?.specPerks?.["technician-diagnostics"] === true, "repair fork roundtrip");
+  assert(decodedRepair?.specPerks?.["technician-overclock"] !== true, "overclock stays off in share");
 }
 
 function testStrikerSampleChc() {
