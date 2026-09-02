@@ -11,6 +11,7 @@ import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, i
 import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import {
+  SKILLS,
   sanitizeSpecPerks,
   setSpecPerkFlags,
   specPerkEnabled,
@@ -1853,6 +1854,43 @@ function testSeasonModifier() {
   assert(decoded?.season?.passives[1] === "new-formula-gamma", "passive roundtrip");
 }
 
+function testSeasonLiveY8s3Copy() {
+  const fiery = SEASON_ACTIVES.find((item) => item.id === "fiery-aura");
+  assert(fiery?.assumed.some((bonus) => bonus.stat === "armorRegenPercent" && bonus.value === 1.5), "Fiery Aura 1.5%/s");
+  assert(fiery?.assumedNote.includes("15% Bonus Armor"), "Fiery Aura L5 bonus armor");
+  assert(fiery?.assumedNote.includes("100% while sprinting"), "Fiery Aura sprint DR");
+  assert(fiery?.description.includes("15% Bonus Armor"), "Fiery Aura description L5");
+
+  const vicarious = SEASON_ACTIVES.find((item) => item.id === "vicarious-combustion");
+  assert(vicarious?.assumed.some((bonus) => bonus.stat === "hsd" && bonus.value === 50), "Vicarious 50% HSD");
+  assert(vicarious?.assumedNote.includes("20 m"), "Vicarious 20 m spread");
+  assert(vicarious?.assumedNote.includes("50%–10%") || vicarious?.assumedNote.includes("50%-10%"), "Vicarious burn penalty band");
+
+  const signed = SEASON_ACTIVES.find((item) => item.id === "signed-shield-delivered");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "skillEfficiency" && bonus.value === 25), "Signed 25% SE");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "shieldHealth" && bonus.value === 500), "Signed +500% shield");
+  assert(signed?.assumed.some((bonus) => bonus.stat === "signatureWeaponDamage" && bonus.value === 50), "Signed +50% sig WD");
+  assert(signed?.assumedNote.includes("+150% Shield Active Regen"), "Signed shield active regen");
+  assert(signed?.description.includes("+2 s") && signed.description.includes("+1 s"), "Signed L5 duration extend");
+
+  const leaky = SEASON_PASSIVES.find((item) => item.id === "leaky-valve");
+  assert(leaky?.description.includes("95%"), "Leaky Valve 95%");
+  assert(/regardless of other effects/i.test(leaky?.description ?? ""), "Leaky Valve overrides Delayed Venting");
+
+  const reserve = SEASON_PASSIVES.find((item) => item.id === "reserve-tank");
+  assert(reserve?.description.includes("20%"), "Reserve Tank resets to 20%");
+
+  const flint = SEASON_PASSIVES.find((item) => item.id === "flint-and-steel");
+  assert(flint?.description.includes("15 seconds"), "Flint and Steel 15 s");
+
+  assert(SEASON_PASSIVES.length === 20, "still 20 player passives");
+  assert(SEASON_ACTIVES.length === 3, "still 3 actives");
+  assert(
+    !SEASON_PASSIVES.some((item) => /draining|achilles|thousand-cuts/.test(item.id)),
+    "hostile modifiers are not selectable passives",
+  );
+}
+
 function testExoticAssumedCatalog() {
   const vile = catalogById("vile");
   assert(vile?.assumed?.length, "Vile has maxed bonuses");
@@ -1957,6 +1995,101 @@ function testY8s3LiveGearTables() {
   assert(ember?.fourAssumedNote?.includes("not burn DPS"), "Ember 4pc note is honest");
 }
 
+function testY8S3LiveSkillCatalog() {
+  const byId = new Map(SKILLS.map((skill) => [skill.id, skill]));
+  assert(byId.has("banshee-pulse"), "Banshee Pulse (Gunner) is live");
+  assert(byId.get("banshee-pulse")?.name === "Banshee Pulse", "Banshee English name");
+  assert(byId.has("achilles-pulse"), "Achilles Pulse is live");
+  assert(byId.has("shrapnel-trap"), "Shrapnel Trap is live");
+  assert(byId.has("precision-smart-cover"), "Precision Smart Cover (Brooklyn) is live");
+  assert(byId.has("fortified-smart-cover"), "Fortified Smart Cover (Brooklyn) is live");
+  assert(!byId.has("sticky-flash"), "Flashbang Sticky is Division 1 only");
+  assert(byId.get("repair-chem")?.name === "Reinforcer Chem Launcher", "Reinforcer in-game name");
+  assert(SKILLS.filter((skill) => skill.category === "Sticky Bomb").length === 3, "three sticky variants");
+  assert(SKILLS.filter((skill) => skill.category === "Pulse").length === 5, "five pulse variants");
+  assert(SKILLS.filter((skill) => skill.category === "Trap").length === 3, "three trap variants");
+  assert(SKILLS.filter((skill) => skill.category === "Smart Cover").length === 2, "two smart cover variants");
+
+  const banshee = skillModSlotsFor("banshee-pulse", "gunner");
+  assert(
+    banshee.some((slot) => slot.options.some((option) => option.id === "coil-cone")),
+    "Banshee coil cone size",
+  );
+  assert(
+    banshee.some((slot) => slot.options.some((option) => option.id === "gunner-directional-transmitter")),
+    "Gunner unique on Banshee",
+  );
+
+  const shrapnel = skillModSlotsFor("shrapnel-trap");
+  assert(shrapnel.length === 2, `shrapnel trap 2 slots, got ${shrapnel.length}`);
+  assert(shrapnel[0]?.label === "Charge", "trap charge slot");
+  assert(shrapnel[1]?.label === "Electronic", "trap electronic slot");
+
+  const precision = skillModSlotsFor("precision-smart-cover");
+  assert(precision.length === 2, `precision smart cover 2 slots, got ${precision.length}`);
+  assert(precision[0]?.label === "Smart Launcher", "smart launcher slot");
+  assert(precision[1]?.label === "Smart Projectile", "smart projectile slot");
+  assert(
+    precision[1]?.options.some((option) => option.id === "smart-projectile-handling"),
+    "precision projectile handling",
+  );
+  assert(
+    !precision[1]?.options.some((option) => option.id === "smart-projectile-bonus-armor"),
+    "precision does not roll fortified bonus armor",
+  );
+
+  const fortified = skillModSlotsFor("fortified-smart-cover");
+  assert(
+    fortified[1]?.options.some((option) => option.id === "smart-projectile-bonus-armor"),
+    "fortified projectile bonus armor",
+  );
+  assert(
+    !fortified[1]?.options.some((option) => option.id === "smart-projectile-handling"),
+    "fortified does not roll precision handling",
+  );
+}
+
+function testY8s3LiveWeaponCatalog() {
+  const determined = weaponTalentByName("Determined");
+  assert(determined?.description.includes("converted shot"), "Y8S3 Determined no-chain text");
+  assert(determined?.types?.includes("mmr") && determined.types.includes("rifle") && determined.types.includes("pistol"), "Determined MMR/rifle/pistol");
+  assert(!determined?.assumed?.length, "Determined is not a reload-speed sheet stat");
+  assert(determined?.assumedNote?.includes("Iron Will"), "Determined points chaining to Iron Will");
+
+  const boiling = weaponTalentByName("Boiling Point");
+  assert(boiling?.description.includes("53%"), "Boiling Point live 53%");
+  assert(boiling?.assumed?.some((stat) => stat.stat === "chc" && stat.value === 100), "Boiling Point remaining mag 100% CHC");
+
+  const fafnir = WEAPONS.find((weapon) => weapon.id === "fafnir");
+  assert(fafnir?.talent === "Dragon's Breath", "Fafnir talent");
+  assert(fafnir?.talentDesc.includes("40%"), "Fafnir 40% Burn");
+  assert(fafnir?.talentDesc.includes("50%"), "Fafnir 50% SE amp");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "chc" && stat.value === 15), "Fafnir locked +15% CHC");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "magazineSize" && stat.value === 5), "Fafnir locked +5 mag");
+  assert(fafnir?.extraStats?.some((stat) => stat.stat === "weaponHandling" && stat.value === 10), "Fafnir locked +10% handling");
+  assert(!fafnir?.assumed?.length, "Fafnir SE amp is not a fake WD average");
+
+  const acr = WEAPONS.find((weapon) => weapon.id === "steel-and-sons");
+  assert(acr?.name === "Steel & Sons ACR", "Steel & Sons ACR id");
+  assert(acr?.type === "rifle" && acr.quality === "exotic", "Steel & Sons is exotic ACR SS rifle");
+  assert(acr?.rpm === 320 && acr.mag === 30, "Steel & Sons ACR SS rpm/mag");
+  assert(acr?.talent === "Confirm & Execute", "Confirm & Execute");
+  assert(acr?.talentDesc.includes("Max stacks: 4"), "Y8S3 max stacks 4");
+  assert(acr?.talentDesc.includes("+30% Amplified Damage"), "Y8S3 weak-point +30%");
+  assert(acr?.extraStats?.some((stat) => stat.stat === "chc" && stat.value === 15), "Steel & Sons locked optic");
+  assert(acr?.assumed?.some((stat) => stat.stat === "weaponDamage" && stat.value === 16), "4 stacks × 4% amp");
+
+  const teapot = WEAPONS.find((weapon) => weapon.id === "teapot");
+  const steamer = WEAPONS.find((weapon) => weapon.id === "steamer");
+  assert(teapot?.talent === "Perfect Boiling Point" && teapot.talentDesc.includes("48%"), "Teapot Perfect Boiling Point");
+  assert(steamer?.talent === "Perfect Boiling Point" && steamer.type === "ar", "Steamer named AR");
+
+  const relic = WEAPONS.find((weapon) => weapon.id === "relic");
+  const prophet = WEAPONS.find((weapon) => weapon.id === "prophet");
+  assert(relic?.talentDesc.includes("converted shot"), "Relic Perfectly Determined no-chain");
+  assert(prophet?.talentDesc.includes("converted shot"), "Prophet Perfectly Determined no-chain");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2034,8 +2167,11 @@ const tests = [
   testNursesHazardModel,
   testShareNewFields,
   testSeasonModifier,
+  testSeasonLiveY8s3Copy,
   testExoticAssumedCatalog,
   testY8s3LiveGearTables,
+  testY8S3LiveSkillCatalog,
+  testY8s3LiveWeaponCatalog,
 ];
 
 let failed = 0;

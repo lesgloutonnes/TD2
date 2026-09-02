@@ -72,7 +72,9 @@ function slots(defs: Array<[string, string, SkillModOption[]]>): SkillModSlotDef
 
 /**
  * Platform → named slots. Option `skills` / `spec` further restrict the pool.
- * Max rolls: community live sheet (Namu / level 40 Gear 2.0).
+ * Max rolls: Namu wiki Gear 2.0 / level 40 tables (live Y8S3 PvE).
+ * Official Y8S3 skill-change tables are Conflict / PvP Dark Zone only — not applied here.
+ * Smart Cover slot names from Namu; max rolls unpublished there, so family-typical Gear 2.0 caps.
  */
 const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
   Pulse: slots([
@@ -81,12 +83,12 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
       "Coil",
       [
         opt("coil-radius", "Radius", "+10% radius", ["scanner-pulse", "remote-pulse"]),
-        opt("coil-cone", "Cone Size", "+7.5% cone size", ["jammer-pulse"]),
+        opt("coil-cone", "Cone Size", "+7.5% cone size", ["jammer-pulse", "banshee-pulse"]),
         opt(
           "gunner-directional-transmitter",
           "Directional Transmitter",
           "+15% radius (Gunner unique)",
-          ["scanner-pulse", "remote-pulse"],
+          ["scanner-pulse", "remote-pulse", "banshee-pulse"],
           "gunner",
         ),
       ],
@@ -422,6 +424,46 @@ const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
     ["housing", "Housing", [opt("housing-health", "Skill Health", "+7.5% Skill Health")]],
     ["projector", "Projector", [opt("projector-duration", "Duration", "+7.5% Duration")]],
   ]),
+  /**
+   * Battle for Brooklyn Smart Cover. Namu lists two slots and which lines roll,
+   * but not max percentages. Caps below match other Gear 2.0 platforms
+   * (7.5% duration / haste / radius, 5% unique stat lines).
+   */
+  "Smart Cover": slots([
+    [
+      "smart-launcher",
+      "Smart Launcher",
+      [
+        opt("smart-launcher-radius", "Radius", "+7.5% radius"),
+        opt("smart-launcher-haste", "Skill Haste", "+7.5% Skill Haste"),
+        opt("smart-launcher-duration", "Duration", "+7.5% Duration"),
+      ],
+    ],
+    [
+      "smart-projectile",
+      "Smart Projectile",
+      [
+        opt("smart-projectile-handling", "Weapon Handling", "+5% weapon handling", [
+          "precision-smart-cover",
+        ]),
+        opt(
+          "smart-projectile-out-of-cover",
+          "Damage to Targets Out of Cover",
+          "+5% damage to targets out of cover",
+          ["precision-smart-cover"],
+        ),
+        opt("smart-projectile-bonus-armor", "Bonus Armor", "+5% bonus armor", [
+          "fortified-smart-cover",
+        ]),
+        opt("smart-projectile-explosive", "Explosive Resistance", "+5% explosive resistance", [
+          "fortified-smart-cover",
+        ]),
+        opt("smart-projectile-pulse-res", "Pulse Resistance", "+5% pulse resistance", [
+          "fortified-smart-cover",
+        ]),
+      ],
+    ],
+  ]),
 };
 
 const SUPPORT_SKILL_IDS = new Set([
@@ -433,6 +475,7 @@ const SUPPORT_SKILL_IDS = new Set([
   "artificer-hive",
   "repair-chem",
   "repair-trap",
+  "fortified-smart-cover",
 ]);
 
 function optionVisible(
@@ -618,6 +661,10 @@ function skillEffectStat(rest: string): StatBonus["stat"] | null {
   if (text.includes("stim efficiency") || text.includes("efficiency")) return "skillEfficiency";
   if (text.includes("repair")) return "skillRepair";
   if (text.includes("duration")) return "skillDuration";
+  if (text.includes("weapon handling")) return "weaponHandling";
+  if (text.includes("explosive resistance")) return "explosiveResistance";
+  if (text.includes("pulse resistance")) return "pulseResistance";
+  if (text.includes("out of cover") || text.includes("bonus armor")) return null;
   if (text.includes("burn") || text.startsWith("damage") || text.includes("damage (")) {
     return "skillDamage";
   }

@@ -22,6 +22,15 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
     passive: true,
   },
   {
+    id: "boiling-point",
+    name: "Boiling Point",
+    description:
+      "The first 53% of your magazine will have -100% Critical Hit Chance. The rest will have 100%.",
+    assumed: [{ stat: "chc", value: 100 }],
+    assumedNote:
+      "Max Boiling Point: remaining magazine at 100% Critical Hit Chance (first 53% is -100% CHC).",
+  },
+  {
     id: "boomerang",
     name: "Boomerang",
     description:
@@ -47,9 +56,11 @@ export const WEAPON_TALENTS: WeaponTalentDef[] = [
   {
     id: "determined",
     name: "Determined",
-    description: "Killing an enemy refreshes the current magazine.",
-    assumed: [{ stat: "reloadSpeed", value: 15 }],
-    assumedNote: "Determined modeled as extra reload uptime.",
+    description:
+      "Killing an enemy with a headshot guarantees that the next shot will be a critical headshot. A kill from that converted shot does not trigger another guaranteed headshot. Exclusive to pistols, rifles, and marksman rifles.",
+    assumedNote:
+      "Y8S3 Determined matches Perfect Determined: one guaranteed crit headshot after a true headshot kill (no chain). Not a sheet stat. Body-to-headshot chaining lives on Iron Will (exotic chest, Resolved), not this talent.",
+    types: ["mmr", "rifle", "pistol"],
   },
   {
     id: "esagerato",
