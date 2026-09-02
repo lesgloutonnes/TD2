@@ -8,6 +8,7 @@ import type {
   StatKey,
 } from "../types";
 import { pushBonus } from "../builder-model";
+import { STAT_LABELS } from "./attributes";
 
 export const SEASON_NAME = "Y8S3 Red Horizon";
 export const SEASON_MODIFIER_NAME = "Under Pressure";
@@ -40,10 +41,26 @@ export type SeasonPassiveDef = {
 
 const DEFAULT_ACTIVE: SeasonActiveId = "fiery-aura";
 
-/** Status Effects / Beta / Gamma payouts at the four gauge tiers (live Y8S3 tables). */
+/**
+ * Status Effects / Beta / Gamma payouts at the four gauge tiers.
+ * Live Y8S3 (PTS tables unchanged at launch): 10 / 35 / 65 / 90% → these values.
+ * Delayed Venting moves the same four payouts to 0 / 20 / 50 / 80%.
+ */
 const GAUGE_STATUS = [15, 25, 40, 65] as const;
 const GAUGE_BETA = [10, 20, 30, 50] as const;
 const GAUGE_GAMMA = [5, 15, 25, 40] as const;
+
+/**
+ * Hostile modifiers are enemy effects, not player loadout picks — do not add them
+ * as selectable passives. Live Y8S3 (PTS + 21 Aug 2026 developer notes):
+ * - Draining Presence: within 5 m, −10% magazine and −1% Pressure per second (radius was 7 m on PTS).
+ * - Achilles' Heal: breaking a weak point or armor piece restores 50% Health to the enemy
+ *   and allies within 10 m, and costs 5% Pressure (was 10% on PTS).
+ * - Thousand Cuts: each hit −1% Pressure and a stacking 0.5% Damage Reduction debuff for 15 s.
+ * Setting the carrier on fire permanently removes or reverses the effect.
+ */
+export const SEASON_HOSTILE_NOTE =
+  "Hostile modifiers (Draining Presence, Achilles' Heal, Thousand Cuts) are enemy effects, not player picks. Burn the carrier to clear them.";
 
 export const SEASON_ACTIVES: SeasonActiveDef[] = [
   {
@@ -51,34 +68,34 @@ export const SEASON_ACTIVES: SeasonActiveDef[] = [
     name: "Fiery Aura",
     secondary: "Armor Regen",
     description:
-      "Damage Resistance and Armor Regen while active. Nearby enemies burn the first time they enter range. Level 5: Bonus Armor per unique enemy burned.",
+      "Damage Resistance and Armor Regen while active. Nearby enemies burn the first time they enter range (5–10 m). Level 5: 15% Bonus Armor per unique enemy burned.",
     assumed: [{ stat: "armorRegenPercent", value: 1.5 }],
     assumedNote:
-      "Assumes Level 5 active up: 1.5%/s Armor Regen. Combat-only: +65% Damage Resistance (100% while sprinting), 10 m Burn. Not a DPS sim.",
+      "Assumes Level 5 active up: 1.5%/s Armor Regen. Combat-only: +65% Damage Resistance (100% while sprinting), 10 m Burn, 15% Bonus Armor per unique enemy burned. Not a DPS sim.",
   },
   {
     id: "vicarious-combustion",
     name: "Vicarious Combustion",
     secondary: "Headshot Damage",
     description:
-      "Headshots on burning enemies spread Burn. Level 5: headshots apply Burn directly.",
+      "Headshots on burning enemies spread Burn (10–20 m). Level 5: headshots apply Burn directly.",
     assumed: [{ stat: "hsd", value: 50 }],
     assumedNote:
-      "Assumes Level 5 active up: +50% Headshot Damage. Combat-only: 20 m Burn spread. Burn damage is reduced while it runs.",
+      "Assumes Level 5 active up: +50% Headshot Damage. Combat-only: 20 m Burn spread. Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Not a DPS sim.",
   },
   {
     id: "signed-shield-delivered",
     name: "Signed, Shield, Delivered",
     secondary: "Skill Efficiency",
     description:
-      "Signature Weapon and Shield bonuses. Kills with a Signature Weapon, or while a shield is up, refill the magazine.",
+      "Signature Weapon and Shield bonuses. Kills with a Signature Weapon, or while a shield is up, refill the magazine. Level 5: those kills extend duration (+2 s Signature / +1 s shield).",
     assumed: [
       { stat: "skillEfficiency", value: 25 },
       { stat: "shieldHealth", value: 500 },
       { stat: "signatureWeaponDamage", value: 50 },
     ],
     assumedNote:
-      "Assumes Level 5 active up: +25% Skill Efficiency, +500% Shield Health, +50% Signature Weapon Damage. Combat-only: mag refill, +25% Signature range, duration extend on kills.",
+      "Assumes Level 5 active up: +25% Skill Efficiency, +500% Shield Health, +50% Signature Weapon Damage. Combat-only: mag refill, +25% Signature range, +150% Shield Active Regen, +2 s duration on Signature kills / +1 s on shield kills. Not a DPS sim.",
   },
 ];
 
@@ -111,7 +128,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     id: "quality-seals",
     name: "Quality Seals",
     category: "pressure",
-    description: "Pressure Gauge decay begins after a longer delay.",
+    description: "Pressure Gauge decay begins after a longer period of time.",
   },
   {
     id: "delayed-venting",
@@ -126,13 +143,13 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "Leaky Valve",
     category: "pressure",
     description:
-      "Cover no longer stops decay. Gains +50% from all actions. Actives require 95% Pressure. Decay pauses out of combat.",
+      "Cover no longer stops decay. Gains +50% from all actions. Actives require 95% Pressure regardless of other effects. Decay pauses out of combat.",
   },
   {
     id: "vacuum-seal",
     name: "Vacuum Seal",
     category: "pressure",
-    description: "The Pressure Gauge no longer decays, but gains are reduced by 50%.",
+    description: "The Pressure Gauge no longer decays, but gains are reduced by 50% from all actions.",
   },
   {
     id: "reserve-tank",
@@ -145,7 +162,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "All or Nothing",
     category: "pressure",
     description:
-      "Gauge bonuses below 80% are 0. Bonuses at 80%+ increase by 25%. Disabled if paired with Kickstart.",
+      "Gauge bonuses below 80% are 0. Bonuses at 80%+ increase by 25% of their value. Disabled if paired with Kickstart.",
     allOrNothing: true,
   },
   {
@@ -153,7 +170,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "Kickstart",
     category: "pressure",
     description:
-      "Gauge bonuses above 80% are 0. Bonuses below 80% increase by 50%. Disabled if paired with All or Nothing.",
+      "Gauge bonuses above 80% are 0. Bonuses at or below 80% increase by 50% of their value. Disabled if paired with All or Nothing.",
     kickstart: true,
   },
   {
@@ -161,7 +178,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "Microwave Coils",
     category: "fire",
     description:
-      "Up to four Pulsed enemies have a 30% chance to Burn. Gain 3% Pressure per affected enemy.",
+      "Up to four Pulsed enemies have a 30% chance to Burn. Gain 3% bonus Pressure per affected enemy.",
   },
   {
     id: "new-model",
@@ -218,7 +235,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "Modular Plates",
     category: "formula",
     description:
-      "Armor Kits: +100% Bonus Armor and restore 100% shield health. Insta Kits: +25% Bonus Armor and 50% shield health.",
+      "Armor Kits grant +100% Bonus Armor and restore 100% of your shield's maximum health. Insta Armor Kits grant +25% Bonus Armor and restore 50% of your shield's maximum health.",
   },
 ];
 
@@ -361,10 +378,7 @@ export function seasonGaugePreview(season: SeasonModifier): SeasonGaugePreview {
 }
 
 function statLabel(stat: StatKey): string {
-  if (stat === "statusEffects") return "Status Effects";
-  if (stat === "signatureWeaponDamage") return "Signature Weapon Damage";
-  if (stat === "hazardProtection") return "Hazard Protection";
-  return stat;
+  return STAT_LABELS[stat] ?? stat;
 }
 
 export function applySeasonModifiers(
@@ -382,7 +396,7 @@ export function applySeasonModifiers(
   const gauge = seasonGaugePreview(season);
 
   notes.push(
-    `${SEASON_MODIFIER_NAME} on (${SEASON_NAME}). Assumed Pressure ${season.pressure}%. Not a combat sim.`,
+    `${SEASON_MODIFIER_NAME} on (${SEASON_NAME}). Assumed Pressure ${season.pressure}%. Not a combat sim. ${SEASON_HOSTILE_NOTE}`,
   );
 
   if (gauge.formulaCancelled) {
@@ -441,7 +455,7 @@ function formatSeasonBonuses(bonuses: StatBonus[]): string {
   return bonuses
     .map((bonus) => {
       const pretty = Number.isInteger(bonus.value) ? String(bonus.value) : bonus.value.toFixed(1);
-      if (bonus.stat === "armorRegenPercent") return `+${pretty}% Armor Regeneration`;
+      if (bonus.stat === "armorRegenPercent") return `+${pretty}%/s Armor Regeneration`;
       return `+${pretty}% ${statLabel(bonus.stat)}`;
     })
     .join(", ");
