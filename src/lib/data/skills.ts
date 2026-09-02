@@ -377,6 +377,14 @@ function weaponTypePerks(specId: string): SpecPerkDef[] {
   }));
 }
 
+/**
+ * Live Y8S3 PvE (TU 2.34) specialization sheet perks.
+ * Red Horizon notes + live gear PDF (ubi.li/4Yvr2) do not retune spec trees.
+ * In-game English node names: Amped, Overclocked CPU, Enhanced Diagnostics
+ * (Division Dispatch 1 Aug 2026; gem-con / Namu trees). Exclusive sheet fork is
+ * Technician only. Combat procs, signature ammo, skill unlocks, armor-kit
+ * extras, and 3-rank weapon-type stacks beyond the +5% toggle stay unmodeled.
+ */
 export const SPECIALIZATIONS: SpecializationDef[] = [
   {
     id: "gunner",
@@ -395,7 +403,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     signature: "P-017 Missile Launcher",
     description: "Artificer Hive, EMP grenades. Skill meta.",
     perks: [
-      sheetPerk("technician", "tier", "Skill Tier", [{ stat: "skillTier", value: 1 }]),
+      sheetPerk("technician", "tier", "Amped", [{ stat: "skillTier", value: 1 }]),
       choicePerk(
         "technician",
         "overclock",

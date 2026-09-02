@@ -12,6 +12,8 @@ import { AUGMENTS } from "./data/augments";
 import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
 import {
   SKILLS,
+  SPECIALIZATIONS,
+  exclusivePerkGroups,
   sanitizeSpecPerks,
   setSpecPerkFlags,
   specPerkEnabled,
@@ -2090,6 +2092,139 @@ function testY8s3LiveWeaponCatalog() {
   assert(prophet?.talentDesc.includes("converted shot"), "Prophet Perfectly Determined no-chain");
 }
 
+/** Live Y8S3 PvE (TU 2.34) sheet-perk lock. Do not silently retune specs. */
+function testSpecPerksLiveY8s3() {
+  const expected: Record<
+    string,
+    { signature: string; sheet: { id: string; name: string; stat: string; value: number }[] }
+  > = {
+    gunner: {
+      signature: "M134 Minigun",
+      sheet: [
+        { id: "gunner-aok", name: "Armor on Kill", stat: "armorOnKill", value: 10 },
+        { id: "gunner-ammo", name: "Ammo Capacity", stat: "ammoCapacity", value: 25 },
+      ],
+    },
+    technician: {
+      signature: "P-017 Missile Launcher",
+      sheet: [{ id: "technician-tier", name: "Amped", stat: "skillTier", value: 1 }],
+    },
+    sharpshooter: {
+      signature: "TAC-50",
+      sheet: [
+        { id: "sharpshooter-hsd", name: "Headshot Damage", stat: "hsd", value: 15 },
+        { id: "sharpshooter-mmr", name: "Marksman Rifle damage", stat: "mmrDamage", value: 10 },
+      ],
+    },
+    survivalist: {
+      signature: "Explosive Crossbow",
+      sheet: [
+        { id: "survivalist-repairs", name: "Incoming Repairs", stat: "incomingRepairs", value: 10 },
+        { id: "survivalist-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+      ],
+    },
+    demolitionist: {
+      signature: "M32A1 Grenade Launcher",
+      sheet: [
+        { id: "demolitionist-explosive", name: "Explosive Damage", stat: "explosiveDamage", value: 15 },
+        { id: "demolitionist-lmg", name: "LMG damage", stat: "lmgDamage", value: 10 },
+      ],
+    },
+    firewall: {
+      signature: "K8-JetStream Flamethrower",
+      sheet: [
+        { id: "firewall-armor", name: "Total Armor", stat: "armorPercent", value: 10 },
+        { id: "firewall-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+      ],
+    },
+  };
+
+  assert(SPECIALIZATIONS.length === 6, `six live specs, got ${SPECIALIZATIONS.length}`);
+  assert(
+    SPECIALIZATIONS.map((spec) => spec.id).join(",") === Object.keys(expected).join(","),
+    "spec order is gunner/technician/sharpshooter/survivalist/demolitionist/firewall",
+  );
+
+  for (const spec of SPECIALIZATIONS) {
+    const want = expected[spec.id];
+    assert(want, `unexpected spec ${spec.id}`);
+    assert(spec.signature === want.signature, `${spec.id} signature ${spec.signature}`);
+
+    const sheet = spec.perks.filter((perk) => perk.group === "sheet" && !perk.exclusiveGroup);
+    assert(sheet.length === want.sheet.length, `${spec.id} sheet count ${sheet.length}`);
+    for (const [index, perk] of sheet.entries()) {
+      const row = want.sheet[index];
+      assert(perk.id === row.id && perk.name === row.name, `${spec.id} sheet ${perk.id} ${perk.name}`);
+      assert(perk.defaultOn === true, `${perk.id} default on`);
+      assert(
+        perk.bonuses.length === 1 && perk.bonuses[0]?.stat === row.stat && perk.bonuses[0]?.value === row.value,
+        `${perk.id} bonus`,
+      );
+    }
+
+    const weapon = spec.perks.filter((perk) => perk.group === "weapon-type");
+    const expectWeapon = spec.id === "sharpshooter" || spec.id === "demolitionist" ? 6 : 7;
+    assert(weapon.length === expectWeapon, `${spec.id} weapon-type count ${weapon.length}`);
+    assert(
+      weapon.every((perk) => perk.defaultOn === false && perk.bonuses[0]?.value === 5),
+      `${spec.id} weapon-type +5% default off`,
+    );
+  }
+
+  assert(
+    !SPECIALIZATIONS.find((spec) => spec.id === "sharpshooter")?.perks.some(
+      (perk) => perk.group === "weapon-type" && perk.id === "sharpshooter-mmr",
+    ),
+    "Sharpshooter filters generated MMR +5% against the 10% sheet node",
+  );
+  assert(
+    !SPECIALIZATIONS.find((spec) => spec.id === "demolitionist")?.perks.some(
+      (perk) => perk.group === "weapon-type" && perk.id === "demolitionist-lmg",
+    ),
+    "Demolitionist filters generated LMG +5% against the 10% sheet node",
+  );
+
+  const forks = SPECIALIZATIONS.flatMap((spec) =>
+    exclusivePerkGroups(spec).map((group) => ({ spec: spec.id, group })),
+  );
+  assert(forks.length === 1 && forks[0]?.spec === "technician", "only Technician has an exclusive sheet fork");
+  const techFork = forks[0]!.group;
+  assert(techFork.map((perk) => perk.id).join(",") === "technician-overclock,technician-diagnostics", "fork ids");
+  assert(techFork[0]?.name === "Overclocked CPU" && techFork[0].bonuses[0]?.stat === "skillDamage" && techFork[0].bonuses[0]?.value === 10, "Overclocked CPU +10% Skill Damage");
+  assert(techFork[1]?.name === "Enhanced Diagnostics" && techFork[1].bonuses[0]?.stat === "skillRepair" && techFork[1].bonuses[0]?.value === 10, "Enhanced Diagnostics +10% Skill Repair");
+  assert(techFork.every((perk) => perk.defaultOn === false && perk.exclusiveGroup === "technician-skill-focus"), "fork default off");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+
+  loadout.specialization = "gunner";
+  let stats = computeStats(loadout);
+  assert(stats.values.armorOnKill === 10 && stats.values.ammoCapacity === 25, "gunner sheet defaults");
+  assert(stats.values.arDamage === 0, "gunner weapon-type off");
+
+  loadout.specialization = "technician";
+  loadout.specPerks = undefined;
+  stats = computeStats(loadout);
+  assert(stats.values.skillTier === 1, "Amped default on");
+  assert(stats.values.skillDamage === 0 && stats.values.skillRepair === 0, "technician fork default off");
+
+  loadout.specialization = "sharpshooter";
+  stats = computeStats(loadout);
+  assert(stats.values.hsd === 15 && stats.values.mmrDamage === 10, "sharpshooter sheet defaults");
+
+  loadout.specialization = "survivalist";
+  stats = computeStats(loadout);
+  assert(stats.values.incomingRepairs === 10 && stats.values.statusEffects === 10, "survivalist sheet defaults");
+
+  loadout.specialization = "demolitionist";
+  stats = computeStats(loadout);
+  assert(stats.values.explosiveDamage === 15 && stats.values.lmgDamage === 10, "demolitionist sheet defaults");
+
+  loadout.specialization = "firewall";
+  stats = computeStats(loadout);
+  assert(stats.values.armorPercent === 10 && stats.values.statusEffects === 10, "firewall sheet defaults");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2172,6 +2307,7 @@ const tests = [
   testY8s3LiveGearTables,
   testY8S3LiveSkillCatalog,
   testY8s3LiveWeaponCatalog,
+  testSpecPerksLiveY8s3,
 ];
 
 let failed = 0;
