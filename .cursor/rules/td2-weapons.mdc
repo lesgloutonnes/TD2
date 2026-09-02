@@ -14,7 +14,10 @@ Y8S3 facts (do not regress):
 - **Boiling Point** is a pickable HE talent (first 53% mag −100% CHC, rest 100%). Perfect (Teapot, Steamer) is 48%.
 - **Steel & Sons ACR** is an exotic ACR SS rifle (`steel-and-sons`), talent Confirm & Execute, max stacks 4, weak-point +30% amp / 5s.
 - **Fafnir**: Dragon's Breath 40% Burn, WD amplified by 50% of Status Effects; locked +15% CHC / +5 mag / +10% handling as `extraStats`. No averaged +WD assumed. RPM/mag unpublished by Ubisoft — do not invent.
-- Do not add Prima Donna / Insult to Injury / Brain Break without an official talent table.
+- **Quickstep** is a named Tactical M1911 pistol (`quickstep`), talent Sport Mode: +20% movement speed while unholstered, does not stack with other MS bonuses. Not a meme seasonal — keep it. Do not model MS as fake Weapon Damage.
+- **Prima Donna** is an exotic Mk20 SSR MMR (`prima-donna`), Paradise Lost, 55 RPM / mag 7, talent You can look... but you can't touch. Out-of-combat stacks are not averaged as Weapon Damage.
+- **Head Scratcher** is a pickable HE talent (30% amp vs confused / 4 kills). Perfect 35% / 3 kills is named-only (Insult to Injury / Brain Break) — do not add those named weapons without official family + RPM/mag.
+- Do not add Insult to Injury / Brain Break without an official talent table.
 - Do not add Perfect-only HE talents (Allegro, Streamline, …) unless they are on the live picker.
 
 Sources: Red Horizon article + live gear PDF. `npm test` after edits.

@@ -38,14 +38,19 @@ Search Ubisoft news for hotfixes after 27 Aug 2026 before assuming launch notes 
 
 Dispatch **one bot per row**. Do not let two bots edit the same file. `calc.test.ts` is the exception: **append-only** (new `test…` function + one line in the `tests` array at the bottom). Never rewrite shared helpers.
 
+Never run **Skills** and **Specialization** in parallel — both live in `skills.ts`. Split the file by section: Skills owns the `SKILLS` array; Specialization owns `SPECIALIZATIONS` and spec helpers.
+
 | Specialist | Owns | Must not touch |
 |---|---|---|
 | Weapons | `src/lib/data/weapons.ts`, `he-weapons.ts`, `weapon-talents.ts`, `weapon-mods.ts` | brands, catalog, gear-sets, talents (gear), skills, season |
 | Gear | `brands.ts`, `gear-sets.ts`, `catalog.ts`, `talents.ts`, `attributes.ts`, `core-lock.ts`, `augments.ts` | weapons, skills, season |
-| Skills | `skills.ts`, `skill-mods.ts` | everything else in `data/` |
+| Skills | `SKILLS` array in `skills.ts`; `skill-mods.ts` | `SPECIALIZATIONS` / spec helpers, weapons, gear, season |
+| Specialization | `SPECIALIZATIONS` + spec helpers in `skills.ts`; `SpecPerksPanel.tsx` only if a new fork needs UI | `SKILLS` array, `skill-mods.ts`, weapons, gear, season |
 | Season | `season-modifiers.ts`; `SeasonActiveId` / `SeasonPassiveId` / `SeasonModifier` in `types.ts`; `SeasonPanel.tsx` only if a **new id** needs UI | weapon/gear/skill data |
 
-Parent/lead: open PRs if a child cannot (this environment’s `gh` is read-only; `ManagePullRequest` is the write path). Do not merge specialist PRs unless the user asks. Land them **one after another** because all four append to `calc.test.ts`.
+Weapons may add a weapon-only `StatKey` (e.g. `movementSpeed`) to `types.ts` + `STAT_LABELS` / `PERCENT_STATS` + `calc.ts` `STAT_KEYS`. Do not add that key to the gear attribute roll pool. Do not run Weapons and Gear in parallel if both would edit `attributes.ts`.
+
+Parent/lead: open PRs if a child cannot (this environment’s `gh` is read-only; `ManagePullRequest` is the write path). Do not merge specialist PRs unless the user asks. Land them **one after another** because specialists append to `calc.test.ts`.
 
 ## After a catalog edit
 
