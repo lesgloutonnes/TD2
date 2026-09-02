@@ -1,5 +1,13 @@
 import type { Brand } from "../types";
 
+/**
+ * Brand 1/2/3pc bonuses, PvE live Y8S3 (TU 2.34).
+ * Source: Ubisoft “Red Horizon Gear Updates” (https://ubi.li/4Yvr2).
+ * Live vs PTS: Airaldi 2pc HSD 26% (PTS 13%), Grupo 3pc HSD 39%;
+ * Murakami omitted from the live table = unchanged Y8S2 (35% Repair / 18% Skill Damage),
+ * not the PTS swap to 13%/52%. PvP numbers in the PDF are ignored (this planner is PvE).
+ */
+
 export const BRANDS: Brand[] = [
   {
     id: "providence",

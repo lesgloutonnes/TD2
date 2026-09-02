@@ -1,5 +1,13 @@
 import type { CoreType, GearSetDef, Slot, StatBonus } from "../types";
 
+/**
+ * Gear sets, PvE live Y8S3 (TU 2.34, Red Horizon).
+ * Red-core rebalance + Ortiz: Exuro + True Patriot from Ubisoft
+ * “Red Horizon Gear Updates” (https://ubi.li/4Yvr2 → canopy PDF, 24 Aug 2026).
+ * Ember Engine 4pc/chest/backpack from the 26 Aug live article (PTS was 20%/40%).
+ * Blue/yellow-core sets were not in this pass unless listed.
+ */
+
 export const GEAR_SETS: GearSetDef[] = [
   {
     id: "striker",
@@ -98,7 +106,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Critical Hit Chance",
     three: "+20% Critical Hit Damage",
-    four: "Crowd Control — critical hits mark enemies (max 3, 20s). Critical hits deal 60% of their damage to other marked targets. Killing a marked target grants +10% Critical Hit Damage (10 stacks).",
+    four: "Crowd Control — critical hits mark enemies (max 3, 20s). Crits deal 60% of that damage to other marked targets. When a marked enemy dies: +10% Critical Hit Damage (10 stacks, until combat ends).",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "chd", value: 20 }],
     fourStats: [{ stat: "chd", value: 100 }],
@@ -119,7 +127,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Marksman Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "Headache — the first Marksman Rifle headshot grants +80% damage to the next shot. The second grants bonus armor. The third grants a reload. After that, all three bonuses are granted on every consecutive headshot.",
+    four: "Headache — first Marksman Rifle headshot: +80% to the next headshot. Second consecutive: +10% armor (bonus armor up to 50% if already full). Third: mag refill. From the fourth consecutive headshot kill, all three bonuses apply. A missed headshot resets the cycle.",
     twoStats: [{ stat: "mmrDamage", value: 30 }],
     threeStats: [
       { stat: "hsd", value: 30 },
@@ -217,7 +225,10 @@ export const GEAR_SETS: GearSetDef[] = [
     three: "+1% Armor Regeneration and +50% Shield Health",
     four: "Makeshift Repairs — 25% of damage taken (by you or your shield) is repaired over 10s.",
     twoStats: [{ stat: "armorPercent", value: 10 }],
-    threeStats: [{ stat: "armorRegenPercent", value: 1 }],
+    threeStats: [
+      { stat: "armorRegenPercent", value: 1 },
+      { stat: "shieldHealth", value: 50 },
+    ],
     fourStats: [{ stat: "armorPercent", value: 5 }],
     fourAssumedNote: "Max Makeshift Repairs modeled as +5% Total Armor equivalent.",
     backpackTalent: {
@@ -263,7 +274,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Status Effects",
     three: "+30% Reload Speed",
-    four: "Rules of Engagement — killing a marked enemy grants Hollow-Point rounds (+40% damage, causes bleed).",
+    four: "Rules of Engagement — shooting a status-affected enemy marks them (10s). Killing a marked enemy grants a full clip of Hollow-Point ammo (+40% amplified weapon damage, bleed on hit) and half a clip to allies.",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
     fourStats: [{ stat: "weaponDamage", value: 40 }],
@@ -284,18 +295,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+15% Weapon Handling",
     three: "+30% Magazine Size",
-    four: "Red, White and Blue — cycling debuffs: +15% incoming damage, 2% repair/s, -10% outgoing damage. Ends with a Full Flag explosion.",
+    four: "Red, White and Blue — every 2s, enemies you shoot receive a stacking debuff: Red +15% damage taken, White 2% armor repair/s, Blue −10% damage dealt. Full Flag: death explosion.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "magazineSize", value: 30 }],
     fourStats: [{ stat: "armorRegenPercent", value: 2 }],
-    fourAssumedNote: "Max white-stripe self-repair: +2% Armor Regeneration. Backpack Patriotic Boost: +5%.",
+    fourAssumedNote: "Max white-stripe self-repair: +2% Armor Regeneration (sheet proxy). Backpack Patriotic Boost: White 2% → 5%. Red/Blue amps are enemy debuffs, not self WD.",
     backpackTalent: {
       name: "Patriotic Boost",
-      description: "Debuffs: 15/2/10 → 30/5/20.",
+      description: "Debuffs: Red 15% → 30%, White 2% → 5%, Blue 10% → 20%.",
     },
     chestTalent: {
       name: "Waving the Flag",
-      description: "Debuff rotation: 1.5s → 1s.",
+      description: "Increases Red, White and Blue rotation speed to 1s (base 4pc is every 2s).",
     },
   },
   {
@@ -305,7 +316,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Marksman Rifle Damage and +30% Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "Dead Man's Hand — flip 5 cards: your next shot is amplified by 75%. A better hand grants more amplified shots.",
+    four: "Dead Man's Hand — flip a card on Rifle or Marksman Rifle hits. After 5 cards, the next shot is amplified by 75%. Better hands grant more amplified shots.",
     twoStats: [
       { stat: "mmrDamage", value: 30 },
       { stat: "rifleDamage", value: 30 },
@@ -333,7 +344,7 @@ export const GEAR_SETS: GearSetDef[] = [
     two: "+20% Signature Weapon Damage",
     three: "+10% Weapon Damage",
     four: "Aggressive Recon — a signature weapon kill grants +15% signature weapon damage for 10s and +25% reload speed. Regenerates signature weapon ammo every 60s.",
-    twoStats: [],
+    twoStats: [{ stat: "signatureWeaponDamage", value: 20 }],
     threeStats: [{ stat: "weaponDamage", value: 10 }],
     fourStats: [{ stat: "weaponDamage", value: 15 }],
     fourAssumedNote: "Max Aggressive Recon: +15% Weapon Damage after a signature kill. Chest: +30%. Backpack: +50% after emptying the signature weapon.",
@@ -363,7 +374,10 @@ export const GEAR_SETS: GearSetDef[] = [
     three: "+40% Disrupt Resistance and Pulse Resistance",
     four: "Hackstep Protocol — replaces your skills with an infinite-use ability (20s): grants 20% armor, 50% bonus armor, and hides your nameplate for 5s.",
     twoStats: [{ stat: "armorOnKill", value: 15 }],
-    threeStats: [{ stat: "pulseResistance", value: 40 }],
+    threeStats: [
+      { stat: "pulseResistance", value: 40 },
+      { stat: "disruptResistance", value: 40 },
+    ],
     fourStats: [{ stat: "armorPercent", value: 20 }],
     fourAssumedNote: "Max Hackstep Protocol window: +20% Total Armor.",
     backpackTalent: {
@@ -407,10 +421,12 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "skillHealth", value: 15 }],
     threeStats: [{ stat: "statusEffects", value: 15 }],
     fourStats: [{ stat: "skillDamage", value: 10 }],
-    fourAssumedNote: "Incinerator Prototype burn contribution approximated as +10% Skill Damage.",
+    fourAssumedNote:
+      "Incinerator Prototype has no standing sheet WD. +10% Skill Damage is a soft proxy only. Heatstroke is +40% amplified damage vs turret-burned targets, not Increased Weapon Damage.",
     backpackTalent: {
       name: "Heatstroke",
-      description: "+40% amplified damage against enemies set on fire by the turret. +25% range.",
+      description:
+        "+40% amplified damage against enemies set on fire by the turret. +25% range. In-game text wrongly says Increased Weapon Damage — the bonus is an amplifier.",
     },
     chestTalent: {
       name: "Chain Combustion",
@@ -445,7 +461,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Rifle Damage and Marksman Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "On Point — gain stacks while firing; reloading grants +2% Weapon Handling and +4% weapon damage per stack for 20s.",
+    four: "On Point — Rifle/MMR hits grant stacks. Reloading grants +2% Weapon Handling and +4% weapon damage per stack for 20s. Timer expiry or a weapon swap while the buff is active refills the magazine.",
     twoStats: [
       { stat: "rifleDamage", value: 30 },
       { stat: "mmrDamage", value: 30 },
@@ -464,7 +480,7 @@ export const GEAR_SETS: GearSetDef[] = [
       description: "On Point damage bonus: 4% → 9%.",
     },
     chestTalent: {
-      name: "Point of no Return",
+      name: "Point of No Return",
       description: "On Point duration: 20s → 40s.",
     },
   },
@@ -579,14 +595,14 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+10% Weapon Damage",
     three: "+30% Weapon Handling",
-    four: "Camaraderie — killing a marked target (10s) grants stacks (3% Weapon Damage + 3% Critical Hit Damage) based on nearby allies and active skills.",
+    four: "Camaraderie — shooting marks an enemy for 10s. When a marked enemy dies, gain 3% Weapon Damage and 3% Critical Hit Damage per contributing ally or skill (including you). Max 35 stacks; 4 marks.",
     twoStats: [{ stat: "weaponDamage", value: 10 }],
     threeStats: [{ stat: "weaponHandling", value: 30 }],
     fourStats: [
-      { stat: "weaponDamage", value: 12 },
-      { stat: "chd", value: 12 },
+      { stat: "weaponDamage", value: 105 },
+      { stat: "chd", value: 105 },
     ],
-    fourAssumedNote: "Max Camaraderie at 4 stacks: +12% Weapon Damage and CHD. Chest 8 stacks. Backpack 6% WD/stack.",
+    fourAssumedNote: "Max Camaraderie: 35 stacks × 3% Weapon Damage and CHD. Chest All for One raises marks (4→8), not the stack cap. Backpack 6% WD/stack.",
     backpackTalent: {
       name: "One for All",
       description: "Weapon damage per stack: 3% → 6%.",
@@ -654,7 +670,8 @@ export const GEAR_SETS: GearSetDef[] = [
     twoStats: [{ stat: "skillEfficiency", value: 8 }],
     threeStats: [{ stat: "statusEffects", value: 30 }],
     fourStats: [{ stat: "statusEffects", value: 10 }],
-    fourAssumedNote: "Spontaneous Combustion extra burn chance: +10% Status Effects.",
+    fourAssumedNote:
+      "Spontaneous Combustion is a 40% Burn proc (60% with Flashpoint) and +25% burn damage if already burning — not a standing Status bonus. +10% Status Effects is a sheet proxy only; not burn DPS.",
     backpackTalent: {
       name: "White Hot",
       description: "Burn damage debuff duration: +50%.",
@@ -825,14 +842,14 @@ export function resolveFourPieceMax(
       };
     }
     case "concentrated-company": {
-      const stacks = chestIsSet ? 8 : 4;
+      const stacks = 35;
       const wdEach = backpackIsSet ? 6 : 3;
       return {
         stats: [
           { stat: "weaponDamage", value: wdEach * stacks },
           { stat: "chd", value: 3 * stacks },
         ],
-        note: `Max Camaraderie: ${stacks} stacks × ${wdEach}% Weapon Damage and 3% CHD.`,
+        note: `Max Camaraderie: ${stacks} stacks × ${wdEach}% Weapon Damage and 3% CHD. All for One raises marks (4→8), not the stack cap.`,
       };
     }
     default: {

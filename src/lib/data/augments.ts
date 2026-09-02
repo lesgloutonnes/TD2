@@ -34,6 +34,7 @@ function linear(level1: number, perLevel: number, level: number): number {
  *   Quantum 1% +0.4 → 4.6% | Amalgam 1.6% +0.3 → 4.3%
  *   Anomaly 4% +0.5 → 8.5% | Synesthesia 5% +1 → 14%
  * Echo was explicitly left unchanged in that patch (still ~1% +0.2 → 2.8%).
+ * Y8S3 Red Horizon (TU 2.34) did not publish new Prototype Augment curves.
  */
 export const AUGMENTS: AugmentDef[] = [
   {
