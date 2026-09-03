@@ -24,6 +24,7 @@ import { defaultWeaponTalentId, weaponTalentByName, weaponTalentsForType } from 
 import { clampExpertise } from "./builder-model";
 import { pieceInspect, weaponInspect } from "./tooltip";
 import { shouldOpenGearPicker } from "./gear-picker";
+import { previewDescribedOption } from "./described-select";
 import {
   SEASON_ACTIVES,
   SEASON_GAUGE_NOTE,
@@ -2697,6 +2698,29 @@ function testOfficialExoticAndGearSetCopy() {
   assert(underboss?.talentDesc.includes("other agents using this weapon"), "Underboss official group marks");
 }
 
+function testTalentHoverPreview() {
+  const creeping = ALL_TALENTS.find((talent) => talent.id === "creeping-death");
+  const overclock = ALL_TALENTS.find((talent) => talent.id === "overclock");
+  assert(creeping && overclock, "Creeping Death and Overclock exist");
+  const options = [
+    { value: creeping.id, label: creeping.name, description: creeping.description },
+    { value: overclock.id, label: overclock.name, description: overclock.description },
+  ];
+  assert(
+    previewDescribedOption(options, "creeping-death", null)?.description === creeping.description,
+    "closed list shows selected talent",
+  );
+  assert(
+    previewDescribedOption(options, "creeping-death", "overclock")?.description ===
+      overclock.description,
+    "hover previews Overclock while Creeping Death is selected",
+  );
+  assert(
+    previewDescribedOption(options, "creeping-death", "") === undefined,
+    "hovering None clears the description",
+  );
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2787,6 +2811,7 @@ const tests = [
   testSeasonLiveGaugeAndHostileNotes,
   testSpecPerksSheetGapsY8s3,
   testOfficialExoticAndGearSetCopy,
+  testTalentHoverPreview,
 ];
 
 let failed = 0;

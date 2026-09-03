@@ -2,7 +2,8 @@
 
 import type { CoreType, GearPiece, Slot, StatKey } from "@/lib/types";
 import { catalogById } from "@/lib/data/catalog";
-import { ALL_TALENTS, talentsForSlot } from "@/lib/data/talents";
+import { talentsForSlot } from "@/lib/data/talents";
+import { DescribedSelect } from "./DescribedSelect";
 import {
   ATTRIBUTE_GROUPS,
   canBePrototype,
@@ -333,28 +334,20 @@ export function PieceEditor({
             )}
 
           {talentOptions.length > 0 && !talentLocked ? (
-            <label className="field">
+            <div className="field">
               <span>Talent</span>
-              <select
+              <DescribedSelect
                 value={piece.talentId ?? ""}
-                onChange={(event) => onChange({ ...piece, talentId: event.target.value })}
-              >
-                <option value="">None</option>
-                {talentOptions
+                onChange={(talentId) => onChange({ ...piece, talentId })}
+                options={talentOptions
                   .filter((talent) => !talent.perfect)
-                  .map((talent) => (
-                    <option key={talent.id} value={talent.id}>
-                      {talent.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          ) : null}
-
-          {piece.talentId && !source?.uniqueTalent ? (
-            <p className="hint">
-              {ALL_TALENTS.find((talent) => talent.id === piece.talentId)?.description}
-            </p>
+                  .map((talent) => ({
+                    value: talent.id,
+                    label: talent.name,
+                    description: talent.description,
+                  }))}
+              />
+            </div>
           ) : null}
         </>
       )}
