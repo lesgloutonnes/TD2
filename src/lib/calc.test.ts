@@ -2715,6 +2715,7 @@ function testTalentHoverPreview() {
   const creeping = ALL_TALENTS.find((talent) => talent.id === "creeping-death");
   const overclock = ALL_TALENTS.find((talent) => talent.id === "overclock");
   assert(creeping && overclock, "Creeping Death and Overclock exist");
+  if (!creeping || !overclock) return;
   const options = [
     { value: creeping.id, label: creeping.name, description: creeping.description },
     { value: overclock.id, label: overclock.name, description: overclock.description },
