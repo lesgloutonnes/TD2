@@ -1,6 +1,7 @@
 import type { StatBonus, WeaponDef } from "../types";
 import { HE_WEAPONS } from "./he-weapons";
 
+/** Named / exotic weapons. Exotic `talentDesc` is official PvE talent text. */
 export const WEAPONS: WeaponDef[] = [
   {
     id: "lexington",
@@ -20,7 +21,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 50,
     talent: "Actum Est",
-    talentDesc: "Perfect Perfectly Fast Hands + periodic Shock ammo. Ideal for Striker / Heartbreaker.",
+    talentDesc:
+      "Shooting an enemy gives 1 stack. At 100 stacks the next magazine is 100% filled with shock ammo.",
     assumed: [{ stat: "weaponHandling", value: 10 }, { stat: "reloadSpeed", value: 15 }],
     assumedNote: "Actum Est / Fast Hands uptime approximated.",
   },
@@ -32,7 +34,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 750,
     mag: 40,
     talent: "Eagle's Strike",
-    talentDesc: "Hits: damage stacks. Headshots: armor stacks. Dark Hours raid.",
+    talentDesc:
+      "Accuracy increases as you continuously fire, up to 30%. Headshot kills grant the Tenacity buff for 15 seconds. The damage reduction of Tenacity is increased by 1% for body shots and 5% for headshots. Tenacity: 40%-80% of damage taken is delayed until the buff expires. All of the total delayed damage is reduced for each enemy killed while the buff is active, up to 100% with 3 kills.",
     assumed: [{ stat: "weaponDamage", value: 15 }, { stat: "armorOnKill", value: 5 }],
     assumedNote: "Eagle stacks assumed mid fight.",
   },
@@ -84,7 +87,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 700,
     mag: 30,
     talent: "Big Game Hunter",
-    talentDesc: "While in cover: switches to a semi-auto mode with very high damage. Iron Horse raid.",
+    talentDesc:
+      "When scoped, switches to semi-automatic mode, dealing 450% weapon damage with each shot. Headshots grant +6% Headshot Damage. Stacks up to 25 times. Once at full stacks, 10 stacks decay every 4 seconds until all stacks have been removed. Headshots delay decaying of stacks.",
     assumed: [{ stat: "weaponDamage", value: 20 }],
     assumedNote: "Big Game Hunter while planted in cover.",
   },
@@ -97,7 +101,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Adaptive Instincts",
     talentDesc:
-      "Body shots / headshots / critical hits build stacks of Critical Hit Chance, Critical Hit Damage, and rate of fire bonuses.",
+      "Hitting 30 headshots grants 20% Critical Hit Chance and 50% Critical Hit Damage for 45 seconds. Hitting 65 body shots grants 90% Weapon Damage for 45 seconds. Hitting 20 leg shots grants 150% Reload Speed for 45 seconds. Exiting combat refreshes timer on all active buffs.",
     assumed: [{ stat: "chc", value: 10 }, { stat: "chd", value: 15 }],
     assumedNote: "Chameleon buffs assumed mid distance.",
   },
@@ -109,7 +113,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 700,
     mag: 40,
     talent: "Capacitance",
-    talentDesc: "Firing builds stacks of skill damage. Skill DPS build.",
+    talentDesc:
+      "Shooting enemies builds stacks to a cap of 40. Each stack grants 1.5% Skill Damage. After 5 seconds, stacks decay 1 per second. For each Skill Tier core attribute gain 7.5% Weapon Damage.",
     assumed: [{ stat: "skillDamage", value: 40 }],
     assumedNote: "Max Capacitance stacks (+40% Skill Damage).",
   },
@@ -121,7 +126,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 610,
     mag: 75,
     talent: "Plague of the Outcasts",
-    talentDesc: "Hits apply a DoT. On death, the DoT spreads.",
+    talentDesc:
+      "Hits apply a debuff dealing 100% weapon damage over 10 seconds. This stacks up to 50 times. Whenever an enemy dies with this debuff, all stacks are transferred to a nearby enemy within 25 meters.",
     assumed: [{ stat: "statusEffects", value: 12 }, { stat: "weaponDamage", value: 8 }],
     assumedNote: "Plague of the Outcasts DoT spread averaged.",
   },
@@ -163,7 +169,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1000,
     mag: 200,
     talent: "Bullet Hell",
-    talentDesc: "No reloading. Overheats instead.",
+    talentDesc:
+      "This weapon never needs to be reloaded. For every 100 bullets that hit an enemy, replenish one magazine worth of ammo to you and all your allies' ammo reserves.",
   },
   {
     id: "vector",
@@ -202,8 +209,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 900,
     mag: 50,
-    talent: "In sync",
-    talentDesc: "Kills reload the magazine and increase rate of fire. Damage stacks increase at close range.",
+    talent: "Incessant Chatter",
+    talentDesc:
+      "When you reload, rate of fire is increased by 25% for each enemy within 15 meters for the duration of that magazine. Max stacks: 5. Kills refill 50% of your magazine.",
   },
   {
     id: "backfire",
@@ -212,8 +220,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 750,
     mag: 40,
-    talent: "Adaptive Instincts",
-    talentDesc: "High Critical Hit Chance, but applies Bleed to yourself. More Critical Hit Damage while bleeding.",
+    talent: "Payment in Kind",
+    talentDesc:
+      "Dealing damage to enemies adds a stack of 2% Critical Hit Damage. Stacks last for 10s and are capped to 100. On reload, applies a 10s bleed to yourself which deals 0.5% armor damage per stack.",
   },
   {
     id: "acs-12",
@@ -232,8 +241,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 70,
     mag: 8,
-    talent: "Sandman",
-    talentDesc: "Hits apply rotating status effects, followed by a Disrupt burst. Excellent utility.",
+    talent: "Septic Shock",
+    talentDesc:
+      "Shooting a target applies stacks of venom, which last for 10s. Increasing stacks adds more severe debuffs to the target. 1: Poison. 3: Disorient. 6: Shock. 7: Target takes 20% damage from all sources. Stacks no longer increase. Duration of Status Effects is based on percentage of pellets hit on applying shot.",
   },
   {
     id: "rock-n-roll",
@@ -272,8 +282,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 30,
     mag: 5,
-    talent: "Magnetic Scope",
-    talentDesc: "The longer you aim, the more the shot's damage increases before exploding. Dark Hours raid.",
+    talent: "Electromagnetic Accelerator",
+    talentDesc:
+      "Shots fired deal 0-100% weapon damage based on how long the trigger is held before releasing.",
   },
   {
     id: "m1a",
@@ -303,7 +314,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 10,
     talent: "Agonizing Bite",
-    talentDesc: "Marks a target. Killing the marked target grants a damage buff and marks a new target.",
+    talentDesc:
+      "Diamondback randomly marks an enemy within 20m. If no enemies are within 20m, it marks the closest enemy to you. Hitting that enemy consumes the mark, guaranteeing a critical hit and amplifying damage of the hit by 20%. After hitting a mark, all shots fired are guaranteed critical hits for 5 seconds. A new random enemy is marked afterwards and whenever you reload.",
   },
   {
     id: "liberty",
@@ -313,7 +325,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 110,
     mag: 7,
     talent: "Liberty or Death",
-    talentDesc: "Hits: stacks. At 5 stacks, the next shot ignores armor and repairs it.",
+    talentDesc:
+      "Hits grant +2% Weapon Damage. Stacks up to 30. Headshots consume all stacks, repairing your shield for 3% per stack.",
   },
   {
     id: "regulus",
@@ -323,7 +336,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 160,
     mag: 6,
     talent: "Regicide",
-    talentDesc: "Massive headshot damage, knockback. Iron Horse raid.",
+    talentDesc:
+      "Headshot kills create a 5m explosion, dealing 400% weapon damage and applying bleed to all enemies hit.",
   },
   {
     id: "d50",
@@ -390,7 +404,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 40,
     talent: "Caduceus",
     talentDesc:
-      "Every critical hit heals you and nearby allies for 3% of the damage dealt. Mods: Critical Hit Chance / Critical Hit Damage / 40-round magazine.",
+      "Critical hits repair you and your allies for 1.5% of the hit's dealt damage.",
   },
   {
     id: "strega",
@@ -399,8 +413,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 900,
     mag: 30,
-    talent: "Witchcraft",
-    talentDesc: "Builds damage stacks based on hits. Reloading consumes the stacks for a burst of damage.",
+    talent: "Unnerve",
+    talentDesc:
+      "Killing an enemy will apply a mark on every enemy within 20m. Multiple marks can be applied to the same enemy. Max number of marks that can be applied to an enemy is 5. All marks on an enemy will disappear 10s after the last one has been applied. Deal +15% Amplified Damage per mark to marked enemies.",
   },
   {
     id: "shield-splinterer",
@@ -512,7 +527,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1500,
     mag: 50,
     talent: "Rule Them All",
-    talentDesc: "Extreme rate of fire, damage stacks. Paradise Lost incursion.",
+    talentDesc:
+      "When the agent has a Status Effect applied to them, 50% of the ammo in their next magazine will apply the same Status Effect to their targets. This effect will only occur during combat.",
   },
   {
     id: "lady-death",
@@ -522,7 +538,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 1050,
     mag: 40,
     talent: "Breathe Free",
-    talentDesc: "Sprinting builds stacks of close-quarters damage. Reload while sprinting.",
+    talentDesc:
+      "When moving, gains 4 stacks per second or 8 stacks if sprinting. Max stack is equal to the weapon's Mag Size. Each round fired consumes a stack, amplifying damage by 75%. Kills grant +20% Movement Speed for 10 seconds.",
   },
   {
     id: "oxpecker",
@@ -532,7 +549,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 900,
     mag: 32,
     talent: "Symbiosis",
-    talentDesc: "Skill damage and weapon damage buff each other.",
+    talentDesc:
+      "While having a Shield deployed, lose Shield Health at a rate of 10% per second. Your Shield receives repairs of 25% of the damage dealt by this weapon.",
   },
   {
     id: "the-apartment",
@@ -562,7 +580,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 500,
     mag: 100,
     talent: "Cover Shooter",
-    talentDesc: "While in cover: builds damage stacks up to a high cap.",
+    talentDesc:
+      "Every bullet fired while in cover increases Weapon Damage by 1% up to 100%. The bonus lasts for 15s. Getting a kill with this weapon while in cover resets the duration. The bonus damage is cancelled by reloading, swapping weapons or exiting combat.",
   },
   {
     id: "bluescreen",
@@ -572,7 +591,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 650,
     mag: 50,
     talent: "Disruptor Rounds",
-    talentDesc: "Hits apply Disrupt. Enemy skills become more fragile.",
+    talentDesc:
+      "Shooting an enemy marks them and adds a stack to a count of 50. Shooting a marked enemy refreshes the mark and adds stacks to the agent. When you deploy a non-shield skill, remove all stacks on agent and all marked targets trigger an effect. 1-10 stacks: Pulse marked targets for 5 seconds. 11-25: Pulse and Disrupt. 26-49: Pulse, Disrupt and Disorient. 50: Pulse, Disrupt and Disorient marked targets and all hostiles within 10 meters of the marked targets for 5 seconds. This effect will trigger immediately if any marked enemy is killed.",
   },
   {
     id: "pakhan",
@@ -581,8 +601,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 600,
     mag: 150,
-    talent: "Overwhelming Force",
-    talentDesc: "Large magazine, builds damage stacks while holding the trigger.",
+    talent: "Pakhan",
+    talentDesc:
+      "Each kill with this weapon gains a stack of 75% Base Magazine Size increase to the next magazine, up to 4 stacks.",
   },
   {
     id: "good-times",
@@ -632,7 +653,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 14,
     talent: "Binary Trigger",
-    talentDesc: "Fires on both trigger pull and release. Causes explosions on repeated hits.",
+    talentDesc:
+      "This weapon fires on trigger pull and release. If both bullets hit the same enemy, gain a stack. At 7 stacks, shooting an enemy deals 500% amplified damage and creates a 7m explosion dealing 500% weapon damage, consuming the stacks.",
   },
   {
     id: "ravenous",
@@ -641,8 +663,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 275,
     mag: 20,
-    talent: "Designated Target",
-    talentDesc: "Marks a target, dealing explosive area damage. Iron Horse raid.",
+    talent: "Geri and Freki",
+    talentDesc:
+      "On trigger pull, fire both barrels at once. When fired from the right shoulder, hits add offensive primers. When fired from the left shoulder, hits add defensive primers. Hits from one shoulder will detonate all of the opposite shoulder's primers when present. When detonated or affected enemy is killed, each offensive primer deals 100% weapon damage, while each defensive primer grants 4% bonus armor and 10% amplified damage to armor plates for 5s. Primer effectiveness is doubled at 10 stacks.",
   },
   {
     id: "doctor-home",
@@ -651,8 +674,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 300,
     mag: 20,
-    talent: "House Call",
-    talentDesc: "Hits heal or buff depending on context. Manhunt reward.",
+    talent: "Doctor Home",
+    talentDesc:
+      "Shooting an enemy with this weapon will apply a mark for 5 seconds. If a marked target is killed it will drop a 10% armor repair kit which applies to the whole party. The kit will not give bonus armor.",
   },
   {
     id: "vindicator",
@@ -661,8 +685,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 400,
     mag: 20,
-    talent: "Vindicated",
-    talentDesc: "Builds damage stacks while holding down the trigger. Purchasable from Descent (NSA Tech).",
+    talent: "Ortiz Assault Interface",
+    talentDesc:
+      "While scoped, the weapon will highlight a random body section of each enemy. The weapon amplifies damage by +60% Weapon Damage to highlighted enemy's body sections.",
   },
   {
     id: "harmony",
@@ -722,7 +747,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 75,
     mag: 8,
     talent: "Sandman",
-    talentDesc: "Melee takes enemies out of combat. High close-quarters shotgun damage.",
+    talentDesc:
+      "Melee attacks instantly kill non-elite enemies. Cooldown: 15 seconds.",
   },
   {
     id: "enforcer",
@@ -741,8 +767,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 60,
     mag: 5,
-    talent: "Mantis",
-    talentDesc: "Holding aim builds a headshot damage multiplier. Manhunt reward.",
+    talent: "In Plain Sight",
+    talentDesc:
+      "Your scoped view displays additional information about enemies not targeting you. Your scoped view highlights weakpoints. Headshot and weakpoint damage against enemies not targeting you is amplified by 50%. Headshot kills reset the cooldown of your Decoy Skill. This bonus will wait until your current decoy goes on cooldown if currently active.",
   },
   {
     id: "pinprick",
@@ -764,7 +791,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 8,
     talent: "Faster Than Reloading",
     talentDesc:
-      "Swapping to this pistol instantly reloads your primary and secondary weapons. Year 8 Season 1 Pentagon Climax reward.",
+      "Having this weapon holstered for 5s reloads and primes it. While primed, swapping to this weapon reloads your Primary and Secondary weapons and grants +20% Rate of Fire and +50% Weapon Damage until its magazine is emptied. Reloading or swapping from this weapon before its magazine is emptied will remove its stat bonuses.",
   },
   {
     id: "busy-little-bee",
@@ -773,8 +800,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 1100,
     mag: 20,
-    talent: "Hive Mind",
-    talentDesc: "Fully automatic pistol. Hits empower your Hive / Drone.",
+    talent: "Busy Little Bee",
+    talentDesc:
+      "Each shot to a different target will give 1 stack, up to 10 max, with each stack giving 20% Weapon Damage increase. Stacks will activate once the weapon is switched and will last for 10 seconds. Changing weapon again during the said 10 seconds will cancel the buff.",
   },
   {
     id: "tempest",
@@ -783,8 +811,9 @@ export const WEAPONS: WeaponDef[] = [
     quality: "exotic",
     rpm: 300,
     mag: 15,
-    talent: "Storm Surge",
-    talentDesc: "Applies Shock and area damage on headshots. Manhunt reward.",
+    talent: "Restrained",
+    talentDesc:
+      "The pistol is fully automatic and deals +25% Amplified Damage for 20s after your Shield gets broken.",
   },
   {
     id: "orbit",
@@ -894,7 +923,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 850,
     mag: 30,
     talent: "Perturb",
-    talentDesc: "Holstered: -50% threat. Primed for 10 seconds: swapping to this weapon grants rate of fire, damage, and applies Shock.",
+    talentDesc:
+      "While this weapon is holstered, generate 50% less Threat when shooting. Keeping this weapon holstered for 10s will prime it. While primed, swapping to this weapon grants +25% Rate of Fire, +30% Weapon Damage and you generate 100% more Threat when shooting for 20s. Swapping from this weapon before the timer ends removes the bonuses.",
   },
   {
     id: "dare",
@@ -1255,7 +1285,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 300,
     mag: 10,
     talent: "Transfusion",
-    talentDesc: "Headshots: builds stacks. Shooting an ally or skill repairs it based on stacks.",
+    talentDesc:
+      "Hitting headshots builds stacks, up to a max of 8. When shooting an Ally or Skill, repair them for 50% of the weapon's Total Damage value for each stack. Healed Allies will receive 50% of your Repair Skills bonus as Bonus Armor for each stack for 10s. All hits are guaranteed headshots for 8s after healing an Ally or Skill while at maximum stacks.",
   },
   {
     id: "ekims-long-stick",
@@ -1348,7 +1379,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 60,
     mag: 7,
     talent: "High Priority Target",
-    talentDesc: "+125% weapon damage against the highest-ranking enemy still in combat.",
+    talentDesc:
+      "Amplifies Weapon Damage by 125% to the highest ranking enemies within the Tier hierarchy. Tier 1: Hunter, Rogue, Leader, Tank, Shield, Heavy Weapons, RPG, Medic, Controller, Warhound, Marauder. Tier 2: Support, Engineer, Bodyguard, Immobilizer, Bomber, Mini Tank, Drone Operator. Tier 3: Any other enemy or skill proxy.",
   },
   {
     id: "prophet",
@@ -1431,7 +1463,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 310,
     mag: 15,
     talent: "Mosquito Song",
-    talentDesc: "5 shared stacks: the target aggros you for 5 seconds and takes +25% damage to armor.",
+    talentDesc:
+      "Hitting an enemy applies a stack. Stacks are shared between players. At 5 stacks, the enemy will forcefully target the last player to apply a stack for 5s and take 25% more damage to armor. Stacks deplete every 5s. Activating the effect on an enemy will remove all stacks from other enemies.",
   },
   {
     id: "dread-edict",
@@ -1442,7 +1475,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 10,
     talent: "Full Stop",
     talentDesc:
-      "Hits build stacks (20 max; headshots grant 2). Each stack: +2% weapon damage and +5% Headshot Damage. Reloading converts stacks into bonus armor. Headshot kills refill the magazine.",
+      "Shooting enemies builds stacks to a cap of 20. Headshots grant 2 stacks. Each stack grants 2% Weapon Damage and 5% Headshot Damage. On reload, clear all stacks and gain 5% of your max Armor as temporary armor for 10 seconds for each stack removed. Headshot kills with Dread Edict restore all bullets in the magazine. This does not count as a reload.",
     assumed: [{ stat: "weaponDamage", value: 20 }, { stat: "hsd", value: 25 }],
     assumedNote: "Full Stop assumed at mid stacks.",
   },
@@ -1455,7 +1488,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 20,
     talent: "The Trap",
     talentDesc:
-      "Scoping tags up to 10 enemies after 2s. Headshot-killing a tagged target applies Burn (10s) and slows other tagged enemies by 50% (20% in PvP). Cooldown 30s, −10s per extra headshot kill.",
+      "Tags enemies when in scope (maximum 10). Killing any marked target with a headshot applies 10 seconds Burn Status Effect and gives a 50% Movement Speed decrease on all other targets. Cooldown is 30 seconds. Killing another enemy with a headshot shortens the cooldown by 10 seconds. Targets are marked after 1 second in scope.",
   },
   {
     id: "overlord",
@@ -1465,7 +1498,8 @@ export const WEAPONS: WeaponDef[] = [
     rpm: 70,
     mag: 14,
     talent: "Capitulate",
-    talentDesc: "Each pellet hit slows the target by 4% for 5 seconds. Stacks with additional pellets.",
+    talentDesc:
+      "Hitting an enemy will apply a stack of -4% Movement Speed for each pellet hit for 5 seconds. Shooting the enemy again will reapply the stacks.",
   },
   {
     id: "sheriff",
@@ -1476,7 +1510,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 8,
     talent: "Autentico",
     talentDesc:
-      "Permanent +35% weapon damage, +100% accuracy, and no damage drop-off. Super 90. Year 7 Season 3 Mutiny Climax (United Ironworks).",
+      "+35% Weapon Damage. +100% Accuracy. No Damage Drop Off. These bonuses are built into the weapon's base stats.",
     extraStats: [{ stat: "accuracy", value: 100 }],
     assumed: [{ stat: "weaponDamage", value: 35 }],
     assumedNote: "Autentico is a permanent passive (+35% WD, +100% accuracy, no drop-off).",
@@ -1491,7 +1525,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 32,
     talent: "Gangland Hit",
     talentDesc:
-      "Hits mark a target (+20% amplified damage). Extra marks on the same target add +5% each (4 max in a group). One mark at a time; shooting another enemy transfers it. Year 8 Season 2 Into the Dark Climax.",
+      "Shooting an enemy with this weapon applies a mark. You can only apply one mark at a time. Shooting another enemy will transfer the mark. More marks can be applied on the same enemy by other agents using this weapon. Maximum amount of marks that can be applied on an enemy is 4. This weapon deals +20% Amplified Damage to marked enemies. The bonus is increased by 5% for each extra mark on the enemy other than your own.",
     extraStats: [{ stat: "chc", value: 15 }],
     assumed: [{ stat: "weaponDamage", value: 20 }],
     assumedNote: "Gangland Hit assumed on a marked target. Locked optic +15% Critical Hit Chance is extraStats.",
@@ -1505,7 +1539,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 30,
     talent: "Confirm & Execute",
     talentDesc:
-      "Body shots add 1 stack to the enemy for 10s. Max stacks: 4. Hitting a different enemy removes all stacks. This weapon deals +4% Amplified Damage per stack. Your next headshot on an enemy with stacks consumes all stacks, dealing +11% Amplified Damage per stack. Destroying an enemy's weakpoint causes them to take +30% Amplified Damage from you for 5s. Broken Rain incursion (ACR SS).",
+      "Body shots add 1 stack to the enemy for 10s. Max stacks: 4. Hitting a different enemy removes all stacks. This weapon deals +4% Amplified Damage per stack. Your next headshot on an enemy with stacks consumes all stacks, dealing +11% Amplified Damage per stack. Destroying an enemy's weakpoint causes them to take +30% Amplified Damage from you for 5s.",
     extraStats: [
       { stat: "chc", value: 15 },
       { stat: "magazineSize", value: 10 },
@@ -1525,7 +1559,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 8,
     talent: "Sandman",
     talentDesc:
-      "Melee takes non-elites out of combat. Functionally the same as Sweet Dreams (pre-order / Capitol Defender variant).",
+      "Melee attacks instantly kill non-elite enemies. Cooldown: 15 seconds.",
   },
   {
     id: "ruthless",
@@ -1536,7 +1570,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 14,
     talent: "Binary Trigger",
     talentDesc:
-      "Fires on both trigger pull and release. Causes explosions on repeated hits. Functionally the same as Merciless (Ultimate Edition variant).",
+      "This weapon fires on trigger pull and release. If both bullets hit the same enemy, gain a stack. At 7 stacks, shooting an enemy deals 500% amplified damage and creates a 7m explosion dealing 500% weapon damage, consuming the stacks.",
   },
   {
     id: "first-sight",
@@ -1633,7 +1667,7 @@ export const WEAPONS: WeaponDef[] = [
     mag: 7,
     talent: "You can look... but you can't touch",
     talentDesc:
-      "When out of combat, receive 10 stacks. This weapon deals +12.5% Amplified Damage per stack. 1 stack is automatically consumed to fully repair one instance of damage you receive. 1 stack replenishes every 3s. Paradise Lost incursion (Mk20 SSR variant).",
+      "When out of combat, receive 10 stacks. This weapon deals +12.5% Amplified Damage per stack. 1 stack is automatically consumed to fully repair one instance of damage you receive. 1 stack replenishes every 3s.",
     assumedNote:
       "Out-of-combat stacks (10 × 12.5% amp) and the on-hit repair consume are not averaged as Weapon Damage. PvE values only.",
   },

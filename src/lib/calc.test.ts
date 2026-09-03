@@ -2594,6 +2594,109 @@ function testSpecPerksSheetGapsY8s3() {
   assert(computeStats(loadout).values.weaponDamage === 0, "no invented Weapon Damage from spec tree");
 }
 
+/** Homemade picker blurbs must not leak into exotic / gear-set talent text. */
+function testOfficialExoticAndGearSetCopy() {
+  const homemade = /Ideal for|Excellent |Skill DPS build|Drops from:|Toxic DZ|hybrid piece|CQC crowd/;
+  for (const item of NAMED_AND_EXOTICS) {
+    if (item.kind !== "exotic" || !item.uniqueTalent) continue;
+    assert(
+      !homemade.test(item.uniqueTalent.description),
+      `${item.id} talent is homemade: ${item.uniqueTalent.description.slice(0, 80)}`,
+    );
+  }
+  for (const weapon of WEAPONS) {
+    if (weapon.quality !== "exotic") continue;
+    assert(
+      !homemade.test(weapon.talentDesc),
+      `${weapon.id} talentDesc is homemade: ${weapon.talentDesc.slice(0, 80)}`,
+    );
+  }
+
+  const coyote = catalogById("coyotes-mask");
+  assert(coyote?.uniqueTalent?.name === "Pack Instincts", "Coyote Pack Instincts");
+  assert(
+    coyote?.uniqueTalent?.description.includes("0-15m") &&
+      coyote.uniqueTalent.description.includes("25%") &&
+      coyote.uniqueTalent.description.includes("Critical Hit Damage"),
+    "Coyote official range bands",
+  );
+
+  const memento = catalogById("memento");
+  assert(memento?.uniqueTalent?.name === "Kill Confirmed", "Memento Kill Confirmed");
+  assert(memento?.uniqueTalent?.description.includes("trophy"), "Memento trophies");
+  assert(memento?.uniqueTalent?.description.includes("30"), "Memento 30 stacks");
+
+  const ninja = catalogById("ninjabike");
+  assert(
+    ninja?.uniqueTalent?.description.includes("Gear Set") &&
+      ninja.uniqueTalent.description.includes("Brand Set"),
+    "NinjaBike Resourceful official",
+  );
+
+  const catalyst = catalogById("catalyst");
+  assert(catalyst?.uniqueTalent?.name === "Chemical Agent", "Catalyst Chemical Agent");
+  assert(catalyst?.uniqueTalent?.description.includes("15 meters"), "Catalyst official 15m Catalysis radius");
+  assert(!catalyst?.uniqueTalent?.description.includes("25 meters"), "Catalyst is not 25m");
+
+  const ridgeway = catalogById("ridgeways-pride");
+  assert(ridgeway?.uniqueTalent?.name === "Bleeding Edge", "Ridgeway Bleeding Edge");
+  assert(ridgeway?.uniqueTalent?.description.includes("15m"), "Bleeding Edge 15m");
+
+  const waveform = catalogById("waveform");
+  assert(waveform?.uniqueTalent?.name === "Alternating Current", "Waveform Alternating Current");
+
+  const nurse = catalogById("nurses-kneepads");
+  assert(nurse?.uniqueTalent?.name === "Impervious", "Nurse Impervious");
+  assert(nurse?.uniqueTalent?.description.includes("40% Hazard Protection"), "Impervious 40%");
+
+  const tinkerer = catalogById("tinkerer");
+  assert(tinkerer?.uniqueTalent?.name === "Abridged", "Tinkerer Abridged");
+
+  const heartbreaker = GEAR_SETS.find((set) => set.id === "heartbreaker");
+  assert(heartbreaker?.four.includes("+1% weapon damage"), "Heartstopper official 1% WD/stack");
+  assert(!heartbreaker?.four.includes("1.1%"), "Heartstopper is not 1.1%");
+
+  const striker = GEAR_SETS.find((set) => set.id === "striker");
+  assert(striker?.four.startsWith("Striker's Gamble"), "Striker 4pc named");
+  assert(striker?.four.includes("0.65%"), "Striker official 0.65%");
+  assert(
+    striker?.backpackTalent.description.includes("from 0.65% to 1%"),
+    "Risk Management official live 1%",
+  );
+  assert(
+    !striker?.backpackTalent.description.includes("0.65% → 1%"),
+    "no homemade arrow shorthand on Striker backpack",
+  );
+
+  const umbra = GEAR_SETS.find((set) => set.id === "umbra");
+  assert(umbra?.four.includes("1.2% Critical Hit Damage"), "Umbra official per-stack CHD");
+  assert(
+    umbra?.chestTalent.description.includes("From the Shadows"),
+    "Umbra chest buffs From the Shadows",
+  );
+  assert(
+    umbra?.backpackTalent.description.includes("Into the Light"),
+    "Umbra backpack buffs Into the Light",
+  );
+
+  const elmo = WEAPONS.find((weapon) => weapon.id === "st-elmo");
+  assert(elmo?.talent === "Actum Est", "Elmo Actum Est");
+  assert(elmo?.talentDesc.includes("shock ammo"), "Elmo official shock ammo");
+  assert(!elmo?.talentDesc.includes("Ideal for"), "Elmo no build advice");
+
+  const eagle = WEAPONS.find((weapon) => weapon.id === "eagle-bearer");
+  assert(eagle?.talent === "Eagle's Strike", "Eagle Bearer Eagle's Strike");
+
+  const chatterbox = WEAPONS.find((weapon) => weapon.id === "chatterbox");
+  assert(chatterbox?.talent === "Incessant Chatter", "Chatterbox official talent name");
+
+  const backfire = WEAPONS.find((weapon) => weapon.id === "backfire");
+  assert(backfire?.talent === "Payment in Kind", "Backfire official talent name");
+
+  const underboss = WEAPONS.find((weapon) => weapon.id === "underboss");
+  assert(underboss?.talentDesc.includes("other agents using this weapon"), "Underboss official group marks");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -2683,6 +2786,7 @@ const tests = [
   testY8S3SkillPveSheetGaps,
   testSeasonLiveGaugeAndHostileNotes,
   testSpecPerksSheetGapsY8s3,
+  testOfficialExoticAndGearSetCopy,
 ];
 
 let failed = 0;

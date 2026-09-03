@@ -5,6 +5,8 @@ import type { CoreType, GearSetDef, Slot, StatBonus } from "../types";
  * Red-core rebalance + Ortiz: Exuro + True Patriot from Ubisoft
  * “Red Horizon Gear Updates” (https://ubi.li/4Yvr2 → canopy PDF, 24 Aug 2026).
  * Ember Engine 4pc/chest/backpack from the 26 Aug live article (PTS was 20%/40%).
+ * 4pc / chest / backpack talent wording is official PvE text (Ubisoft talent tables),
+ * with live Y8S3 numbers overlaid where Red Horizon changed them.
  * Blue/yellow-core sets were not in this pass unless listed.
  */
 
@@ -16,18 +18,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Weapon Handling",
     three: "+15% Rate of Fire",
-    four: "Striker's Gamble — every hit increases total weapon damage by 0.65% (100 stacks). Stacks decay out of combat.",
+    four: "Striker's Gamble — Weapon hits increase total weapon damage by 0.65%, stacking up to 100 times. 1 stack lost per second between 0 and 50 stacks; 2 stacks lost per second between 51 and 100 stacks.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "rateOfFire", value: 15 }],
     fourStats: [{ stat: "weaponDamage", value: 65 }],
     fourAssumedNote: "Max 100 stacks × 0.65% = +65% Weapon Damage. Chest 200 stacks. Backpack 1%/stack.",
     backpackTalent: {
       name: "Risk Management",
-      description: "Damage per Striker's Gamble stack: 0.65% → 1%.",
+      description: "Increases total weapon damage gained per stack of Striker's Gamble from 0.65% to 1%.",
     },
     chestTalent: {
       name: "Press the Advantage",
-      description: "Max Striker's Gamble stacks: 100 → 200.",
+      description: "Increases max stacks for Striker's Gamble from 100 to 200. 3 stacks lost per second between 101 and 200 stacks.",
     },
   },
   {
@@ -37,7 +39,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+15% Assault Rifle Damage and LMG Damage",
     three: "+15% Weapon Handling",
-    four: "Heartstopper — headshots pulse the enemy. Hits on pulsed targets grant 1% bonus armor and 1% weapon damage (50 stacks).",
+    four: "Heartstopper — Headshots apply pulse for 5s. Weapon hits on pulsed enemies add and refresh a stack of +1% bonus armor and +1% weapon damage to pulsed enemies for 5s. Max stack is 50. Two stacks are lost per second.",
     twoStats: [
       { stat: "arDamage", value: 15 },
       { stat: "lmgDamage", value: 15 },
@@ -47,11 +49,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max 50 Heartstopper stacks (+50% Weapon Damage). Chest Max BPM: 100 stacks.",
     backpackTalent: {
       name: "Cold",
-      description: "Bonus armor per stack: 1% → 2%.",
+      description: "Increases total bonus armor gained per stack of Heartstopper from 1% to 2%.",
     },
     chestTalent: {
       name: "Max BPM",
-      description: "Max Heartstopper stacks: 50 → 100.",
+      description: "Increases max stacks for Heartstopper from 50 to 100.",
     },
   },
   {
@@ -61,18 +63,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Critical Hit Chance",
     three: "+30% Reload Speed",
-    four: "From the Shadows / Into the Light — gain stacks while in cover (Critical Hit Damage + Rate of Fire) and out of cover (Armor Regeneration).",
+    four: "From the Shadows / Into the Light — While in cover, gain 10 stacks per second up to 50. Each stack grants 1.2% Critical Hit Damage and 0.4% Rate of Fire. Buff does not apply while shooting from cover. While out of cover and in combat, gain 10 stacks per second up to 50. Each stack grants 0.8% Armor Regeneration when consumed. Stacks consume 10 per second, only in cover. While out of cover, lose 2 stacks per second, or 1 stack per second if sprinting.",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
     fourStats: [{ stat: "chd", value: 50 }, { stat: "rateOfFire", value: 15 }],
     fourAssumedNote: "Max From the Shadows (in cover): 50 stacks modeled as +50% CHD / +15% RoF. Chest doubles the cap.",
     backpackTalent: {
       name: "Into the Light",
-      description: "Max Into the Light stacks: 50 → 100, gain and consumption doubled.",
+      description: "Increases max stacks for Into the Light from 50 to 100, stack gain from 10 to 20 and stack consumption from 10 to 20.",
     },
     chestTalent: {
       name: "From the Shadows",
-      description: "Max From the Shadows stacks: 50 → 100, gain doubled.",
+      description: "Increases max stacks for From the Shadows from 50 to 100 and stack gain from 10 to 20.",
     },
   },
   {
@@ -82,7 +84,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Shotgun Damage and SMG Damage",
     three: "+20% Armor on Kill and +50% Health on Kill",
-    four: "Apex Predator — +20% weapon damage against enemies within 15m. On kill: disorient enemies and gain +5% damage (5 stacks, 10s).",
+    four: "Apex Predator — Enemies within 15m receive a debuff, amplifying your weapon damage against them by +20%. Killing a debuffed enemy with your weapon disorients other enemies within 5m, and amplifies weapon damage by 5% for 10s, stacking up to 5 times.",
     twoStats: [
       { stat: "shotgunDamage", value: 15 },
       { stat: "smgDamage", value: 15 },
@@ -92,11 +94,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Apex Predator: +20% Weapon Damage in CQC plus 5 stacks × 5%.",
     backpackTalent: {
       name: "Overwhelming Force",
-      description: "Disorient radius: 5m → 10m.",
+      description: "Increases the radius of disorient on Apex Predator kills from 5m to 10m.",
     },
     chestTalent: {
       name: "Endless Hunger",
-      description: "Apex Predator stack duration: 10s → 30s.",
+      description: "Increases the duration of Apex Predator stacks from 10s to 30s.",
     },
   },
   {
@@ -106,18 +108,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Critical Hit Chance",
     three: "+20% Critical Hit Damage",
-    four: "Crowd Control — critical hits mark enemies (max 3, 20s). Crits deal 60% of that damage to other marked targets. When a marked enemy dies: +10% Critical Hit Damage (10 stacks, until combat ends).",
+    four: "Crowd Control — Critical hits mark enemies for 20s, up to 3 marks total. When you critically hit a marked enemy, all other marked enemies take 60% of the damage dealt. Whenever a marked enemy dies, gain +10% Critical Hit Damage, stacking up to 10 times, or until combat ends.",
     twoStats: [{ stat: "chc", value: 15 }],
     threeStats: [{ stat: "chd", value: 20 }],
     fourStats: [{ stat: "chd", value: 100 }],
     fourAssumedNote: "Max Crowd Control kill stacks: 10 × +10% Critical Hit Damage.",
     backpackTalent: {
       name: "Critical Measures",
-      description: "Damage dealt to other marked targets: 60% → 100%.",
+      description: "Increases Crowd Control damage to additional marked enemies from 60% to 100%.",
     },
     chestTalent: {
       name: "Target Rich Environment",
-      description: "Max marks: 3 → 5.",
+      description: "Increases Crowd Control mark count from 3 to 5.",
     },
   },
   {
@@ -127,7 +129,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Marksman Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "Headache — first Marksman Rifle headshot: +80% to the next headshot. Second consecutive: +10% armor (bonus armor up to 50% if already full). Third: mag refill. From the fourth consecutive headshot kill, all three bonuses apply. A missed headshot resets the cycle.",
+    four: "Headache — First headshot with a Marksman Rifle will increase next headshot by 80%. Second consecutive headshot with a Marksman Rifle will give +10% armor (if at full armor it will give bonus armor, max +50% of current armor value). Third consecutive headshot will refill magazine. From the fourth headshot forward, agents will get all 3 bonuses for each consecutive headshot kill. Missing a headshot will reset the cycle.",
     twoStats: [{ stat: "mmrDamage", value: 30 }],
     threeStats: [
       { stat: "hsd", value: 30 },
@@ -137,11 +139,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Headache amplified Marksman shot: +80% Weapon Damage.",
     backpackTalent: {
       name: "Blessed",
-      description: "A missed headshot no longer resets the cycle.",
+      description: "Agents can miss a headshot before resetting the cycle.",
     },
     chestTalent: {
       name: "Daring",
-      description: "Bonus armor: 50% → 100%.",
+      description: "Increase bonus armor from 50% to 100%.",
     },
   },
   {
@@ -151,18 +153,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+15% Skill Haste",
     three: "+15% Skill Duration",
-    four: "Tend and Befriend — interacting with a deployed skill grants it +25% damage for 10s.",
+    four: "Tend and Befriend — Interacting with your deployed skills grants the skill 25% skill damage for 10s. This buff cannot be refreshed. Interactions include: using / deploying the skill, changing the skill's target, healing the skill.",
     twoStats: [{ stat: "skillHaste", value: 15 }],
     threeStats: [{ stat: "skillDuration", value: 15 }],
     fourStats: [{ stat: "skillDamage", value: 25 }],
     fourAssumedNote: "Max Tend and Befriend: +25% Skill Damage. Chest Best Buds: +50%.",
     backpackTalent: {
       name: "Complete Uptime",
-      description: "Canceling a skill resets its cooldown.",
+      description: "Cancelling your skills will reset their cooldown.",
     },
     chestTalent: {
       name: "Best Buds",
-      description: "Damage bonus: 25% → 50%.",
+      description: "Increase the damage buff from 25% to 50%.",
     },
   },
   {
@@ -172,7 +174,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+15% Status Effects",
     three: "+15% Skill Haste and +30% Hazard Protection",
-    four: "Indirect Transmission — status effects spread to enemies within 10m on death and refresh 50% of their duration.",
+    four: "Indirect Transmission — Your status effects now spread on kill to all enemies within 10m and refresh 50% of the duration.",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [
       { stat: "skillHaste", value: 15 },
@@ -182,11 +184,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Indirect Transmission extra status uptime: +10% Status Effects.",
     backpackTalent: {
       name: "Symptom Aggravator",
-      description: "Amplifies all damage against targets affected by a status effect by 30%.",
+      description: "Amplifies all damage you deal to status affected targets by 30%.",
     },
     chestTalent: {
       name: "Proliferation",
-      description: "Range: 10m → 15m, refresh: 50% → 75%.",
+      description: "Increases Indirect Transmission range from 10m to 15m. Increases refresh percentage from 50% to 75%.",
     },
   },
   {
@@ -196,7 +198,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+30% Repair Skills",
     three: "+15% Skill Haste and +30% Skill Duration",
-    four: "Ground Control — +15% weapon and skill damage while at full armor. Repairing an ally also repairs the group.",
+    four: "Ground Control — Increases you and your allies' total weapon and skill damage by 15% when at full armor. When you repair an ally, you and all allies within 5m of you are also repaired for 60% of that amount.",
     twoStats: [{ stat: "skillRepair", value: 30 }],
     threeStats: [
       { stat: "skillHaste", value: 15 },
@@ -209,11 +211,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Ground Control at full armor: +15% weapon and skill damage. Chest: +25%.",
     backpackTalent: {
       name: "Strategic Combat Support",
-      description: "Proximity repair: 60% → 120%.",
+      description: "Increases Ground Control proximity repair from 60% to 120%.",
     },
     chestTalent: {
       name: "Tactical Superiority",
-      description: "Ground Control damage bonus: 15% → 25%.",
+      description: "Increases Ground Control damage bonus from 15% to 25%.",
     },
   },
   {
@@ -223,7 +225,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+10% Total Armor",
     three: "+1% Armor Regeneration and +50% Shield Health",
-    four: "Makeshift Repairs — 25% of damage taken (by you or your shield) is repaired over 10s.",
+    four: "Makeshift Repairs — Whenever you or your shield take damage, 25% of that amount is repaired to both over 10s.",
     twoStats: [{ stat: "armorPercent", value: 10 }],
     threeStats: [
       { stat: "armorRegenPercent", value: 1 },
@@ -233,11 +235,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Makeshift Repairs modeled as +5% Total Armor equivalent.",
     backpackTalent: {
       name: "Process Refinery",
-      description: "Repair duration: 10s → 5s.",
+      description: "Decreases time taken for Makeshift Repairs from 10s to 5s.",
     },
     chestTalent: {
       name: "Improved Materials",
-      description: "Makeshift Repairs: 25% → 35%.",
+      description: "Increases Makeshift Repairs from 25% to 35%.",
     },
   },
   {
@@ -247,7 +249,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+15% Skill Haste",
     three: "+15% Skill Damage and +30% Repair Skills",
-    four: "Feedback Loop — using or canceling a skill reduces the other skill's cooldown by 30s and grants +10% skill damage/repair for 20s.",
+    four: "Feedback Loop — Whenever you use or cancel a skill, your other skill's cooldown is automatically reduced by 30s while increasing total skill damage and repair by 10% for 20s. Feedback Loop can occur once every 20s.",
     twoStats: [{ stat: "skillHaste", value: 15 }],
     threeStats: [
       { stat: "skillDamage", value: 15 },
@@ -260,11 +262,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Feedback Loop buff: +10% Skill Damage and Repair Skills. Chest: +25%.",
     backpackTalent: {
       name: "Short Circuit",
-      description: "Feedback Loop cooldown: 20s → 10s.",
+      description: "Decreases Feedback Loop cooldown from 20s to 10s.",
     },
     chestTalent: {
       name: "Positive Reinforcement",
-      description: "Damage/repair bonus: 10% → 25%.",
+      description: "Increases Feedback Loop skill damage and repair bonus from +10% to +25%.",
     },
   },
   {
@@ -274,18 +276,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Status Effects",
     three: "+30% Reload Speed",
-    four: "Rules of Engagement — shooting a status-affected enemy marks them (10s). Killing a marked enemy grants a full clip of Hollow-Point ammo (+40% amplified weapon damage, bleed on hit) and half a clip to allies.",
+    four: "Rules of Engagement — Shooting a status affected enemy will apply a mark. Killing a marked enemy grants a full clip of Hollow-Point Ammo for your active weapon, and half a clip of the agent's active weapon to the rest of the party. Mark lasts for 10 seconds. Hollow-Point Ammo amplifies weapon damage by 40% and applies bleed on hit.",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "reloadSpeed", value: 30 }],
     fourStats: [{ stat: "weaponDamage", value: 40 }],
     fourAssumedNote: "Max Hollow-Point rounds: +40% Weapon Damage. Chest Parabellum: +60%.",
     backpackTalent: {
       name: "Trauma Specialist",
-      description: "+50% bleed duration, +100% bleed damage.",
+      description: "Increases duration of bleed status effects by 50%. Increases all bleed damage done by 100%.",
     },
     chestTalent: {
       name: "Parabellum Rounds",
-      description: "Hollow-Point amplification: 40% → 60% (not shared with the group).",
+      description: "Increases Hollow-Point Ammo damage amplification from 40% to 60%. Does not affect party ammo.",
     },
   },
   {
@@ -295,18 +297,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+15% Weapon Handling",
     three: "+30% Magazine Size",
-    four: "Red, White and Blue — every 2s, enemies you shoot receive a stacking debuff: Red +15% damage taken, White 2% armor repair/s, Blue −10% damage dealt. Full Flag: death explosion.",
+    four: "Red, White and Blue — Enemies you shoot receive stacking debuffs of Red/White/Blue. Changes every 2s. Red: Amplifies the enemy's damage taken by 15%. White: Hitting the enemy restores you and your allies' armor by 2% once every second. Blue: Decreases enemy damage dealt by 10%. Full Flag: Enemies that die while under the effect of all three debuffs create a 5m explosion, dealing damage equal to their total health and armor. Explosion strength is reduced on Named enemy deaths.",
     twoStats: [{ stat: "weaponHandling", value: 15 }],
     threeStats: [{ stat: "magazineSize", value: 30 }],
     fourStats: [{ stat: "armorRegenPercent", value: 2 }],
     fourAssumedNote: "Max white-stripe self-repair: +2% Armor Regeneration (sheet proxy). Backpack Patriotic Boost: White 2% → 5%. Red/Blue amps are enemy debuffs, not self WD.",
     backpackTalent: {
       name: "Patriotic Boost",
-      description: "Debuffs: Red 15% → 30%, White 2% → 5%, Blue 10% → 20%.",
+      description: "Increases Red, White and Blue debuff strength. Red: from 15% to 30%. White: from 2% to 5%. Blue: from 10% to 20%.",
     },
     chestTalent: {
       name: "Waving the Flag",
-      description: "Increases Red, White and Blue rotation speed to 1s (base 4pc is every 2s).",
+      description: "Increases Red, White and Blue rotation speed to 1s.",
     },
   },
   {
@@ -316,7 +318,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Marksman Rifle Damage and +30% Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "Dead Man's Hand — flip a card on Rifle or Marksman Rifle hits. After 5 cards, the next shot is amplified by 75%. Better hands grant more amplified shots.",
+    four: "Dead Man's Hand — Flip a card when landing shots with a Rifle or Marksman Rifle. After 5 cards are flipped, the damage of your next shot is amplified by 75%. More shots are enhanced the better the hand revealed. Four of a Kind: 4 shots. Full House: 3 shots. Aces and Eights: 2 shots. Flip an additional card on headshots.",
     twoStats: [
       { stat: "mmrDamage", value: 30 },
       { stat: "rifleDamage", value: 30 },
@@ -329,11 +331,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Dead Man's Hand amplified shot: +75% Weapon Damage. Chest No Limit: +100%.",
     backpackTalent: {
       name: "Ace in the Sleeve",
-      description: "One additional amplified shot.",
+      description: "Amplifies 1 extra shot when revealing your hand.",
     },
     chestTalent: {
       name: "No Limit",
-      description: "Dead Man's Hand bonus: 75% → 100%.",
+      description: "Increases Dead Man's Hand damage bonus from 75% to 100%.",
     },
   },
   {
@@ -343,18 +345,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+20% Signature Weapon Damage",
     three: "+10% Weapon Damage",
-    four: "Aggressive Recon — a signature weapon kill grants +15% signature weapon damage for 10s and +25% reload speed. Regenerates signature weapon ammo every 60s.",
+    four: "Aggressive Recon — Getting a Signature Weapon kill gives +15% Signature Weapon Damage for 10s and +25% Reload Speed for the next reload of the weapon (the bonuses do not stack). Automatically regenerate Signature Weapon Ammo every 60s.",
     twoStats: [{ stat: "signatureWeaponDamage", value: 20 }],
     threeStats: [{ stat: "weaponDamage", value: 10 }],
     fourStats: [{ stat: "weaponDamage", value: 15 }],
     fourAssumedNote: "Max Aggressive Recon: +15% Weapon Damage after a signature kill. Chest: +30%. Backpack: +50% after emptying the signature weapon.",
     backpackTalent: {
       name: "Signature Moves",
-      description: "+50% weapon damage for 15s after emptying your signature weapon. Signature weapon ammo capacity doubled.",
+      description: "+50% Weapon Damage for 15s after fully depleting the Signature Weapon of ammo. Doubles the amount of ammo generated by Aggressive Recon.",
     },
     chestTalent: {
       name: "Specialized Destruction",
-      description: "Signature weapon bonus: 15% → 30%. Every 3rd kill generates signature weapon ammo.",
+      description: "Increase Aggressive Recon Signature Weapon Damage bonus from 15% to 30%. Every 3rd Signature Weapon kill generates Signature Weapon ammo.",
     },
   },
   {
@@ -372,7 +374,7 @@ export const GEAR_SETS: GearSetDef[] = [
     },
     two: "+15% Armor on Kill",
     three: "+40% Disrupt Resistance and Pulse Resistance",
-    four: "Hackstep Protocol — replaces your skills with an infinite-use ability (20s): grants 20% armor, 50% bonus armor, and hides your nameplate for 5s.",
+    four: "Hackstep Protocol — Replaces armor kits with an instant, infinite-use ability on a 20s cooldown, that repairs 20% armor, grants 50% bonus armor and hides your nameplate for 5s. Increases total weapon damage by 2% per 5% bonus armor gained, up to 20%.",
     twoStats: [{ stat: "armorOnKill", value: 15 }],
     threeStats: [
       { stat: "pulseResistance", value: 40 },
@@ -382,11 +384,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Hackstep Protocol window: +20% Total Armor.",
     backpackTalent: {
       name: "Multithreaded Execution",
-      description: "Hackstep bonus armor: 50% → 100%.",
+      description: "Increases Hackstep Protocol bonus armor from 50% to 100%.",
     },
     chestTalent: {
       name: "Compiler Optimization",
-      description: "Hackstep cooldown: 20s → 15s.",
+      description: "Decreases Hackstep Protocol cooldown from 20s to 15s.",
     },
   },
   {
@@ -396,18 +398,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+30% Hazard Protection",
     three: "+40% Repair Skills",
-    four: "Charging — while out of cover, reduce incoming skill damage by 5%/s (up to 50%). Once fully Charged, share the protection with allies.",
+    four: "Charging / Charged — Charging: For each second spent out of cover during combat, Agents will get 5% reduced incoming skill damage. Max 50%. Charged: While fully charged, gain immunity to any movement speed debuff and share this with all of the agent's hazard protection and the incoming skill damage reduction with all allies for 10 seconds. After Charged is consumed, Charging buff will resume if still in combat and out of cover.",
     twoStats: [{ stat: "hazardProtection", value: 30 }],
     threeStats: [{ stat: "skillRepair", value: 40 }],
     fourStats: [{ stat: "hazardProtection", value: 50 }],
     fourAssumedNote: "Max Charging protection: +50% (modeled as Hazard Protection). Chest Overcharging: +70%.",
     backpackTalent: {
       name: "Safe Charging",
-      description: "Charging grants 10% protection per second.",
+      description: "Charging gives 10% protection per second.",
     },
     chestTalent: {
       name: "Overcharging",
-      description: "Max protection: 50% → 70%.",
+      description: "Increases Charging max incoming damage protection to 70%.",
     },
   },
   {
@@ -417,7 +419,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+20% Burn Duration and +15% Skill Health",
     three: "+40% Burn Damage",
-    four: "Incinerator Turret Prototype — a 360° turret, immune to your own fire, explodes when destroyed.",
+    four: "Ortiz Incinerator Turret Prototype — The Incinerator Turret spins 360°. You are immune to your own Incinerator Turret's fire. The Incinerator Turret explodes when disabled.",
     twoStats: [{ stat: "skillHealth", value: 15 }],
     threeStats: [{ stat: "statusEffects", value: 15 }],
     fourStats: [{ stat: "skillDamage", value: 10 }],
@@ -426,11 +428,11 @@ export const GEAR_SETS: GearSetDef[] = [
     backpackTalent: {
       name: "Heatstroke",
       description:
-        "+40% amplified damage against enemies set on fire by the turret. +25% range. In-game text wrongly says Increased Weapon Damage — the bonus is an amplifier.",
+        "+40% amplified damage against enemies set on fire by the Ortiz Incinerator Turret Prototype. +25% Ortiz Incinerator Turret Prototype Range.",
     },
     chestTalent: {
       name: "Chain Combustion",
-      description: "Enemies set on fire by the turret ignite other enemies within 10m.",
+      description: "Enemies set ablaze by the Ortiz Incinerator Turret Prototype ignite other enemies within 10m.",
     },
   },
   {
@@ -440,18 +442,18 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "blue",
     two: "+70% Health",
     three: "+15% Total Armor",
-    four: "Stoic — gain +3% damage resistance for each enemy targeting you (multiplied by group size).",
+    four: "Stoic — Get +3% Damage Resistance for every enemy that is targeting you. The bonus is multiplied by 1.X, where X is the number of agents in your group.",
     twoStats: [{ stat: "healthPercent", value: 70 }],
     threeStats: [{ stat: "armorPercent", value: 15 }],
     fourStats: [{ stat: "armorPercent", value: 8 }],
     fourAssumedNote: "Max Stoic resist modeled as +8% Total Armor equivalent.",
     backpackTalent: {
       name: "Polyethylene Plating",
-      description: "Stoic bonus: 3% → 4%.",
+      description: "Increase Stoic Damage Resistance bonus from 3% to 4%.",
     },
     chestTalent: {
       name: "Deceit",
-      description: "Enemies targeting your decoy count towards Stoic.",
+      description: "Enemies targeting your Decoy also count towards the Stoic Damage Resistance bonus.",
     },
   },
   {
@@ -461,7 +463,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Rifle Damage and Marksman Rifle Damage",
     three: "+30% Headshot Damage and +30% Weapon Handling",
-    four: "On Point — Rifle/MMR hits grant stacks. Reloading grants +2% Weapon Handling and +4% weapon damage per stack for 20s. Timer expiry or a weapon swap while the buff is active refills the magazine.",
+    four: "On Point — Hitting a shot with a Rifle or MMR grants a stack. Reloading will grant +2% Weapon Handling and +4% Weapon Damage per stack, for 20s. No stacks are acquired while the bonuses are active. The timer running out will refill your magazine. Switching weapons while the bonuses are active will stop the effect and refill your magazine. Switching weapons while the bonuses are not active will remove all stacks and refill your magazine.",
     twoStats: [
       { stat: "rifleDamage", value: 30 },
       { stat: "mmrDamage", value: 30 },
@@ -477,11 +479,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max On Point modeled at 10 stacks: +40% Weapon Damage, +20% Handling. Backpack 9%/stack.",
     backpackTalent: {
       name: "Point of Honor",
-      description: "On Point damage bonus: 4% → 9%.",
+      description: "Increases On Point Weapon Damage bonus from 4% to 9%.",
     },
     chestTalent: {
       name: "Point of No Return",
-      description: "On Point duration: 20s → 40s.",
+      description: "Increases On Point timer from 20s to 40s.",
     },
   },
   {
@@ -491,7 +493,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+15% Weapon Handling and +15% Magazine Size",
     three: "+15% Weapon Damage",
-    four: "Symphony — kills at long range and close range grant different weapon bonuses. At 4 stacks, all bonuses are multiplied by 1.5.",
+    four: "Symphony — Killing an enemy further than 25m will provide +40% Weapon Damage to Shotguns, SMGs and Pistols, +20% Weapon Damage to ARs and LMGs and 25% Bonus Armor for 15s. Killing an enemy within 25m will provide +40% Weapon Damage to MMRs and Rifles, +20% Weapon Damage to ARs and LMGs and +30% Headshot Damage for 15s. Intermittently killing enemies from both ranges will build up stacks. At 4 stacks, all bonuses are multiplied by 1.5 and triggered at the same time for 15s. No stacks are acquired while talent bonuses are active.",
     twoStats: [
       { stat: "weaponHandling", value: 15 },
       { stat: "magazineSize", value: 15 },
@@ -501,11 +503,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Symphony at 4 stacks × 1.5. Chest Fortissimo doubles weapon-damage bonuses.",
     backpackTalent: {
       name: "Accelerando",
-      description: "Symphony stacks: 4 → 3.",
+      description: "Decrease the number of stacks needed to proc the Symphony double buffs from 4 to 3.",
     },
     chestTalent: {
       name: "Fortissimo",
-      description: "Doubles Symphony's weapon damage bonuses.",
+      description: "Double the Weapon Damage of Symphony.",
     },
   },
   {
@@ -523,7 +525,7 @@ export const GEAR_SETS: GearSetDef[] = [
     },
     two: "+15% Status Effects",
     three: "+25% Skill Damage",
-    four: "Return to Sender — you are repaired for 10% of skill damage dealt, allies for 20%.",
+    four: "Return to Sender — Receive repairs of 10% of the damage dealt by your Skills. Your allies receive repairs of 20% of the damage dealt by your Skills. (Range 45m)",
     twoStats: [{ stat: "statusEffects", value: 15 }],
     threeStats: [{ stat: "skillDamage", value: 25 }],
     fourStats: [
@@ -533,11 +535,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Return to Sender conversion: +10% Repair Skills, +5% Incoming Repairs.",
     backpackTalent: {
       name: "Over-engineered",
-      description: "At full armor, repair effects are converted into bonus armor (up to 80%).",
+      description: "While at full Armor, repairs received from Return to Sender will provide Bonus Armor, up to 80% of your Total Armor. Does not apply to allies.",
     },
     chestTalent: {
       name: "Increased Interest",
-      description: "Repair amounts: 10/20% → 25/35%.",
+      description: "Increase the repairs received from Return to Sender from 10% to 25% and from 20% to 35%.",
     },
   },
   {
@@ -547,7 +549,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+15% Skill Haste",
     three: "+60% Repair Skills and +40% Explosive Resistance",
-    four: "Huddle — gain +1 tier for each ally near your hive. Tier 6: Overcharge. Destroys enemy mortars and skills.",
+    four: "Huddle — Receive +1 Skill Tier for each ally Agent that is within the range of your Hive or Smart Cover. While at Skill Tier 6, having at least one ally Agent in the range of your Hive or Smart Cover for 4s will grant Overcharge for 15s. Cooldown: 40s. Mortars and enemy Skills that enter the range of your Hive or Smart Cover will be destroyed. Cooldown 10s. The cooldown is 20% faster for each ally Agent within the range of your Hive or Smart Cover.",
     twoStats: [{ stat: "skillHaste", value: 15 }],
     threeStats: [
       { stat: "skillRepair", value: 60 },
@@ -557,11 +559,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Huddle: +1 Skill Tier per nearby ally (3 allies).",
     backpackTalent: {
       name: "Smart Cooperation",
-      description: "Mortar destruction cooldown: 10s → 1s.",
+      description: "Decrease the cooldown for destroying Mortars and enemy Skills from 10s to 1s.",
     },
     chestTalent: {
       name: "Hivemind",
-      description: "Overcharge cooldown: 40s → 25s.",
+      description: "Decrease the Overcharge cooldown from 40s to 25s.",
     },
   },
   {
@@ -571,7 +573,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+30% Magazine Size",
     three: "+30% LMG Damage",
-    four: "Throttle Control — firing builds stacks (max 50): +0.5% Weapon Handling and +5% Critical Hit Damage per stack.",
+    four: "Throttle Control — Shooting builds stacks to a max of 50. Each stack provides +0.5% Weapon Handling and +5% Critical Hit Damage. Lose 6 stacks per second while not shooting. No stacks are lost if an enemy is Suppressed.",
     twoStats: [{ stat: "magazineSize", value: 30 }],
     threeStats: [{ stat: "lmgDamage", value: 30 }],
     fourStats: [
@@ -581,11 +583,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Throttle Control: 50 stacks × 0.5% Handling and 5% CHD. Chest 75 stacks. Backpack 8% CHD/stack.",
     backpackTalent: {
       name: "Snowball",
-      description: "Critical Hit Damage per stack: 5% → 8%.",
+      description: "Increase the Critical Hit Damage received per stack from 5% to 8%.",
     },
     chestTalent: {
       name: "Sustainability",
-      description: "Max stacks: 50 → 75.",
+      description: "Increase the maximum number of stacks from 50 to 75.",
     },
   },
   {
@@ -595,7 +597,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+10% Weapon Damage",
     three: "+30% Weapon Handling",
-    four: "Camaraderie — shooting marks an enemy for 10s. When a marked enemy dies, gain 3% Weapon Damage and 3% Critical Hit Damage per contributing ally or skill (including you). Max 35 stacks; 4 marks.",
+    four: "Camaraderie — Shooting an enemy marks them for 10s. When a marked enemy dies, receive one stack of 3% Weapon Damage and 3% Critical Hit Damage for each Ally or Skill that has contributed to killing that enemy, including yourself. Max stack is 35. Stacks decay every 10s. Maximum amount of marks that can be placed is 4.",
     twoStats: [{ stat: "weaponDamage", value: 10 }],
     threeStats: [{ stat: "weaponHandling", value: 30 }],
     fourStats: [
@@ -605,11 +607,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Max Camaraderie: 35 stacks × 3% Weapon Damage and CHD. Chest All for One raises marks (4→8), not the stack cap. Backpack 6% WD/stack.",
     backpackTalent: {
       name: "One for All",
-      description: "Weapon damage per stack: 3% → 6%.",
+      description: "Increase the Weapon Damage bonus per stack from 3% to 6%.",
     },
     chestTalent: {
       name: "All for One",
-      description: "Max marks: 4 → 8.",
+      description: "Increase the amount of marks that can be placed from 4 to 8.",
     },
   },
   {
@@ -619,7 +621,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "red",
     two: "+10% Weapon Handling",
     three: "+5% Weapon Damage, Armor, and Skill Efficiency",
-    four: "Core Exercise — each core grants 40% of the other two cores' bonuses. Tiers grant 15% efficiency.",
+    four: "Core Exercise — For each Core attribute, receive 40% of the other two Core Attributes' bonuses. Skill Tiers count as 15% Skill Efficiency when these attributes are applied. All pieces from this Gear Set, apart from the Backpack, will feature random Core Attributes.",
     twoStats: [{ stat: "weaponHandling", value: 10 }],
     threeStats: [
       { stat: "weaponDamage", value: 5 },
@@ -628,11 +630,11 @@ export const GEAR_SETS: GearSetDef[] = [
     ],
     backpackTalent: {
       name: "Outer Core",
-      description: "This backpack has three attribute cores.",
+      description: "This Talent does not provide a direct change to the Core Exercise Talent. This Backpack features three Core Attributes.",
     },
     chestTalent: {
       name: "Inner Core",
-      description: "Conversion from other cores: 40% → 75%.",
+      description: "Increase the percentage of the bonuses you receive from the other Cores from 40% to 75%.",
     },
   },
   {
@@ -642,7 +644,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+8% Skill Efficiency",
     three: "+60% Repair Skills",
-    four: "Rapid Application Nanite — heal duration/range reduced by 90%, efficiency increased by 150%. Healing an ally grants +30% Hazard Protection.",
+    four: "Ortiz Rapid Application Nanite Prototype — Healing Skills' Duration and Range are decreased by 90%, but their Healing Efficiency is increased by 150%. Healing an Ally with a Skill will provide them 30% Hazard Protection for 10s. Cooldown per ally: 10s.",
     twoStats: [{ stat: "skillEfficiency", value: 8 }],
     threeStats: [{ stat: "skillRepair", value: 60 }],
     fourStats: [
@@ -652,11 +654,11 @@ export const GEAR_SETS: GearSetDef[] = [
     fourAssumedNote: "Nanite efficiency + ally-heal hazard: +20% Repair Skills, +15% Hazard Protection.",
     backpackTalent: {
       name: "Improved Dampeners",
-      description: "Duration/range reduction: 90% → 25%.",
+      description: "Decrease the Range and Duration reduction from 90% to 25%.",
     },
     chestTalent: {
       name: "Overcharged Nanites",
-      description: "Healing efficiency: 150% → 225%.",
+      description: "Increase the Healing Efficiency bonus from 150% to 225%.",
     },
   },
   {
@@ -666,7 +668,7 @@ export const GEAR_SETS: GearSetDef[] = [
     core: "yellow",
     two: "+8% Skill Efficiency",
     three: "+30% Status Effects",
-    four: "Spontaneous Combustion — every status effect has a 40% chance to also apply Burn. If Burn was already applied: +25% burn damage.",
+    four: "Spontaneous Combustion — Every status effect has a 40% chance to also apply Burn. If Burn was already applied: +25% burn damage.",
     twoStats: [{ stat: "skillEfficiency", value: 8 }],
     threeStats: [{ stat: "statusEffects", value: 30 }],
     fourStats: [{ stat: "statusEffects", value: 10 }],
@@ -678,7 +680,7 @@ export const GEAR_SETS: GearSetDef[] = [
     },
     chestTalent: {
       name: "Flashpoint",
-      description: "Spontaneous Combustion Burn chance: 40% → 60%.",
+      description: "Increases Spontaneous Combustion Burn chance from 40% to 60%.",
     },
   },
 ];
