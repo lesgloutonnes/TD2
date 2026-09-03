@@ -9,6 +9,7 @@ import { talentByName } from "./talents";
  * Organized brand by brand, then exotics by slot.
  * Base: community sheet (up to date as of March 22, 2026) + later Y8S2/Y8S3 pieces.
  * Named Perfect talent text is sourced from the live PvE talent library (`talents.ts`).
+ * Exotic uniqueTalent text is in-game PvE wording (Ubisoft PvE talent tables).
  * Meme seasonal items (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…) intentionally omitted.
  */
 export const NAMED_AND_EXOTICS: CatalogItem[] = [
@@ -716,7 +717,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Pack Instincts",
       description:
-        "Depending on distance: Critical Hit Damage (close), Critical Hit Chance (mid), or Headshot Damage (far).",
+        "You and all group members gain a damage buff based on the distance of the last enemy you hit. 0-15m: +25% Critical Hit Damage. 15-25m: +10% Critical Hit Chance and +10% Critical Hit Damage. 25m+: +25% Critical Hit Chance. A group member can receive all 3 damage buffs at the same time. However, a group member can only have 1 of each damage buff at a time.",
     },
     assumed: [{ stat: "chd", value: 25 }],
     assumedNote: "Max Pack Instincts at close range (+25% Critical Hit Damage).",
@@ -730,7 +731,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Toxic Delivery",
       description:
-        "Applying a status effect or dealing skill damage applies a DoT. Its strength scales with Status Effects and Skill Damage.",
+        "Status effects also apply a damage over time debuff for 10s. Total damage dealt is equal to 50% of your concussion grenade damage and is increased by your status effect attributes.",
     },
     assumed: [{ stat: "statusEffects", value: 10 }, { stat: "skillDamage", value: 8 }],
     assumedNote: "Toxic Delivery DoT averaged as Status Effects + Skill Damage while applying statuses.",
@@ -744,7 +745,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Vicious Cycle",
       description:
-        "Taking damage builds a buff. At low armor: a burst of repair and applies a status effect to nearby enemies.",
+        "Taking damage builds stacks to a cap of 30. Each stack grants 1.5% Weapon Damage. Taking damage at max stacks triggers a purge, removing all stacks and Status Effects and then dropping a healing cloud which restores 5% of Max Armor for 10s to all allies in the cloud.",
     },
     assumed: [{ stat: "incomingRepairs", value: 10 }, { stat: "armorOnKill", value: 8 }],
     assumedNote: "Vicious Cycle repair burst averaged as Incoming Repairs + Armor on Kill.",
@@ -756,9 +757,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["mask"],
     uniqueTalent: {
-      name: "Chain Reaction",
+      name: "Chemical Agent",
       description:
-        "Brooklyn mask. Skill damage and weapon damage boost each other. Drops from: Army Terminal / Charlie elites.",
+        "Dealing and receiving status effects (Burn, Bleed, Shock, EMP/Disrupt, Poison, and Blind/Disorient) builds stacks of Catalysis to a maximum of 12. Each stack grants +2% Weapon Damage and +2% Status Effects. For each enemy within 15 meters that is affected by a status effect grants 1 stack/sec. Receiving Status Effects grants 2 stacks/sec. Stacks decay at 1 stack/sec after 5 seconds if no enemies or you are affected by status effects. At max stacks, killing a status-affected enemy grants +25% bonus armor and +20% reload speed for 5s. While burning, you can maintain ADS without disruption.",
     },
     assumed: [{ stat: "weaponDamage", value: 10 }, { stat: "skillDamage", value: 10 }],
     assumedNote: "Chain Reaction mid-fight weapon/skill loop.",
@@ -770,9 +771,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["mask"],
     uniqueTalent: {
-      name: "Jury Rigged",
+      name: "Abridged",
       description:
-        "Allows unusual skill combinations and boosts equipped skill mods.",
+        "If your Primary and Secondary weapon are not Exotic or Named and of the same type, the Secondary Weapon's talent will also be applied to the Primary Weapon. (Doesn't apply to talents that include Weapon Swapping.)",
     },
     assumed: [{ stat: "skillEfficiency", value: 10 }, { stat: "skillHaste", value: 8 }],
     assumedNote: "Jury Rigged unusual combos modeled as Skill Efficiency + Haste.",
@@ -787,7 +788,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Slotted",
       description:
-        "Bonus based on the color of each non-core attribute: red +10% Critical Hit Damage, yellow +5% skill efficiency, blue +1% armor regen.",
+        "Receive bonuses for each non-Core Attribute on this item, depending on their color: Red: +10% Critical Hit Damage. Yellow: +5% Skill Efficiency. Blue: +1% Armor Regen. This item can feature any Core Attribute. This item features a third random Attribute instead of having a Gear Mod Slot. This item cannot feature Headshot Damage, Health or Skill Repair.",
     },
     note: "Core can roll red / blue / yellow on each drop (not locked). Third attribute replaces the gear mod slot.",
   },
@@ -804,7 +805,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Kill Confirmed",
       description:
-        "Picking up a trophy: stacks of Weapon Damage, armor, and skill damage. 3 cores. Excellent hybrid piece.",
+        "Enemies you kill drop a trophy on death. Collecting trophies provides both a short and long term buff. The first of which scales with the number of core attributes equipped and lasts 10s. Red Core: +5% Weapon Damage. Blue Core: +10% Bonus Armor. Yellow Core: +5% Skill Efficiency. For every trophy collected gain an additional +1% Weapon Damage, +1% Skill Efficiency and +0.1% Armor Regeneration for 300s. Maximum 30 stacks.",
     },
     assumed: [
       { stat: "weaponDamage", value: 15 },
@@ -826,7 +827,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Resourceful",
       description:
-        "Counts as +1 piece for every brand and set already equipped. Allows activating multiple 2pc / 3pc / 4pc bonuses.",
+        "Slots in with any equipped Gear Set and/or Brand Set item to fulfill a requirement towards unlocking a Gear and/or Brand Sets bonus. Allows to unlock bonuses from multiple sets simultaneously.",
     },
     note: "Fixed 3-core package (red + blue + yellow) — not recalibratable.",
   },
@@ -837,8 +838,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
-      name: "One Step Ahead",
-      description: "Bonus grenades and kits. Using a grenade: damage/armor buff.",
+      name: "One in the Hand",
+      description:
+        "Throwing a grenade refunds it and grants +1 Skill Tier for 15s. Grants Overcharge if already at Skill Tier 6. Cooldown: 60s. Two in the Bag: +1 Armor Kit Capacity, +3 Grenade Capacity, +25% Ammo Capacity, +10% Repair Skills, +10% Status Effects.",
     },
     assumed: [{ stat: "explosiveDamage", value: 15 }, { stat: "armorPercent", value: 5 }],
     assumedNote: "Grenade/kit window averaged as Explosive Damage + bonus armor.",
@@ -850,9 +852,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
-      name: "Close Air Support",
+      name: "Rebalance",
       description:
-        "Brooklyn backpack. Deployed skills boost nearby weapon damage, and vice versa.",
+        "Getting kills and hitting enemies 3 times builds Red stacks. Each stack provides 0.5% Weapon Damage. Getting hit 3 times builds Blue stacks. Each stack provides 0.5% Damage Resistance. Upon reaching 80 stacks in total, lose all stacks and receive a separate bonus of 0.5% Damage Resistance per Red stack and 0.5% Weapon Damage per Blue stack until the next time the stack cap is reached.",
     },
     assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "skillDamage", value: 8 }],
     assumedNote: "Close Air Support near a deployed skill.",
@@ -864,9 +866,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["backpack"],
     uniqueTalent: {
-      name: "Field Medic",
+      name: "Combat Medic",
       description:
-        "Using a kit or a healing skill: a burst of repair for the group and Skill Haste.",
+        "+90% Revive Speed. -50% Weakened debuff time. +45% Hive Efficiency. Provides 50% Damage Resistance to both agents while reviving or being revived, and for 5s after a successful Hive Revive, or 10s after a Manual Revive. Any successful revives provide +1 Skill Tier for 30s. Revives at Skill Tier 6 grant Overcharge for 15s.",
     },
     assumed: [{ stat: "skillHaste", value: 10 }, { stat: "skillRepair", value: 15 }],
     assumedNote: "Field Medic kit/heal window averaged.",
@@ -880,8 +882,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "red",
     slots: ["chest"],
     uniqueTalent: {
-      name: "Bleeding Heart",
-      description: "Weapon damage applies bleed. Heals based on bleeding targets.",
+      name: "Bleeding Edge",
+      description:
+        "Shooting enemies within 15m applies bleed to the target. Repair 3-48% of your armor per second for every enemy that is bleeding within 15m. Repair strength per number of bleeding enemies: 1: 3%, 2: 6%, 3: 12%, 4: 24%, 5: 48%.",
     },
     assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "incomingRepairs", value: 10 }],
     assumedNote: "Bleeding Heart mid-uptime vs bleeding targets.",
@@ -893,8 +896,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "blue",
     slots: ["chest"],
     uniqueTalent: {
-      name: "Ablative Nanoplating",
-      description: "When armor breaks: deploys an armor hive for you and nearby allies.",
+      name: "Ablative Nano-Plating",
+      description:
+        "Whenever you or any ally's armor breaks, they gain 80% of your armor as bonus armor for 10s. Cooldown per ally: 45s. Killing an enemy with your specialization weapon removes this cooldown for all allies.",
     },
     assumed: [{ stat: "armorPercent", value: 10 }],
     assumedNote: "Ablative hive window averaged as +10% Total Armor.",
@@ -922,7 +926,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Hoarder",
       description:
-        "+3 grenade capacity, +50% grenade radius, +35% grenade damage, and +25% grenade damage per extra enemy in the blast. Regenerates grenades every 30s while you have fewer than 2.",
+        "+3 Grenade Capacity. +50% Grenade Radius. +35% Grenade Damage. +25% Grenade Damage for each extra enemy caught in the blast. Automatically regenerate grenades every 30s, if you have less than 2 grenades in your inventory.",
     },
     assumed: [{ stat: "explosiveDamage", value: 25 }],
     assumedNote: "Hoarder grenade package averaged as Explosive Damage.",
@@ -935,9 +939,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "blue",
     slots: ["chest"],
     uniqueTalent: {
-      name: "Instigator",
+      name: "Challenger",
       description:
-        "Increases threat and converts a portion of damage taken into bonus armor for the group.",
+        "Receive +25% Damage Resistance from enemies within 20m.",
     },
     assumed: [{ stat: "armorPercent", value: 8 }, { stat: "threat", value: 10 }],
     assumedNote: "Instigator group bonus armor + threat averaged.",
@@ -964,9 +968,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["gloves"],
     uniqueTalent: {
-      name: "Transference",
+      name: "Transference Overclock",
       description:
-        "Deploying a hive: overcharge for you and nearby allies. Skill kills reduce the hive's cooldown.",
+        "Grants 15% Hive skill haste per skill tier. Detonating a hive refreshes your skill cooldowns and grants Overcharge for 15s. If at Skill Tier 6, this effect also applies to all allies. Allies receiving this effect are unable to benefit from it again for 120s.",
     },
     assumed: [{ stat: "skillHaste", value: 15 }, { stat: "skillDamage", value: 10 }],
     assumedNote: "Hive overcharge window averaged as Skill Haste + Skill Damage.",
@@ -978,12 +982,12 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "red",
     slots: ["gloves"],
     uniqueTalent: {
-      name: "Bloodsport",
+      name: "Over the Top",
       description:
-        "Melee attacks apply bleed. Bonus weapon damage against bleeding targets.",
+        "Damaging an enemy with a grenade or striking an enemy with a melee attack activates Seeing Red. Seeing Red grants +25% Weapon Damage and +100% melee damage. Seeing Red lasts 20 seconds and starts a 60 second cooldown after completion. While in cooldown, striking an enemy with a melee attack or hitting an enemy with the effect of a grenade will complete the cooldown instantly.",
     },
     assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "meleeDamage", value: 10 }],
-    assumedNote: "Bloodsport vs bleeding targets, CQC uptime.",
+    assumedNote: "Over the Top / Seeing Red vs grenade or melee uptime.",
   },
   {
     id: "overdogs",
@@ -994,7 +998,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Weakest Link",
       description:
-        "Amplifies weapon damage by 30% against the lowest-ranking enemy currently in combat (tier hierarchy).",
+        "Amplifies Weapon Damage by 30% to the lowest ranking enemies within the Tier hierarchy. Tier 1: Hunter, Rogue, Leader, Tank, Shield, Heavy Weapons, RPG, Medic, Controller, Warhound, Marauder. Tier 2: Support, Engineer, Bodyguard, Immobilizer, Bomber, Mini Tank, Drone Operator. Tier 3: Any other enemy or skill proxy.",
     },
     assumed: [{ stat: "weaponDamage", value: 15 }],
     assumedNote: "Weakest Link 30% vs the lowest-rank target, averaged across a mixed group.",
@@ -1011,7 +1015,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Defibrillator",
       description:
-        "Shock stun on you is reduced by 50%. A shield grants +100% melee damage. Combined with St. Elmo's Engine: extra +100% melee and the next melee applies Shock (5m radius with all three). Cooldown 15s.",
+        "While Shocker Punch is equipped, the stun received by the agent from the Shock status effect will be reduced by 50%. Using a shield will give 100% to melee damage. Using St. Elmo's Engine with the holster will give 100% extra melee damage and will make the next melee attack apply Shock to the target. Using all three items will offer all of the above mentioned bonuses and the Shock from the melee attack will have a 5m radius, starting from the first target. 15 second cooldown.",
     },
     assumed: [{ stat: "meleeDamage", value: 50 }, { stat: "hazardProtection", value: 5 }],
     assumedNote: "Defibrillator melee with a shield equipped; Elmo combo is extra.",
@@ -1024,8 +1028,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["holster"],
     uniqueTalent: {
-      name: "Capacitance",
-      description: "Skill damage builds a weapon damage bonus, and vice versa.",
+      name: "Alternating Current",
+      description:
+        "Generate a stack of 2.5% Skill Damage on one of your skills every second, capping at 10 stacks. When at 10 stacks, 10 seconds pass before the stacks transfer to the other skill one by one. The process then repeats.",
     },
     assumed: [{ stat: "weaponDamage", value: 8 }, { stat: "skillDamage", value: 12 }],
     assumedNote: "Capacitance mid-fight weapon/skill loop.",
@@ -1037,8 +1042,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["holster"],
     uniqueTalent: {
-      name: "Dragon's Negation",
-      description: "Nearby enemies: burn. CQC crowd control.",
+      name: "Dragon's Glare",
+      description:
+        "While in combat, applies Burn to the enemy closest to you within 20m. Cooldown: 35s.",
     },
     assumed: [{ stat: "statusEffects", value: 12 }],
     assumedNote: "Proximity burn modeled as Status Effects.",
@@ -1051,7 +1057,8 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     slots: ["holster"],
     uniqueTalent: {
       name: "Quick Draw",
-      description: "Swapping to the pistol: massive pistol headshot damage. Regulus / Liberty.",
+      description:
+        "While your pistol is holstered, gain a stacking buff every 0.3s, up to 100. When you swap to it, your first shot consumes the buff and deals +10% damage per stack (for a maximum of 1000% damage). This deals headshot damage anywhere you hit.",
     },
     assumed: [{ stat: "pistolDamage", value: 20 }, { stat: "hsd", value: 15 }],
     assumedNote: "Quick Draw after swapping to the sidearm.",
@@ -1063,9 +1070,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "red",
     slots: ["holster"],
     uniqueTalent: {
-      name: "Gladius",
+      name: "Counter",
       description:
-        "Killing with the pistol: bonus armor. Swapping to the pistol: rate of fire and pistol damage.",
+        "Swapping weapons will give the following groups of bonuses one by one, in order: 1. +20% Rate of Fire, +20% Weapon Damage. 2. +50% Magazine Size, +50% Reload Speed. The bonuses remain active for 12s or until the next weapon swap. Swapping to your sidearm will not trigger the next group of bonuses.",
     },
     assumed: [{ stat: "pistolDamage", value: 12 }, { stat: "armorPercent", value: 8 }],
     assumedNote: "Gladius pistol swap / kill window averaged.",
@@ -1081,7 +1088,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Stand Your Ground",
       description:
-        "Cannot be staggered by explosions. Gain a stack every second you are not moving, each granting +3% total weapon damage (10 stacks max). Stop gaining stacks when moving; all stacks are lost 10s after moving.",
+        "Cannot be staggered by explosions. Increases total weapon damage by 3% each second you are not moving. Stacks up to 10 until you start moving. Stacks decay gradually once you start moving. All stacks are lost 10s after moving.",
     },
     assumed: [{ stat: "weaponDamage", value: 18 }],
     assumedNote: "Stand Your Ground at ~6 stacks while planted.",
@@ -1094,9 +1101,9 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     lockedCore: "yellow",
     slots: ["kneepads"],
     uniqueTalent: {
-      name: "First Aid Associate",
+      name: "Impervious",
       description:
-        "You and allies within 10m: +40% hazard protection. Core piece for support / Toxic DZ builds.",
+        "Both you and allies within 10m of you receive 40% Hazard Protection.",
     },
     assumed: [{ stat: "hazardProtection", value: 40 }],
     assumedNote: "First Aid Associate is always on within 10m — +40% Hazard Protection.",
@@ -1111,7 +1118,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Escape Plan",
       description:
-        "Vaulting, staying still for 5s, or being affected by a status effect: movement speed bonus (max 20%). −50% status effect mobility penalty.",
+        "Vaulting, climbing or dropping from on top of an object gives +10% Movement Speed for 3 seconds. After not moving for 5 seconds, receive +20% Movement Speed for 5 seconds. Being applied a Status Effect will provide +10% Movement Speed for 5 seconds. Max Movement Speed bonus is 20%. The bonuses do not stack with Movement Speed bonuses from other sources. -50% Movement Impairment penalty from Status Effects.",
     },
     assumed: [{ stat: "hazardProtection", value: 5 }],
     assumedNote: "Escape Plan mobility/status penalty modeled as mild Hazard Protection.",
@@ -1125,7 +1132,7 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     uniqueTalent: {
       name: "Ostracize",
       description:
-        "Marks an enemy: you take 600% amplified damage from them, and deal +20% amplified damage to others. One mark at a time.",
+        "Shooting an enemy applies a mark. Only one mark can be active at a time. The mark disappears after 15s, or when the marked enemy dies. Receive 600% Amplified Damage from the marked enemy. Deal 20% Amplified Damage to unmarked enemies. If only one enemy remains in combat, the mark disappears and cannot be reapplied.",
     },
     assumed: [{ stat: "weaponDamage", value: 10 }],
     assumedNote: "Ostracize +20% vs unmarked targets, averaged (the marked enemy is a tank check).",

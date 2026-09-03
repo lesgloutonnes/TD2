@@ -123,6 +123,76 @@ select:focus {
   outline: 1px solid var(--orange);
 }
 
+.described-select {
+  position: relative;
+  display: grid;
+  gap: 6px;
+}
+
+.described-select-anchor {
+  position: relative;
+}
+
+.described-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #0c1016;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.described-select-trigger::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--muted);
+  flex: none;
+}
+
+.described-select-trigger:focus-visible,
+.described-select-trigger[aria-expanded="true"] {
+  outline: 1px solid var(--orange);
+}
+
+.described-select-list {
+  z-index: 24;
+  margin: 4px 0 0;
+  padding: 4px 0;
+  list-style: none;
+  max-height: 240px;
+  overflow: auto;
+  background: #0c1016;
+  border: 1px solid var(--orange);
+  border-radius: 4px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+}
+
+.described-select-option {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.described-select-option.is-active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.described-select-option.is-selected {
+  color: var(--amber);
+}
+
 .top-actions,
 .chip-row,
 .bonus-title,

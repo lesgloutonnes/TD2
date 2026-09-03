@@ -42,6 +42,7 @@ import {
   weaponTalentsForType,
 } from "@/lib/data/weapon-talents";
 import { resolveWeaponTalent } from "@/lib/builder-model";
+import { DescribedSelect } from "./DescribedSelect";
 import {
   clampWeaponMod,
   defaultWeaponMods,
@@ -924,24 +925,22 @@ function WeaponSelect({
             {resolvedTalent?.name ?? selected.talent} · {resolvedTalent?.description ?? selected.talentDesc}
           </small>
           {heTalents.length > 0 ? (
-            <label className="field">
+            <div className="field">
               <span>Weapon talent</span>
-              <select
+              <DescribedSelect
                 value={equipped.talentId ?? defaultWeaponTalentId(selected.type)}
-                onChange={(event) =>
-                  onUpdate(slot, { ...equipped, talentId: event.target.value })
-                }
-              >
-                {heTalents.map((talent) => (
-                  <option key={talent.id} value={talent.id}>
-                    {talent.name}
-                  </option>
-                ))}
-              </select>
+                onChange={(talentId) => onUpdate(slot, { ...equipped, talentId })}
+                allowEmpty={false}
+                options={heTalents.map((talent) => ({
+                  value: talent.id,
+                  label: talent.name,
+                  description: talent.description,
+                }))}
+              />
               {resolvedTalent?.assumedNote ? (
                 <small className="hint">{resolvedTalent.assumedNote}</small>
               ) : null}
-            </label>
+            </div>
           ) : null}
           {prototypeAllowed ? (
             <label className="field checkbox prototype-switch">
