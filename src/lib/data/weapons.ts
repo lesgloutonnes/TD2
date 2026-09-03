@@ -155,11 +155,18 @@ export const WEAPONS: WeaponDef[] = [
     id: "iron-lung",
     name: "Iron Lung",
     type: "lmg",
-    quality: "named",
-    rpm: 600,
-    mag: 75,
-    talent: "Perfect Frenzy",
-    talentDesc: "Kill: +10% rate of fire and weapon handling for 10 seconds. Stacks.",
+    quality: "exotic",
+    rpm: 800,
+    mag: 85,
+    talent: "Ardent",
+    talentDesc:
+      "Shooting heats the weapon up filling the heat meter. The meter is equivalent to 50% of the weapon's standard Magazine Size. When the meter is full, rounds shot by the weapon will ignite enemies. When not shooting, the meter constantly depletes. Reloading or swapping to another weapon fully depletes the meter.",
+    extraStats: [
+      { stat: "chc", value: 10 },
+      { stat: "chd", value: 20 },
+    ],
+    assumedNote:
+      "Ardent ignite is combat-only — not modeled as Weapon Damage. Mag 85 includes locked Bellows +35 rounds (MG5 50). Locked optic +10% Critical Hit Chance, underbarrel +20% Critical Hit Damage.",
   },
   {
     id: "bullet-king",

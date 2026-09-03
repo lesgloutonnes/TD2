@@ -2698,6 +2698,19 @@ function testOfficialExoticAndGearSetCopy() {
   assert(underboss?.talentDesc.includes("other agents using this weapon"), "Underboss official group marks");
 }
 
+function testIronLungExoticArdent() {
+  const lung = WEAPONS.find((weapon) => weapon.id === "iron-lung");
+  assert(lung?.quality === "exotic", "Iron Lung is the TU19 exotic, not named Perfect Frenzy");
+  assert(lung?.type === "lmg" && lung.name === "Iron Lung", "Iron Lung exotic LMG");
+  assert(lung?.talent === "Ardent", "Ardent talent");
+  assert(lung?.talentDesc.includes("heat meter"), "Ardent official heat meter");
+  assert(lung?.talentDesc.includes("ignite"), "Ardent ignite when full");
+  assert(lung?.rpm === 800 && lung.mag === 85, "MG5 800 RPM, 50+35 Bellows mag");
+  assert(lung?.extraStats?.some((stat) => stat.stat === "chc" && stat.value === 10), "Dragon Horns +10% CHC");
+  assert(lung?.extraStats?.some((stat) => stat.stat === "chd" && stat.value === 20), "Scales +20% CHD");
+  assert(!lung?.assumed?.length, "Ardent burn is not fake Weapon Damage");
+}
+
 function testTalentHoverPreview() {
   const creeping = ALL_TALENTS.find((talent) => talent.id === "creeping-death");
   const overclock = ALL_TALENTS.find((talent) => talent.id === "overclock");
@@ -2812,6 +2825,7 @@ const tests = [
   testSpecPerksSheetGapsY8s3,
   testOfficialExoticAndGearSetCopy,
   testTalentHoverPreview,
+  testIronLungExoticArdent,
 ];
 
 let failed = 0;
