@@ -428,16 +428,23 @@ function signatureWeaponPerk(specId: string): SpecPerkDef {
   ]);
 }
 
+/** TU6 retuned Vital Protection from Conflict crit-reduction to Pulse Resistance on every spec tree. */
+function vitalProtectionPerk(specId: string): SpecPerkDef {
+  return sheetPerk(specId, "pulse", "Vital Protection", [{ stat: "pulseResistance", value: 50 }]);
+}
+
 /**
  * Live Y8S3 PvE (TU 2.34) specialization sheet perks.
  * Red Horizon notes + live gear PDF (ubi.li/4Yvr2) do not retune spec trees.
  * The 2021 Intelligence Annex revamp never shipped — trees stay the Gear 2.0 layout.
  * In-game English node names: Amped, Overclocked CPU, Enhanced Diagnostics,
- * Vital Protection (Technician pulse), Breath Control, Incombustible, Elite Defense
- * (Division Dispatch 1 Aug 2026; Namu trees last modified 2025-04-08).
+ * Vital Protection (Pulse Resistance, all six specs since TU6), Breath Control,
+ * Incombustible, Elite Defense, Triage Specialist
+ * (Division Dispatch 1 Aug 2026; Namu trees last modified 2025-04-08;
+ * TU6 Pentagon notes: Vital Protection → Pulse resistance).
  * Exclusive sheet fork is Technician only. Combat procs, signature ammo, skill
- * unlocks, armor-kit extras, Conflict crit-reduction Vital Protection, and 3-rank
- * weapon-type stacks beyond the +5% toggle stay unmodeled.
+ * unlocks, armor-kit extras, and 3-rank weapon-type stacks beyond the +5% toggle
+ * stay unmodeled.
  */
 export const SPECIALIZATIONS: SpecializationDef[] = [
   {
@@ -445,10 +452,11 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     name: "Gunner",
     signature: "M134 Minigun",
     description:
-      "M134 Minigun, Banshee Pulse, Riot Foam Chem Launcher, P320 XCompact. Combat-only: Supply Line ammo regen, Barrage RoF on kill, Emplacement handling while stationary, Hardened Armor Kits.",
+      "M134 Minigun, Banshee Pulse, Riot Foam Chem Launcher, P320 XCompact. Combat-only: Supply Line ammo regen, Barrage RoF on kill, Coupler every 3rd reload, Emplacement handling while stationary, Hardened Armor Kits.",
     perks: [
       sheetPerk("gunner", "aok", "Armor on Kill", [{ stat: "armorOnKill", value: 10 }]),
       sheetPerk("gunner", "ammo", "Ammo Capacity", [{ stat: "ammoCapacity", value: 25 }]),
+      vitalProtectionPerk("gunner"),
       signatureWeaponPerk("gunner"),
       ...weaponTypePerks("gunner"),
     ],
@@ -461,7 +469,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
       "P-017 Missile Launcher, Artificer Hive, EMP grenades, Maxim-9, Linked Laser Pointer. Combat-only: Faraday Field, Technomancy bonus armor while aiming a skill, Emergency Patch, Dismantling vs drones/robots.",
     perks: [
       sheetPerk("technician", "tier", "Amped", [{ stat: "skillTier", value: 1 }]),
-      sheetPerk("technician", "pulse", "Vital Protection", [{ stat: "pulseResistance", value: 50 }]),
+      vitalProtectionPerk("technician"),
       choicePerk(
         "technician",
         "overclock",
@@ -490,6 +498,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
       sheetPerk("sharpshooter", "hsd", "Headshot Damage", [{ stat: "hsd", value: 15 }]),
       sheetPerk("sharpshooter", "mmr", "Marksman Rifle damage", [{ stat: "mmrDamage", value: 10 }]),
       sheetPerk("sharpshooter", "breath", "Breath Control", [{ stat: "stability", value: 15 }]),
+      vitalProtectionPerk("sharpshooter"),
       signatureWeaponPerk("sharpshooter"),
       ...weaponTypePerks("sharpshooter").filter((perk) => perk.id !== "sharpshooter-mmr"),
     ],
@@ -503,7 +512,9 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     perks: [
       sheetPerk("survivalist", "repairs", "Incoming Repairs", [{ stat: "incomingRepairs", value: 10 }]),
       sheetPerk("survivalist", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      sheetPerk("survivalist", "triage", "Triage Specialist", [{ stat: "skillRepair", value: 15 }]),
       sheetPerk("survivalist", "elite", "Elite Defense", [{ stat: "protectionFromElites", value: 10 }]),
+      vitalProtectionPerk("survivalist"),
       signatureWeaponPerk("survivalist"),
       ...weaponTypePerks("survivalist"),
     ],
@@ -518,6 +529,7 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
       sheetPerk("demolitionist", "explosive", "Explosive Damage", [{ stat: "explosiveDamage", value: 15 }]),
       sheetPerk("demolitionist", "lmg", "LMG damage", [{ stat: "lmgDamage", value: 10 }]),
       sheetPerk("demolitionist", "incombustible", "Incombustible", [{ stat: "burnResistance", value: 20 }]),
+      vitalProtectionPerk("demolitionist"),
       signatureWeaponPerk("demolitionist"),
       ...weaponTypePerks("demolitionist").filter((perk) => perk.id !== "demolitionist-lmg"),
     ],
@@ -527,10 +539,11 @@ export const SPECIALIZATIONS: SpecializationDef[] = [
     name: "Firewall",
     signature: "K8-JetStream Flamethrower",
     description:
-      "K8-JetStream Flamethrower, Striker Shield, Cluster grenades, Firestarter sawed-off. Combat-only: burn duration ranks, ignition on armor break, Forced Breakthrough bonus armor while moving cover-to-cover.",
+      "K8-JetStream Flamethrower, Striker Shield, Cluster grenades, Firestarter sawed-off. Combat-only: burn duration ranks, Frontline Recovery health on kill, ignition on armor break, Forced Breakthrough bonus armor while moving cover-to-cover.",
     perks: [
       sheetPerk("firewall", "armor", "Total Armor", [{ stat: "armorPercent", value: 10 }]),
       sheetPerk("firewall", "status", "Status Effects", [{ stat: "statusEffects", value: 10 }]),
+      vitalProtectionPerk("firewall"),
       signatureWeaponPerk("firewall"),
       ...weaponTypePerks("firewall"),
     ],
