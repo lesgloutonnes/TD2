@@ -14,10 +14,15 @@ Y8S3 facts (do not regress):
 - **Boiling Point** is a pickable HE talent (first 53% mag −100% CHC, rest 100%). Perfect (Teapot, Steamer) is 48%.
 - **Steel & Sons ACR** is an exotic ACR SS rifle (`steel-and-sons`), talent Confirm & Execute, max stacks 4, weak-point +30% amp / 5s.
 - **Fafnir**: Dragon's Breath 40% Burn, WD amplified by 50% of Status Effects; locked +15% CHC / +5 mag / +10% handling as `extraStats`. No averaged +WD assumed. RPM/mag unpublished by Ubisoft — do not invent.
-- **Quickstep** is a named Tactical M1911 pistol (`quickstep`), talent Sport Mode: +20% movement speed while unholstered, does not stack with other MS bonuses. Not a meme seasonal — keep it. Do not model MS as fake Weapon Damage.
+- **Quickstep** is a named Tactical M1911 pistol (`quickstep`), talent Sport Mode: +20% movement speed while unholstered, does not stack with other MS bonuses. Family RPM/mag is **310 / 7** (mx live BuildStation, same as Mozambique Special). Not a meme seasonal — keep it. Do not model MS as fake Weapon Damage.
 - **Prima Donna** is an exotic Mk20 SSR MMR (`prima-donna`), Paradise Lost, 55 RPM / mag 7, talent You can look... but you can't touch. Out-of-combat stacks are not averaged as Weapon Damage.
-- **Head Scratcher** is a pickable HE talent (30% amp vs confused / 4 kills). Perfect 35% / 3 kills is named-only (Insult to Injury / Brain Break) — do not add those named weapons without official family + RPM/mag.
-- Do not add Insult to Injury / Brain Break without an official talent table.
+- **Head Scratcher** is a pickable HE talent (30% amp vs confused / 4 kills). Perfect 35% / 3 kills is named-only:
+  - **Insult To Injury** (`insult-to-injury`) — SA80 LMG, 610 RPM / mag 30
+  - **Brain Break** (`brain-break`) — MDR rifle, 360 RPM / mag 20
+  Do not add Perfect Head Scratcher to the HE picker.
+- **First Bloom** (`first-bloom`) — named PDR AR, 700 / 30, talent Blossom Harvest (3.3% amp per 10% combined Armor+Health remaining). Not sheet WD.
+- **Rabid D50** (`rabid-d50`) — named D50, 200 RPM / mag 8, talent Foam at the Mouth (HS kill → Ensnare next hit; +25% amp vs Ensnared). Not sheet WD. HE D50 family is 200 / 8.
 - Do not add Perfect-only HE talents (Allegro, Streamline, …) unless they are on the live picker.
+- mx-division-builds live API (`buildstation.app/api/td2/v2/data/mx/…`) is a community catalog for **existence + family + RPM/mag + talent name/text**. Do not copy its GitHub CSVs (stale brands). Do not mass-overwrite our Y8S3 brand/set numbers or HE picker. Skip meme seasonals and D1 leftovers (Nimble Holster, NinjaBike-as-kneepads).
 
-Sources: Red Horizon article + live gear PDF. `npm test` after edits.
+Sources: Red Horizon article + live gear PDF; mx live API for named gaps. `npm test` after edits.

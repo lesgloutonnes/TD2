@@ -45,6 +45,7 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("black-market-ak-m", "Black Market AK-M", "ar", 600, 30, "optimist"),
   he("police-g36", "Police G36", "ar", 750, 30, "optimist"),
   he("classic-rpk-16", "RPK-16", "ar", 650, 45, "optimist"),
+  he("pdr", "PDR", "ar", 700, 30, "optimist"),
   // LMGs
   he("m249-b", "M249 B", "lmg", 850, 100, "fast-hands"),
   he("mk46", "Mk46", "lmg", 550, 100, "ranger"),
@@ -107,9 +108,10 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("military-mk17", "Military Mk17", "rifle", 275, 20, "ranger"),
   he("classic-m1a-socom", "M1A SOCOM", "rifle", 300, 20, "rifleman"),
   he("lightweight-m4-rifle", "Lightweight M4 (Rifle)", "rifle", 850, 30, "fast-hands"),
+  he("urban-mdr", "Urban MDR", "rifle", 380, 20, "rifleman"),
   // Pistols
   he("pistol-93r", "93R", "pistol", 1100, 20, "fast-hands"),
-  he("m1911", "M1911", "pistol", 160, 7, "killer"),
+  he("m1911", "M1911", "pistol", 310, 7, "killer"),
   he("px4", "Px4 Storm", "pistol", 360, 17, "strained"),
   he("x-45", "X-45", "pistol", 380, 15, "optimist"),
   he("diceros", "Diceros", "pistol", 160, 6, "close-personal"),
@@ -119,6 +121,6 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("magnum-586", "586 Magnum", "pistol", 160, 6, "ranger"),
   he("snub", "Snubnosed Diceros", "pistol", 160, 5, "close-personal"),
   he("first-wave-pf45", "First Wave PF45", "pistol", 380, 15, "strained"),
-  he("tactical-m1911", "Tactical M1911", "pistol", 160, 7, "killer"),
+  he("tactical-m1911", "Tactical M1911", "pistol", 310, 7, "killer"),
   he("police-m9", "Police M9", "pistol", 400, 15, "fast-hands"),
 ];

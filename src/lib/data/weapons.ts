@@ -351,8 +351,8 @@ export const WEAPONS: WeaponDef[] = [
     name: "D50",
     type: "pistol",
     quality: "high-end",
-    rpm: 150,
-    mag: 7,
+    rpm: 200,
+    mag: 8,
     talent: "Salvage",
     talentDesc: "Killing a target has a +70% chance to refill the magazine.",
   },
@@ -707,6 +707,19 @@ export const WEAPONS: WeaponDef[] = [
     talentDesc: "Weapon hits buff skills, and skill use buffs weapon damage. Former DZ exclusive.",
   },
   {
+    id: "brain-break",
+    name: "Brain Break",
+    type: "rifle",
+    quality: "named",
+    rpm: 360,
+    mag: 20,
+    talent: "Perfect Head Scratcher",
+    talentDesc:
+      "Deal 35% Amplified Damage to confused enemies. After 3 kills, applies Confuse to the enemy you hit. Named MDR.",
+    assumedNote:
+      "Perfect Head Scratcher amp vs confused is not a sheet Weapon Damage average. HE Head Scratcher is 30% / 4 kills.",
+  },
+  {
     id: "virginian",
     name: "The Virginian",
     type: "rifle",
@@ -923,6 +936,19 @@ export const WEAPONS: WeaponDef[] = [
     talentDesc: "Weapon hits: +20% skill damage. Skill use: +20% weapon damage. Doubled if both are active.",
   },
   {
+    id: "first-bloom",
+    name: "First Bloom",
+    type: "ar",
+    quality: "named",
+    rpm: 700,
+    mag: 30,
+    talent: "Blossom Harvest",
+    talentDesc:
+      "Amplifies Weapon Damage by 3.3% for each 10% combined Armor and Health the enemy has remaining. Named PDR.",
+    assumedNote:
+      "Blossom Harvest scales with the target's remaining armor + health. Not averaged as sheet Weapon Damage.",
+  },
+  {
     id: "agitator",
     name: "Agitator",
     type: "ar",
@@ -1013,6 +1039,19 @@ export const WEAPONS: WeaponDef[] = [
     mag: 50,
     talent: "Perfect Precision Strike",
     talentDesc: "Kills at long range: builds stacks. Hits at close range: +35% amplified close-quarters damage.",
+  },
+  {
+    id: "insult-to-injury",
+    name: "Insult To Injury",
+    type: "lmg",
+    quality: "named",
+    rpm: 610,
+    mag: 30,
+    talent: "Perfect Head Scratcher",
+    talentDesc:
+      "Deal 35% Amplified Damage to confused enemies. After 3 kills, applies Confuse to the enemy you hit. Named SA80.",
+    assumedNote:
+      "Perfect Head Scratcher amp vs confused is not a sheet Weapon Damage average. HE Head Scratcher is 30% / 4 kills.",
   },
   {
     id: "rusty",
@@ -1647,18 +1686,31 @@ export const WEAPONS: WeaponDef[] = [
     name: "Survivalist D50",
     type: "pistol",
     quality: "named",
-    rpm: 150,
-    mag: 7,
+    rpm: 200,
+    mag: 8,
     talent: "Perfect Sadist",
     talentDesc:
       "+35% damage against bleeding targets. Survivalist specialization sidearm (specialization must be active to equip).",
+  },
+  {
+    id: "rabid-d50",
+    name: "Rabid D50",
+    type: "pistol",
+    quality: "named",
+    rpm: 200,
+    mag: 8,
+    talent: "Foam at the Mouth",
+    talentDesc:
+      "After killing an enemy with a headshot, applies Ensnare to the next enemy you hit. Amplifies Weapon Damage by 25% against Ensnared enemies. Named D50.",
+    assumedNote:
+      "Foam at the Mouth amp vs Ensnared after a headshot kill is not averaged as sheet Weapon Damage.",
   },
   {
     id: "quickstep",
     name: "Quickstep",
     type: "pistol",
     quality: "named",
-    rpm: 160,
+    rpm: 310,
     mag: 7,
     talent: "Sport Mode",
     talentDesc:

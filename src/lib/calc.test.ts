@@ -812,6 +812,10 @@ function testWeaponCatalog() {
     "survivalist-d50",
     "quickstep",
     "prima-donna",
+    "first-bloom",
+    "insult-to-injury",
+    "brain-break",
+    "rabid-d50",
   ]) {
     assert(
       WEAPONS.some((weapon) => weapon.id === required),
@@ -2257,8 +2261,8 @@ function testQuickstep() {
   assert(quickstep?.talentDesc.includes("+20% Movement Speed"), "Sport Mode +20%");
   assert(quickstep?.talentDesc.includes("unholstered"), "Sport Mode unholstered");
   assert(quickstep?.talentDesc.includes("does not stack"), "Sport Mode no stack");
-  assert(quickstep?.rpm === 160 && quickstep.mag === 7, "Quickstep inherits Tactical M1911 160/7");
-  assert(family?.type === "pistol" && family.rpm === 160 && family.mag === 7, "HE Tactical M1911 family");
+  assert(quickstep?.rpm === 310 && quickstep.mag === 7, "Quickstep inherits Tactical M1911 310/7");
+  assert(family?.type === "pistol" && family.rpm === 310 && family.mag === 7, "HE Tactical M1911 family");
   assert(
     quickstep?.extraStats?.some((stat) => stat.stat === "movementSpeed" && stat.value === 20),
     "Sport Mode +20 Movement Speed extraStats",
@@ -2698,6 +2702,65 @@ function testOfficialExoticAndGearSetCopy() {
   assert(underboss?.talentDesc.includes("other agents using this weapon"), "Underboss official group marks");
 }
 
+/** Named gaps filled from mx-division-builds live BuildStation API (Y8S3, 27 Aug 2026). */
+function testMxLiveNamedGaps() {
+  const pdr = WEAPONS.find((weapon) => weapon.id === "pdr");
+  assert(pdr?.type === "ar" && pdr.quality === "high-end" && pdr.rpm === 700 && pdr.mag === 30, "HE PDR 700/30");
+
+  const mdr = WEAPONS.find((weapon) => weapon.id === "urban-mdr");
+  assert(mdr?.type === "rifle" && mdr.quality === "high-end" && mdr.rpm === 380 && mdr.mag === 20, "HE Urban MDR 380/20");
+
+  const bloom = WEAPONS.find((weapon) => weapon.id === "first-bloom");
+  assert(bloom?.name === "First Bloom" && bloom.type === "ar" && bloom.quality === "named", "First Bloom named PDR");
+  assert(bloom?.rpm === 700 && bloom.mag === 30, "First Bloom 700/30");
+  assert(bloom?.talent === "Blossom Harvest", "Blossom Harvest");
+  assert(bloom?.talentDesc.includes("3.3%"), "Blossom Harvest 3.3%");
+  assert(bloom?.talentDesc.includes("combined Armor and Health"), "Blossom Harvest remaining armor+health");
+  assert(!bloom?.assumed?.length, "Blossom Harvest is not sheet Weapon Damage");
+
+  const insult = WEAPONS.find((weapon) => weapon.id === "insult-to-injury");
+  assert(insult?.name === "Insult To Injury" && insult.type === "lmg" && insult.quality === "named", "Insult To Injury SA80");
+  assert(insult?.rpm === 610 && insult.mag === 30, "Insult To Injury 610/30");
+  assert(insult?.talent === "Perfect Head Scratcher", "Insult Perfect Head Scratcher");
+  assert(insult?.talentDesc.includes("35%") && insult.talentDesc.includes("3 kills"), "Perfect Head Scratcher 35%/3");
+  assert(!insult?.assumed?.length, "Perfect Head Scratcher is not sheet WD");
+
+  const brain = WEAPONS.find((weapon) => weapon.id === "brain-break");
+  assert(brain?.name === "Brain Break" && brain.type === "rifle" && brain.quality === "named", "Brain Break MDR");
+  assert(brain?.rpm === 360 && brain.mag === 20, "Brain Break 360/20");
+  assert(brain?.talent === "Perfect Head Scratcher", "Brain Break Perfect Head Scratcher");
+  assert(!brain?.assumed?.length, "Brain Break is not sheet WD");
+
+  const rabid = WEAPONS.find((weapon) => weapon.id === "rabid-d50");
+  assert(rabid?.name === "Rabid D50" && rabid.type === "pistol" && rabid.quality === "named", "Rabid D50");
+  assert(rabid?.rpm === 200 && rabid.mag === 8, "Rabid D50 200/8");
+  assert(rabid?.talent === "Foam at the Mouth", "Foam at the Mouth");
+  assert(rabid?.talentDesc.includes("Ensnare") && rabid.talentDesc.includes("25%"), "Foam ensnare +25%");
+  assert(!rabid?.assumed?.length, "Foam at the Mouth is not sheet WD");
+
+  const d50 = WEAPONS.find((weapon) => weapon.id === "d50");
+  assert(d50?.rpm === 200 && d50.mag === 8, "HE D50 family 200/8");
+  const survivalist = WEAPONS.find((weapon) => weapon.id === "survivalist-d50");
+  assert(survivalist?.rpm === 200 && survivalist.mag === 8, "Survivalist D50 200/8");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.includeAssumed = true;
+  loadout.weapons.primary = { weaponId: "first-bloom", expertise: 0, mods: [] };
+  loadout.activeWeapon = "primary";
+  const bloomStats = computeStats(loadout);
+  assert(bloomStats.values.weaponDamage === 0, "Blossom Harvest does not add standing WD");
+
+  loadout.weapons.primary = { weaponId: "insult-to-injury", expertise: 0, mods: [] };
+  const insultStats = computeStats(loadout);
+  assert(insultStats.values.weaponDamage === 0, "Perfect Head Scratcher does not add standing WD");
+
+  loadout.weapons.sidearm = { weaponId: "rabid-d50", expertise: 0, mods: [] };
+  loadout.activeWeapon = "sidearm";
+  const rabidStats = computeStats(loadout);
+  assert(rabidStats.values.weaponDamage === 0, "Foam at the Mouth does not add standing WD");
+}
+
 function testIronLungExoticArdent() {
   const lung = WEAPONS.find((weapon) => weapon.id === "iron-lung");
   assert(lung?.quality === "exotic", "Iron Lung is the TU19 exotic, not named Perfect Frenzy");
@@ -2827,6 +2890,7 @@ const tests = [
   testOfficialExoticAndGearSetCopy,
   testTalentHoverPreview,
   testIronLungExoticArdent,
+  testMxLiveNamedGaps,
 ];
 
 let failed = 0;
