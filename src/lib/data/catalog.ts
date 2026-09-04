@@ -1024,6 +1024,19 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     note: "Exotic gloves. Weapon Damage core is locked. CHC/CHD secondaries — no extra Armor on Kill core/stat.",
   },
   {
+    id: "rugged-gauntlets",
+    name: "Rugged Gauntlets",
+    kind: "exotic",
+    lockedCore: "red",
+    slots: ["gloves"],
+    uniqueTalent: {
+      name: "Iron Grip",
+      description:
+        "-50% Recoil Penalty when hip-firing; -50% Recoil Penalty when blind-firing from cover.",
+    },
+    note: "Exotic gloves (Y5S3 Vanguard). Recoil penalties are combat handling, not standing Weapon Damage.",
+  },
+  {
     id: "exodus",
     name: "Exodus",
     kind: "exotic",

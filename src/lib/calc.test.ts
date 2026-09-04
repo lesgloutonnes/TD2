@@ -739,8 +739,11 @@ function testLiveTalentLibrary() {
   assert(chest.includes("tag-team") && !pack.includes("tag-team"), "Tag Team is a chest talent");
 
   const intimidate = talentByName("Perfect Intimidate");
-  assert(intimidate.description.includes("gain 3 stacks each second"), "Intimidate stacking");
-  assert(intimidate.description.includes("max 10"), "Perfect Intimidate 10 stacks");
+  assert(intimidate.description.includes("gain 1 stack each second"), "Intimidate TU15 ramp-up");
+  assert(intimidate.description.includes("max of 8"), "Perfect Intimidate 8 stacks");
+  assert(!intimidate.description.includes("max of 10"), "Perfect Intimidate is not 10 stacks");
+  const heIntimidate = talentByName("Intimidate");
+  assert(heIntimidate.description.includes("max of 7"), "HE Intimidate 7 stacks");
 
   const headhunter = talentByName("Perfect Headhunter");
   assert(headhunter.description.includes("killing an enemy with a headshot"), "Headhunter on kill");
@@ -3135,6 +3138,82 @@ function testSpecPerksVitalProtectionAllSpecsY8s3() {
   assert(skippedTriage.values.pulseResistance === 50, "Vital Protection stays on without Triage");
 }
 
+function testGearCatalogMissingLiveExotics() {
+  const beacon = catalogById("beacon");
+  assert(beacon?.kind === "exotic" && beacon.name === "Beacon", "Beacon exotic chest");
+  assert(beacon?.uniqueTalent?.name === "Bond", "Beacon Bond");
+  assert(beacon?.uniqueTalent?.description.includes("+30% Critical Hit Damage"), "Bond ally 30% CHD");
+  assert(beacon?.uniqueTalent?.description.includes("+15% Skill Efficiency"), "Bond ally 15% Skill Efficiency");
+  assert(beacon?.uniqueTalent?.description.includes("+2% Armor Regen"), "Bond ally 2% Armor Regen");
+  assert(beacon?.uniqueTalent?.description.includes("10m"), "Bond 10m");
+  assert(beacon?.assumed?.some((stat) => stat.stat === "chd" && stat.value === 30), "Bond assumed CHD");
+  assert(
+    beacon?.assumed?.some((stat) => stat.stat === "skillEfficiency" && stat.value === 15),
+    "Bond assumed Skill Efficiency",
+  );
+  assert(
+    beacon?.assumed?.some((stat) => stat.stat === "armorRegenPercent" && stat.value === 2),
+    "Bond assumed Armor Regen",
+  );
+
+  const beaconOn = emptyLoadout();
+  beaconOn.shdWatch = false;
+  beaconOn.includeAssumed = true;
+  beaconOn.gear.chest = createPiece("chest", "beacon");
+  beaconOn.gear.chest.attributes = [];
+  const beaconMax = computeStats(beaconOn);
+  assert(beaconMax.values.weaponDamage === 15, `Beacon red core only, got ${beaconMax.values.weaponDamage}`);
+  assert(beaconMax.values.chd === 30, `Bond max CHD, got ${beaconMax.values.chd}`);
+  assert(beaconMax.values.skillEfficiency === 15, `Bond max Skill Efficiency, got ${beaconMax.values.skillEfficiency}`);
+  assert(beaconMax.values.armorRegenPercent === 2, `Bond max Armor Regen, got ${beaconMax.values.armorRegenPercent}`);
+
+  const beaconOff = emptyLoadout();
+  beaconOff.shdWatch = false;
+  beaconOff.includeAssumed = false;
+  beaconOff.gear.chest = createPiece("chest", "beacon");
+  beaconOff.gear.chest.attributes = [];
+  const beaconBase = computeStats(beaconOff);
+  assert(beaconBase.values.chd === 0, "Bond CHD gated by Include maxed bonuses");
+  assert(beaconBase.values.skillEfficiency === 0, "Bond Skill Efficiency gated");
+  assert(beaconBase.values.armorRegenPercent === 0, "Bond Armor Regen gated");
+
+  const exodus = catalogById("exodus");
+  assert(exodus?.kind === "exotic" && exodus.name === "Exodus", "Exodus exotic gloves");
+  assert(exodus?.uniqueTalent?.name === "Smoke Screen", "Smoke Screen");
+  assert(exodus?.uniqueTalent?.description.includes("3s") && exodus.uniqueTalent.description.includes("40s"), "Smoke 3s / 40s CD");
+  assert(!exodus?.assumed?.some((stat) => stat.stat === "weaponDamage"), "Smoke Screen is not standing WD");
+
+  const rugged = catalogById("rugged-gauntlets");
+  assert(rugged?.kind === "exotic" && rugged.name === "Rugged Gauntlets", "Rugged Gauntlets");
+  assert(rugged?.uniqueTalent?.name === "Iron Grip", "Iron Grip");
+  assert(rugged?.uniqueTalent?.description.includes("hip-firing"), "Iron Grip hip-fire");
+  assert(rugged?.uniqueTalent?.description.includes("blind-firing"), "Iron Grip blind-fire");
+  assert(!rugged?.assumed?.some((stat) => stat.stat === "weaponDamage"), "Iron Grip is not standing WD");
+
+  const gloves = catalogForSlot("gloves");
+  assert(gloves.some((item) => item.id === "exodus"), "Exodus in gloves picker");
+  assert(gloves.some((item) => item.id === "rugged-gauntlets"), "Rugged Gauntlets in gloves picker");
+  assert(catalogForSlot("chest").some((item) => item.id === "beacon"), "Beacon in chest picker");
+
+  assert(!catalogById("festive-delivery"), "Festive Delivery meme omitted");
+  assert(!catalogById("snow-machine"), "Snow Machine meme omitted");
+  assert(!catalogById("nimble-holster"), "Nimble Holster is Division 1");
+  assert(!NAMED_AND_EXOTICS.some((item) => item.id === "ninjabike" && item.slots !== "all" && item.slots.includes("kneepads")), "NinjaBike stays a backpack");
+
+  const hunter = emptyLoadout();
+  hunter.shdWatch = false;
+  hunter.includeAssumed = true;
+  hunter.gear.chest = createPiece("chest", "hunter-killer");
+  hunter.gear.chest.attributes = [];
+  const hunterStats = computeStats(hunter);
+  assert(hunterStats.values.weaponDamage === 40, `Perfect Intimidate 8×5% on blue Golan native, got ${hunterStats.values.weaponDamage}`);
+
+  const heIntimidate = ALL_TALENTS.find((talent) => talent.id === "intimidate");
+  assert(heIntimidate?.assumed?.some((stat) => stat.stat === "weaponDamage" && stat.value === 35), "HE Intimidate 7×5%");
+  const perfectIntimidate = ALL_TALENTS.find((talent) => talent.id === "perfect-intimidate");
+  assert(perfectIntimidate?.assumed?.some((stat) => stat.stat === "weaponDamage" && stat.value === 40), "Perfect Intimidate 8×5%");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -3233,6 +3312,7 @@ const tests = [
   testSeasonLiveY8s3CopyHoles4Sep,
   testSpecPerksVitalProtectionAllSpecsY8s3,
   testUniqueAttrNamedAndHeFamilies,
+  testGearCatalogMissingLiveExotics,
 ];
 
 let failed = 0;

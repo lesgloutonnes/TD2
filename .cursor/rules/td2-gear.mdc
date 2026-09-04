@@ -21,6 +21,8 @@ Do not regress live-vs-PTS:
 - Brands absent from the live table (Alps, Providence, Yaahl, Uzina, Brazos, Shiny Monkey, Edelweiss) stay Y8S2.
 - Iron Will: Marksman Rifle (not “sniper”), Resolved 2s PvE / 3s PvP.
 - Loaded for Bear Afterburn is a **reload consume burst**, not standing WD.
+- Intimidate is TU15 ramp-up: **1 stack/s**, max **7** × **5%** WD in 10m. Perfect (Hunter-Killer) max **8**. Do not regress to the old 3/s × 4% (9/10 stacks).
+- Keep live exotics **Beacon** (Bond), **Exodus** (Smoke Screen), **Rugged Gauntlets** (Iron Grip), **NinjaBike Messenger Kneepads** (Parkour!). Do not import mx D1 leftovers (Nimble Holster) or meme seasonal named (Festive Delivery, Snow Machine).
 - Prototype Augment curves: Y8S1.3 Ubisoft for Quantum/Amalgam/Anomaly/Synesthesia; Echo unchanged. No official Y8S3 curves — do not invent.
 - **Beacon** (`beacon`) is an exotic chest (Y7S4 Mutiny), talent Bond. Ally-within-10m group is the maxed sheet: +30% CHD / +15% Skill Efficiency / +2% Armor Regen. Skill-proximity group is weaker and does not stack. Not a D1 leftover.
 - **Exodus** (`exodus`) is exotic gloves (Y6S3), talent Smoke Screen. Armor-break smoke is combat-only — no fake Weapon Damage.

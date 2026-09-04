@@ -183,19 +183,19 @@ export const CHEST_TALENTS: GearTalent[] = [
     name: "Intimidate",
     slot: "chest",
     description:
-      "While you have bonus armor, gain 3 stacks each second (max 9). Each stack increases weapon damage by 4% to enemies within 10m. All stacks are lost when you have no bonus armor.",
-    assumed: [{ stat: "weaponDamage", value: 36 }],
-    assumedNote: "Assumes Intimidate at 9 stacks (bonus armor, targets within 10m).",
+      "While you have bonus armor, gain 1 stack each second up to a max of 7. Each stack increases total weapon damage by 5% to enemies within 10m. All stacks are lost when you have no bonus armor.",
+    assumed: [{ stat: "weaponDamage", value: 35 }],
+    assumedNote: "Max Intimidate: 7 stacks × 5% (bonus armor, targets within 10m).",
   },
   {
     id: "perfect-intimidate",
     name: "Perfect Intimidate",
     slot: "chest",
     description:
-      "While you have bonus armor, gain 3 stacks each second (max 10). Each stack increases weapon damage by 4% to enemies within 10m. All stacks are lost when you have no bonus armor.",
+      "While you have bonus armor, gain 1 stack each second up to a max of 8. Each stack increases total weapon damage by 5% to enemies within 10m. All stacks are lost when you have no bonus armor.",
     perfect: true,
     assumed: [{ stat: "weaponDamage", value: 40 }],
-    assumedNote: "Assumes Perfect Intimidate at 10 stacks (bonus armor, targets within 10m).",
+    assumedNote: "Max Perfect Intimidate: 8 stacks × 5% (bonus armor, targets within 10m).",
   },
   {
     id: "kinetic-momentum",
