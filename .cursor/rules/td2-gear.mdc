@@ -22,6 +22,9 @@ Do not regress live-vs-PTS:
 - Iron Will: Marksman Rifle (not “sniper”), Resolved 2s PvE / 3s PvP.
 - Loaded for Bear Afterburn is a **reload consume burst**, not standing WD.
 - Prototype Augment curves: Y8S1.3 Ubisoft for Quantum/Amalgam/Anomaly/Synesthesia; Echo unchanged. No official Y8S3 curves — do not invent.
+- **Beacon** (`beacon`) is an exotic chest (Y7S4 Mutiny), talent Bond. Ally-within-10m group is the maxed sheet: +30% CHD / +15% Skill Efficiency / +2% Armor Regen. Skill-proximity group is weaker and does not stack. Not a D1 leftover.
+- **Exodus** (`exodus`) is exotic gloves (Y6S3), talent Smoke Screen. Armor-break smoke is combat-only — no fake Weapon Damage.
+- **NinjaBike Messenger Kneepads** (`ninjabike-kneepads`) are exotic kneepads (TU8), talent Parkour!. Separate from the backpack (`ninjabike`, Resourceful / `ninja: true`). Do not put `ninja: true` on the kneepads.
 - Omit meme seasonal named items.
 
 `npm test` after edits. Append-only tests in `calc.test.ts`.
