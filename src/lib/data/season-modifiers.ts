@@ -52,7 +52,8 @@ const GAUGE_GAMMA = [5, 15, 25, 40] as const;
 
 /**
  * Hostile modifiers are enemy effects, not player loadout picks — do not add them
- * as selectable passives. Live Y8S3 (PTS + 21 Aug 2026 developer notes):
+ * as selectable passives. Live Y8S3 (PTS + 21 Aug 2026 developer notes; no post-launch
+ * retune through 4 Sep 2026):
  * - Draining Presence: within 5 m, −10% magazine and −1% Pressure per second (radius was 7 m on PTS).
  * - Achilles' Heal: breaking a weak point or armor piece restores 50% Health to the enemy
  *   and allies within 10 m, and costs 5% Pressure (was 10% on PTS).
@@ -60,17 +61,18 @@ const GAUGE_GAMMA = [5, 15, 25, 40] as const;
  * Setting the carrier on fire permanently removes or reverses the effect.
  */
 export const SEASON_HOSTILE_NOTE =
-  "Hostile modifiers are enemy effects, not player picks. Burn the carrier to clear them. Draining Presence: within 5 m, −10% magazine and −1% Pressure per second. Achilles' Heal: breaking a weak point or armor piece restores 50% Health to the enemy and allies within 10 m, and costs 5% Pressure. Thousand Cuts: each hit −1% Pressure and a stacking 0.5% Damage Reduction debuff for 15 s.";
+  "Hostile modifiers are enemy effects, not player picks. Setting the carrier on fire permanently removes or reverses the effect. Draining Presence: within 5 m, −10% magazine and −1% Pressure per second. Achilles' Heal: breaking a weak point or armor piece restores 50% Health to the enemy and allies within 10 m, and costs 5% Pressure. Thousand Cuts: each hit −1% Pressure and a stacking 0.5% Damage Reduction debuff for 15 s.";
 
 /**
  * Combat Pressure rules that the sheet does not simulate. Live launch article lists
  * the action types; 21 Aug 2026 developer notes add Group Kill +1% and state that
  * some PTS fill amounts were buffed. Those per-action percentages were omitted from
  * the live article — do not ship the PTS 2.5 / 2 / 3 / 3.5 / 5 table as live.
- * Active durations and Quality Seals delay (seconds) are unpublished.
+ * Active durations, default Active unlock %, and Quality Seals delay (seconds) are unpublished.
+ * Live: Active Modifiers have no cooldown (launch article).
  */
 export const SEASON_GAUGE_NOTE =
-  "Pressure Gauge fills from kills, headshots, multikills, grenade kills, Skill kills, Status Effect kills, fire kills, and group kills (+1% Pressure per teammate kill). Actions can stack. Cover and cover-to-cover pause decay. The gauge freezes while an Active Modifier runs and resets when it ends. Default Status Effects: +15 / +25 / +40 / +65% at 10 / 35 / 65 / 90%. Live per-action fill amounts were buffed after PTS and omitted from the launch article — unpublished.";
+  "Pressure Gauge fills from kills, headshots, multikills, grenade kills, Skill kills, Status Effect kills, fire kills, and group kills (+1% Pressure per teammate kill). Actions can stack. Cover and cover-to-cover pause decay. Active Modifiers have no cooldown: the gauge freezes while one runs and resets when it ends. Default Status Effects: +15 / +25 / +40 / +65% at 10 / 35 / 65 / 90%. Live per-action fill amounts were buffed after PTS and omitted from the launch article — unpublished.";
 
 export const SEASON_ACTIVES: SeasonActiveDef[] = [
   {
@@ -88,24 +90,24 @@ export const SEASON_ACTIVES: SeasonActiveDef[] = [
     name: "Vicarious Combustion",
     secondary: "Headshot Damage",
     description:
-      "Headshots on burning enemies spread Burn (10–20 m). Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Level 5: headshots apply Burn directly.",
+      "Headshot Damage +10 / +20 / +30 / +50% from Level 3. Headshots on burning enemies spread Burn (10–20 m). Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Level 5: headshots apply Burn directly.",
     assumed: [{ stat: "hsd", value: 50 }],
     assumedNote:
-      "Assumes Level 5 active up: +50% Headshot Damage. Combat-only: 20 m Burn spread. Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Not a DPS sim.",
+      "Assumes Level 5 active up: +50% Headshot Damage (live band 10 / 20 / 30 / 50% from Level 3). Combat-only: 20 m Burn spread. Burn Damage reduced by 50%–10% while it runs (10% penalty at Level 5). Not a DPS sim.",
   },
   {
     id: "signed-shield-delivered",
     name: "Signed, Shield, Delivered",
     secondary: "Skill Efficiency",
     description:
-      "Signature Weapon and Shield bonuses. Kills with a Signature Weapon, or while a shield is up, refill the magazine. Level 5: those kills extend duration (+2 s Signature / +1 s shield).",
+      "Skill Efficiency +10 / +12.5 / +15 / +25% from Level 3. Signature Weapon Damage +50%, Signature range +25%, Shield Health +500%, Shield Active Regen +150%. Kills with a Signature Weapon, or with a regular weapon while a shield is up, refill the magazine. Level 5: those kills extend duration (+2 s Signature / +1 s shield).",
     assumed: [
       { stat: "skillEfficiency", value: 25 },
       { stat: "shieldHealth", value: 500 },
       { stat: "signatureWeaponDamage", value: 50 },
     ],
     assumedNote:
-      "Assumes Level 5 active up: +25% Skill Efficiency, +500% Shield Health, +50% Signature Weapon Damage. Combat-only: mag refill, +25% Signature range, +150% Shield Active Regen, +2 s duration on Signature kills / +1 s on shield kills. Not a DPS sim.",
+      "Assumes Level 5 active up: +25% Skill Efficiency (live band 10 / 12.5 / 15 / 25% from Level 3), +500% Shield Health, +50% Signature Weapon Damage. Combat-only: mag refill on Signature or shielded-weapon kills, +25% Signature range, +150% Shield Active Regen, +2 s duration on Signature kills / +1 s on shield kills. Not a DPS sim.",
   },
 ];
 
@@ -153,7 +155,7 @@ export const SEASON_PASSIVES: SeasonPassiveDef[] = [
     name: "Leaky Valve",
     category: "pressure",
     description:
-      "Cover no longer stops decay. Gains +50% from all actions. Actives require 95% Pressure regardless of other effects. Decay pauses out of combat.",
+      "Cover and cover-to-cover no longer stop decay. Gains +50% from all actions. Actives require 95% Pressure regardless of other effects. Decay pauses out of combat.",
   },
   {
     id: "vacuum-seal",

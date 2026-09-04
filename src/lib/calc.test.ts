@@ -2975,6 +2975,48 @@ function testTalentHoverPreview() {
   );
 }
 
+/** Live Y8S3 Under Pressure copy holes filled 4 Sep 2026 from launch article + PTS tables unchanged at live. */
+function testSeasonLiveY8s3CopyHoles4Sep() {
+  assert(SEASON_GAUGE_NOTE.includes("no cooldown"), "actives have no cooldown");
+  assert(SEASON_GAUGE_NOTE.includes("freezes"), "gauge still freezes during Active");
+  assert(!SEASON_GAUGE_NOTE.includes("2.5%"), "still do not ship PTS kill fill");
+
+  assert(
+    SEASON_HOSTILE_NOTE.includes("permanently removes or reverses"),
+    "hostile burn permanently removes or reverses",
+  );
+
+  const leaky = SEASON_PASSIVES.find((item) => item.id === "leaky-valve");
+  assert(leaky?.description.includes("cover-to-cover"), "Leaky Valve cover-to-cover");
+  assert(leaky?.description.includes("95%"), "Leaky Valve 95%");
+
+  const vicarious = SEASON_ACTIVES.find((item) => item.id === "vicarious-combustion");
+  assert(vicarious?.description.includes("+10 / +20 / +30 / +50%"), "Vicarious HSD L3 band");
+  assert(vicarious?.assumedNote.includes("10 / 20 / 30 / 50%"), "Vicarious assumed HSD band");
+
+  const signed = SEASON_ACTIVES.find((item) => item.id === "signed-shield-delivered");
+  assert(signed?.description.includes("+10 / +12.5 / +15 / +25%"), "Signed SE L3 band");
+  assert(signed?.description.includes("+500%") && signed.description.includes("+50%"), "Signed L5 shield/sig in description");
+  assert(signed?.description.includes("regular weapon"), "Signed mag refill on shielded regular weapons");
+  assert(signed?.assumedNote.includes("10 / 12.5 / 15 / 25%"), "Signed assumed SE band");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.season = sanitizeSeason({
+    enabled: true,
+    pressure: 80,
+    passives: ["delayed-venting", "kickstart", null],
+  });
+  const delayedKick = computeStats(loadout);
+  assert(
+    delayedKick.values.statusEffects === 97.5,
+    `Delayed Venting + Kickstart at 80% inclusive, got ${delayedKick.values.statusEffects}`,
+  );
+
+  assert(SEASON_PASSIVES.length === 20, "still 20 player passives");
+  assert(SEASON_ACTIVES.length === 3, "still 3 actives");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -3069,7 +3111,11 @@ const tests = [
   testTalentHoverPreview,
   testIronLungExoticArdent,
   testMxLiveNamedGaps,
+<<<<<<< HEAD
   testMxLiveExoticGearGaps,
+=======
+  testSeasonLiveY8s3CopyHoles4Sep,
+>>>>>>> 42edf8a (Complète les textes live Under Pressure (Y8S3) sans inventer les fills.)
 ];
 
 let failed = 0;
