@@ -14,7 +14,8 @@ Do not regress:
 - Technician exclusive fork: Overclocked CPU +10% Skill Damage vs Enhanced Diagnostics +10% Skill Repair (`technician-skill-focus`).
 - Sharpshooter 15% HSD + 10% MMR; filter the generated weapon-type MMR +5% so it does not double.
 - Demolitionist 15% Explosive + 10% LMG; filter the generated weapon-type LMG +5%.
-- Gunner 10% Armor on Kill / 25% ammo. Survivalist 10% Incoming Repairs / 10% Status. Firewall 10% Total Armor / 10% Status.
+- Gunner 10% Armor on Kill / 25% ammo. Survivalist 10% Incoming Repairs / 10% Status + Triage Specialist +15% Skill Repair. Firewall 10% Total Armor / 10% Status.
+- **Vital Protection** on all six specs: +50% Pulse Resistance (TU6; not Conflict crit-reduction). Ids `{spec}-pulse`.
 - Keep existing perk `id` slugs.
 
 Combat-only nodes (signature ammo, extra armor kits, skill unlocks, Banshee) stay in the spec `description`. Do not invent Weapon Damage. PvE only — ignore Conflict / PvP DZ tables.

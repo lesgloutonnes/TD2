@@ -2119,6 +2119,7 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "gunner-aok", name: "Armor on Kill", stat: "armorOnKill", value: 10 },
         { id: "gunner-ammo", name: "Ammo Capacity", stat: "ammoCapacity", value: 25 },
+        { id: "gunner-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
         { id: "gunner-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
@@ -2136,6 +2137,7 @@ function testSpecPerksLiveY8s3() {
         { id: "sharpshooter-hsd", name: "Headshot Damage", stat: "hsd", value: 15 },
         { id: "sharpshooter-mmr", name: "Marksman Rifle damage", stat: "mmrDamage", value: 10 },
         { id: "sharpshooter-breath", name: "Breath Control", stat: "stability", value: 15 },
+        { id: "sharpshooter-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
         { id: "sharpshooter-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
@@ -2144,7 +2146,9 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "survivalist-repairs", name: "Incoming Repairs", stat: "incomingRepairs", value: 10 },
         { id: "survivalist-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+        { id: "survivalist-triage", name: "Triage Specialist", stat: "skillRepair", value: 15 },
         { id: "survivalist-elite", name: "Elite Defense", stat: "protectionFromElites", value: 10 },
+        { id: "survivalist-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
         { id: "survivalist-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
@@ -2154,6 +2158,7 @@ function testSpecPerksLiveY8s3() {
         { id: "demolitionist-explosive", name: "Explosive Damage", stat: "explosiveDamage", value: 15 },
         { id: "demolitionist-lmg", name: "LMG damage", stat: "lmgDamage", value: 10 },
         { id: "demolitionist-incombustible", name: "Incombustible", stat: "burnResistance", value: 20 },
+        { id: "demolitionist-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
         { id: "demolitionist-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
@@ -2162,6 +2167,7 @@ function testSpecPerksLiveY8s3() {
       sheet: [
         { id: "firewall-armor", name: "Total Armor", stat: "armorPercent", value: 10 },
         { id: "firewall-status", name: "Status Effects", stat: "statusEffects", value: 10 },
+        { id: "firewall-pulse", name: "Vital Protection", stat: "pulseResistance", value: 50 },
         { id: "firewall-sig-wd", name: "Signature Weapon Damage", stat: "signatureWeaponDamage", value: 40 },
       ],
     },
@@ -2229,6 +2235,7 @@ function testSpecPerksLiveY8s3() {
   let stats = computeStats(loadout);
   assert(stats.values.armorOnKill === 10 && stats.values.ammoCapacity === 25, "gunner sheet defaults");
   assert(stats.values.signatureWeaponDamage === 40, "gunner signature WD default on");
+  assert(stats.values.pulseResistance === 50, "gunner Vital Protection default on");
   assert(stats.values.arDamage === 0, "gunner weapon-type off");
 
   loadout.specialization = "technician";
@@ -2242,20 +2249,25 @@ function testSpecPerksLiveY8s3() {
   stats = computeStats(loadout);
   assert(stats.values.hsd === 15 && stats.values.mmrDamage === 10, "sharpshooter sheet defaults");
   assert(stats.values.stability === 15, "Breath Control default on");
+  assert(stats.values.pulseResistance === 50, "sharpshooter Vital Protection default on");
 
   loadout.specialization = "survivalist";
   stats = computeStats(loadout);
   assert(stats.values.incomingRepairs === 10 && stats.values.statusEffects === 10, "survivalist sheet defaults");
   assert(stats.values.protectionFromElites === 10, "Elite Defense default on");
+  assert(stats.values.skillRepair === 15, "Triage Specialist default on");
+  assert(stats.values.pulseResistance === 50, "survivalist Vital Protection default on");
 
   loadout.specialization = "demolitionist";
   stats = computeStats(loadout);
   assert(stats.values.explosiveDamage === 15 && stats.values.lmgDamage === 10, "demolitionist sheet defaults");
   assert(stats.values.burnResistance === 20, "Incombustible default on");
+  assert(stats.values.pulseResistance === 50, "demolitionist Vital Protection default on");
 
   loadout.specialization = "firewall";
   stats = computeStats(loadout);
   assert(stats.values.armorPercent === 10 && stats.values.statusEffects === 10, "firewall sheet defaults");
+  assert(stats.values.pulseResistance === 50, "firewall Vital Protection default on");
 }
 
 function testQuickstep() {
@@ -2669,12 +2681,14 @@ function testSpecPerksSheetGapsY8s3() {
     tech.perks.some((perk) => perk.id === "technician-pulse" && perk.name === "Vital Protection"),
     "Technician Vital Protection id",
   );
-  assert(
-    !SPECIALIZATIONS.filter((spec) => spec.id !== "technician").some((spec) =>
-      spec.perks.some((perk) => perk.name === "Vital Protection"),
-    ),
-    "Conflict crit-reduction Vital Protection stays unmodeled on other specs",
-  );
+  for (const spec of SPECIALIZATIONS) {
+    const pulse = spec.perks.find((perk) => perk.id === `${spec.id}-pulse`);
+    assert(pulse?.name === "Vital Protection", `${spec.id} Vital Protection name`);
+    assert(
+      pulse?.defaultOn === true && pulse.bonuses[0]?.stat === "pulseResistance" && pulse.bonuses[0]?.value === 50,
+      `${spec.id} Vital Protection +50% Pulse Resistance`,
+    );
+  }
 
   const loadout = emptyLoadout();
   loadout.shdWatch = false;
@@ -3017,6 +3031,40 @@ function testSeasonLiveY8s3CopyHoles4Sep() {
   assert(SEASON_ACTIVES.length === 3, "still 3 actives");
 }
 
+/** TU6 Vital Protection is Pulse Resistance on every spec; Survivalist Triage Specialist is outgoing Skill Repair. */
+function testSpecPerksVitalProtectionAllSpecsY8s3() {
+  for (const spec of SPECIALIZATIONS) {
+    const pulse = spec.perks.find((perk) => perk.id === `${spec.id}-pulse`);
+    assert(pulse?.group === "sheet" && pulse.defaultOn, `${spec.id}-pulse is a default-on sheet perk`);
+    assert(pulse?.exclusiveGroup === undefined, `${spec.id}-pulse is not a fork`);
+  }
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.specialization = "gunner";
+  loadout.specPerks = { "gunner-pulse": false };
+  const skippedGunner = computeStats(loadout);
+  assert(skippedGunner.values.pulseResistance === 0, "Gunner Vital Protection can be skipped");
+  assert(skippedGunner.values.armorOnKill === 10, "Gunner identity AoK stays on without pulse");
+
+  loadout.specialization = "firewall";
+  loadout.specPerks = undefined;
+  assert(computeStats(loadout).values.pulseResistance === 50, "Firewall Vital Protection default on");
+  loadout.specPerks = { "firewall-pulse": false };
+  assert(computeStats(loadout).values.armorPercent === 10, "Firewall identity armor stays on without pulse");
+
+  loadout.specialization = "survivalist";
+  loadout.specPerks = undefined;
+  const survivalist = computeStats(loadout);
+  assert(survivalist.values.skillRepair === 15, "Triage Specialist +15% Skill Repair");
+  assert(survivalist.values.incomingRepairs === 10, "Incoming Repairs identity stays separate from Triage");
+  loadout.specPerks = { "survivalist-triage": false };
+  const skippedTriage = computeStats(loadout);
+  assert(skippedTriage.values.skillRepair === 0, "Triage Specialist can be skipped");
+  assert(skippedTriage.values.incomingRepairs === 10, "Incoming Repairs stays on without Triage");
+  assert(skippedTriage.values.pulseResistance === 50, "Vital Protection stays on without Triage");
+}
+
 const tests = [
   testEmpty,
   testWatchOff,
@@ -3113,6 +3161,7 @@ const tests = [
   testMxLiveNamedGaps,
   testMxLiveExoticGearGaps,
   testSeasonLiveY8s3CopyHoles4Sep,
+  testSpecPerksVitalProtectionAllSpecsY8s3,
 ];
 
 let failed = 0;
