@@ -946,6 +946,25 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     assumed: [{ stat: "armorPercent", value: 8 }, { stat: "threat", value: 10 }],
     assumedNote: "Instigator group bonus armor + threat averaged.",
   },
+  {
+    id: "beacon",
+    name: "Beacon",
+    kind: "exotic",
+    lockedCore: "red",
+    slots: ["chest"],
+    uniqueTalent: {
+      name: "Bond",
+      description:
+        "Both you and Allies receive +30% Critical Hit Damage, +15% Skill Efficiency and +2% Armor Regen when an Ally is within 10m of you. Receive +15% Critical Hit Damage, +7.5% Skill Efficiency and +1% Armor Regen when one of your Skills is within 10m of you. Only the highest group of buffs can be active at one time.",
+    },
+    assumed: [
+      { stat: "chd", value: 30 },
+      { stat: "skillEfficiency", value: 15 },
+      { stat: "armorRegenPercent", value: 2 },
+    ],
+    assumedNote: "Bond ally-within-10m group (highest). Skill-proximity group does not stack.",
+    note: "Y7S4 Mutiny exotic chest. Weapon Damage core is locked. CHC/CHD secondaries.",
+  },
 
   // ========== Exotics — gloves ==========
   {
@@ -1003,6 +1022,19 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     assumed: [{ stat: "weaponDamage", value: 15 }],
     assumedNote: "Weakest Link 30% vs the lowest-rank target, averaged across a mixed group.",
     note: "Exotic gloves. Weapon Damage core is locked. CHC/CHD secondaries — no extra Armor on Kill core/stat.",
+  },
+  {
+    id: "exodus",
+    name: "Exodus",
+    kind: "exotic",
+    lockedCore: "red",
+    slots: ["gloves"],
+    uniqueTalent: {
+      name: "Smoke Screen",
+      description:
+        "On armor break, drop a Smoke Bomb at your feet, concealing you from enemies for 3s. Cooldown 40s.",
+    },
+    note: "Y6S3 Burden of Truth exotic gloves. Smoke Screen is combat-only concealment — not sheet Weapon Damage. Weapon Damage core is locked. CHC/CHD secondaries.",
   },
 
   // ========== Exotics — holsters ==========
@@ -1136,6 +1168,19 @@ export const NAMED_AND_EXOTICS: CatalogItem[] = [
     },
     assumed: [{ stat: "weaponDamage", value: 10 }],
     assumedNote: "Ostracize +20% vs unmarked targets, averaged (the marked enemy is a tank check).",
+  },
+  {
+    id: "ninjabike-kneepads",
+    name: "NinjaBike Messenger Kneepads",
+    kind: "exotic",
+    lockedCore: "red",
+    slots: ["kneepads"],
+    uniqueTalent: {
+      name: "Parkour!",
+      description:
+        "Performing a cover to cover or vaulting reloads your drawn weapon and grants +25% bonus armor for 5s.",
+    },
+    note: "TU8 exotic kneepads — a different item from the NinjaBike Messenger Bag. Parkour! is combat-only (reload + bonus armor). Does not fill brand/set requirements.",
   },
 ];
 

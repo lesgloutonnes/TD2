@@ -2761,6 +2761,91 @@ function testMxLiveNamedGaps() {
   assert(rabidStats.values.weaponDamage === 0, "Foam at the Mouth does not add standing WD");
 }
 
+/** mx live exotic gear the first import skipped: Beacon chest, Exodus gloves, NinjaBike kneepads. */
+function testMxLiveExoticGearGaps() {
+  const beacon = catalogById("beacon");
+  assert(beacon?.name === "Beacon" && beacon.kind === "exotic", "Beacon exotic");
+  assert(beacon?.slots !== "all" && beacon?.slots.includes("chest"), "Beacon is a chest");
+  assert(beacon?.lockedCore === "red", "Beacon red core");
+  assert(beacon?.uniqueTalent?.name === "Bond", "Bond talent");
+  assert(beacon?.uniqueTalent?.description.includes("+30% Critical Hit Damage"), "Bond ally 30% CHD");
+  assert(beacon?.uniqueTalent?.description.includes("+15% Skill Efficiency"), "Bond ally 15% SE");
+  assert(beacon?.uniqueTalent?.description.includes("+2% Armor Regen"), "Bond ally 2% regen");
+  assert(beacon?.uniqueTalent?.description.includes("Skills is within 10m"), "Bond skill-proximity group");
+  assert(beacon?.uniqueTalent?.description.includes("highest group"), "Bond groups do not stack");
+  assert(
+    beacon?.assumed?.some((stat) => stat.stat === "chd" && stat.value === 30),
+    "Bond assumed ally CHD",
+  );
+  assert(
+    !beacon?.assumed?.some((stat) => stat.stat === "weaponDamage"),
+    "Bond is not fake Weapon Damage",
+  );
+
+  const beaconLoadout = emptyLoadout();
+  beaconLoadout.shdWatch = false;
+  beaconLoadout.includeAssumed = true;
+  beaconLoadout.gear.chest = createPiece("chest", "beacon");
+  beaconLoadout.gear.chest.attributes = [];
+  const beaconOn = computeStats(beaconLoadout);
+  assert(beaconOn.values.chd === 30, `Bond ally CHD, got ${beaconOn.values.chd}`);
+  assert(beaconOn.values.skillEfficiency === 15, `Bond ally Skill Efficiency, got ${beaconOn.values.skillEfficiency}`);
+  assert(beaconOn.values.armorRegenPercent === 2, `Bond ally Armor Regen, got ${beaconOn.values.armorRegenPercent}`);
+  beaconLoadout.includeAssumed = false;
+  const beaconOff = computeStats(beaconLoadout);
+  assert(beaconOff.values.chd === 0, "Bond proximity is gated by maxed bonuses");
+
+  const exodus = catalogById("exodus");
+  assert(exodus?.name === "Exodus" && exodus.kind === "exotic", "Exodus exotic");
+  assert(exodus?.slots !== "all" && exodus?.slots.includes("gloves"), "Exodus is gloves");
+  assert(exodus?.lockedCore === "red", "Exodus red core");
+  assert(exodus?.uniqueTalent?.name === "Smoke Screen", "Smoke Screen talent");
+  assert(exodus?.uniqueTalent?.description.includes("armor break"), "Smoke Screen on armor break");
+  assert(exodus?.uniqueTalent?.description.includes("3s"), "Smoke Screen PvE 3s");
+  assert(exodus?.uniqueTalent?.description.includes("40s"), "Smoke Screen 40s CD");
+  assert(!exodus?.assumed?.length, "Smoke Screen is not sheet Weapon Damage");
+
+  const exodusLoadout = emptyLoadout();
+  exodusLoadout.shdWatch = false;
+  exodusLoadout.includeAssumed = true;
+  exodusLoadout.gear.gloves = createPiece("gloves", "exodus");
+  exodusLoadout.gear.gloves.attributes = [];
+  assert(computeStats(exodusLoadout).values.weaponDamage === 15, "Exodus red core only, no Smoke Screen WD");
+
+  const pads = catalogById("ninjabike-kneepads");
+  assert(pads?.name === "NinjaBike Messenger Kneepads", "NinjaBike kneepads English name");
+  assert(pads?.kind === "exotic" && pads.slots !== "all" && pads.slots.includes("kneepads"), "NinjaBike kneepads slot");
+  assert(!pads?.slots.includes("backpack"), "kneepads are not the bag");
+  assert(pads?.lockedCore === "red", "NinjaBike kneepads red core");
+  assert(pads?.ninja !== true, "Parkour kneepads do not fill brand/set requirements");
+  assert(pads?.uniqueTalent?.name === "Parkour!", "Parkour! talent");
+  assert(pads?.uniqueTalent?.description.includes("cover to cover"), "Parkour C2C");
+  assert(pads?.uniqueTalent?.description.includes("+25% bonus armor"), "Parkour 25% bonus armor");
+  assert(!pads?.assumed?.length, "Parkour is combat-only, not sheet WD");
+  assert(catalogById("ninjabike")?.ninja === true, "Messenger Bag still has ninja: true");
+  assert(
+    catalogForSlot("kneepads").some((item) => item.id === "ninjabike-kneepads"),
+    "kneepads picker has NinjaBike Messenger Kneepads",
+  );
+  assert(
+    !catalogForSlot("backpack").some((item) => item.id === "ninjabike-kneepads"),
+    "backpack picker does not list the kneepads",
+  );
+  assert(
+    catalogForSlot("backpack").some((item) => item.id === "ninjabike"),
+    "backpack picker still has the Messenger Bag",
+  );
+
+  const padLoadout = emptyLoadout();
+  padLoadout.shdWatch = false;
+  padLoadout.includeAssumed = true;
+  padLoadout.gear.kneepads = createPiece("kneepads", "ninjabike-kneepads");
+  padLoadout.gear.kneepads.attributes = [];
+  const padStats = computeStats(padLoadout);
+  assert(padStats.values.weaponDamage === 15, "kneepads red core only");
+  assert(padStats.values.hsd === 0, "Parkour kneepads do not unlock Airaldi like the bag");
+}
+
 function testIronLungExoticArdent() {
   const lung = WEAPONS.find((weapon) => weapon.id === "iron-lung");
   assert(lung?.quality === "exotic", "Iron Lung is the TU19 exotic, not named Perfect Frenzy");
@@ -2891,6 +2976,7 @@ const tests = [
   testTalentHoverPreview,
   testIronLungExoticArdent,
   testMxLiveNamedGaps,
+  testMxLiveExoticGearGaps,
 ];
 
 let failed = 0;
