@@ -3111,11 +3111,8 @@ const tests = [
   testTalentHoverPreview,
   testIronLungExoticArdent,
   testMxLiveNamedGaps,
-<<<<<<< HEAD
   testMxLiveExoticGearGaps,
-=======
   testSeasonLiveY8s3CopyHoles4Sep,
->>>>>>> 42edf8a (Complète les textes live Under Pressure (Y8S3) sans inventer les fills.)
 ];
 
 let failed = 0;
