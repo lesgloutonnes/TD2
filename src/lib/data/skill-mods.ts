@@ -73,10 +73,12 @@ function slots(defs: Array<[string, string, SkillModOption[]]>): SkillModSlotDef
 /**
  * Platform → named slots. Option `skills` / `spec` further restrict the pool.
  * Max rolls: Namu wiki Gear 2.0 / level 40 tables (live Y8S3 PvE).
- * Official Y8S3 skill-change tables are Conflict / PvP Dark Zone only — not applied here.
- * The same live PDF also lists PvE base/tier lines; used to fill variant-gated attachment holes
+ * Official Y8S3 skill PDF (ubi.li/DpMjQ, 24 Aug 2026) lists PvE white + PvP red.
+ * PvP / Conflict / DZ Global PvP Balance rows are not applied here.
+ * PvE base/tier lines fill variant-gated attachment holes Namu skipped
  * (Jammer Radius, Hive Extra Charges for Reviver/Artificer, Trap unique lines, Airburst Burn)
  * with family-typical Gear 2.0 caps when Namu does not publish a max %.
+ * Achilles Pulse coil unique is unpublished (Namu coil is Radius / Cone Size only; PDF has no Achilles radius) — Housing still rolls.
  * Smart Cover slot names from Namu; max rolls unpublished there, so family-typical Gear 2.0 caps.
  */
 const PLATFORM_SLOTS: Record<string, SkillModSlotDef[]> = {
@@ -684,6 +686,8 @@ function skillEffectStat(rest: string): StatBonus["stat"] | null {
   if (text.includes("explosive resistance")) return "explosiveResistance";
   if (text.includes("pulse resistance")) return "pulseResistance";
   if (text.includes("out of cover") || text.includes("bonus armor")) return null;
+  if (text.includes("deflect")) return null;
+  if (text.includes("damage bonus")) return "weaponDamage";
   if (text.includes("burn") || text.startsWith("damage") || text.includes("damage (")) {
     return "skillDamage";
   }

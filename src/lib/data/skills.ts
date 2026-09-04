@@ -5,13 +5,15 @@ export const SKILLS: SkillDef[] = [
     id: "assault-turret",
     name: "Assault Turret",
     category: "Turret",
-    description: "Automatic turret with sustained damage.",
+    description:
+      "Automatic turret with sustained fire. PvE T0: 180s duration, 25s cooldown. Damage and health scale with Skill Tier.",
   },
   {
     id: "artillery-turret",
     name: "Artillery Turret",
     category: "Turret",
-    description: "Guided mortar. Explosion plus Bleed. Strong skill DPS.",
+    description:
+      "Guided mortar (Demolitionist). Explosion plus Bleed. PvE T0: 3 mortar rounds, 4.5m blast, 7s Bleed. Ammo and damage scale with Skill Tier.",
     assumed: [{ stat: "skillDamage", value: 5 }],
     assumedNote: "Deployed offensive skill soft contribution.",
   },
@@ -19,19 +21,22 @@ export const SKILLS: SkillDef[] = [
     id: "incinerator-turret",
     name: "Incinerator Turret",
     category: "Turret",
-    description: "Flame cone, area control.",
+    description:
+      "Frontal flame cone; toggle on/off after deploy. PvE T0: 15s duration, 15m range, 45° cone, 4s Burn. Cone, Burn, and duration scale with Skill Tier.",
   },
   {
     id: "sniper-turret",
     name: "Sniper Turret",
     category: "Turret",
-    description: "Heavy long-range shots.",
+    description:
+      "Heavy long-range shots. PvE T0: 3 sniper rounds, 300s duration, 20s cooldown. Extra ammo scales with Skill Tier.",
   },
   {
     id: "striker-drone",
     name: "Striker Drone",
     category: "Drone",
-    description: "Offensive drone that engages enemies.",
+    description:
+      "Offensive drone that engages enemies. PvE T0: 180s duration, 25s cooldown. Damage and health scale with Skill Tier.",
     assumed: [{ stat: "skillDamage", value: 5 }],
     assumedNote: "Deployed offensive skill soft contribution.",
   },
@@ -39,31 +44,36 @@ export const SKILLS: SkillDef[] = [
     id: "defender-drone",
     name: "Defender Drone",
     category: "Drone",
-    description: "Intercepts projectiles around the agent.",
+    description:
+      "Intercepts projectiles around the agent. PvE T0: 20% damage reduction, 20s duration (DR scales with Skill Tier). Skill-local — not character-wide armor.",
   },
   {
     id: "bombardier-drone",
     name: "Bombardier Drone",
     category: "Drone",
-    description: "Drops an explosive salvo on an area.",
+    description:
+      "Drops an explosive salvo on a marked area. PvE T0: 3 bombs, 4.5m blast. Bomb count scales with Skill Tier.",
   },
   {
     id: "tactician-drone",
     name: "Tactician Drone",
     category: "Drone",
-    description: "Pulses and marks enemies (Sharpshooter).",
+    description:
+      "Pulses and marks enemies (Sharpshooter). PvE T0: 50m scan range, 300s duration. Overcharge Weakness Exploit: +15% amplified damage to pulsed targets (not a sheet Weapon Damage).",
   },
   {
     id: "fixer-drone",
     name: "Fixer Drone",
     category: "Drone",
-    description: "Follows an ally and repairs their armor.",
+    description:
+      "Follows an ally and repairs their armor. PvE T0: 180s duration, 25s cooldown. Repair scales with Skill Tier.",
   },
   {
     id: "cluster-seeker",
     name: "Cluster Seeker Mine",
     category: "Seeker Mine",
-    description: "Splits into submunitions. Classic skill DPS.",
+    description:
+      "Splits into submunitions. PvE T0: 3 cluster mines, 2m blast, 50s cooldown. Extra mines scale with Skill Tier.",
     assumed: [{ stat: "skillDamage", value: 5 }],
     assumedNote: "Deployed offensive skill soft contribution.",
   },
@@ -71,31 +81,36 @@ export const SKILLS: SkillDef[] = [
     id: "explosive-seeker",
     name: "Explosive Seeker Mine",
     category: "Seeker Mine",
-    description: "Single large explosion plus Bleed.",
+    description:
+      "Single large explosion plus Bleed. PvE T0: 4m blast, 7s Bleed, 35s cooldown.",
   },
   {
     id: "airburst-seeker",
     name: "Airburst Seeker Mine",
     category: "Seeker Mine",
-    description: "Detonates above targets: explosion plus Burn.",
+    description:
+      "Detonates above targets: explosion plus Burn. PvE T0: 6m radius, 4s Burn, 30s cooldown. Burn duration scales with Skill Tier.",
   },
   {
     id: "mender-seeker",
     name: "Mender Seeker Mine",
     category: "Seeker Mine",
-    description: "Repairs allies (Survivalist).",
+    description:
+      "Repair cloud for allies (Survivalist). PvE T0: 3m radius, 8s cloud, 180s duration. Repair scales with Skill Tier.",
   },
   {
     id: "stinger-hive",
     name: "Stinger Hive",
     category: "Hive",
-    description: "Swarm of offensive micro-drones.",
+    description:
+      "Swarm of offensive micro-drones plus Bleed. PvE T0: 8 charges, 8m range, 7s Bleed, 180s duration. Charges scale with Skill Tier.",
   },
   {
     id: "restorer-hive",
     name: "Restorer Hive",
     category: "Hive",
-    description: "Repairs ally armor in the area.",
+    description:
+      "Repairs ally armor and deployed skills in range. PvE T0: 8 charges, 8m range, 180s duration. Charges and repair scale with Skill Tier.",
     assumed: [{ stat: "skillRepair", value: 5 }],
     assumedNote: "Healing skill soft contribution.",
   },
@@ -103,7 +118,8 @@ export const SKILLS: SkillDef[] = [
     id: "reviver-hive",
     name: "Reviver Hive",
     category: "Hive",
-    description: "Automatic revive. Solo meta.",
+    description:
+      "Automatic revive, including self-revive when charged. PvE T0: 1 charge, 25% armor restore on revive, 8m range, 180s refill. Charges and restore scale with Skill Tier.",
     assumed: [{ stat: "incomingRepairs", value: 5 }],
     assumedNote: "Support hive soft contribution.",
   },
@@ -111,43 +127,50 @@ export const SKILLS: SkillDef[] = [
     id: "booster-hive",
     name: "Booster Hive",
     category: "Hive",
-    description: "Weapon handling, hazard protection, and melee damage buff for allies (not weapon damage).",
+    description:
+      "Ally stim: weapon handling, hazard protection, and melee damage (not weapon damage). PvE T0: 20% stim efficiency, 5s buff, 8 stim charges, 12m range. Stim efficiency scales with Skill Tier.",
   },
   {
     id: "artificer-hive",
     name: "Artificer Hive",
     category: "Hive",
-    description: "Overcharges allied skills: +10% buff amount and +10% Skill Repair, plus duration refresh (Technician).",
+    description:
+      "Overcharges allied skills (Technician). PvE T0: +10% buff amount and +10% Skill Repair (do not scale with Skill Tier), 3s skill refresh (scales), 8 charges, 8m range, 10s buff duration.",
   },
   {
     id: "oxidizer",
     name: "Oxidizer Chem Launcher",
     category: "Chem Launcher",
-    description: "Acid DoT. Skill DPS / Eclipse.",
+    description:
+      "Acid cloud DoT. PvE T0: 1 ammo, 3.5m / 5s cloud, 25s ammo cooldown. Cloud damage, duration, and radius scale with Skill Tier.",
   },
   {
     id: "firestarter",
     name: "Firestarter Chem Launcher",
     category: "Chem Launcher",
-    description: "Flammable cloud, then burn.",
+    description:
+      "Flammable cloud, then Burn. PvE T0: 1 ammo, 3m / 20s cloud, 4s Burn. Burn scales with Skill Tier.",
   },
   {
     id: "riot-foam",
     name: "Riot Foam Chem Launcher",
     category: "Chem Launcher",
-    description: "Immobilizes enemies.",
+    description:
+      "Ensnare foam that immobilizes enemies. PvE T0: 1 ammo, 3m cloud, 6s ensnare. Ensnare duration and foam health scale with Skill Tier.",
   },
   {
     id: "repair-chem",
     name: "Reinforcer Chem Launcher",
     category: "Chem Launcher",
-    description: "Armor repair cloud.",
+    description:
+      "Armor repair cloud. PvE T0: 2 ammo, 3m / 5s cloud, 30s ammo cooldown. Healing efficiency scales with Skill Tier.",
   },
   {
     id: "bulwark-shield",
     name: "Bulwark Shield",
     category: "Shield",
-    description: "Full frontal cover, pistol only.",
+    description:
+      "Full frontal cover, pistol only. Shield Wall: the shield is invulnerable. PvE T0: 20s cooldown. Health and regen scale with Skill Tier.",
     assumed: [{ stat: "armorPercent", value: 5 }],
     assumedNote: "Bulwark coverage approximated as +5% Total Armor.",
   },
@@ -155,7 +178,8 @@ export const SKILLS: SkillDef[] = [
     id: "crusader-shield",
     name: "Crusader Shield",
     category: "Shield",
-    description: "Shield + primary weapon. Heartbreaker / tank meta.",
+    description:
+      "Shield plus primary weapon. Shield Wall: the shield is invulnerable. PvE T0: 20s cooldown. Health and regen scale with Skill Tier.",
     assumed: [{ stat: "weaponDamage", value: 5 }],
     assumedNote: "Shield enables Intimidate/HB playstyles; soft +5% WD.",
   },
@@ -163,117 +187,137 @@ export const SKILLS: SkillDef[] = [
     id: "striker-shield",
     name: "Striker Shield",
     category: "Shield",
-    description: "Small shield, pistol. Firewall.",
+    description:
+      "Small shield, pistol (Firewall). Damage bonus per enemy in a 45° / 10m cone. PvE T0: +5% damage bonus per enemy (scales with Skill Tier). Shield Wall: the shield is invulnerable.",
     assumed: [{ stat: "weaponDamage", value: 5 }],
-    assumedNote: "Striker Shield CQC soft bonus.",
+    assumedNote:
+      "PvE T0 +5% damage bonus for one enemy in the cone (skill-local; not extra character Weapon Damage beyond this hint).",
   },
   {
     id: "deflector-shield",
     name: "Deflector Shield",
     category: "Shield",
-    description: "Reflects a portion of incoming projectiles.",
+    description:
+      "Reflects a portion of incoming projectiles. Shield Wall: the shield is invulnerable. PvE T0: 20s cooldown. Deflected damage scales with Skill Tier.",
   },
   {
     id: "scanner-pulse",
     name: "Scanner Pulse",
     category: "Pulse",
-    description: "Reveals enemies. Spotter synergy.",
+    description:
+      "Reveals enemies in a wide radius. PvE T0: 100m effect radius, 8s duration, 20s cooldown. Overcharge Weakness Exploit: +15% amplified damage to pulsed targets (not sheet Weapon Damage). Spotter synergy.",
   },
   {
     id: "remote-pulse",
     name: "Remote Pulse",
     category: "Pulse",
-    description: "Deployable pulse, shorter cooldown.",
+    description:
+      "Deployable pulse. PvE T0: 15m effect radius, 45s duration, 20s cooldown. Radius and duration scale with Skill Tier. Overcharge Weakness Exploit: +15% amplified damage to pulsed targets (not sheet Weapon Damage).",
   },
   {
     id: "jammer-pulse",
     name: "Jammer Pulse",
     category: "Pulse",
-    description: "Omnidirectional EMP that disables enemy skills. Spark.",
+    description:
+      "Omnidirectional EMP that disables enemy skills (Spark). PvE T0: 20m radius, 3s EMP, 2s charge, 30s cooldown. Hold to charge a larger pulse. Radius and EMP duration scale with Skill Tier.",
   },
   {
     id: "banshee-pulse",
     name: "Banshee Pulse",
     category: "Pulse",
-    description: "Forward arc that disorients targets through cover (Gunner).",
+    description:
+      "Forward arc that disorients through cover (Gunner). Charge for range. PvE T0: 30m radius, 20 cone size, 4s Disorient, 10s duration, 30s cooldown. Cone and Disorient scale with Skill Tier. Overcharge Weakness Exploit: +15% amplified damage to pulsed targets (not sheet Weapon Damage).",
   },
   {
     id: "achilles-pulse",
     name: "Achilles Pulse",
     category: "Pulse",
-    description: "Marks weak-point zones on a target; those spots take headshot damage. Zone count scales with Skill Tier (1 at T0, 3 at T6).",
+    description:
+      "Marks weak-point zones on a target; those spots take headshot damage. PvE T0: 1 zone, 10s zone duration, 40s cooldown. Zone count scales with Skill Tier (3 at T6).",
   },
   {
     id: "blinder-firefly",
     name: "Blinder Firefly",
     category: "Firefly",
-    description: "Blinds enemies in a chain.",
+    description:
+      "Blinds enemies in a chain. PvE T0: 3 max targets, 5s Blind, 50s cooldown. Extra targets and Blind duration scale with Skill Tier.",
   },
   {
     id: "burster-firefly",
     name: "Burster Firefly",
     category: "Firefly",
-    description: "Detonates weak points and skills.",
+    description:
+      "Detonates weak points and skills. PvE T0: 3 max targets, 30s cooldown. Extra targets and damage scale with Skill Tier.",
   },
   {
     id: "demolisher-firefly",
     name: "Demolisher Firefly",
     category: "Firefly",
-    description: "Destroys cover and armor weak points.",
+    description:
+      "Destroys cover and armor weak points. PvE T0: 3 max targets, 50s cooldown. Extra targets and damage scale with Skill Tier.",
   },
   {
     id: "decoy",
     name: "Decoy",
     category: "Decoy",
-    description: "Draws aggro. Aegis / tank.",
+    description:
+      "Holographic distraction that draws aggro. PvE T0: 15s duration, 100% Threat, 25s cooldown. Duration, health, and Threat scale with Skill Tier.",
   },
   {
     id: "shock-trap",
     name: "Shock Trap",
     category: "Trap",
-    description: "Immobilizes enemies in the area.",
+    description:
+      "Shock zone that immobilizes enemies. PvE T0: 6 traps, 2.5m shock radius, 3s Shock, 60s duration. Trap count, radius, and Shock duration scale with Skill Tier.",
   },
   {
     id: "repair-trap",
     name: "Repair Trap",
     category: "Trap",
-    description: "Armor repair zone.",
+    description:
+      "Armor repair zone. Immunizing Serum: traps also grant status-effect immunity for 10s. PvE T0: 2 traps, 0.75m repair radius, 60s duration, 40s cooldown. Trap count and repair scale with Skill Tier.",
   },
   {
     id: "shrapnel-trap",
     name: "Shrapnel Trap",
     category: "Trap",
-    description: "Proximity mines that explode and apply Bleed.",
+    description:
+      "Proximity mines that explode and apply Bleed. PvE T0: 9 traps, 2m explosion radius, 60s duration. Trap count and damage scale with Skill Tier.",
   },
   {
     id: "precision-smart-cover",
     name: "Precision Smart Cover",
     category: "Smart Cover",
-    description: "Reinforces cover: weapon handling, damage to targets out of cover, auto-reload on swap. PvE T0 while in cover: +15% Weapon Handling / +10% damage to targets out of cover (scales with Skill Tier).",
+    description:
+      "Reinforces cover: weapon handling, damage to targets out of cover, auto-reload on swap. PvE T0 while in cover: 6m radius, 20s duration, 45s cooldown, +15% Weapon Handling / +10% damage to targets out of cover (scales with Skill Tier).",
   },
   {
     id: "fortified-smart-cover",
     name: "Fortified Smart Cover",
     category: "Smart Cover",
-    description: "Reinforces cover: bonus armor, explosive resistance, pulse resistance, stagger immunity. PvE T0 while in cover: +50% Bonus Armor.",
+    description:
+      "Reinforces cover: bonus armor, explosive resistance, pulse resistance, stagger immunity. PvE T0 while in cover: 6m radius, 30s duration, 45s cooldown, +50% Bonus Armor / +5% Explosive Resistance / +5% Pulse Resistance (armor and resists scale with Skill Tier).",
   },
   {
     id: "sticky-burn",
     name: "Burn Sticky Bomb",
     category: "Sticky Bomb",
-    description: "Explosion + burn.",
+    description:
+      "Explosion plus Burn. PvE T0: 10s flare, 4.5s Burn. Burn damage and duration scale with Skill Tier.",
   },
   {
     id: "sticky-emp",
     name: "EMP Sticky Bomb",
     category: "Sticky Bomb",
-    description: "Disables skills and robots.",
+    description:
+      "Disables skills and robots. PvE T0: 4m EMP blast radius, 8s flare, 30s cooldown. Blast radius scales with Skill Tier.",
   },
   {
     id: "sticky-explosive",
     name: "Explosive Sticky Bomb",
     category: "Sticky Bomb",
-    description: "Large explosive burst.",
+    description:
+      "Large explosive burst. PvE T0: 3m blast, 10s duration, 60s cooldown. Damage and blast radius scale with Skill Tier.",
   },
 ];
 

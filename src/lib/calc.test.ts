@@ -9,7 +9,13 @@ import { BRANDS } from "./data/brands";
 import { GEAR_SETS, gearSetCores } from "./data/gear-sets";
 import { CORE_COLORS, EMPTY_SLOT_COLOR, GEAR_BASE_ARMOR, SLOTS, itemKindColor, itemDisplayColor, weaponDisplayColor, PROTOTYPE_COLOR, clampStat, ATTRIBUTE_OPTIONS, MOD_OPTIONS, storedCoreValue } from "./data/attributes";
 import { AUGMENTS } from "./data/augments";
-import { defaultSkillMods, skillModSlotsFor, weaponsByType, weaponsSorted } from "./data/skill-mods";
+import {
+  defaultSkillMods,
+  skillModLocalBreakdown,
+  skillModSlotsFor,
+  weaponsByType,
+  weaponsSorted,
+} from "./data/skill-mods";
 import {
   SKILLS,
   SPECIALIZATIONS,
@@ -2505,6 +2511,92 @@ function testY8S3SkillPveSheetGaps() {
   );
 }
 
+function testY8S3SkillPveLivePdfDescriptions() {
+  const byId = new Map(SKILLS.map((skill) => [skill.id, skill]));
+
+  const repairTrap = byId.get("repair-trap");
+  assert(repairTrap?.description.includes("Immunizing Serum"), "Repair Trap Immunizing Serum");
+  assert(repairTrap?.description.includes("10s"), "Immunizing Serum 10s");
+
+  const stinger = byId.get("stinger-hive");
+  assert(stinger?.description.toLowerCase().includes("bleed"), "Stinger PvE bleed");
+
+  const booster = byId.get("booster-hive");
+  assert(booster?.description.includes("20%"), "Booster PvE T0 stim 20%");
+  assert(booster?.description.toLowerCase().includes("not weapon damage"), "Booster still not WD");
+  assert(!booster?.assumed?.some((stat) => stat.stat === "weaponDamage"), "Booster assumed is not WD");
+
+  const artificer = byId.get("artificer-hive");
+  assert(artificer?.description.includes("3s"), "Artificer PvE T0 skill refresh 3s");
+  assert(artificer?.description.includes("+10% Skill Repair"), "Artificer PvE 10% skill repair stays");
+
+  const defender = byId.get("defender-drone");
+  assert(defender?.description.includes("20%"), "Defender PvE T0 20% DR");
+
+  const scanner = byId.get("scanner-pulse");
+  assert(scanner?.description.includes("100m"), "Scanner PvE 100m radius");
+  assert(scanner?.description.includes("Weakness Exploit"), "Scanner OC Weakness Exploit");
+  assert(!scanner?.assumed?.some((stat) => stat.stat === "weaponDamage"), "Weakness Exploit is not sheet WD");
+
+  const jammer = byId.get("jammer-pulse");
+  assert(jammer?.description.includes("20m"), "Jammer PvE 20m radius");
+  assert(jammer?.description.includes("3s"), "Jammer PvE 3s EMP");
+
+  const banshee = byId.get("banshee-pulse");
+  assert(banshee?.description.includes("Disorient") || banshee?.description.includes("disorient"), "Banshee disorient");
+  assert(banshee?.description.includes("20 cone"), "Banshee PvE cone size 20");
+
+  const achilles = byId.get("achilles-pulse");
+  assert(achilles?.description.includes("10s"), "Achilles PvE 10s zone duration");
+  assert(achilles?.description.includes("3 at T6"), "Achilles 3 zones at T6");
+
+  const cluster = byId.get("cluster-seeker");
+  assert(cluster?.description.includes("3 cluster"), "Cluster PvE 3 mines");
+
+  const emp = byId.get("sticky-emp");
+  assert(emp?.description.includes("4m"), "EMP sticky PvE 4m blast");
+
+  const reviver = byId.get("reviver-hive");
+  assert(reviver?.description.includes("25%"), "Reviver PvE 25% armor restore");
+
+  const striker = byId.get("striker-shield");
+  assert(striker?.description.includes("5%"), "Striker Shield PvE 5% per enemy");
+  assert(striker?.description.includes("45°"), "Striker Shield buff angle");
+  assert(striker?.assumedNote?.includes("one enemy"), "Striker assumed is one-enemy T0 hint");
+
+  const fortified = byId.get("fortified-smart-cover");
+  assert(fortified?.description.includes("Explosive Resistance"), "Fortified T0 explosive resist");
+  assert(fortified?.description.includes("Pulse Resistance"), "Fortified T0 pulse resist");
+
+  const chem = byId.get("repair-chem");
+  assert(chem?.name === "Reinforcer Chem Launcher", "Reinforcer name stays");
+  assert(chem?.description.includes("2 ammo"), "Reinforcer PvE 2 ammo");
+
+  const achillesMods = skillModSlotsFor("achilles-pulse");
+  assert(
+    !achillesMods.some((slot) => slot.options.some((option) => option.id === "coil-radius")),
+    "Achilles coil is not Scanner radius",
+  );
+  assert(
+    !achillesMods.some((slot) => slot.options.some((option) => option.id === "coil-cone")),
+    "Achilles coil is not Banshee cone",
+  );
+  assert(
+    achillesMods.some((slot) => slot.options.some((option) => option.id === "housing-duration")),
+    "Achilles still rolls Pulse Housing duration",
+  );
+
+  const strikerMods = skillModLocalBreakdown("striker-shield", ["circuit-damage-bonus", "coating-health", "gyro-damage-bonus"]);
+  assert(
+    strikerMods.bonuses.some((bonus) => bonus.stat === "weaponDamage" && bonus.value === 5),
+    "Striker Shield gyro damage bonus is local weapon damage, not skill damage",
+  );
+  assert(
+    !strikerMods.bonuses.some((bonus) => bonus.stat === "skillDamage"),
+    "Striker Shield cone buff is not skill damage",
+  );
+}
+
 function testSeasonLiveGaugeAndHostileNotes() {
   const kick80 = computeStats(
     (() => {
@@ -2970,6 +3062,7 @@ const tests = [
   testGearCatalogLiveHoles,
   testY8s3LiveHeTalentPicker,
   testY8S3SkillPveSheetGaps,
+  testY8S3SkillPveLivePdfDescriptions,
   testSeasonLiveGaugeAndHostileNotes,
   testSpecPerksSheetGapsY8s3,
   testOfficialExoticAndGearSetCopy,
