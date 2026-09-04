@@ -22,7 +22,14 @@ Y8S3 facts (do not regress):
   Do not add Perfect Head Scratcher to the HE picker.
 - **First Bloom** (`first-bloom`) — named PDR AR, 700 / 30, talent Blossom Harvest (3.3% amp per 10% combined Armor+Health remaining). Not sheet WD.
 - **Rabid D50** (`rabid-d50`) — named D50, 200 RPM / mag 8, talent Foam at the Mouth (HS kill → Ensnare next hit; +25% amp vs Ensnared). Not sheet WD. HE D50 family is 200 / 8.
+- **TDI "Kard" Custom** (`tdi-kard`) — named KARD-45, 310 / 10. Unique **+1 Skill Tier while drawn** (`extraStats`), talent slot recalibratable. Not Perfectly Unhinged.
+- Unique-attribute nameds (no Perfect talent, talent slot recalibratable):
+  - **Stack Broker** (`stack-broker`) — ACS-12, 360 / 20 (official Veteran Rewards: higher RoF, lower base damage)
+  - **Slingshot** (`slingshot`) — Tactical UMP-45, 650 / 25, innate 60m Optimal Range
+  - **Handbasket** (`handbasket`) — SVD, 60 / 10 (higher base damage, slower RPM than SVD 260)
+- Named family RPM/mag (mx live, case-by-case — not a mass overwrite): Kingbreaker / TKB-408 600/30; Dare & Cricket / GR9 750/200; Harmony / Resolute MK47 300/30; Relic & Sacrum Imperium / G28 180/20; Teapot M4 rifle 360/30; Steamer & Lud SCAR-L 650/30.
 - Do not add Perfect-only HE talents (Allegro, Streamline, …) unless they are on the live picker.
+- Skip **October Fifth** (unobtainable) and meme seasonals (Oh Carol, Sleigher, Bell Ringer, Festive Delivery…).
 - mx-division-builds live API (`buildstation.app/api/td2/v2/data/mx/…`) is a community catalog for **existence + family + RPM/mag + talent name/text**. Do not copy its GitHub CSVs (stale brands). Do not mass-overwrite our Y8S3 brand/set numbers or HE picker. Skip meme seasonals and D1 leftovers (Nimble Holster, NinjaBike-as-kneepads).
 
 Sources: Red Horizon article + live gear PDF; mx live API for named gaps. `npm test` after edits.

@@ -2952,6 +2952,76 @@ function testMxLiveExoticGearGaps() {
   assert(padStats.values.hsd === 0, "Parkour kneepads do not unlock Airaldi like the bag");
 }
 
+/** Unique-attribute nameds + HE families filled from mx live / Ubisoft Veteran Rewards (Y8S3). */
+function testUniqueAttrNamedAndHeFamilies() {
+  const kard = WEAPONS.find((weapon) => weapon.id === "tdi-kard");
+  const kardHe = WEAPONS.find((weapon) => weapon.id === "kard-45");
+  assert(kard?.name === 'TDI "Kard" Custom' && kard.type === "pistol" && kard.quality === "named", "TDI Kard named pistol");
+  assert(kard?.rpm === 310 && kard.mag === 10, "TDI Kard KARD-45 family 310/10");
+  assert(kard?.talent === "Innate Skill Tier", "TDI Kard is unique Skill Tier, not Perfectly Unhinged");
+  assert(kard?.talentDesc.includes("Skill Tier"), "TDI Kard +1 Skill Tier text");
+  assert(kard?.extraStats?.some((stat) => stat.stat === "skillTier" && stat.value === 1), "TDI Kard extraStats +1 ST");
+  assert(!kard?.assumed?.length, "TDI Kard unique ST is extraStats, not assumed WD");
+  assert(kardHe?.quality === "high-end" && kardHe.rpm === 310 && kardHe.mag === 10, "HE KARD-45 310/10");
+
+  const loadout = emptyLoadout();
+  loadout.shdWatch = false;
+  loadout.weapons.sidearm = { weaponId: "tdi-kard", expertise: 0, mods: [] };
+  loadout.activeWeapon = "sidearm";
+  const drawn = computeStats(loadout);
+  assert(drawn.values.skillTier === 1, `TDI Kard drawn +1 Skill Tier, got ${drawn.values.skillTier}`);
+  loadout.activeWeapon = "primary";
+  const holstered = computeStats(loadout);
+  assert(holstered.values.skillTier === 0, "TDI Kard Skill Tier only while drawn");
+
+  const broker = WEAPONS.find((weapon) => weapon.id === "stack-broker");
+  assert(broker?.name === "Stack Broker" && broker.type === "shotgun" && broker.quality === "named", "Stack Broker named ACS-12");
+  assert(broker?.rpm === 360 && broker.mag === 20, "Stack Broker 360/20 vs ACS-12 300/20");
+  assert(broker?.talentDesc.includes("rate of fire"), "Stack Broker unique RoF");
+  assert(!broker?.assumed?.length, "Stack Broker unique RoF is not sheet WD");
+
+  const sling = WEAPONS.find((weapon) => weapon.id === "slingshot");
+  const umpTac = WEAPONS.find((weapon) => weapon.id === "tactical-ump-45");
+  assert(sling?.name === "Slingshot" && sling.type === "smg" && sling.quality === "named", "Slingshot named UMP");
+  assert(sling?.rpm === 650 && sling.mag === 25, "Slingshot Tactical UMP 650/25");
+  assert(sling?.talentDesc.includes("60m"), "Slingshot 60m Optimal Range");
+  assert(!sling?.assumed?.length, "Slingshot OR is not sheet WD");
+  assert(umpTac?.quality === "high-end" && umpTac.rpm === 650 && umpTac.mag === 25, "HE Tactical UMP-45");
+
+  const basket = WEAPONS.find((weapon) => weapon.id === "handbasket");
+  assert(basket?.name === "Handbasket" && basket.type === "mmr" && basket.quality === "named", "Handbasket named SVD");
+  assert(basket?.rpm === 60 && basket.mag === 10, "Handbasket slower SVD 60/10");
+  assert(!basket?.assumed?.length, "Handbasket unique damage is not sheet WD");
+
+  assert(WEAPONS.some((weapon) => weapon.id === "tkb-408" && weapon.rpm === 600 && weapon.mag === 30), "HE TKB-408");
+  assert(WEAPONS.some((weapon) => weapon.id === "gr9" && weapon.rpm === 750 && weapon.mag === 200), "HE GR9 750/200");
+  assert(WEAPONS.some((weapon) => weapon.id === "resolute-mk47" && weapon.rpm === 300 && weapon.mag === 30), "HE Resolute MK47");
+  assert(WEAPONS.some((weapon) => weapon.id === "g28" && weapon.rpm === 180 && weapon.mag === 20), "HE G28");
+  assert(WEAPONS.some((weapon) => weapon.id === "tactical-308" && weapon.rpm === 70 && weapon.mag === 7), "HE Tactical .308");
+  assert(WEAPONS.some((weapon) => weapon.id === "aug-a3-cqc" && weapon.rpm === 680 && weapon.mag === 42), "HE AUG A3-CQC");
+
+  const king = WEAPONS.find((weapon) => weapon.id === "kingbreaker");
+  assert(king?.rpm === 600 && king.mag === 30, "Kingbreaker TKB-408 family 600/30");
+  const dare = WEAPONS.find((weapon) => weapon.id === "dare");
+  const cricket = WEAPONS.find((weapon) => weapon.id === "cricket");
+  assert(dare?.rpm === 750 && dare.mag === 200, "Dare GR9 mag 200");
+  assert(cricket?.rpm === 750 && cricket.mag === 200, "Cricket GR9 mag 200");
+  const harmony = WEAPONS.find((weapon) => weapon.id === "harmony");
+  assert(harmony?.rpm === 300 && harmony.mag === 30, "Harmony MK47 300/30");
+  const relic = WEAPONS.find((weapon) => weapon.id === "relic");
+  const sacrum = WEAPONS.find((weapon) => weapon.id === "sacrum-imperium");
+  assert(relic?.rpm === 180 && relic.mag === 20, "Relic G28 180/20");
+  assert(sacrum?.rpm === 180 && sacrum.mag === 20, "Sacrum Imperium G28 180/20");
+  const teapot = WEAPONS.find((weapon) => weapon.id === "teapot");
+  const steamer = WEAPONS.find((weapon) => weapon.id === "steamer");
+  const lud = WEAPONS.find((weapon) => weapon.id === "lud");
+  assert(teapot?.rpm === 360 && teapot.mag === 30, "Teapot M4 rifle 360/30");
+  assert(steamer?.rpm === 650 && steamer.mag === 30, "Steamer SCAR-L 650/30");
+  assert(lud?.rpm === 650 && lud.mag === 30, "Lud SCAR-L 650/30");
+
+  assert(!WEAPONS.some((weapon) => /oh carol|sleigher|bell ringer|october fifth/i.test(weapon.name)), "meme / unobtainable nameds stay omitted");
+}
+
 function testIronLungExoticArdent() {
   const lung = WEAPONS.find((weapon) => weapon.id === "iron-lung");
   assert(lung?.quality === "exotic", "Iron Lung is the TU19 exotic, not named Perfect Frenzy");
@@ -3162,6 +3232,7 @@ const tests = [
   testMxLiveExoticGearGaps,
   testSeasonLiveY8s3CopyHoles4Sep,
   testSpecPerksVitalProtectionAllSpecsY8s3,
+  testUniqueAttrNamedAndHeFamilies,
 ];
 
 let failed = 0;

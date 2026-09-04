@@ -46,6 +46,8 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("police-g36", "Police G36", "ar", 750, 30, "optimist"),
   he("classic-rpk-16", "RPK-16", "ar", 650, 45, "optimist"),
   he("pdr", "PDR", "ar", 700, 30, "optimist"),
+  he("tkb-408", "TKB-408", "ar", 600, 30, "optimist"),
+  he("aug-a3-cqc", "AUG A3-CQC", "ar", 680, 42, "optimist"),
   // LMGs
   he("m249-b", "M249 B", "lmg", 850, 100, "fast-hands"),
   he("mk46", "Mk46", "lmg", 550, 100, "ranger"),
@@ -58,6 +60,7 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("military-m60", "Military M60", "lmg", 500, 100, "measured"),
   he("military-mk46", "Military Mk46", "lmg", 550, 100, "fast-hands"),
   he("black-market-m60", "Black Market M60", "lmg", 500, 100, "unhinged"),
+  he("gr9", "GR9", "lmg", 750, 200, "frenzy"),
   // SMGs
   he("mp5", "MP5", "smg", 800, 32, "strained"),
   he("mp7", "MP7", "smg", 950, 40, "fast-hands"),
@@ -74,6 +77,8 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("smg-9-au", "SMG-9 AU", "smg", 1100, 32, "strained"),
   he("police-ump-45", "Police UMP-45", "smg", 600, 30, "killer"),
   he("enhanced-pp-19", "Enhanced PP-19", "smg", 700, 64, "strained"),
+  he("tactical-ump-45", "Tactical UMP-45", "smg", 650, 25, "strained"),
+  he("tommy-gun", "Tommy Gun", "smg", 900, 50, "close-personal"),
   // Shotguns
   he("sasg-12", "SASG-12", "shotgun", 180, 8, "close-personal"),
   he("super-90", "Super 90", "shotgun", 120, 8, "ranger"),
@@ -96,6 +101,9 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("hunting-m44", "Hunting M44", "mmr", 50, 5, "ranger"),
   he("classic-m44", "Classic M44 Carbine", "mmr", 50, 5, "determined"),
   he("military-svd", "Military SVD", "mmr", 260, 10, "spike"),
+  he("g28", "G28", "mmr", 180, 20, "first-blood"),
+  he("tactical-308", "Tactical .308", "mmr", 70, 7, "first-blood"),
+  he("m700-tactical", "M700 Tactical", "mmr", 55, 7, "first-blood"),
   // Rifles
   he("usc", "USC .45 ACP", "rifle", 400, 20, "rifleman"),
   he("winchester-1886", "1886", "rifle", 100, 5, "close-personal"),
@@ -107,8 +115,11 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("g3", "G3", "rifle", 500, 20, "ranger"),
   he("military-mk17", "Military Mk17", "rifle", 275, 20, "ranger"),
   he("classic-m1a-socom", "M1A SOCOM", "rifle", 300, 20, "rifleman"),
-  he("lightweight-m4-rifle", "Lightweight M4 (Rifle)", "rifle", 850, 30, "fast-hands"),
+  he("lightweight-m4-rifle", "Lightweight M4 (Rifle)", "rifle", 360, 30, "rifleman"),
   he("urban-mdr", "Urban MDR", "rifle", 380, 20, "rifleman"),
+  he("resolute-mk47", "Resolute MK47", "rifle", 300, 30, "rifleman"),
+  he("uic15-mod2", "UIC15 MOD2", "rifle", 240, 30, "rifleman"),
+  he("m1a-cqb", "M1A CQB", "rifle", 320, 10, "rifleman"),
   // Pistols
   he("pistol-93r", "93R", "pistol", 1100, 20, "fast-hands"),
   he("m1911", "M1911", "pistol", 310, 7, "killer"),
@@ -123,4 +134,5 @@ export const HE_WEAPONS: WeaponDef[] = [
   he("first-wave-pf45", "First Wave PF45", "pistol", 380, 15, "strained"),
   he("tactical-m1911", "Tactical M1911", "pistol", 310, 7, "killer"),
   he("police-m9", "Police M9", "pistol", 400, 15, "fast-hands"),
+  he("kard-45", "KARD-45", "pistol", 310, 10, "killer"),
 ];
